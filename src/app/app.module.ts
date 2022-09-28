@@ -11,6 +11,8 @@ import { ManageRomsComponent } from './pages/manage-roms/manage-roms.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NbThemeModule, NbLayoutModule } from '@nebular/theme';
 import { NbEvaIconsModule } from '@nebular/eva-icons';
+import { NotificationCentreComponent } from './pages/notification-centre/notification-centre.component';
+import { ProfileComponent } from './pages/profile/profile.component';
 
 @NgModule({
   declarations: [
@@ -19,7 +21,9 @@ import { NbEvaIconsModule } from '@nebular/eva-icons';
     DashboardComponent,
     HomepageComponent,
     ManageScribesComponent,
-    ManageRomsComponent
+    ManageRomsComponent,
+    NotificationCentreComponent,
+    ProfileComponent
   ],
   imports: [
     BrowserModule,

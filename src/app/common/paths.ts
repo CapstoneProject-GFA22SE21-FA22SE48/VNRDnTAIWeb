@@ -1,0 +1,13 @@
+/* paths.ts was created to provide shrinked links for API calling. */
+// Base path
+const base = '';
+
+// Scribe
+export const CreateScribe: string = base + '/';
+export const UpdateScribe: string = base + '/';
+
+// Request of Modification
+export const AcceptRequest: string = base + '/';
+export const DenyRequest: string = base + '/';
+
+// Notification
