@@ -11,6 +11,7 @@ import { ManageRomsComponent } from './pages/manage-roms/manage-roms.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NotificationCentreComponent } from './pages/notification-centre/notification-centre.component';
 import { ProfileComponent } from './pages/profile/profile.component';
+import { SidebarComponent } from './shared/sidebar/sidebar.component';
 
 @NgModule({
   declarations: [
@@ -21,7 +22,8 @@ import { ProfileComponent } from './pages/profile/profile.component';
     ManageScribesComponent,
     ManageRomsComponent,
     NotificationCentreComponent,
-    ProfileComponent
+    ProfileComponent,
+    SidebarComponent
   ],
   imports: [
     BrowserModule,
