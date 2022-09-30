@@ -8,7 +8,10 @@ import {
 } from '@angular/router';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { verifyToken } from 'src/app/utilities/jwt.util';
-import { clearLoginInformation, getUserRole } from 'src/app/utilities/localStorage.util';
+import {
+  clearLoginInformation,
+  getUserRole,
+} from 'src/app/utilities/localStorage.util';
 
 @Injectable({
   providedIn: 'root',
@@ -37,10 +40,10 @@ export class LoginAuthGuard implements CanActivate {
     const isValidToken = verifyToken();
 
     if (isValidToken) {
-      if(getUserRole() && getUserRole() === 0){
-        this.router.navigate(['/dashboard']);
-      } else if(getUserRole() && getUserRole() === 1){
-        //TODO
+      if (getUserRole() && getUserRole() === 0) {
+        this.router.navigate(['/admin/dashboard']);
+      } else if (getUserRole() && getUserRole() === 1) {
+        this.router.navigate(['/scribe/manage-laws']);
       }
       return false;
     }

@@ -12,7 +12,5 @@ export const paths = {
     dashboard: 'admin/dashboard',
     manageScribes: 'admin/manage-scribes',
     manageRoMs: 'admin/manage-roms',
-
-    chatLog: 'admin/chat-log',
   },
 };
