@@ -13,6 +13,7 @@ import { NbThemeModule, NbLayoutModule } from '@nebular/theme';
 import { NbEvaIconsModule } from '@nebular/eva-icons';
 import { NotificationCentreComponent } from './pages/notification-centre/notification-centre.component';
 import { ProfileComponent } from './pages/profile/profile.component';
+import { SidebarComponent } from './shared/sidebar/sidebar.component';
 
 @NgModule({
   declarations: [
@@ -23,7 +24,8 @@ import { ProfileComponent } from './pages/profile/profile.component';
     ManageScribesComponent,
     ManageRomsComponent,
     NotificationCentreComponent,
-    ProfileComponent
+    ProfileComponent,
+    SidebarComponent
   ],
   imports: [
     BrowserModule,
