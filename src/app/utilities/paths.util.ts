@@ -1,9 +1,9 @@
 export const paths = {
   general: {
     default: '',
-    auth: {
-      login: 'login',
-    },
+    // auth: {
+    //   login: 'login',
+    // },
     profile: 'profile',
     settings: 'settings',
     notifications: 'notifications',

@@ -9,8 +9,6 @@ import { HomepageComponent } from './pages/homepage/homepage.component';
 import { ManageScribesComponent } from './pages/manage-scribes/manage-scribes.component';
 import { ManageRomsComponent } from './pages/manage-roms/manage-roms.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { NbThemeModule, NbLayoutModule } from '@nebular/theme';
-import { NbEvaIconsModule } from '@nebular/eva-icons';
 import { NotificationCentreComponent } from './pages/notification-centre/notification-centre.component';
 import { ProfileComponent } from './pages/profile/profile.component';
 
@@ -29,9 +27,6 @@ import { ProfileComponent } from './pages/profile/profile.component';
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
-    NbThemeModule.forRoot({ name: 'corporate' }),
-    NbLayoutModule,
-    NbEvaIconsModule
   ],
   providers: [],
   bootstrap: [AppComponent]
