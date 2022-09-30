@@ -214,6 +214,12 @@ export interface User {
     userModificationRequestPromotingAdmins: UserModificationRequest[]
 }
 
+export enum UserRole {
+    ADMIN = 0,
+    SCRIBE = 1,
+    USER = 2
+}
+
 export interface UserModificationRequest {
     modifiedUserId: string,
     modifyingUserId: string,

@@ -19,10 +19,11 @@
     "@angular/platform-browser": "~13.3.0",
     "@angular/platform-browser-dynamic": "~13.3.0",
     "@angular/router": "~13.3.0",
-    "@nebular/eva-icons": "9.1.0-rc.6",
-    "@nebular/theme": "^9.1.0-rc.6",
+    "@service-work/is-loading": "^6.2.2",
+    "axios": "^0.27.2",
     "eva-icons": "^1.1.2",
     "jwt-decode": "^3.1.2",
+    "primeng": "^14.1.2",
     "rxjs": "~7.5.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.11.4"

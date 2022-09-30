@@ -1,9 +1,9 @@
 export const paths = {
   general: {
     default: '',
-    auth: {
-      login: 'login',
-    },
+    // auth: {
+    //   login: 'login',
+    // },
     profile: 'profile',
     settings: 'settings',
     notifications: 'notifications',
@@ -12,7 +12,5 @@ export const paths = {
     dashboard: 'admin/dashboard',
     manageScribes: 'admin/manage-scribes',
     manageRoMs: 'admin/manage-roms',
-
-    chatLog: 'admin/chat-log',
   },
 };
