@@ -5,9 +5,10 @@ import {
   getUserRole,
   saveLoginInformation,
 } from 'src/app/utilities/localStorage.util';
-import { AuthService } from 'src/services/auth.service';
 import { WrapperService } from 'src/services/wrapper.service';
 import * as paths from '../../common/paths';
+import { IsLoadingService } from '@service-work/is-loading';
+import { User } from 'src/app/models/General.model';
 
 @Component({
   selector: 'app-login',
@@ -17,7 +18,7 @@ import * as paths from '../../common/paths';
 export class LoginComponent implements OnInit {
   username: string = '';
   password: string = '';
-  user: any;
+  user: User | undefined;
 
   loginFailed: boolean = false;
   loginFailedText: string =
@@ -25,8 +26,8 @@ export class LoginComponent implements OnInit {
 
   constructor(
     private router: Router,
-    private authService: AuthService,
-    private wrapperService: WrapperService
+    private wrapperService: WrapperService,
+    private isLoadingService: IsLoadingService
   ) {}
 
   ngOnInit(): void {
@@ -40,6 +41,7 @@ export class LoginComponent implements OnInit {
   }
 
   login() {
+    this.isLoadingService.add();
     this.wrapperService.post(
       paths.Login,
       { username: this.username, password: this.password },
@@ -48,8 +50,12 @@ export class LoginComponent implements OnInit {
         successCallback: (response) => {
           // localStorage.setItem('token', response.token);
           // saveLoginInformation(response.user);
-          this.router.navigate(['/admin/dashboard']);
+          this.user = response;
+          // this.router.navigate(['/admin/dashboard']);
           this.loginFailed = false;
+          console.log(this.user);
+                                                                      
+          this.isLoadingService.remove();
         },
         errorCallback: (error) => {
           console.log(error);
