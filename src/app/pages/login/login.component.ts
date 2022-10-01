@@ -33,12 +33,12 @@ export class LoginComponent implements OnInit {
 
   ngOnInit(): void {
     if (verifyToken()) {
-      if (getUserRole() && getUserRole() === 0) {
+      if (getUserRole() != null && getUserRole() === 0) {
         this.router.navigate(['/admin/dashboard']);
-      } else if (getUserRole() && getUserRole() === 1) {
+      } else if (getUserRole() != null && getUserRole() === 1) {
         this.router.navigate(['/scribe/manage-laws']);
       }
-    }
+    } 
   }
 
   login() {
@@ -55,7 +55,7 @@ export class LoginComponent implements OnInit {
           if(response.data?.user?.role === 0){
             this.router.navigate(['/admin/dashboard']);
           }else if(response.data?.user?.role === 1){
-            this.router.navigate(['/scribe/manage-laws']);
+            this.router.navigate(['/scribe/dashboard']);
           }                                                            
           this.isLoadingService.remove();
         },
