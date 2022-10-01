@@ -40,14 +40,39 @@ export class LoginAuthGuard implements CanActivate {
     const isValidToken = verifyToken();
 
     if (isValidToken) {
-      if (getUserRole() && getUserRole() === 0) {
+      if (getUserRole() != null && getUserRole() === 0) {
         this.router.navigate(['/admin/dashboard']);
-      } else if (getUserRole() && getUserRole() === 1) {
-        this.router.navigate(['/scribe/manage-laws']);
+      } else if (getUserRole() != null && getUserRole() === 1) {
+        this.router.navigate(['/scribe/dashboard']);
       }
       return false;
     }
-    clearLoginInformation();
     return true;
+  }
+}
+
+@Injectable({
+  providedIn: 'root',
+})
+export class AuthGuard implements CanActivate {
+  constructor(private router: Router) {}
+
+  canActivate(
+    route: ActivatedRouteSnapshot,
+    state: RouterStateSnapshot
+  ):
+    | boolean
+    | UrlTree
+    | Observable<boolean | UrlTree>
+    | Promise<boolean | UrlTree> {
+    const isValidToken = verifyToken();
+
+    if (isValidToken) {
+      return true;
+    }
+    this.router.navigate(['/']);
+    localStorage.setItem('token', '');
+    clearLoginInformation();
+    return false;
   }
 }

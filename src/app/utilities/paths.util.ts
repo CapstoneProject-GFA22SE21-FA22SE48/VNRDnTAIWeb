@@ -1,6 +1,7 @@
 export const paths = {
   general: {
     default: '',
+    notFound: '**',
     // auth: {
     //   login: 'login',
     // },
@@ -13,4 +14,8 @@ export const paths = {
     manageScribes: 'admin/manage-scribes',
     manageRoMs: 'admin/manage-roms',
   },
+  scribe: {
+    dashboard: 'scribe/dashboard',
+    manageLaws: 'scribe/manage-laws'
+  }
 };

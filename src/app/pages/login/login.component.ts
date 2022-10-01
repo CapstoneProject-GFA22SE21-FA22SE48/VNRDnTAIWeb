@@ -18,11 +18,12 @@ import { User } from 'src/app/models/General.model';
 export class LoginComponent implements OnInit {
   username: string = '';
   password: string = '';
-  user: User | undefined;
+  user: any;
+  isRememeber: boolean = false;
 
   loginFailed: boolean = false;
   loginFailedText: string =
-    'Login failed!! Please check your login information and try again...';
+    '';
 
   constructor(
     private router: Router,
@@ -32,12 +33,12 @@ export class LoginComponent implements OnInit {
 
   ngOnInit(): void {
     if (verifyToken()) {
-      if (getUserRole() && getUserRole() === 0) {
+      if (getUserRole() != null && getUserRole() === 0) {
         this.router.navigate(['/admin/dashboard']);
-      } else if (getUserRole() && getUserRole() === 1) {
+      } else if (getUserRole() != null && getUserRole() === 1) {
         this.router.navigate(['/scribe/manage-laws']);
       }
-    }
+    } 
   }
 
   login() {
@@ -48,18 +49,20 @@ export class LoginComponent implements OnInit {
       null,
       {
         successCallback: (response) => {
-          // localStorage.setItem('token', response.token);
-          // saveLoginInformation(response.user);
-          this.user = response;
-          // this.router.navigate(['/admin/dashboard']);
+          localStorage.setItem('token', response.data?.token);
+          saveLoginInformation(response.data.user);
           this.loginFailed = false;
-          console.log(this.user);
-                                                                      
+          if(response.data?.user?.role === 0){
+            this.router.navigate(['/admin/dashboard']);
+          }else if(response.data?.user?.role === 1){
+            this.router.navigate(['/scribe/dashboard']);
+          }                                                            
           this.isLoadingService.remove();
         },
         errorCallback: (error) => {
-          console.log(error);
           this.loginFailed = true;
+          this.loginFailedText = error?.response?.data
+          this.isLoadingService.remove();
         },
       }
     );
