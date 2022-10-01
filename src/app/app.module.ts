@@ -14,6 +14,8 @@ import { ProfileComponent } from './pages/profile/profile.component';
 import { SidebarComponent } from './shared/sidebar/sidebar.component';
 import { FormsModule } from '@angular/forms';
 import { ManageLawsComponent } from './pages/scribe/manage-laws/manage-laws.component';
+import {ProgressSpinnerModule} from 'primeng/progressspinner';
+import { SpinnerComponent } from './shared/spinner/spinner.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -25,13 +27,15 @@ import { ManageLawsComponent } from './pages/scribe/manage-laws/manage-laws.comp
     NotificationCentreComponent,
     ProfileComponent,
     SidebarComponent,
-    ManageLawsComponent
+    ManageLawsComponent,
+    SpinnerComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
     FormsModule,
+    ProgressSpinnerModule
   ],
   providers: [],
   bootstrap: [AppComponent]
