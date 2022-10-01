@@ -19,7 +19,7 @@ export class LoginComponent implements OnInit {
   username: string = '';
   password: string = '';
   user: any;
-  value: boolean = false;
+  isRememeber: boolean = false;
 
   loginFailed: boolean = false;
   loginFailedText: string =

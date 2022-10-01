@@ -4,10 +4,10 @@
   <div class="col-6 bg-white text-center h-full left">
     <img src="../../../assets/images/logo.png" id="logo" alt="logo" /><br />
     <div class="welcome-text">
-      <p>Welcome text</p>
+      <p>Văn bản chào mừng</p>
     </div>
     <div class="welcome-paragraph">
-      <p>Welcome paragraph</p>
+      <p>Đoạn chào mừng</p>
     </div>
   </div>
   <div
@@ -20,31 +20,30 @@
           id="logo-noname"
           alt="logo"
         />
-        <p id="txt-login">Log In</p>
+        <p id="txt-login">Đăng nhập</p>
       </div>
 
       <div class="mt-0">
-        <p class="label">Username:</p>
+        <p class="label">Tên đăng nhập:</p>
         <div class="p-inputgroup">
           <input
             type="text"
             pInputText
             [(ngModel)]="username"
-            placeholder="Username..."
+            placeholder="Tên đăng nhập..."
           />
         </div>
-        <p class="label">Password:</p>
+        <p class="label">Mật khẩu:</p>
         <div class="p-inputgroup">
           <input
             type="password"
             pInputText
             [(ngModel)]="password"
-            placeholder="Password..."
+            placeholder="Mật khẩu..."
           />
         </div>
         <div class="flex align-items-center mt-2">
-          <p-checkbox [(ngModel)]="value" [binary]="true"></p-checkbox>
-          <span id="txt-remember-me">Remember me</span> <br />
+          <p-checkbox [(ngModel)]="isRememeber" [binary]="true" label="Ghi nhớ đăng nhập" id="cb-remember-me"></p-checkbox>
         </div>
       </div>
 
@@ -53,7 +52,7 @@
           (click)="login()"
           pButton
           type="button"
-          label="LOG IN"
+          label="ĐĂNG NHẬP"
           class="p-button-success w-full h-3rem"
           id="btn-login"
         ></button>
