@@ -7,6 +7,7 @@ import { ManageRomsComponent } from './pages/admin/manage-roms/manage-roms.compo
 import { ManageScribesComponent } from './pages/admin/manage-scribes/manage-scribes.component';
 import { ProfileComponent } from './pages/profile/profile.component';
 import { paths } from './utilities/paths.util';
+import { ManageLawsComponent } from './pages/scribe/manage-laws/manage-laws.component';
 
 const routes: Routes = [
   // {
@@ -39,6 +40,11 @@ const routes: Routes = [
     component: ManageRomsComponent,
     // canActivate: [LoginAuthGuard],
   },
+  {
+    path: paths.scribe.manageLaws,
+    component: ManageLawsComponent,
+    // canActivate: [AuthGuard]
+  }
 ];
 
 @NgModule({

@@ -12,10 +12,18 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NotificationCentreComponent } from './pages/notification-centre/notification-centre.component';
 import { ProfileComponent } from './pages/profile/profile.component';
 import { SidebarComponent } from './shared/sidebar/sidebar.component';
-import { FormsModule } from '@angular/forms';
 import { ManageLawsComponent } from './pages/scribe/manage-laws/manage-laws.component';
 import {ProgressSpinnerModule} from 'primeng/progressspinner';
 import { SpinnerComponent } from './shared/spinner/spinner.component';
+import { FormsModule } from '@angular/forms';
+import {CardModule} from 'primeng/card';
+import {InputTextModule} from 'primeng/inputtext';
+import {PasswordModule} from 'primeng/password';
+import {ButtonModule} from 'primeng/button';
+import {CheckboxModule} from 'primeng/checkbox';
+import {MessagesModule} from 'primeng/messages';
+import {MessageModule} from 'primeng/message';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -34,8 +42,15 @@ import { SpinnerComponent } from './shared/spinner/spinner.component';
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
+    ProgressSpinnerModule,
     FormsModule,
-    ProgressSpinnerModule
+    CardModule,
+    InputTextModule,
+    PasswordModule,
+    ButtonModule,
+    CheckboxModule,
+    MessagesModule,
+    MessageModule
   ],
   providers: [],
   bootstrap: [AppComponent]

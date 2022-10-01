@@ -13,4 +13,7 @@ export const paths = {
     manageScribes: 'admin/manage-scribes',
     manageRoMs: 'admin/manage-roms',
   },
+  scribe: {
+    manageLaws: 'scribe/manage-laws'
+  }
 };

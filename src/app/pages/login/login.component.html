@@ -1,6 +1,66 @@
-<form>
-    <input type="text" [(ngModel)]="username" name="username"/>
-    <input type="password" [(ngModel)]="password" name="password"/>
-    <button (click)="login()">Login</button>
-</form>
-<app-spinner></app-spinner>
+<div id="background"></div>
+
+<div class="grid h-full">
+  <div class="col-6 bg-white text-center h-full left">
+    <img src="../../../assets/images/logo.png" id="logo" alt="logo" /><br />
+    <div class="welcome-text">
+      <p>Welcome text</p>
+    </div>
+    <div class="welcome-paragraph">
+      <p>Welcome paragraph</p>
+    </div>
+  </div>
+  <div
+    class="col-6 flex align-items-center justify-content-center h-full right"
+  >
+    <p-card class="w-5 h-auto">
+      <div class="text-center">
+        <img
+          src="../../../assets/images/logo-noname.png"
+          id="logo-noname"
+          alt="logo"
+        />
+        <p id="txt-login">Log In</p>
+      </div>
+
+      <div class="mt-0">
+        <p class="label">Username:</p>
+        <div class="p-inputgroup">
+          <input
+            type="text"
+            pInputText
+            [(ngModel)]="username"
+            placeholder="Username..."
+          />
+        </div>
+        <p class="label">Password:</p>
+        <div class="p-inputgroup">
+          <input
+            type="password"
+            pInputText
+            [(ngModel)]="password"
+            placeholder="Password..."
+          />
+        </div>
+        <div class="flex align-items-center mt-2">
+          <p-checkbox [(ngModel)]="value" [binary]="true"></p-checkbox>
+          <span id="txt-remember-me">Remember me</span> <br />
+        </div>
+      </div>
+
+      <div class="w-full mt-5">
+        <button
+          (click)="login()"
+          pButton
+          type="button"
+          label="LOG IN"
+          class="p-button-success w-full h-3rem"
+          id="btn-login"
+        ></button>
+      </div>
+      <div class="text-center mt-3">
+        <p-message *ngIf="loginFailedText" severity="warn" [text]="loginFailedText"></p-message>  
+      </div>
+    </p-card>
+  </div>
+</div>
