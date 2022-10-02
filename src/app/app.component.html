@@ -1,7 +1,9 @@
 <div *ngIf="(authService.getStorageSub() | async); then auth else notAuth"></div>
 
 <ng-template #auth>
-  <router-outlet></router-outlet>
+    <app-header></app-header>
+    <app-sidebar></app-sidebar>
+    <router-outlet></router-outlet>
 </ng-template>
 
 <ng-template #notAuth>

@@ -22,14 +22,14 @@ export class NotFoundComponent implements OnInit {
       if (parseInt(decodeToken(token ? token : '').Role) === 0) {
         this.router.navigate(['/admin/dashboard']);
       } else if (parseInt(decodeToken(token ? token : '').Role) === 1) {
-        this.router.navigate(['/scribe/manage-laws']);
+        this.router.navigate(['/scribe/dashboard']);
       }
     } else if (verifyLocalStorageToken()) {
       const token = localStorage.getItem('token')
       if (decodeToken(token ? token : '').Role === 0) {
         this.router.navigate(['/admin/dashboard']);
       } else if (decodeToken(token ? token : '').Role === 1) {
-        this.router.navigate(['/scribe/manage-laws']);
+        this.router.navigate(['/scribe/dashboard']);
       }
     } else {
       this.router.navigate(['']);

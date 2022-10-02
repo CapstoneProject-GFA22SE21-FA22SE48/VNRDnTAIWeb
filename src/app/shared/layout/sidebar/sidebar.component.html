@@ -1,1 +1,16 @@
-
+<div class="layout-sidebar">
+    <ul *ngFor="let item of items">
+        <li> 
+          <a [routerLink]="item.routerLink" routerLinkActive="active" class="sidebar-menu-items">
+              <fa-icon class="mr-3" *ngIf="item.label == 'Bảng điều khiển'" [icon]="['fas', 'house']"></fa-icon>
+              <fa-icon class="mr-3" *ngIf="item.label == 'Quản lý luật'" [icon]="['fas', 'scale-balanced']"></fa-icon>
+              <fa-icon class="mr-3" *ngIf="item.label == 'Quản lý biển báo'" [icon]="['fas', 'sign-hanging']"></fa-icon>
+              <fa-icon class="mr-3" *ngIf="item.label == 'Quản lý câu hỏi'" [icon]="['fas', 'circle-question']"></fa-icon>
+              <fa-icon class="mr-3" *ngIf="item.label == 'Quản lý yêu cầu'" [icon]="['fas', 'code-pull-request']"></fa-icon>
+              <fa-icon class="mr-3" *ngIf="item.label == 'Quản lý nhân viên'" [icon]="['fas', 'clipboard-user']"></fa-icon>
+              <fa-icon class="mr-3" *ngIf="item.label == 'Quản lý người dùng'" [icon]="['fas', 'user']"></fa-icon>
+            <span>{{ item.label }}</span>
+          </a>
+        </li>
+    </ul>
+</div>
