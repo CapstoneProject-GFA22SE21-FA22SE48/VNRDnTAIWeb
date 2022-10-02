@@ -7,20 +7,30 @@ import {
   UrlTree,
 } from '@angular/router';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { verifyToken } from 'src/app/utilities/jwt.util';
 import {
-  clearLoginInformation,
-  getUserRole,
-} from 'src/app/utilities/localStorage.util';
+  decodeToken,
+  verifyLocalStorageToken,
+  verifySessionStorageToken,
+} from 'src/app/utilities/jwt.util';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
   private authSub = new BehaviorSubject<boolean>(false);
-  private roleSub = new BehaviorSubject<number>(0);
 
   constructor() {}
+
+  onLogin = () => {
+    return this.authSub.next(
+      verifySessionStorageToken() || verifyLocalStorageToken()
+    );
+  };
+
+  getStorageSub = (): Observable<boolean> => {
+    this.onLogin();
+    return this.authSub.asObservable();
+  };
 }
 
 @Injectable({
@@ -37,12 +47,24 @@ export class LoginAuthGuard implements CanActivate {
     | UrlTree
     | Observable<boolean | UrlTree>
     | Promise<boolean | UrlTree> {
-    const isValidToken = verifyToken();
+    const isValidLocalStorageToken = verifyLocalStorageToken();
+    const isValidSessionStorageToken = verifySessionStorageToken();
 
-    if (isValidToken) {
-      if (getUserRole() != null && getUserRole() === 0) {
+    if (isValidLocalStorageToken) {
+      const token =
+        localStorage.getItem('token') != '' ? localStorage.getItem('token') : '';
+      if (parseInt(decodeToken(token ? token : '').Role) === 0) {
         this.router.navigate(['/admin/dashboard']);
-      } else if (getUserRole() != null && getUserRole() === 1) {
+      } else if (parseInt(decodeToken(token ? token : '').Role) === 0) {
+        this.router.navigate(['/scribe/dashboard']);
+      }
+      return false;
+    } else if (isValidSessionStorageToken) {
+      const token =
+        sessionStorage.getItem('token') != '' ? sessionStorage.getItem('token') : '';
+      if (parseInt(decodeToken(token ? token : '').Role) === 0) {
+        this.router.navigate(['/admin/dashboard']);
+      } else if (parseInt(decodeToken(token ? token : '').Role) === 0) {
         this.router.navigate(['/scribe/dashboard']);
       }
       return false;
@@ -65,14 +87,15 @@ export class AuthGuard implements CanActivate {
     | UrlTree
     | Observable<boolean | UrlTree>
     | Promise<boolean | UrlTree> {
-    const isValidToken = verifyToken();
+    const isValidLocalStorageToken = verifyLocalStorageToken();
+    const isValidSessionStorageToken = verifySessionStorageToken();
 
-    if (isValidToken) {
+    if (isValidLocalStorageToken || isValidSessionStorageToken) {
       return true;
     }
     this.router.navigate(['/']);
+    sessionStorage.setItem('token', '');
     localStorage.setItem('token', '');
-    clearLoginInformation();
     return false;
   }
 }

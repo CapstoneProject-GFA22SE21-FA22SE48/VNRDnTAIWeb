@@ -11,7 +11,7 @@ import { ManageRomsComponent } from './pages/admin/manage-roms/manage-roms.compo
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NotificationCentreComponent } from './pages/notification-centre/notification-centre.component';
 import { ProfileComponent } from './pages/profile/profile.component';
-import { SidebarComponent } from './shared/sidebar/sidebar.component';
+import { SidebarComponent } from './shared/layout/sidebar/sidebar.component';
 import { ManageLawsComponent } from './pages/scribe/manage-laws/manage-laws.component';
 import {ProgressSpinnerModule} from 'primeng/progressspinner';
 import { SpinnerComponent } from './shared/spinner/spinner.component';
@@ -24,7 +24,11 @@ import {CheckboxModule} from 'primeng/checkbox';
 import {MessagesModule} from 'primeng/messages';
 import {MessageModule} from 'primeng/message';
 import { NotFoundComponent } from './pages/not-found/not-found.component';
-
+import {AvatarModule} from 'primeng/avatar';
+import { HeaderComponent } from './shared/layout/header/header.component';
+import { ManageUsersComponent } from './pages/admin/manage-users/manage-users.component';
+import { ManageSignsComponent } from './pages/scribe/manage-signs/manage-signs.component';
+import { ManageQuestionsComponent } from './pages/scribe/manage-questions/manage-questions.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -38,7 +42,11 @@ import { NotFoundComponent } from './pages/not-found/not-found.component';
     SidebarComponent,
     ManageLawsComponent,
     SpinnerComponent,
-    NotFoundComponent
+    NotFoundComponent,
+    HeaderComponent,
+    ManageUsersComponent,
+    ManageSignsComponent,
+    ManageQuestionsComponent,
   ],
   imports: [
     BrowserModule,
@@ -52,7 +60,8 @@ import { NotFoundComponent } from './pages/not-found/not-found.component';
     ButtonModule,
     CheckboxModule,
     MessagesModule,
-    MessageModule
+    MessageModule,
+    AvatarModule,
   ],
   providers: [],
   bootstrap: [AppComponent]
