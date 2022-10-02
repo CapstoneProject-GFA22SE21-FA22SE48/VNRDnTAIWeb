@@ -3,14 +3,28 @@
             box-sizing: border-box;
   }
   
+.overlay {
+  position: absolute;
+  top:0; 
+  left: 0;
+  bottom: 0;
+  right: 0;
+  z-index: 2;
+  background-color: white;
+}
+  
   body {
     padding: 0;
     margin: 0;
   }
   
   #notfound {
-    position: relative;
-    height: 100vh;
+    position: absolute;
+  top:0; 
+  left: 0;
+  bottom: 0;
+  right: 0;
+  z-index: 3;
   }
   
   #notfound .notfound {
