@@ -29,6 +29,12 @@ import { HeaderComponent } from './shared/layout/header/header.component';
 import { ManageUsersComponent } from './pages/admin/manage-users/manage-users.component';
 import { ManageSignsComponent } from './pages/scribe/manage-signs/manage-signs.component';
 import { ManageQuestionsComponent } from './pages/scribe/manage-questions/manage-questions.component';
+import {MenuModule} from 'primeng/menu';
+import {SidebarModule} from 'primeng/sidebar';
+import { BadgeModule } from 'primeng/badge';
+import { FontAwesomeModule, FaIconLibrary } from '@fortawesome/angular-fontawesome';
+import { fas } from '@fortawesome/free-solid-svg-icons';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -62,8 +68,16 @@ import { ManageQuestionsComponent } from './pages/scribe/manage-questions/manage
     MessagesModule,
     MessageModule,
     AvatarModule,
+    MenuModule,
+    SidebarModule,
+    BadgeModule,
+    FontAwesomeModule
   ],
   providers: [],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule { 
+  constructor(librabry: FaIconLibrary){
+    librabry.addIconPacks(fas);
+  }
+}

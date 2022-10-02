@@ -35,19 +35,19 @@ export class SidebarComponent implements OnInit {
   scribeSidebarItems: any[] = [
     {
       label: 'Bảng điều khiển',
-      routerLink: '/admin/dashboard',
+      routerLink: '/scribe/dashboard',
     },
     {
       label: 'Quản lý luật',
-      routerLink: '/admin/manage-laws',
+      routerLink: '/scribe/manage-laws',
     },
     {
       label: 'Quản lý biển báo',
-      routerLink: '/admin/manage-signs',
+      routerLink: '/scribe/manage-signs',
     },
     {
-      label: 'Quản lý câu hỏi thi GPLX',
-      routerLink: '/admin/manage-questions',
+      label: 'Quản lý câu hỏi',
+      routerLink: '/scribe/manage-questions',
     },
   ];
 
