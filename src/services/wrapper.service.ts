@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Callback } from 'src/app/models/Callback.model';
 import axios from 'axios';
-import { saveLoginInformation } from 'src/app/utilities/localStorage.util';
 
 @Injectable({
   providedIn: 'root',

@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { verifyToken } from 'src/app/utilities/jwt.util';
-import { getUserRole } from 'src/app/utilities/localStorage.util';
+import { decodeToken, verifyLocalStorageToken, verifySessionStorageToken } from 'src/app/utilities/jwt.util';
 
 @Component({
   selector: 'app-not-found',
@@ -17,11 +16,19 @@ export class NotFoundComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  return(){
-    if (verifyToken()) {
-      if (getUserRole() != null && getUserRole() === 0) {
+  returnHome(){
+    if (verifySessionStorageToken()) {
+      const token = sessionStorage.getItem('token')
+      if (parseInt(decodeToken(token ? token : '').Role) === 0) {
         this.router.navigate(['/admin/dashboard']);
-      } else if (getUserRole() != null && getUserRole() === 1) {
+      } else if (parseInt(decodeToken(token ? token : '').Role) === 1) {
+        this.router.navigate(['/scribe/manage-laws']);
+      }
+    } else if (verifyLocalStorageToken()) {
+      const token = localStorage.getItem('token')
+      if (decodeToken(token ? token : '').Role === 0) {
+        this.router.navigate(['/admin/dashboard']);
+      } else if (decodeToken(token ? token : '').Role === 1) {
         this.router.navigate(['/scribe/manage-laws']);
       }
     } else {
