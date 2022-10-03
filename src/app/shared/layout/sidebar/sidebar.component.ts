@@ -27,7 +27,7 @@ export class SidebarComponent implements OnInit {
       routerLink: '/admin/manage-scribes',
     },
     {
-      label: 'Quản lý người dùng',
+      label: 'Quản lý thành viên',
       routerLink: '/admin/manage-users',
     },
   ];

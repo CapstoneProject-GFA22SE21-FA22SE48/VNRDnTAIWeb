@@ -241,3 +241,8 @@ export interface VehicleCategory {
 
     statues: Statue[]
 }
+
+//AdminUserReportDTO
+export interface AdminUserByYearDTO {
+    userByYear: number[],
+}

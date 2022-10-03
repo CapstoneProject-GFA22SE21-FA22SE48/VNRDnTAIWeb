@@ -5,6 +5,9 @@ const base = 'https://localhost:5001/api';
 //Login
 export const Login: string = base + "/Users/Login";
 
+//Admin
+export const AdminUserByYear: string = base + "/AdminReports/UserByYear";
+
 // Scribe
 export const CreateScribe: string = base + '/';
 export const UpdateScribe: string = base + '/';
