@@ -1,0 +1,20 @@
+<div class="flex">
+    <div class="w-6 p-3">
+        <div>
+            <fa-icon class="fa-lg mr-2" [icon]="['far', 'circle-user']"></fa-icon>
+            <span class="text-xl">Quản lý thành viên</span>
+            <div class="flex h-2rem">
+                <div class="w-4">
+                <span>Tổng số thành viên</span>
+                </div>
+                <div class="w-8">
+                <span class="font-bold text-2xl" style="color: #0039CA;">{{ totalUser }}</span>
+                </div>
+            </div>
+            <p-chart type="line" [data]="chartUserByYearData" [options]="chartOptions"></p-chart>
+        </div>
+    </div>
+    <div class="w-6">
+        
+    </div>
+</div>

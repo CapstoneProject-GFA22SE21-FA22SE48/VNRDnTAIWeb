@@ -19,6 +19,16 @@ export interface Column {
     statues: Statue[]
 }
 
+export interface Comment {
+    id: string,
+    userId: string,
+    content: string,
+    createdDate: Date,
+    isDeleted: boolean,
+
+    user: User
+}
+
 export interface Decree {
     id: string,
     name: string,
@@ -70,6 +80,7 @@ export interface ParagraphModificationRequest {
     adminId: string,
     operationType: number,
     status: number,
+    createdDate: Date,
     isDeleted: boolean,
 
     admin: User,
@@ -99,6 +110,7 @@ export interface QuestionModificationRequest {
     adminId: string,
     operationType: number,
     status: number,
+    createdDate: Date,
     isDeleted: boolean,
 
     admin: User,
@@ -159,6 +171,7 @@ export interface SignModificationRequest {
     operationType: number,
     imageUrl: string,
     status: number,
+    createdDate: Date,
     isDeleted: boolean,
 
     admin: User,
@@ -198,12 +211,38 @@ export interface TestCategory {
     questions: Question[]
 }
 
+export interface TestResult {
+    id: string,
+    userId: string,
+    testCategoryId: string,
+    createdDate: Date,
+    isDeleted: boolean,
+
+    testCategory: TestCategory,
+    user: User,
+    testResultDetails: TestResultDetail[]
+}
+
+export interface TestResultDetail {
+    id: string,
+    testResultId: string,
+    questionId: string,
+    answerId: string,
+    isCorrect: boolean,
+    isDeleted: boolean,
+
+    answer: Answer,
+    question: Question,
+    testResult: TestResult
+}
+
 export interface User {
     id: string, 
     username: string, 
     password: string,
     role: number,
     status: number,
+    createdDate: Date,
     isDeleted: boolean,
 
     paragraphModificationRequestAdmins: ParagraphModificationRequest[],
@@ -214,18 +253,13 @@ export interface User {
     userModificationRequestPromotingAdmins: UserModificationRequest[]
 }
 
-export enum UserRole {
-    ADMIN = 0,
-    SCRIBE = 1,
-    USER = 2
-}
-
 export interface UserModificationRequest {
     modifiedUserId: string,
     modifyingUserId: string,
     promotingAdminId: string,
     arbitratingAdminId: string,
     status: number,
+    createdDate: Date,
     isDeleted: boolean,
 
     arbitratingAdmin: User,
@@ -240,4 +274,16 @@ export interface VehicleCategory {
     isDeleted: boolean,
 
     statues: Statue[]
+}
+
+//Enumeration
+export enum UserRole {
+    ADMIN = 0,
+    SCRIBE = 1,
+    USER = 2
+}
+
+//AdminUserReportDTO
+export interface AdminUserByYearDTO {
+    userByYear: number[],
 }

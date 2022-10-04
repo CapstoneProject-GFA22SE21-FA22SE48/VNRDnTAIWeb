@@ -34,6 +34,13 @@ import {SidebarModule} from 'primeng/sidebar';
 import { BadgeModule } from 'primeng/badge';
 import { FontAwesomeModule, FaIconLibrary } from '@fortawesome/angular-fontawesome';
 import { fas } from '@fortawesome/free-solid-svg-icons';
+import { far } from '@fortawesome/free-regular-svg-icons';
+import {ChartModule} from 'primeng/chart';
+import {TableModule} from 'primeng/table';
+import {DropdownModule} from 'primeng/dropdown';
+import {DialogModule} from 'primeng/dialog';
+import {ScrollerModule} from 'primeng/scroller';
+import { DatePipe } from './shared/pipes/date.pipe';
 
 @NgModule({
   declarations: [
@@ -53,6 +60,7 @@ import { fas } from '@fortawesome/free-solid-svg-icons';
     ManageUsersComponent,
     ManageSignsComponent,
     ManageQuestionsComponent,
+    DatePipe,
   ],
   imports: [
     BrowserModule,
@@ -71,13 +79,18 @@ import { fas } from '@fortawesome/free-solid-svg-icons';
     MenuModule,
     SidebarModule,
     BadgeModule,
-    FontAwesomeModule
+    FontAwesomeModule,
+    ChartModule,
+    TableModule,
+    DropdownModule,
+    DialogModule,
+    ScrollerModule
   ],
   providers: [],
   bootstrap: [AppComponent]
 })
 export class AppModule { 
   constructor(librabry: FaIconLibrary){
-    librabry.addIconPacks(fas);
+    librabry.addIconPacks(fas, far);
   }
 }
