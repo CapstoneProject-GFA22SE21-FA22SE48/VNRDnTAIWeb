@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { IsLoadingService } from '@service-work/is-loading';
+import { getStorageToken } from 'src/app/utilities/jwt.util';
 import { WrapperService } from 'src/services/wrapper.service';
 import * as paths from '../../../common/paths';
 @Component({
@@ -27,11 +28,7 @@ export class DashboardComponent implements OnInit {
     this.isLoadingService.add();
     this.wrapperService.get(
       paths.AdminUserByYear,
-      localStorage.getItem('token') != ''
-        ? sessionStorage.getItem('token') != ''
-          ? sessionStorage.getItem('token')
-          : ''
-        : '',
+      getStorageToken(),
       {
         successCallback: (response) => {
           response.data?.userByYear?.forEach((e: string) => {

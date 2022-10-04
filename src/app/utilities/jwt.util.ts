@@ -45,3 +45,12 @@ export const verifySessionStorageToken = (): boolean => {
 
   return isValid;
 };
+
+
+export const getStorageToken = () => {
+  return (localStorage.getItem('token') != ''
+  ? sessionStorage.getItem('token') != ''
+    ? sessionStorage.getItem('token')
+    : ''
+  : '');
+}
