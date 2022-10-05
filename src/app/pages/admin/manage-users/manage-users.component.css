@@ -17,12 +17,27 @@
   width: 33.3333%;
 }
 
-:host ::ng-deep .p-password input {
+::ng-deep .p-password input {
   border: none;
-  font-size: .8rem;
-  color: black;
+  font-size: 1em;
+  font-family: 'Jaldi';
   padding: 0;
   margin: 0;
+  text-align: center;
+}
+
+::ng-deep .p-dropdown .p-placeholder {
+  font-size: .9rem;
+  padding-top:5%;
+}
+
+::ng-deep .p-dropdown .p-element {
+  font-size: .9rem;
+  padding-top:5%;
+}
+
+::ng-deep .p-datepicker-buttonbar button {
+  color: red;
 }
 
 #member-info {
@@ -71,4 +86,23 @@
 .comment-time {
   height: 30%;
   color: #53A0F4;
+}
+
+#input-search {
+  height: 40px;
+  font-size: .9rem;
+}
+
+.txt-username {
+  width: 10rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#lb-username {
+  width: 20rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }

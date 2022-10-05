@@ -41,6 +41,7 @@ import {DropdownModule} from 'primeng/dropdown';
 import {DialogModule} from 'primeng/dialog';
 import {ScrollerModule} from 'primeng/scroller';
 import { DatePipe } from './shared/pipes/date.pipe';
+import {CalendarModule} from 'primeng/calendar';
 
 @NgModule({
   declarations: [
@@ -84,7 +85,8 @@ import { DatePipe } from './shared/pipes/date.pipe';
     TableModule,
     DropdownModule,
     DialogModule,
-    ScrollerModule
+    ScrollerModule,
+    CalendarModule
   ],
   providers: [],
   bootstrap: [AppComponent]
