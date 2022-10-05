@@ -8,7 +8,9 @@ export const Login: string = base + "/Users/Login";
 //Admin
 export const AdminUserByYear: string = base + "/AdminReports/UserByYear";
 export const AdminGetMembers: string = base + "/Users/Members";
-export const AdminGetMemberComments: string = base + '/Comments/Member'
+export const AdminGetMemberComments: string = base + '/Comments/Members';
+export const AdminDeactivateMember: string = base + '/Users/Members/Deactivate';
+export const AdminReEnableMember: string = base + '/Users/Members/ReEnable';
 
 // Scribe
 export const CreateScribe: string = base + '/';

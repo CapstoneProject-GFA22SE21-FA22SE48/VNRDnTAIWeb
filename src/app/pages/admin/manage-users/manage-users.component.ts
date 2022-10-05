@@ -1,5 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { IsLoadingService } from '@service-work/is-loading';
+import { ConfirmationService } from 'primeng/api';
+import { MessageService } from 'primeng/api';
 import { User, Comment } from 'src/app/models/General.model';
 import { getStorageToken } from 'src/app/utilities/jwt.util';
 import { WrapperService } from 'src/services/wrapper.service';
@@ -19,7 +21,7 @@ export class ManageUsersComponent implements OnInit {
     { name: 'Ngưng hoạt động' },
   ];
 
-  selectedMember: User | undefined;
+  selectedMember: any;
   userComments: Comment[] = [];
 
   searchStr: string = '';
@@ -30,10 +32,16 @@ export class ManageUsersComponent implements OnInit {
 
   constructor(
     private wrapperService: WrapperService,
-    private isLoadingService: IsLoadingService
+    private isLoadingService: IsLoadingService,
+    private confirmationService: ConfirmationService,
+    private messageService: MessageService
   ) {}
 
   ngOnInit(): void {
+    this.loadMembers();
+  }
+  
+  loadMembers() {
     this.isLoadingService.add();
     this.wrapperService.get(paths.AdminGetMembers, getStorageToken(), {
       successCallback: (response) => {
@@ -90,7 +98,6 @@ export class ManageUsersComponent implements OnInit {
     } else {
       this.members = this.tmpMembers;
     }
-    
 
     //Status
     if (this.filterStatus) {
@@ -115,5 +122,89 @@ export class ManageUsersComponent implements OnInit {
         });
       }
     }
+  }
+
+  confirmDeactivateMember() {
+    this.isLoadingService.add();
+    this.confirmationService.confirm({
+      key: 'cdDeactivate',
+      message:
+        'Các bình luận của người dùng này đồng thời bị gỡ bỏ. Bạn có chắc chắn?',
+      accept: () => {
+        this.wrapperService.put(
+          paths.AdminDeactivateMember + '/' + this.selectedMember?.id,
+          this.selectedMember,
+          getStorageToken(),
+          {
+            successCallback: (response) => {
+              this.loadMembers();
+              this.viewInfo(response.data);
+              this.messageService.add({
+                key: 'deactivateSuccess',
+                severity: 'success',
+                summary: 'Thành công',
+                detail: 'Cập nhật dữ liệu thành công',
+              });
+              this.isLoadingService.remove();
+            },
+            errorCallback: (error) => {
+              console.log(error);
+              this.messageService.add({
+                key: 'deactivateFail',
+                severity: 'error',
+                summary: 'Thất bại',
+                detail: 'Có lỗi xảy ra',
+              });
+              this.isLoadingService.remove();
+            },
+          }
+        );
+      },
+      reject: () => {
+        this.isLoadingService.remove();
+      },
+    });
+  }
+
+  confirmReEnableMember() {
+    this.isLoadingService.add();
+    this.confirmationService.confirm({
+      key: 'cdReEnable',
+      message:
+        'Tài khoản thành viên này sẽ được kích hoạt trở lại. Bạn có chắc chắn?',
+      accept: () => {
+        this.wrapperService.put(
+          paths.AdminReEnableMember + '/' + this.selectedMember?.id,
+          this.selectedMember,
+          getStorageToken(),
+          {
+            successCallback: (response) => {
+              this.loadMembers();
+              this.viewInfo(response.data);
+              this.messageService.add({
+                key: 'reEnableSuccess',
+                severity: 'success',
+                summary: 'Thành công',
+                detail: 'Cập nhật dữ liệu thành công',
+              });
+              this.isLoadingService.remove();
+            },
+            errorCallback: (error) => {
+              console.log(error);
+              this.messageService.add({
+                key: 'reEnableFail',
+                severity: 'error',
+                summary: 'Thất bại',
+                detail: 'Có lỗi xảy ra',
+              });
+              this.isLoadingService.remove();
+            },
+          }
+        );
+      },
+      reject: () => {
+        this.isLoadingService.remove();
+      },
+    });
   }
 }
