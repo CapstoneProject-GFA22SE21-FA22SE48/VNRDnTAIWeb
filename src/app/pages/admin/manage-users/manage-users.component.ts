@@ -22,9 +22,8 @@ export class ManageUsersComponent implements OnInit {
   selectedMember: User | undefined;
   userComments: Comment[] = [];
 
-  timeOut: any;
   searchStr: string = '';
-  filterStatus: string = '';
+  filterStatus: any;
 
   @ViewChild('calendar') private calendar: any;
   filterRangeDates: any;
@@ -73,65 +72,48 @@ export class ManageUsersComponent implements OnInit {
     this.selectedMember = undefined;
   }
 
-  debounce(callback: any, wait: number = 800) {
-    this.isLoadingService.add();
-    clearTimeout(this.timeOut);
-    this.timeOut = setTimeout(callback, wait);
-    this.isLoadingService.remove();
+  closeDateRangePick() {
+    if (this.filterRangeDates[1]) {
+      this.calendar.overlayVisible = false;
+      this.filterData();
+    }
   }
 
-  search() {
-    // if (this.filterStatus != '') {
-    //   this.members = this.tmpMembers;
+  filterData() {
+    this.members = this.tmpMembers;
 
-    //   if (this.filterStatus === 'Hoạt động') {
-    //     this.members = this.members.filter((m) => m.status === 5);
-    //   } else {
-    //     this.members = this.members.filter((m) => m.status === 6);
-    //   }
-    // }
-    this.debounce(() => {
-      if (this.searchStr != '') {
-        this.members = this.members.filter((m) =>
-          m.username?.toLowerCase().includes(this.searchStr.toLowerCase())
-        );
-      } else {
-        this.members = this.tmpMembers;
-      }
-    });
-  }
+    //Search
+    if (this.searchStr != '') {
+      this.members = this.members.filter((m) =>
+        m.username?.toLowerCase().includes(this.searchStr.toLowerCase())
+      );
+    } else {
+      this.members = this.tmpMembers;
+    }
+    
 
-  filterByStatus(event: any) {
-    // if (this.searchStr == '') {
-    //   this.members = this.tmpMembers;
-    // }
-    if (event.value) {
-      if (event.value.name === 'Hoạt động') {
+    //Status
+    if (this.filterStatus) {
+      if (this.filterStatus.name === 'Hoạt động') {
         this.members = this.members.filter((m) => m.status === 5);
       } else {
         this.members = this.members.filter((m) => m.status === 6);
       }
-    } else {
-      this.members = this.tmpMembers;
     }
 
-    this.filterStatus = event.value?.name;
-  }
+    //Date Range
+    if (this.filterRangeDates) {
+      const startDate = this.filterRangeDates[0]?.toLocaleDateString('sv');
+      const endDate = this.filterRangeDates[1]?.toLocaleDateString('sv');
 
-  closeDateRangePick() {
-    if (this.filterRangeDates[1]) {
-      this.calendar.overlayVisible = false;
-      this.filterByDate();
+      if (startDate && endDate) {
+        this.members = this.members.filter((m) => {
+          return (
+            m.createdDate.toLocaleString().slice(0, 10) >= startDate &&
+            m.createdDate.toLocaleString().slice(0, 10) <= endDate
+          );
+        });
+      }
     }
-  }
-
-  filterByDate() {
-    const startDate = this.filterRangeDates[0]?.toLocaleDateString('sv');
-    const endDate = this.filterRangeDates[1]?.toLocaleDateString('sv');
-
-    this.members = this.tmpMembers;
-    this.members = this.members.filter((m) => {
-      return m.createdDate >= startDate && m.createdDate <= endDate;
-    });
   }
 }

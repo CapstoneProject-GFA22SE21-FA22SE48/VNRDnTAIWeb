@@ -17,16 +17,17 @@
               placeholder="Tìm kiếm..."
               id="input-search"
               [(ngModel)]="searchStr"
-              (keyup)="search()"
+              (keyup)="filterData()"
             />
           </span>
           <p-dropdown
+            [(ngModel)]="filterStatus" 
             [options]="status"
             placeholder="Trạng thái"
             optionLabel="name"
             [showClear]="true"
             [style]="{ height: '40px' }"
-            (onChange)="filterByStatus($event)"
+            (onChange)="filterData()"
           ></p-dropdown>
         </div>
         <div class="w-6 text-right">
@@ -42,6 +43,7 @@
             [style]="{'height':'40px', 'font-size':'.9rem', 'width':'16rem'}"
             placeholder="Từ ngày - đến ngày"
             (onSelect)="closeDateRangePick()"
+            (onClearClick)="filterData()"
           ></p-calendar>
         </div>
       </div>
