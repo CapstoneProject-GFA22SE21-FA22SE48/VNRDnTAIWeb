@@ -3,14 +3,17 @@
 const base = 'https://localhost:5001/api';
 
 //Login
-export const Login: string = base + "/Users/Login";
+export const Login: string = base + '/Users/Login';
 
 //Admin
-export const AdminUserByYear: string = base + "/AdminReports/UserByYear";
-export const AdminGetMembers: string = base + "/Users/Members";
+export const AdminGetAllMemberData: string = base + '/AdminReports/MemberByYear';
+export const AdminGetNewMemberData: string = base + '/AdminReports/NewMember';
+export const AdminGetMembers: string = base + '/Users/Members';
 export const AdminGetMemberComments: string = base + '/Comments/Members';
 export const AdminDeactivateMember: string = base + '/Users/Members/Deactivate';
 export const AdminReEnableMember: string = base + '/Users/Members/ReEnable';
+
+export const AdminGetScribes: string = base + '/Users/Scribes'
 
 // Scribe
 export const CreateScribe: string = base + '/';
