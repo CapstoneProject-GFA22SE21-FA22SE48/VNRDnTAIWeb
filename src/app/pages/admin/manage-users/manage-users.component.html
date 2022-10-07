@@ -8,7 +8,7 @@
     </div>
     <div class="p-2">
       <div class="mb-3 flex">
-        <div class="w-6">
+        <div class="w-7">
           <span class="p-input-icon-right mr-3">
             <i class="pi pi-search"></i>
             <input
@@ -21,7 +21,7 @@
             />
           </span>
           <p-dropdown
-            [(ngModel)]="filterStatus" 
+            [(ngModel)]="filterStatus"
             [options]="status"
             placeholder="Trạng thái"
             optionLabel="name"
@@ -30,17 +30,17 @@
             (onChange)="filterData()"
           ></p-dropdown>
         </div>
-        <div class="w-6 text-right">
-          <span class="mr-3 text-lg">Theo thời gian</span>
+        <div class="w-5 text-right">
+          <!-- <span class="mr-3 text-lg">Theo thời gian</span> -->
           <p-calendar
-          #calendar
+            #calendar
             [(ngModel)]="filterRangeDates"
             [showIcon]="true"
             dateFormat="dd/mm/yy"
             [readonlyInput]="true"
             selectionMode="range"
             [showButtonBar]="true"
-            [style]="{'height':'40px', 'font-size':'.9rem', 'width':'16rem'}"
+            [style]="{ height: '40px', 'font-size': '.9rem', width: '16rem' }"
             placeholder="Từ ngày - đến ngày"
             (onSelect)="closeDateRangePick()"
             (onClearClick)="filterData()"
@@ -146,12 +146,44 @@
 
       <div class="mt-3">
         <button
-          *ngIf="selectedMember?.status === 5"
+          *ngIf="selectedMember?.status === 5 && userComments.length > 0"
           pButton
           type="button"
           label="Ngưng hoạt động"
           class="p-button-raised p-button-danger"
+          (click)="confirmDeactivateMember()"
         ></button>
+        <button
+          *ngIf="selectedMember?.status === 5 && userComments.length === 0"
+          pButton
+          type="button"
+          label="Ngưng hoạt động"
+          class="p-button-raised p-button-danger"
+          [disabled]="true"
+        ></button>
+        <p-confirmDialog key="cdDeactivate"  #cd icon="pi pi-exclamation-triangle">
+          <ng-template pTemplate="header">
+            <h3>Cảnh báo</h3>
+          </ng-template>
+          <ng-template pTemplate="footer">
+            <button
+              type="button"
+              pButton
+              icon="pi pi-times"
+              label="Hủy"
+              class="p-button-danger"
+              (click)="cd.reject()"
+            ></button>
+            <button
+              type="button"
+              pButton
+              icon="pi pi-check"
+              label="Đồng ý"
+              class="p-button-success"
+              (click)="cd.accept()"
+            ></button>
+          </ng-template>
+        </p-confirmDialog>
 
         <button
           *ngIf="selectedMember?.status === 6"
@@ -159,7 +191,32 @@
           type="button"
           label="Kích hoạt lại"
           class="p-button-raised p-button-success"
+          (click)="confirmReEnableMember()"
         ></button>
+
+        <p-confirmDialog key="cdReEnable" #cr icon="pi pi-info-circle">
+          <ng-template pTemplate="header">
+            <h3>Thông báo</h3>
+          </ng-template>
+          <ng-template pTemplate="footer">
+            <button
+              type="button"
+              pButton
+              icon="pi pi-times"
+              label="Hủy"
+              class="p-button-danger"
+              (click)="cr.reject()"
+            ></button>
+            <button
+              type="button"
+              pButton
+              icon="pi pi-check"
+              label="Đồng ý"
+              class="p-button-success"
+              (click)="cr.accept()"
+            ></button>
+          </ng-template>
+        </p-confirmDialog>
       </div>
     </div>
 
@@ -181,10 +238,14 @@
       </div>
 
       <div *ngIf="userComments.length === 0" class="p-2">
-        <span class="text-red-600 font-bold text-lg"
-          >Người dùng này chưa có bình luận nào</span
-        >
+        <span class="text-red-500 text-lg">
+          Người dùng này chưa có bình luận nào hoặc bình luận đã bị xóa
+          </span>
       </div>
     </div>
   </div>
 </div>
+<p-toast key="deactivateSuccess" life="1500"></p-toast>
+<p-toast key="deactivateFail" life="1500"></p-toast>
+<p-toast key="reEnableSuccess" life="1500"></p-toast>
+<p-toast key="reEnableFail" life="1500"></p-toast>
