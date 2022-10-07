@@ -1,20 +1,60 @@
-<div class="flex">
-    <div class="w-6 pt-2 pl-2">
-        <div>
-            <fa-icon class="fa-lg mr-2" [icon]="['far', 'circle-user']"></fa-icon>
-            <span class="text-xl">Quản lý thành viên</span>
-            <div class="flex h-2rem">
-                <div class="w-4">
-                <span>Tổng số thành viên</span>
-                </div>
-                <div class="w-8">
-                <span class="font-bold text-2xl" style="color: #0039CA;">{{ totalUser }}</span>
-                </div>
-            </div>
-            <p-chart type="line" [data]="chartUserByYearData" [options]="chartOptions"></p-chart>
+<div class="flex" id="container">
+  <div id="left" class="w-6">
+    <div id="top-left" class="pt-2 pl-2">
+      <fa-icon class="fa-lg mr-2" [icon]="['far', 'circle-user']"></fa-icon>
+      <span class="text-xl">Quản lý thành viên</span>
+
+      <div class="flex h-2rem mt-1 mb-1 align-items-center">
+        <div class="w-4">
+          <span>Tổng số thành viên</span>
         </div>
+        <div class="w-8">
+          <span class="font-bold text-2xl" style="color: #0039ca">
+            {{ totalUser }}</span>
+        </div>
+      </div>
+      <p-chart
+        type="line"
+        [data]="chartAllMemberData"
+        [options]="chartOptions"
+        height="15rem"
+      ></p-chart>
     </div>
-    <div class="w-6">
-        
+    
+    <div id="bottom-left" class="pt-2 pl-2">
+      <div class="flex h-2rem mt-4 align-items-center">
+        <div class="w-4">
+          <span>Thành viên mới</span>
+        </div>
+        <div class="w-1">
+          <span class="font-bold text-2xl" style="color: #22C55E">
+            {{ newUser }}</span>
+        </div>
+        <div class="w-7 text-right mr-2">
+            <span class="mr-2">Thời gian</span>
+            <p-calendar
+            #calendar
+            [(ngModel)]="monthYearPick"
+            [showIcon]="true"
+            dateFormat="mm/yy"
+            [readonlyInput]="true"
+            view="month"
+            selectionMode="single"
+            [style]="{ height: '30px', 'font-size': '.9rem', width: '10rem' }"
+            placeholder={{currentMonthYear}}
+            (onSelect)="renderNewMemberChart()"
+          ></p-calendar>
+        </div>
+      </div>
+      <p-chart
+      class="mt-3"
+        type="line"
+        [data]="chartNewMemberData"
+        [options]="chartOptions"
+        height="15rem"
+      ></p-chart>
     </div>
+  </div>
+
+  <div id="right" class="w-6"></div>
 </div>
