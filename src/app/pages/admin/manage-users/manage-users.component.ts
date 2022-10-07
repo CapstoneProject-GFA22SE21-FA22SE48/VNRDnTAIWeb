@@ -166,45 +166,45 @@ export class ManageUsersComponent implements OnInit {
     });
   }
 
-  confirmReEnableMember() {
-    this.isLoadingService.add();
-    this.confirmationService.confirm({
-      key: 'cdReEnable',
-      message:
-        'Tài khoản thành viên này sẽ được kích hoạt trở lại. Bạn có chắc chắn?',
-      accept: () => {
-        this.wrapperService.put(
-          paths.AdminReEnableMember + '/' + this.selectedMember?.id,
-          this.selectedMember,
-          getStorageToken(),
-          {
-            successCallback: (response) => {
-              this.loadMembers();
-              this.viewInfo(response.data);
-              this.messageService.add({
-                key: 'reEnableSuccess',
-                severity: 'success',
-                summary: 'Thành công',
-                detail: 'Cập nhật dữ liệu thành công',
-              });
-              this.isLoadingService.remove();
-            },
-            errorCallback: (error) => {
-              console.log(error);
-              this.messageService.add({
-                key: 'reEnableFail',
-                severity: 'error',
-                summary: 'Thất bại',
-                detail: 'Có lỗi xảy ra',
-              });
-              this.isLoadingService.remove();
-            },
-          }
-        );
-      },
-      reject: () => {
-        this.isLoadingService.remove();
-      },
-    });
-  }
+  // confirmReEnableMember() {
+  //   this.isLoadingService.add();
+  //   this.confirmationService.confirm({
+  //     key: 'cdReEnable',
+  //     message:
+  //       'Tài khoản thành viên này sẽ được kích hoạt trở lại. Bạn có chắc chắn?',
+  //     accept: () => {
+  //       this.wrapperService.put(
+  //         paths.AdminReEnableMember + '/' + this.selectedMember?.id,
+  //         this.selectedMember,
+  //         getStorageToken(),
+  //         {
+  //           successCallback: (response) => {
+  //             this.loadMembers();
+  //             this.viewInfo(response.data);
+  //             this.messageService.add({
+  //               key: 'reEnableSuccess',
+  //               severity: 'success',
+  //               summary: 'Thành công',
+  //               detail: 'Cập nhật dữ liệu thành công',
+  //             });
+  //             this.isLoadingService.remove();
+  //           },
+  //           errorCallback: (error) => {
+  //             console.log(error);
+  //             this.messageService.add({
+  //               key: 'reEnableFail',
+  //               severity: 'error',
+  //               summary: 'Thất bại',
+  //               detail: 'Có lỗi xảy ra',
+  //             });
+  //             this.isLoadingService.remove();
+  //           },
+  //         }
+  //       );
+  //     },
+  //     reject: () => {
+  //       this.isLoadingService.remove();
+  //     },
+  //   });
+  // }
 }

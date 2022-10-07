@@ -16,11 +16,9 @@ export const AdminReEnableMember: string = base + '/Users/Members/ReEnable';
 export const AdminGetScribes: string = base + '/Users/Scribes'
 
 // Scribe
-export const CreateScribe: string = base + '/';
-export const UpdateScribe: string = base + '/';
-
-// Request of Modification
-export const AcceptRequest: string = base + '/';
-export const DenyRequest: string = base + '/';
-
-// Notification
+export const ScribeGetQuestions: string = base + '/Questions';
+export const ScribeGetTestCategories: string = base + '/TestCategories';
+export const ScribeGetAnswersByQuestionId: string = base + '/Answers/Question';
+export const ScribeGetAdmins: string = base + '/Users/Admins';
+export const ScribeCreateQuestionForROM: string = base + '/Questions';
+export const ScribeCreateQuestionModificationRequest: string = base + '/QuestionModificationRequests';

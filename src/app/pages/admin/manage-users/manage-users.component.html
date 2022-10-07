@@ -54,7 +54,7 @@
         [rows]="9"
         [showCurrentPageReport]="true"
         responsiveLayout="scroll"
-        currentPageReportTemplate="Hiển thị {first} đến {last} trong tổng số {totalRecords} mục"
+        currentPageReportTemplate="{first} đến {last} trong tổng số {totalRecords} mục"
         styleClass="p-datatable-gridlines p-datatable-sm"
       >
         <ng-template pTemplate="header">
@@ -172,6 +172,7 @@
               icon="pi pi-times"
               label="Hủy"
               class="p-button-danger"
+              style="height: 40px;"
               (click)="cd.reject()"
             ></button>
             <button
@@ -180,12 +181,13 @@
               icon="pi pi-check"
               label="Đồng ý"
               class="p-button-success"
+              style="height: 40px;"
               (click)="cd.accept()"
             ></button>
           </ng-template>
         </p-confirmDialog>
 
-        <button
+        <!-- <button
           *ngIf="selectedMember?.status === 6"
           pButton
           type="button"
@@ -216,7 +218,7 @@
               (click)="cr.accept()"
             ></button>
           </ng-template>
-        </p-confirmDialog>
+        </p-confirmDialog> -->
       </div>
     </div>
 
@@ -247,5 +249,5 @@
 </div>
 <p-toast key="deactivateSuccess" life="1500"></p-toast>
 <p-toast key="deactivateFail" life="1500"></p-toast>
-<p-toast key="reEnableSuccess" life="1500"></p-toast>
-<p-toast key="reEnableFail" life="1500"></p-toast>
+<!-- <p-toast key="reEnableSuccess" life="1500"></p-toast>
+<p-toast key="reEnableFail" life="1500"></p-toast> -->

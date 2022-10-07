@@ -32,6 +32,8 @@ import { ManageQuestionsComponent } from './pages/scribe/manage-questions/manage
 import { MenuModule } from 'primeng/menu';
 import { SidebarModule } from 'primeng/sidebar';
 import { BadgeModule } from 'primeng/badge';
+import {InputTextareaModule} from 'primeng/inputtextarea';
+
 import {
   FontAwesomeModule,
   FaIconLibrary,
@@ -49,7 +51,14 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConfirmationService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
-
+import { MyRequestComponent } from './pages/scribe/my-request/my-request.component';
+import {RadioButtonModule} from 'primeng/radiobutton';
+import {FileUploadModule} from 'primeng/fileupload';
+import {HttpClientModule} from '@angular/common/http';
+import { AngularFireModule } from '@angular/fire/compat';
+import { AngularFireStorageModule } from '@angular/fire/compat/storage';
+import { AngularFireDatabaseModule } from '@angular/fire/compat/database';
+import { environment } from 'src/environments/environment';
 @NgModule({
   declarations: [
     AppComponent,
@@ -69,6 +78,7 @@ import { MessageService } from 'primeng/api';
     ManageSignsComponent,
     ManageQuestionsComponent,
     DatePipe,
+    MyRequestComponent,
   ],
   imports: [
     BrowserModule,
@@ -96,6 +106,14 @@ import { MessageService } from 'primeng/api';
     CalendarModule,
     ConfirmDialogModule,
     ToastModule,
+    InputTextareaModule,
+    RadioButtonModule,
+    FileUploadModule,
+    HttpClientModule,
+    AngularFireModule.initializeApp(environment.firebase),
+    AngularFireDatabaseModule,
+    AngularFireStorageModule,
+    AngularFireModule,
   ],
   providers: [ConfirmationService, MessageService],
   bootstrap: [AppComponent],

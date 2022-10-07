@@ -1,0 +1,182 @@
+#container {
+  height: 100%;
+}
+
+.btn-info {
+  width: 25px !important;
+  height: 25px !important;
+}
+
+.hide {
+  display: none;
+  width: 0;
+}
+
+.show {
+  display: block;
+  width: 33.3333%;
+}
+
+::ng-deep .p-dropdown .p-placeholder {
+  font-size: .9rem;
+  padding-top: .5rem;
+}
+
+::ng-deep .p-dropdown .p-element {
+  font-size: .9rem;
+  padding-top: .5rem;
+}
+
+#question-info {
+  border-left: 3px solid #EFEFEF;
+}
+
+#btn-closeInfo {
+  border: none;
+  background: none;
+  position: absolute;
+  top: 0;
+  right: 0;
+  margin: 1rem 1rem 0 0;
+}
+
+#input-search {
+  height: 40px;
+  font-size: .9rem;
+}
+
+.txt-content {
+  width: 50rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.txt-content-sm {
+  width: 30rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#right {
+  height: 100%;
+}
+
+#right-header {
+  height: 10%;
+}
+
+#right-question-content {
+  height: 18%;
+  margin-bottom: 2%;
+  padding: 2%;
+  border: 2px solid #EFEFEF;
+  border-radius: 5px;
+  overflow-y: scroll;
+}
+
+
+#right-question-img {
+  height: 33%;
+  padding: 2%;
+  border: 2px solid #EFEFEF;
+  border-radius: 5px;
+  margin-bottom: 2%;
+}
+
+#right-answers {
+  height: 28%;
+  margin-bottom: 2%;
+  padding: 2%;
+  border: 2px solid #EFEFEF;
+  border-radius: 5px;
+  overflow-y: scroll;
+}
+
+#question-img {
+  width: 80%;
+  height: 100%;
+}
+
+#right-actions {
+  height: 8%;
+  margin-top: 2%;
+}
+
+
+/* File upload */
+.file-upload-input {
+  position: absolute;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  outline: none;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.image-upload-wrap {
+  margin-top: 20px;
+  border: 4px dashed #1FB264;
+  position: relative;
+}
+
+.image-dropping,
+.image-upload-wrap:hover {
+  background-color: #1FB264;
+  border: 4px dashed #ffffff;
+}
+
+.image-title-wrap {
+  padding: 0 15px 15px 15px;
+  color: #222;
+}
+
+.drag-text {
+  text-align: center;
+}
+
+.drag-text h3 {
+  font-weight: 100;
+  text-transform: uppercase;
+  color: #15824B;
+  padding: 60px 0;
+}
+
+.file-upload-image {
+  max-height: 200px;
+  max-width: 200px;
+  margin: auto;
+  padding: 20px;
+}
+
+.remove-image {
+  width: 200px;
+  margin: 0;
+  color: #fff;
+  background: #cd4535;
+  border: none;
+  padding: 10px;
+  border-radius: 4px;
+  border-bottom: 4px solid #b02818;
+  transition: all .2s ease;
+  outline: none;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.remove-image:hover {
+  background: #c13b2a;
+  color: #ffffff;
+  transition: all .2s ease;
+  cursor: pointer;
+}
+
+.remove-image:active {
+  border: 0;
+  transition: all .2s ease;
+}
+
+/* End of file upload */
