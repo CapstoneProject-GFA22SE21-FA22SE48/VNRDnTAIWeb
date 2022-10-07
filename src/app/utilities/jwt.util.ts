@@ -1,6 +1,7 @@
 import jwtDecode, { JwtPayload } from 'jwt-decode';
 
-export const decodeToken = (token: string) =>  jwtDecode<any>(token ? token : '');
+export const decodeToken = (token: string) =>
+  jwtDecode<any>(token ? token : '');
 
 export const verifyLocalStorageToken = (): boolean => {
   const token = localStorage.getItem('token');
@@ -46,11 +47,10 @@ export const verifySessionStorageToken = (): boolean => {
   return isValid;
 };
 
-
 export const getStorageToken = () => {
-  return (localStorage.getItem('token') != ''
-  ? sessionStorage.getItem('token') != ''
+  return localStorage.getItem('token') !== ''
+    ? localStorage.getItem('token')
+    : sessionStorage.getItem('token') !== ''
     ? sessionStorage.getItem('token')
-    : ''
-  : '');
-}
+    : '';
+};

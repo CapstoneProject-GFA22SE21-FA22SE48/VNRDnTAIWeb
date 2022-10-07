@@ -13,7 +13,7 @@ export const paths = {
     manageUsers: 'admin/manage-users'
   },
   scribe: {
-    dashboard: 'scribe/dashboard',
+    myRequests: 'scribe/my-request',
     manageLaws: 'scribe/manage-laws',
     manageSigns: 'scribe/manage-signs',
     manageQuestions: 'scribe/manage-questions'

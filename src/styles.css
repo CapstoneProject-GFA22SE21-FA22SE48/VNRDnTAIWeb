@@ -13,5 +13,5 @@ body {
 }
 
 *:not(i){
-    font-family: "Jaldi";
+    font-family: "Jaldi"; /* Replacable */
 }

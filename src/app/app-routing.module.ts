@@ -9,10 +9,10 @@ import { ProfileComponent } from './pages/profile/profile.component';
 import { paths } from './utilities/paths.util';
 import { ManageLawsComponent } from './pages/scribe/manage-laws/manage-laws.component';
 import { NotFoundComponent } from './pages/not-found/not-found.component';
-import { DashboardComponent as ScribeDashboardComponent } from './pages/scribe/dashboard/dashboard.component';
 import { ManageUsersComponent } from './pages/admin/manage-users/manage-users.component';
 import { ManageSignsComponent } from './pages/scribe/manage-signs/manage-signs.component';
 import { ManageQuestionsComponent } from './pages/scribe/manage-questions/manage-questions.component';
+import { MyRequestComponent } from './pages/scribe/my-request/my-request.component';
 
 const routes: Routes = [
   // {
@@ -52,9 +52,9 @@ const routes: Routes = [
     canActivate: [AuthGuard],
   },
   {
-    path: paths.scribe.dashboard,
-    component: ScribeDashboardComponent,
-    canActivate: [AuthGuard]
+    path: paths.scribe.myRequests,
+    component: MyRequestComponent,
+    canActivate: [AuthGuard],
   },
   {
     path: paths.scribe.manageLaws,

@@ -56,7 +56,7 @@ export class LoginAuthGuard implements CanActivate {
       if (parseInt(decodeToken(token ? token : '').Role) === 0) {
         this.router.navigate(['/admin/dashboard']);
       } else if (parseInt(decodeToken(token ? token : '').Role) === 0) {
-        this.router.navigate(['/scribe/dashboard']);
+        this.router.navigate(['/scribe/my-request']);
       }
       return false;
     } else if (isValidSessionStorageToken) {
@@ -65,7 +65,7 @@ export class LoginAuthGuard implements CanActivate {
       if (parseInt(decodeToken(token ? token : '').Role) === 0) {
         this.router.navigate(['/admin/dashboard']);
       } else if (parseInt(decodeToken(token ? token : '').Role) === 0) {
-        this.router.navigate(['/scribe/dashboard']);
+        this.router.navigate(['/scribe/my-request']);
       }
       return false;
     }

@@ -56,7 +56,7 @@ export class LoginComponent implements OnInit {
           if(parseInt(decodeToken( token ? token : '').Role) === 0){
             this.router.navigate(['/admin/dashboard']);
           }  else if(parseInt(decodeToken(token ? token : '').Role) === 1){
-            this.router.navigate(['/scribe/dashboard']);
+            this.router.navigate(['/scribe/my-request']);
           }                                                          
           this.isLoadingService.remove();
         },
