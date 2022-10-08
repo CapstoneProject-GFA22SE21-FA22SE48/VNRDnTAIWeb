@@ -1,12 +1,13 @@
 <div class="flex p-0" id="container">
   <div
     [ngClass]="{ 'w-12': selectedMember === undefined, 'w-8': selectedMember }"
+    style="height: 100%"
   >
-    <div class="p-2 mb-1">
+    <div class="p-2 mb-1" style="height: 5%;">
       <fa-icon class="fa-lg mr-2" [icon]="['far', 'circle-user']"></fa-icon>
       <span class="text-xl">Quản lý thành viên</span>
     </div>
-    <div class="p-2">
+    <div class="p-2" style="height: 10%;">
       <div class="mb-3 flex">
         <div class="w-7">
           <span class="p-input-icon-right mr-3">
@@ -48,74 +49,82 @@
         </div>
       </div>
 
+      
+      
+    </div>
+
+    <div style="max-height: 85%;" class="p-1">
       <p-table
-        [value]="members"
-        [paginator]="true"
-        [rows]="9"
-        [showCurrentPageReport]="true"
-        responsiveLayout="scroll"
-        currentPageReportTemplate="{first} đến {last} trong tổng số {totalRecords} mục"
-        styleClass="p-datatable-gridlines p-datatable-sm"
-      >
-        <ng-template pTemplate="header">
-          <tr>
-            <th [ngStyle]="{ width: '5%', 'text-align': 'center' }">#</th>
-            <th [ngStyle]="{ width: '30%', 'text-align': 'center' }">
-              Tên đăng nhập
-            </th>
-            <th [ngStyle]="{ width: '30%', 'text-align': 'center' }">
-              Mật khẩu
-            </th>
-            <th [ngStyle]="{ width: '15%', 'text-align': 'center' }">
-              Ngày tạo
-            </th>
-            <th [ngStyle]="{ width: '15%', 'text-align': 'center' }">
-              Trạng thái
-            </th>
-            <th [ngStyle]="{ width: '5%', 'text-align': 'center' }"></th>
-          </tr>
-        </ng-template>
-        <ng-template pTemplate="body" let-member let-i="rowIndex">
-          <tr>
-            <td [ngStyle]="{ 'text-align': 'center' }">{{ i + 1 }}</td>
-            <td>
-              <div class="w-full text-center txt-username">
-                {{ member.username }}
+      [value]="members"
+      [paginator]="true"
+      [rows]="10"
+      [showCurrentPageReport]="true"
+      responsiveLayout="scroll"
+      currentPageReportTemplate="{first} đến {last} trong tổng số {totalRecords} mục"
+      styleClass="p-datatable-gridlines p-datatable-sm"
+    >
+      <ng-template pTemplate="header">
+        <tr>
+          <th [ngStyle]="{ width: '5%', 'text-align': 'center' }">#</th>
+          <th [ngStyle]="{ width: '30%', 'text-align': 'center' }">
+            Tên đăng nhập
+          </th>
+          <th [ngStyle]="{ width: '30%', 'text-align': 'center' }">
+            Mật khẩu
+          </th>
+          <th [ngStyle]="{ width: '15%', 'text-align': 'center' }">
+            Ngày tạo
+          </th>
+          <th [ngStyle]="{ width: '15%', 'text-align': 'center' }">
+            Trạng thái
+          </th>
+          <th [ngStyle]="{ width: '5%', 'text-align': 'center' }"></th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-member let-i="rowIndex">
+        <tr>
+          <td [ngStyle]="{ 'text-align': 'center' }">{{ i + 1 }}</td>
+          <td>
+            <div class="w-full flex justify-content-center align-items-center">
+              <div class="w-15rem text-center overflow-hidden text-overflow-ellipsis">
+                <span>{{ member.username }}</span>
               </div>
-            </td>
-            <td>
-              <div class="w-full text-center">
-                <p-password
-                  [(ngModel)]="member.password"
-                  [toggleMask]="true"
-                  [feedback]="false"
-                  [disabled]="true"
-                ></p-password>
-              </div>
-            </td>
-            <td [ngStyle]="{ 'text-align': 'center' }">
-              {{ member.createdDate | date: "dd/MM/yyyy" }}
-            </td>
-            <td [ngStyle]="{ 'text-align': 'center' }">
-              <span *ngIf="member.status == 5" class="text-green-600"
-                >Hoạt động</span
-              >
-              <span *ngIf="member.status == 6" class="text-red-600"
-                >Ngưng hoạt động</span
-              >
-            </td>
-            <td [ngStyle]="{ 'text-align': 'center' }">
-              <button
-                pButton
-                type="button"
-                icon="pi pi-info"
-                class="p-button-rounded p-button-outlined btn-info"
-                (click)="viewInfo(member)"
-              ></button>
-            </td>
-          </tr>
-        </ng-template>
-      </p-table>
+            </div>
+            
+          </td>
+          <td>
+            <div class="w-full text-center">
+              <p-password
+                [(ngModel)]="member.password"
+                [toggleMask]="true"
+                [feedback]="false"
+                [disabled]="true"
+              ></p-password>
+            </div>
+          </td>
+          <td [ngStyle]="{ 'text-align': 'center' }">
+            {{ member.createdDate | date: "dd/MM/yyyy" }}
+          </td>
+          <td [ngStyle]="{ 'text-align': 'center' }">
+            <span *ngIf="member.status == 5" class="text-green-600"
+              >Hoạt động</span
+            >
+            <span *ngIf="member.status == 6" class="text-red-600"
+              >Ngưng hoạt động</span
+            >
+          </td>
+          <td [ngStyle]="{ 'text-align': 'center' }">
+            <button
+              pButton
+              type="button"
+              icon="pi pi-info"
+              class="p-button-rounded p-button-outlined btn-info"
+              (click)="viewInfo(member)"
+            ></button>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
     </div>
   </div>
 
@@ -137,11 +146,16 @@
         <span class="text-xl ml-2">Thông tin</span>
       </div>
 
-      <div class="mt-3" id="lb-username">
-        <span class="text-lg text-color-secondary">Người dùng: </span>
-        <span class="text-lg text-900 ml-3">
-          {{ selectedMember?.username }}</span
-        >
+      <div class="flex mt-3 p-2" id="lb-username">
+        <div class="w-3">
+          <span class="text-lg text-color-secondary">Người dùng: </span>
+
+        </div>
+        <div class="w-9 p-0 m-0 overflow-x-auto overflow-y-hidden">
+          <span class="text-lg text-900 ml-3">
+            {{ selectedMember?.username }}</span>
+        </div>
+        
       </div>
 
       <div class="mt-3">
@@ -222,7 +236,7 @@
       </div>
     </div>
 
-    <div id="right-main">
+    <div id="right-main" class="overflow-y-auto">
       <div *ngIf="userComments.length > 0">
         <div
           class="flex align-items-center justify-content-center"

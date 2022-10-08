@@ -54,14 +54,14 @@
 }
 
 #right-top {
-  height: 25%;
+  height: 30%;
 }
 
 #right-main {
-  height: 75%;
+  height: 70%;
   border-radius: 5px;
   background-color: #EFEFEF;
-  overflow-y: scroll;
+  /* overflow-y: scroll; */
 }
 
 .comment {
@@ -76,11 +76,9 @@
 
 .comment-content {
   height: 70%;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  /* overflow-y: scroll; */
-  text-overflow: ellipsis;
+  word-break: break-word;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .comment-time {
@@ -93,16 +91,16 @@
   font-size: .9rem;
 }
 
-.txt-username {
-  width: 10rem;
-  white-space: nowrap;
+/* .txt-username { */
+  /* width: 20rem; */
+  /* white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-}
+} */
 
-#lb-username {
+/* #lb-username {
   width: 20rem;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-}
+} */

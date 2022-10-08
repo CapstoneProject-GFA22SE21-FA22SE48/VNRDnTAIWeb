@@ -73,7 +73,7 @@
   padding: 2%;
   border: 2px solid #EFEFEF;
   border-radius: 5px;
-  overflow-y: scroll;
+  /* overflow-y: scroll; */
 }
 
 
@@ -91,7 +91,7 @@
   padding: 2%;
   border: 2px solid #EFEFEF;
   border-radius: 5px;
-  overflow-y: scroll;
+  /* overflow-y: scroll; */
 }
 
 #question-img {
