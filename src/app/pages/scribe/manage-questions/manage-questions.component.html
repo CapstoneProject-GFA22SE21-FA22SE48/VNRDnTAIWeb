@@ -207,6 +207,7 @@
   #createDialog
   [(visible)]="displayCreateDialog"
   [style]="{ width: '45vw' }"
+  (onHide)="resetDataCreateQuestion()"
 >
   <ng-template pTemplate="header">
     <span class="text-green-500 font-bold text-xl">Tạo mới</span>
@@ -408,7 +409,7 @@
       label="Hủy"
       class="p-button-danger"
       style="height: 40px"
-      (click)="displayCreateDialog = false"
+      (click)="resetDataCreateQuestion()"
     ></button>
     <button
       type="button"
@@ -429,6 +430,7 @@
   #updateDialog
   [(visible)]="displayUpdateDialog"
   [style]="{ width: '40vw' }"
+  (onHide)="resetDataUpdateQuestion()"
 >
   <ng-template pTemplate="header">
     <span class="text-purple-500 font-bold text-xl"> Chỉnh sửa</span>
@@ -459,7 +461,8 @@
         pInputTextarea
         style="width: 100%"
         (change)="changeTxtQuestionContent(newQuestionContent.value)"
-        >{{ tmpSelectedQuestion?.content }}</textarea
+        [value]="tmpSelectedQuestion?.content"
+        ></textarea
       >
     </div>
   </div>
@@ -545,7 +548,7 @@
       label="Hủy"
       class="p-button-danger"
       style="height: 40px"
-      (click)="displayUpdateDialog = false"
+      (click)="resetDataUpdateQuestion()"
     ></button>
     <button
       type="button"
