@@ -52,8 +52,7 @@ export class ManageQuestionsComponent implements OnInit {
   isEditingNewQuestionAnswer: boolean = false;
   newQuestionImgUrl: string = '';
   isValidNewQuestion: boolean = false;
-  inValidMsg: string = 
-  `Vui lòng nhập: - Số câu 
+  inValidMsg: string = `Vui lòng nhập: - Số câu 
                   - Nội dung 
                   - Tối thiểu 2 đáp án 
                   - Chọn đáp án đúng
@@ -88,7 +87,7 @@ export class ManageQuestionsComponent implements OnInit {
           {
             successCallback: (response) => {
               this.loadedTestCategories = response.data;
-              this.selectedTestCategory = this.loadedTestCategories[0]
+              this.selectedTestCategory = this.loadedTestCategories[0];
               this.questions.forEach((q) => {
                 response.data.forEach((r: any) => {
                   if (r.id === q.testCategoryId) q.testCategory = r;
@@ -188,6 +187,15 @@ export class ManageQuestionsComponent implements OnInit {
     this.selectedQuestion = undefined;
   }
 
+  resetDataUpdateQuestion() {
+    this.tmpSelectedQuestion = JSON.parse(
+      JSON.stringify(this.selectedQuestion)
+    );
+    this.selectedAdmin = this.admins[0];
+    this.displayUpdateDialog = false;
+    this.isChanging = false;
+  }
+
   detectChange() {
     if (
       JSON.stringify(this.selectedQuestion) !==
@@ -259,6 +267,7 @@ export class ManageQuestionsComponent implements OnInit {
             getStorageToken(),
             {
               successCallback: (response) => {
+                this.resetDataUpdateQuestion();
                 this.displayUpdateDialog = false;
                 this.messageService.add({
                   key: 'createUpdateROMSuccess',
@@ -284,15 +293,17 @@ export class ManageQuestionsComponent implements OnInit {
   }
 
   deleteQuestion() {
-    this.tmpSelectedQuestion.isDeleted = true;
-    this.tmpSelectedQuestion.answers.forEach((a: Answer) => {
+    let deleteQuestion = JSON.parse(JSON.stringify(this.selectedQuestion));
+
+    deleteQuestion.isDeleted = true;
+    deleteQuestion.answers.forEach((a: Answer) => {
       a.isDeleted = true;
     });
 
     this.isLoadingService.add();
     this.wrapperService.post(
       paths.ScribeCreateQuestionForROM,
-      this.tmpSelectedQuestion,
+      deleteQuestion,
       getStorageToken(),
       {
         successCallback: (response) => {
@@ -414,14 +425,25 @@ export class ManageQuestionsComponent implements OnInit {
       if (a.isCorrect) hasCorrectAnswer = true;
     });
 
-    (this.isValidNewQuestionName &&
+    this.isValidNewQuestionName &&
     this.newQuestionName !== undefined &&
-    this.newQuestion !== '') 
-    && (this.newQuestionContent !== '')
-    && (this.newQuestionAnswers.length >= 2)
-    && (hasCorrectAnswer)
+    this.newQuestion !== '' &&
+    this.newQuestionContent !== '' &&
+    this.newQuestionAnswers.length >= 2 &&
+    hasCorrectAnswer
       ? (this.isValidNewQuestion = true)
       : (this.isValidNewQuestion = false);
+  }
+
+  resetDataCreateQuestion() {
+    this.newQuestionName = undefined;
+    this.newQuestionContent = '';
+    this.newQuestionAnswers = [];
+    this.newQuestionImgUrl = '';
+    this.selectedAdmin = this.admins[0];
+    this.selectedTestCategory = this.loadedTestCategories[0];
+    this.isValidNewQuestionName = true;
+    this.displayCreateDialog = false;
   }
 
   createQuestion() {
@@ -429,17 +451,17 @@ export class ManageQuestionsComponent implements OnInit {
     this.newQuestionAnswers.forEach((a: any) => {
       newAnswers.push({
         description: a.description,
-        isCorrect: a.isCorrect
-      })
-    })
+        isCorrect: a.isCorrect,
+      });
+    });
 
     this.newQuestion = {
       testCategoryId: this.selectedTestCategory.id,
       name: 'Câu ' + this.newQuestionName,
       content: this.newQuestionContent,
       imageUrl: this.newQuestionImgUrl,
-      answers: newAnswers
-    }
+      answers: newAnswers,
+    };
 
     this.isLoadingService.add();
     this.wrapperService.post(
