@@ -59,6 +59,8 @@ import { AngularFireModule } from '@angular/fire/compat';
 import { AngularFireStorageModule } from '@angular/fire/compat/storage';
 import { AngularFireDatabaseModule } from '@angular/fire/compat/database';
 import { environment } from 'src/environments/environment';
+import {InputNumberModule} from 'primeng/inputnumber';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -114,6 +116,7 @@ import { environment } from 'src/environments/environment';
     AngularFireDatabaseModule,
     AngularFireStorageModule,
     AngularFireModule,
+    InputNumberModule
   ],
   providers: [ConfirmationService, MessageService],
   bootstrap: [AppComponent],

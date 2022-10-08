@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { IsLoadingService } from '@service-work/is-loading';
+import { AnyARecord } from 'dns';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { OperationType } from 'src/app/common/operationType';
 import {
@@ -24,7 +25,10 @@ export class ManageQuestionsComponent implements OnInit {
   testCats: TestCategory[] = [];
   selectedQuestion: any;
   tmpSelectedQuestion: any;
-  testCategories: any = [{ name: 'A1' }, { name: 'A2' }, { name: 'B1, B2' }];
+  testCategories: any = [{ name: 'A1' }, { name: 'A2' }, { name: 'B1, B2' }]; //used for filtering
+
+  loadedTestCategories: any;
+  selectedTestCategory: any; //used for creating new question
 
   filterTestCategory: any;
   searchStr: string = '';
@@ -38,6 +42,24 @@ export class ManageQuestionsComponent implements OnInit {
 
   displayCreateDialog: boolean = false;
   newQuestion: any;
+  isValidNewQuestionName: boolean = true;
+  newQuestionName: any;
+  newQuestionContent: string = '';
+  newQuestionAnswer: any;
+  editingNewQuestionAnswerIndex: any;
+  txtEditNewQuestionAnswer: any;
+  newQuestionAnswers: any[] = [];
+  isEditingNewQuestionAnswer: boolean = false;
+  newQuestionImgUrl: string = '';
+  isValidNewQuestion: boolean = false;
+  inValidMsg: string = 
+  `Vui lòng nhập: - Số câu 
+                  - Nội dung 
+                  - Tối thiểu 2 đáp án 
+                  - Chọn đáp án đúng
+                  - Hình ảnh đính kèm (nếu có)
+  Để tiến hành tạo yêu cầu tạo mới câu hỏi
+  `;
 
   admins: User[] = [];
   selectedAdmin: any;
@@ -65,6 +87,8 @@ export class ManageQuestionsComponent implements OnInit {
           getStorageToken(),
           {
             successCallback: (response) => {
+              this.loadedTestCategories = response.data;
+              this.selectedTestCategory = this.loadedTestCategories[0]
               this.questions.forEach((q) => {
                 response.data.forEach((r: any) => {
                   if (r.id === q.testCategoryId) q.testCategory = r;
@@ -215,16 +239,6 @@ export class ManageQuestionsComponent implements OnInit {
       });
   }
 
-  addImage(event: any, imageUploaded: any): void {
-    // this.fileUploadService
-    //   .uploadImageToFirebase(event.files[0])
-    //   .then((imgUrl: any) => {
-    //     this.tmpSelectedQuestion.imageUrl = imgUrl;
-    //     this.detectChange();
-    //     imageUploaded.clear();
-    //   });
-  }
-
   updateQuestion() {
     this.isLoadingService.add();
     this.wrapperService.post(
@@ -273,7 +287,7 @@ export class ManageQuestionsComponent implements OnInit {
     this.tmpSelectedQuestion.isDeleted = true;
     this.tmpSelectedQuestion.answers.forEach((a: Answer) => {
       a.isDeleted = true;
-    })
+    });
 
     this.isLoadingService.add();
     this.wrapperService.post(
@@ -297,6 +311,158 @@ export class ManageQuestionsComponent implements OnInit {
                 this.displayDeleteDialog = false;
                 this.messageService.add({
                   key: 'createDeleteROMSuccess',
+                  severity: 'success',
+                  summary: 'Thành công',
+                  detail: 'Yêu cầu đã được tạo thành công',
+                });
+                this.isLoadingService.remove();
+              },
+              errorCallback: (error) => {
+                console.log(error);
+                this.isLoadingService.remove();
+              },
+            }
+          );
+        },
+        errorCallback: (error) => {
+          console.log(error);
+          this.isLoadingService.remove();
+        },
+      }
+    );
+  }
+
+  checkNewQuestionName(event: any) {
+    this.newQuestionName = event.value;
+    let isDuplicated = false;
+
+    this.tmpQuestions.forEach((q: Question) => {
+      if (parseInt(q.name.split(' ')[1]) === parseInt(this.newQuestionName)) {
+        isDuplicated = true;
+      }
+    });
+
+    if (isDuplicated) {
+      this.isValidNewQuestionName = false;
+    } else {
+      this.isValidNewQuestionName = true;
+    }
+
+    this.validateNewQuestion();
+  }
+
+  getNewQuestionContent(event: any) {
+    this.newQuestionContent = event.target.value;
+    this.validateNewQuestion();
+  }
+
+  addNewQuestionAnswer() {
+    this.newQuestionAnswers.push({
+      description: this.newQuestionAnswer,
+      isCorrect: false,
+    });
+    this.newQuestionAnswer = '';
+    this.validateNewQuestion();
+  }
+
+  pickNewAnswersCorrectAnswer(i: number) {
+    this.newQuestionAnswers.forEach((a, index) => {
+      if (index === i) {
+        a.isCorrect = true;
+      } else {
+        a.isCorrect = false;
+      }
+    });
+    this.validateNewQuestion();
+  }
+
+  enableEditNewQuestionAnswer(answer: any, i: number) {
+    this.isEditingNewQuestionAnswer = true;
+    this.txtEditNewQuestionAnswer = answer.description;
+    this.editingNewQuestionAnswerIndex = i;
+  }
+
+  saveEditNewQuestionAnswer(i: number) {
+    this.newQuestionAnswers[i].description = this.txtEditNewQuestionAnswer;
+    this.isEditingNewQuestionAnswer = false;
+  }
+
+  disableEditNewQuestionAnswer() {
+    this.isEditingNewQuestionAnswer = false;
+  }
+
+  deleteNewQuestionAnswer(i: number) {
+    this.newQuestionAnswers.forEach((item, index) => {
+      if (index === i) this.newQuestionAnswers.splice(index, 1);
+    });
+    this.validateNewQuestion();
+  }
+
+  addNewQuestionImage(event: any, newQuestionImageUploaded: any): void {
+    this.fileUploadService
+      .uploadImageToFirebase(event.files[0])
+      .then((imgUrl: any) => {
+        this.newQuestionImgUrl = imgUrl;
+        this.detectChange();
+        newQuestionImageUploaded.clear();
+      });
+  }
+
+  validateNewQuestion() {
+    let hasCorrectAnswer = false;
+    this.newQuestionAnswers.forEach((a: any) => {
+      if (a.isCorrect) hasCorrectAnswer = true;
+    });
+
+    (this.isValidNewQuestionName &&
+    this.newQuestionName !== undefined &&
+    this.newQuestion !== '') 
+    && (this.newQuestionContent !== '')
+    && (this.newQuestionAnswers.length >= 2)
+    && (hasCorrectAnswer)
+      ? (this.isValidNewQuestion = true)
+      : (this.isValidNewQuestion = false);
+  }
+
+  createQuestion() {
+    var newAnswers: any[] = [];
+    this.newQuestionAnswers.forEach((a: any) => {
+      newAnswers.push({
+        description: a.description,
+        isCorrect: a.isCorrect
+      })
+    })
+
+    this.newQuestion = {
+      testCategoryId: this.selectedTestCategory.id,
+      name: 'Câu ' + this.newQuestionName,
+      content: this.newQuestionContent,
+      imageUrl: this.newQuestionImgUrl,
+      answers: newAnswers
+    }
+
+    this.isLoadingService.add();
+    this.wrapperService.post(
+      paths.ScribeCreateQuestionForROM,
+      this.newQuestion,
+      getStorageToken(),
+      {
+        successCallback: (response) => {
+          this.wrapperService.post(
+            paths.ScribeCreateQuestionModificationRequest,
+            {
+              // create new question -> no modifiedQuestionId
+              modifyingQuestionId: response.data.id,
+              scribeId: decodeToken(getStorageToken() || '').Id,
+              adminId: this.selectedAdmin.id,
+              operationType: OperationType.Add,
+            },
+            getStorageToken(),
+            {
+              successCallback: (response) => {
+                this.displayCreateDialog = false;
+                this.messageService.add({
+                  key: 'createAddROMSuccess',
                   severity: 'success',
                   summary: 'Thành công',
                   detail: 'Yêu cầu đã được tạo thành công',
