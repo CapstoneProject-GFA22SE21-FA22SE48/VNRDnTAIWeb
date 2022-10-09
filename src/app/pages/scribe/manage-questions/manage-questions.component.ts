@@ -239,7 +239,7 @@ export class ManageQuestionsComponent implements OnInit {
 
   updateImage(event: any, imageUploaded: any): void {
     this.fileUploadService
-      .uploadImageToFirebase(event.files[0])
+      .uploadImageToFirebase(event.files[0],  `images/mock-test/new/${event.files[0]?.name}`)
       .then((imgUrl: any) => {
         this.tmpSelectedQuestion.imageUrl = imgUrl;
         this.detectChange();
@@ -411,7 +411,7 @@ export class ManageQuestionsComponent implements OnInit {
 
   addNewQuestionImage(event: any, newQuestionImageUploaded: any): void {
     this.fileUploadService
-      .uploadImageToFirebase(event.files[0])
+      .uploadImageToFirebase(event.files[0], `images/mock-test/new/${event.files[0].name}`)
       .then((imgUrl: any) => {
         this.newQuestionImgUrl = imgUrl;
         this.detectChange();

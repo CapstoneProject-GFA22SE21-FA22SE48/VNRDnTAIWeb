@@ -40,7 +40,7 @@
             pButton
             pRipple
             type="button"
-            label="Yêu cầu tạo mới"
+            label="Tạo mới"
             class="p-button-raised p-button-success"
             [style]="{ height: '40px' }"
             (click)="displayCreateDialog = true"
@@ -121,7 +121,7 @@
         <i class="pi pi-info-circle text-xl"></i>
         <span class="text-xl ml-2">Chi tiết</span>
         <span class="text-lg font-bold ml-4">
-          {{ selectedQuestion?.name }}</span
+          {{ selectedQuestion?.name }} ({{ selectedQuestion?.testCategory?.name }})</span
         >
       </div>
 
@@ -182,7 +182,7 @@
             pButton
             pRipple
             type="button"
-            label="Yêu cầu chỉnh sửa"
+            label="Chỉnh sửa"
             class="p-button-raised p-button-help"
             (click)="displayUpdateDialog = true"
           ></button>
@@ -192,7 +192,7 @@
             pButton
             pRipple
             type="button"
-            label="Yêu cầu xóa"
+            label="Xóa"
             class="p-button-raised p-button-danger"
             (click)="displayDeleteDialog = true"
           ></button>
@@ -214,25 +214,37 @@
   </ng-template>
 
   <div class="mb-2">
-    <span class="text-lg font-bold">Gửi yêu cầu tới </span> <br />
-    <p-dropdown
-      [(ngModel)]="selectedAdmin"
-      [options]="admins"
-      placeholder="Quản trị viên"
-      optionLabel="username"
-      [style]="{ height: '40px' }"
-    ></p-dropdown>
+    <div class="flex justify-content-center align-items-center">
+      <div class="w-3">
+        <span class="text-lg font-bold">Gửi yêu cầu tới </span> <br />
+      </div>
+      <div class="w-9">
+        <p-dropdown
+          [(ngModel)]="selectedAdmin"
+          [options]="admins"
+          placeholder="Quản trị viên"
+          optionLabel="username"
+          [style]="{ height: '40px' }"
+        ></p-dropdown>
+      </div>
+    </div>
   </div>
 
   <div class="mb-2">
-    <span class="text-lg font-bold mr-2">Loại bằng </span>
-    <p-dropdown
-      [(ngModel)]="selectedTestCategory"
-      [options]="loadedTestCategories"
-      placeholder="Loại bằng"
-      optionLabel="name"
-      [style]="{ height: '40px' }"
-    ></p-dropdown>
+    <div class="flex justify-content-center align-items-center">
+      <div class="w-3">
+        <span class="text-lg font-bold mr-2">Loại bằng </span>
+      </div>
+      <div class="w-9">
+        <p-dropdown
+          [(ngModel)]="selectedTestCategory"
+          [options]="loadedTestCategories"
+          placeholder="Loại bằng"
+          optionLabel="name"
+          [style]="{ height: '40px' }"
+        ></p-dropdown>
+      </div>
+    </div>
   </div>
 
   <div class="mb-2">
@@ -250,8 +262,8 @@
     </div>
     <div class="flex align-items-center justify-content-center">
       <small class="p-error block ml-5" *ngIf="!isValidNewQuestionName"
-      >Câu số {{ newQuestionName }} đã tồn tại</small
-    >
+        >Câu số {{ newQuestionName }} đã tồn tại</small
+      >
     </div>
   </div>
 
@@ -291,7 +303,7 @@
       ></button>
     </div>
     <div
-      *ngFor="let answer of newQuestionAnswers, let i=index"
+      *ngFor="let answer of newQuestionAnswers; let i = index"
       class="flex justify-content-center align-items-center"
     >
       <div class="w-10">
@@ -306,20 +318,36 @@
             />
           </div>
           <div style="width: 80%; overflow-x: auto; overflow-y: hidden">
-            <div *ngIf="!isEditingNewQuestionAnswer || (isEditingNewQuestionAnswer && i !== editingNewQuestionAnswerIndex)">
+            <div
+              *ngIf="
+                !isEditingNewQuestionAnswer ||
+                (isEditingNewQuestionAnswer &&
+                  i !== editingNewQuestionAnswerIndex)
+              "
+            >
               <span> {{ answer.description }} </span>
             </div>
 
-            <div class="w-full" *ngIf="isEditingNewQuestionAnswer && i === editingNewQuestionAnswerIndex">
-              <input class="w-full"
-              *ngIf="isEditingNewQuestionAnswer && i === editingNewQuestionAnswerIndex"
-              type="text"
-              pInputText
-              [(ngModel)]="txtEditNewQuestionAnswer"
-              [value]="answer.description"
-              [style]="{ height: '40px' }"
-              /> 
-            </div> 
+            <div
+              class="w-full"
+              *ngIf="
+                isEditingNewQuestionAnswer &&
+                i === editingNewQuestionAnswerIndex
+              "
+            >
+              <input
+                class="w-full"
+                *ngIf="
+                  isEditingNewQuestionAnswer &&
+                  i === editingNewQuestionAnswerIndex
+                "
+                type="text"
+                pInputText
+                [(ngModel)]="txtEditNewQuestionAnswer"
+                [value]="answer.description"
+                [style]="{ height: '40px' }"
+              />
+            </div>
           </div>
           <div style="width: 15%">
             <span *ngIf="answer.isCorrect" class="text-lg text-green-300 ml-1"
@@ -329,7 +357,12 @@
         </div>
       </div>
       <div class="w-2">
-        <div *ngIf="!isEditingNewQuestionAnswer || (isEditingNewQuestionAnswer && i !== editingNewQuestionAnswerIndex)">
+        <div
+          *ngIf="
+            !isEditingNewQuestionAnswer ||
+            (isEditingNewQuestionAnswer && i !== editingNewQuestionAnswerIndex)
+          "
+        >
           <button
             pButton
             type="button"
@@ -340,13 +373,17 @@
           <button
             pButton
             type="button"
-            icon="pi pi-times"
+            icon="pi pi-trash"
             class="p-button-rounded p-button-danger p-button-text"
             (click)="deleteNewQuestionAnswer(i)"
           ></button>
         </div>
 
-        <div *ngIf="isEditingNewQuestionAnswer && i === editingNewQuestionAnswerIndex">
+        <div
+          *ngIf="
+            isEditingNewQuestionAnswer && i === editingNewQuestionAnswerIndex
+          "
+        >
           <button
             pButton
             type="button"
@@ -435,19 +472,25 @@
   <ng-template pTemplate="header">
     <span class="text-purple-500 font-bold text-xl"> Chỉnh sửa</span>
   </ng-template>
-  <div class="w-full text-center">
-    <span class="text-lg font-bold ml-4"> {{ tmpSelectedQuestion?.name }}</span>
+  <div class="w-full text-center mb-2">
+    <span class="text-xl font-bold ml-4"> {{ tmpSelectedQuestion?.name }} ({{ selectedQuestion?.testCategory?.name }})</span>
   </div>
 
   <div class="mb-2">
-    <span class="text-lg font-bold">Gửi yêu cầu tới </span> <br />
-    <p-dropdown
-      [(ngModel)]="selectedAdmin"
-      [options]="admins"
-      placeholder="Quản trị viên"
-      optionLabel="username"
-      [style]="{ height: '40px' }"
-    ></p-dropdown>
+    <div class="flex justify-content-center align-items-center">
+      <div class="w-3">
+        <span class="text-lg font-bold">Gửi yêu cầu tới </span>
+      </div>
+      <div class="w-9">
+        <p-dropdown
+          [(ngModel)]="selectedAdmin"
+          [options]="admins"
+          placeholder="Quản trị viên"
+          optionLabel="username"
+          [style]="{ height: '40px' }"
+        ></p-dropdown>
+      </div>
+    </div>
   </div>
 
   <div class="mb-2">
@@ -462,8 +505,7 @@
         style="width: 100%"
         (change)="changeTxtQuestionContent(newQuestionContent.value)"
         [value]="tmpSelectedQuestion?.content"
-        ></textarea
-      >
+      ></textarea>
     </div>
   </div>
 
@@ -568,25 +610,31 @@
 <p-dialog
   #updateDialog
   [(visible)]="displayDeleteDialog"
-  [style]="{ width: '35vw', height: '45vh' }"
+  [style]="{ width: '35vw', height: '40vh' }"
 >
   <ng-template pTemplate="header">
     <span class="text-red-500 font-bold text-xl">Xóa</span>
   </ng-template>
-  <div class="mb-2">
-    <span class="text-lg font-bold">Gửi yêu cầu tới </span> <br />
-    <p-dropdown
-      [(ngModel)]="selectedAdmin"
-      [options]="admins"
-      optionLabel="username"
-      [style]="{ height: '40px' }"
-    ></p-dropdown>
+  <div class="mb-4">
+    <div class="flex justify-content-center align-items-center">
+      <div class="w-3">
+        <span class="text-lg font-bold">Gửi yêu cầu tới </span> <br />
+      </div>
+      <div class="w-9">
+        <p-dropdown
+          [(ngModel)]="selectedAdmin"
+          [options]="admins"
+          optionLabel="username"
+          [style]="{ height: '40px' }"
+        ></p-dropdown>
+      </div>
+    </div>
   </div>
   <div class="w-full text-center">
     <span class="text-lg font-bold ml-4">
       {{ tmpSelectedQuestion?.name }}
     </span>
-    <span class="text-lg">cùng các đáp án sẽ bị xóa. Bạn có chắc chắn?</span>
+    <span class="text-lg">cùng các đáp án sẽ bị yêu cầu xóa. Bạn có chắc chắn?</span>
   </div>
 
   <ng-template pTemplate="footer">

@@ -13,9 +13,9 @@ export class FileUploadService {
     private storage: AngularFireStorage
   ) {}
 
-  uploadImageToFirebase(file: any): Promise<string> {
+  uploadImageToFirebase(file: any, path: string): Promise<string> {
     var n = Date.now();
-    const filePath = `images/mock-test/${file.name}_${n}`;
+    const filePath = path + `_${n}`;
     const fileRef = this.storage.ref(filePath);
     const task = this.storage.upload(filePath, file);
     return new Promise((resolve) => {
