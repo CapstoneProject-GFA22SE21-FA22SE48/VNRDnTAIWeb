@@ -14,7 +14,7 @@ export const paths = {
   },
   scribe: {
     myRequests: 'scribe/my-request',
-    manageLaws: 'scribe/manage-laws',
+    manageLaws: 'scribe/manage-laws/:id',
     manageSigns: 'scribe/manage-signs',
     manageQuestions: 'scribe/manage-questions'
   }

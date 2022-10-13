@@ -1,0 +1,11 @@
+::ng-deep .p-dropdown .p-placeholder {
+  padding-top: .3rem;
+}
+
+::ng-deep .p-dropdown .p-element {
+  padding-top: .3rem;
+}
+
+#section-dropdown-vehicleCat ::ng-deep .p-dropdown .p-placeholder {
+  padding-right: 0;
+}
