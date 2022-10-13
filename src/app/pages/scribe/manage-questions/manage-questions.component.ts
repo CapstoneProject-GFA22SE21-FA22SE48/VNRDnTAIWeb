@@ -14,6 +14,8 @@ import { vietNameseNormalize } from 'src/app/utilities/string.util';
 import { FileUploadService } from 'src/services/file-upload.service';
 import { WrapperService } from 'src/services/wrapper.service';
 import * as paths from '../../../common/paths';
+import * as commonStr from '../../../common/commonStr';
+
 @Component({
   selector: 'app-manage-questions',
   templateUrl: './manage-questions.component.html',
@@ -272,13 +274,20 @@ export class ManageQuestionsComponent implements OnInit {
                 this.messageService.add({
                   key: 'createUpdateROMSuccess',
                   severity: 'success',
-                  summary: 'Thành công',
-                  detail: 'Yêu cầu đã được tạo thành công',
+                  summary: commonStr.success,
+                  detail: commonStr.romCreatedSuccessfully,
                 });
                 this.isLoadingService.remove();
               },
               errorCallback: (error) => {
                 console.log(error);
+                this.displayUpdateDialog = false;
+                this.messageService.add({
+                  key: 'createUpdateROMError',
+                  severity: 'error',
+                  summary: commonStr.fail,
+                  detail: commonStr.errorOccur,
+                });
                 this.isLoadingService.remove();
               },
             }
@@ -286,6 +295,13 @@ export class ManageQuestionsComponent implements OnInit {
         },
         errorCallback: (error) => {
           console.log(error);
+          this.displayUpdateDialog = false;
+          this.messageService.add({
+            key: 'createUpdateROMError',
+            severity: 'error',
+            summary: commonStr.fail,
+            detail: commonStr.errorOccur,
+          });
           this.isLoadingService.remove();
         },
       }
@@ -323,13 +339,20 @@ export class ManageQuestionsComponent implements OnInit {
                 this.messageService.add({
                   key: 'createDeleteROMSuccess',
                   severity: 'success',
-                  summary: 'Thành công',
-                  detail: 'Yêu cầu đã được tạo thành công',
+                  summary: commonStr.success,
+                  detail: commonStr.romCreatedSuccessfully,
                 });
                 this.isLoadingService.remove();
               },
               errorCallback: (error) => {
                 console.log(error);
+                this.displayDeleteDialog = false;
+                this.messageService.add({
+                  key: 'createDeleteROMError',
+                  severity: 'error',
+                  summary: commonStr.fail,
+                  detail: commonStr.errorOccur,
+                });
                 this.isLoadingService.remove();
               },
             }
@@ -337,6 +360,13 @@ export class ManageQuestionsComponent implements OnInit {
         },
         errorCallback: (error) => {
           console.log(error);
+          this.displayDeleteDialog = false;
+          this.messageService.add({
+            key: 'createDeleteROMError',
+            severity: 'error',
+            summary: commonStr.fail,
+                  detail: commonStr.errorOccur,
+          });
           this.isLoadingService.remove();
         },
       }
@@ -486,13 +516,20 @@ export class ManageQuestionsComponent implements OnInit {
                 this.messageService.add({
                   key: 'createAddROMSuccess',
                   severity: 'success',
-                  summary: 'Thành công',
-                  detail: 'Yêu cầu đã được tạo thành công',
+                  summary: commonStr.success,
+                  detail: commonStr.romCreatedSuccessfully,
                 });
                 this.isLoadingService.remove();
               },
               errorCallback: (error) => {
                 console.log(error);
+                this.displayCreateDialog = false;
+                this.messageService.add({
+                  key: 'createAddROMError',
+                  severity: 'error',
+                  summary: commonStr.fail,
+                  detail: commonStr.errorOccur,
+                });
                 this.isLoadingService.remove();
               },
             }
@@ -500,6 +537,13 @@ export class ManageQuestionsComponent implements OnInit {
         },
         errorCallback: (error) => {
           console.log(error);
+          this.displayCreateDialog = false;
+                this.messageService.add({
+                  key: 'createAddROMError',
+                  severity: 'error',
+                  summary: commonStr.fail,
+                  detail: commonStr.errorOccur,
+                });
           this.isLoadingService.remove();
         },
       }

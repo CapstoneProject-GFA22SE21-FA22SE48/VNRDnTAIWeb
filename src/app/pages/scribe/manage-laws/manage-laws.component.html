@@ -1,0 +1,1586 @@
+<!--Screen 1: Not select statue yet -->
+<div
+  [ngClass]="{
+    'h-full flex p-0': selectedStatue === undefined,
+    hidden: selectedStatue
+  }"
+>
+  <!-- Left -->
+  <div class="h-full w-8">
+    <div style="height: 7%" class="p-2 pb-3">
+      <fa-icon class="fa-lg mr-2" [icon]="['fas', 'scale-balanced']"></fa-icon>
+      <span class="text-xl">Quản lý luật</span>
+    </div>
+
+    <div style="height: 8%" class="p-2">
+      <div class="flex mb-3">
+        <div class="w-6 flex justify-content-start">
+          <div>
+            <p-dropdown
+              [(ngModel)]="selectedStatue"
+              [options]="tmpStatues"
+              placeholder="Điều..."
+              optionLabel="name"
+              [showClear]="true"
+              [style]="{ height: '35px' }"
+              (onChange)="selectStatue()"
+            ></p-dropdown>
+          </div>
+        </div>
+        <div class="w-6 flex justify-content-end">
+          <button
+            pButton
+            type="button"
+            label="Tạo mới"
+            class="p-button-raised p-button-success"
+            [style]="{ height: '40px' }"
+          ></button>
+          <!-- (click)="displayCreateDialog = true" -->
+        </div>
+      </div>
+    </div>
+
+    <div style="height: 10%" class="p-2">
+      <div class="flex align-items-center">
+        <div class="flex justify-content-start" style="width: 35%">
+          <div class="w-full">
+            <span class="p-input-icon-right mr-3 w-full">
+              <i class="pi pi-search"></i>
+              <input
+                type="text"
+                pInputText
+                placeholder="Tìm kiếm điều..."
+                id="input-search"
+                [(ngModel)]="searchStatueStr"
+                [style]="{ height: '35px', width: '100%' }"
+                (keyup)="filterStatueData()"
+              />
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="height: 75%" class="p-1">
+      <p-table
+        [value]="statues"
+        [paginator]="true"
+        [rows]="8"
+        [showCurrentPageReport]="true"
+        responsiveLayout="scroll"
+        currentPageReportTemplate="{first} đến {last} trong tổng số {totalRecords} mục"
+        styleClass="p-datatable-gridlines p-datatable-sm"
+      >
+        <ng-template pTemplate="header">
+          <tr>
+            <th [ngStyle]="{ width: '5%', 'text-align': 'center' }">#</th>
+            <th [ngStyle]="{ width: '15%', 'text-align': 'center' }">Điều</th>
+            <th [ngStyle]="{ width: '70%', 'text-align': 'center' }">
+              Nội dung
+            </th>
+            <th [ngStyle]="{ width: '10%', 'text-align': 'center' }"></th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-statue let-i="rowIndex">
+          <tr>
+            <td class="text-center">
+              {{ i + 1 }}
+            </td>
+            <td class="text-center">
+              {{ statue.name }}
+            </td>
+            <td class="text-center">
+              <div
+                class="overflow-hidden white-space-nowrap text-overflow-ellipsis text-center"
+                style="width: 35rem"
+              >
+                {{ statue.description }}
+              </div>
+            </td>
+            <td class="text-center">
+              <button
+                pButton
+                type="button"
+                icon="pi pi-info"
+                class="p-button-rounded p-button-outlined btn-info"
+                style="width: 25px !important; height: 25px !important"
+                (click)="viewStatueInfo(statue)"
+              ></button>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+
+  <!-- Right default -->
+  <div
+    [ngClass]="{
+      'h-full w-4 border-left-3 border-300 p-2': chosenStatue === undefined,
+      hidden: chosenStatue
+    }"
+  >
+    <div class="flex align-items-center mb-3">
+      <i class="pi pi-info-circle text-xl"></i>
+      <span class="text-xl ml-2">Thông tin</span>
+    </div>
+
+    <div id="right-default-content" class="text-lg">
+      <div class="mb-3">
+        <span>Bạn đang quản lý các Điều trong: </span>
+      </div>
+
+      <div class="flex">
+        <div class="w-4 mb-3">
+          <span>Nghị định: </span>
+        </div>
+        <div class="w-8 mb-3">
+          <span> {{ decree?.name }}</span>
+        </div>
+      </div>
+
+      <div class="flex mb-1">
+        <div class="w-4">
+          <span>Mục: </span>
+        </div>
+        <div class="w-8">
+          <span class="font-bold text-blue-500"> {{ column?.name }}</span>
+        </div>
+      </div>
+
+      <div class="flex align-items-center justify-content-center">
+        <div class="surface-200 w-12 border-left-2 border-400 p-2">
+          {{ column?.description }}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right with chosen statue -->
+  <div
+    [ngClass]="{
+      'h-full w-4 border-left-3 border-300':
+        chosenStatue && !isUpdatingChosenStatue,
+      hidden: chosenStatue === undefined || isUpdatingChosenStatue
+    }"
+  >
+    <div class="border-bottom-3 border-300 p-2" style="height: 20%">
+      <div class="flex align-items-center text-xl mb-2">
+        <i class="pi pi-info-circle text-xl"></i>
+        <span class="ml-2">Thông tin chung</span>
+      </div>
+      <div class="flex text-lg mb-3">
+        <div class="w-4">
+          <span>Nghị định: </span>
+        </div>
+        <div class="w-8">
+          <span> {{ decree?.name }}</span>
+        </div>
+      </div>
+
+      <div class="flex text-lg mb-3">
+        <div class="w-4">
+          <span>Mục: </span>
+        </div>
+        <div class="w-8">
+          <span> {{ column?.name }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div style="height: 80%" class="p-2">
+      <div style="height: 80%">
+        <div class="text-xl mb-3">
+          <i class="pi pi-info-circle"></i>
+          <span class="ml-2">Chi tiết</span>
+        </div>
+
+        <div class="text-lg mb-2">
+          <div class="flex">
+            <div class="w-4">
+              <span>Điều: </span>
+            </div>
+            <div class="w-8">
+              <span class="font-bold text-blue-500">
+                {{ chosenStatue?.name }}</span
+              >
+            </div>
+          </div>
+        </div>
+
+        <div class="text-lg">Nội dung:</div>
+
+        <div
+          class="flex align-items-center justify-content-center text-lg mb-2 overflow-x-hidden overflow-y-auto surface-200 w-12 border-left-2 border-400"
+          style="max-height: 30%"
+        >
+          <div class="p-2 h-full">
+            {{ chosenStatue?.description }}
+          </div>
+        </div>
+      </div>
+      <div style="height: 20%">
+        <div class="mb-2">
+          <button
+            pButton
+            pRipple
+            type="button"
+            label="Quản lý các Khoản"
+            class="p-button-outlined"
+            [style]="{ border: '3px solid #3B82F6', height: '40px' }"
+            (click)="goToManageSectionsOfChosenStatue()"
+          ></button>
+        </div>
+        <div class="flex">
+          <div class="w-6">
+            <button
+              pButton
+              pRipple
+              type="button"
+              label="Chỉnh sửa"
+              class="p-button-raised p-button-warning"
+              [style]="{ height: '40px' }"
+              (click)="openUpdateChosenStatue()"
+            ></button>
+          </div>
+          <div class="w-6 text-right">
+            <button
+              pButton
+              pRipple
+              type="button"
+              label="Xóa "
+              class="p-button-raised p-button-danger"
+              [style]="{ height: '40px' }"
+              (click)="displayConfirmDeleteStatueDialog = true"
+            ></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right for updating chosenStatue -->
+  <div
+    [ngClass]="{
+      'h-full w-4 border-left-3 border-300': isUpdatingChosenStatue,
+      hidden: !isUpdatingChosenStatue
+    }"
+  >
+    <div class="p-2" style="height: 90%">
+      <div class="flex align-items-center text-xl mb-2">
+        <i class="pi pi-file-edit text-xl"></i>
+        <span class="ml-2">Chỉnh sửa</span>
+      </div>
+
+      <div class="text-lg mb-2">
+        <div class="flex">
+          <div class="w-4">
+            <span>Điều: </span>
+          </div>
+          <div class="w-8">
+            <span class="font-bold text-blue-500">
+              {{ chosenStatue?.name }}</span
+            >
+          </div>
+        </div>
+      </div>
+
+      <div class="text-lg">Nội dung:</div>
+      <div class="text-lg">
+        <textarea
+          class="w-full h-7rem overflow-y-auto"
+          [rows]="10"
+          pInputTextarea
+          [autoResize]="true"
+          value="{{ newChosenStatueDesc }}"
+          [(ngModel)]="newChosenStatueDesc"
+          (keyup)="getUpdatedStatueDescription($event)"
+        ></textarea>
+      </div>
+      <span
+        class="p-error block"
+        *ngIf="invalidChosenStatueNewDesc || !tmpChosenStatue?.description"
+        >Vui lòng nhập nội dung của điều</span
+      >
+
+      <div class="text-lg flex align-items-center">
+        <div class="w-4">Gửi yêu cầu tới</div>
+        <div class="w-8 flex flex-row-reverse">
+          <p-dropdown
+            [options]="admins"
+            optionLabel="username"
+            [(ngModel)]="selectedAdmin"
+            [style]="{ width: '10rem', height: '35px' }"
+          ></p-dropdown>
+        </div>
+      </div>
+    </div>
+
+    <div class="p-2" style="height: 10%">
+      <div class="flex align-items-center">
+        <div class="w-6">
+          <button
+            pButton
+            pRipple
+            type="button"
+            label="Cập nhật"
+            class="p-button-raised p-button-success"
+            [style]="{ height: '40px' }"
+            [disabled]="!isValidUpdatingStatue"
+            (click)="displayConfirmUpdateStatueDialog = true"
+          ></button>
+        </div>
+        <div class="w-6 flex flex-row-reverse">
+          <button
+            pButton
+            pRipple
+            type="button"
+            label="Hủy bỏ"
+            class="p-button-outlined p-button-danger"
+            [style]="{ border: '3px solid #EF4450', height: '40px' }"
+            (click)="cancelUpdateChosenStatue()"
+          ></button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--Screen 2:  Statue selected -> manage sections -->
+<div
+  [ngClass]="{
+    'h-full flex p-0': selectedStatue,
+    hidden: selectedStatue === undefined
+  }"
+>
+  <!-- Left -->
+  <div class="h-full w-8">
+    <div style="height: 7%" class="p-2 pb-3">
+      <fa-icon class="fa-lg mr-2" [icon]="['fas', 'scale-balanced']"></fa-icon>
+      <span class="text-xl">Quản lý luật</span>
+    </div>
+
+    <div style="height: 8%" class="p-2">
+      <div class="flex mb-3">
+        <div class="flex justify-content-between" style="width: 35%">
+          <p-dropdown
+            [(ngModel)]="selectedStatue"
+            [options]="tmpStatues"
+            placeholder="Điều..."
+            optionLabel="name"
+            [showClear]="true"
+            [style]="{ height: '35px' }"
+            (onChange)="selectStatue()"
+            (onClear)="clearStatue()"
+          ></p-dropdown>
+
+          <p-dropdown
+            [(ngModel)]="selectedSection"
+            [options]="tmpSections"
+            placeholder="Khoản..."
+            optionLabel="name"
+            [showClear]="true"
+            [style]="{ height: '35px' }"
+            (onChange)="selectSection()"
+            (onClear)="clearSection()"
+          ></p-dropdown>
+        </div>
+        <div class="flex justify-content-end" style="width: 65%">
+          <button
+            pButton
+            type="button"
+            label="Tạo mới"
+            class="p-button-raised p-button-success"
+            [style]="{ height: '40px' }"
+          ></button>
+        </div>
+      </div>
+    </div>
+
+    <div style="height: 10%" class="p-2">
+      <div class="flex align-items-center">
+        <div class="flex justify-content-start" style="width: 35%">
+          <div class="w-full">
+            <span class="p-input-icon-right mr-3 w-full">
+              <i class="pi pi-search"></i>
+              <input
+                type="text"
+                pInputText
+                placeholder="Tìm kiếm khoản..."
+                [(ngModel)]="searchSectionStr"
+                [style]="{ height: '35px', width: '100%' }"
+                (keyup)="filterSectionData()"
+              />
+            </span>
+          </div>
+        </div>
+
+        <div
+          class="flex justify-content-end align-items-center"
+          style="width: 65%"
+        >
+          <span class="text-lg mr-2">Mức phạt: </span>
+          <p-inputNumber
+            [(ngModel)]="filterSectionMinPenalty"
+            class="mr-2"
+            [ngClass]="{'ng-invalid ng-dirty' : invalidFilterSectionMinPenalty}"
+            inputId="integeronly"
+            inputId="minmax"
+            [min]="10000"
+            [inputStyle]="{ width: '7rem', height: '35px' }"
+            placeholder="Tối thiểu..."
+            (onInput)="checkFilterSectionMinPenalty($event)"
+          >
+          </p-inputNumber>
+
+          <p-inputNumber
+            [(ngModel)]="filterSectionMaxPenalty"
+            class="mr-2"
+            [ngClass]="{'ng-invalid ng-dirty' : invalidFilterSectionMaxPenalty}"
+            inputId="integeronly"
+            inputId="mixmax"
+            [min]="10000"
+            [inputStyle]="{ width: '7rem', height: '35px' }"
+            placeholder="Tối đa..."
+            (onInput)="checkFilterSectionMaxPenalty($event)"
+          ></p-inputNumber>
+
+          <p-dropdown
+            [(ngModel)]="filterSectionVehicleCategory"
+            id="section-dropdown-vehicleCat"
+            [options]="vehicleCats"
+            optionLabel="name"
+            placeholder="Phương tiện..."
+            [style]="{ height: '35px', width: '10rem' }"
+            [showClear]="true"
+            (onChange)="filterSectionData()"
+          ></p-dropdown> 
+        </div>
+        
+      </div>
+      <div class="flex">
+        <div style="margin-left: 50%">
+          <small class="p-error block">
+            {{ invalidFilterSectionMinPenaltyMsg || invalidFilterSectionMaxPenaltyMsg }}
+          </small>
+        </div>
+      </div>
+    </div>
+
+    <div style="height: 75%" class="p-2">
+      <p-table
+        [value]="sections"
+        [paginator]="true"
+        [rows]="8"
+        [showCurrentPageReport]="true"
+        responsiveLayout="scroll"
+        currentPageReportTemplate="{first} đến {last} trong tổng số {totalRecords} mục"
+        styleClass="p-datatable-gridlines p-datatable-sm"
+      >
+        <ng-template pTemplate="header">
+          <tr>
+            <th [ngStyle]="{ width: '5%', 'text-align': 'center' }">#</th>
+            <th [ngStyle]="{ width: '10%', 'text-align': 'center' }">Khoản</th>
+            <th [ngStyle]="{ width: '40%', 'text-align': 'center' }">
+              Nội dung
+            </th>
+            <th [ngStyle]="{ width: '15%', 'text-align': 'center' }">
+              Phương tiện
+            </th>
+            <th [ngStyle]="{ width: '25%', 'text-align': 'center' }">
+              Mức phạt
+            </th>
+            <th [ngStyle]="{ width: '5%', 'text-align': 'center' }"></th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-section let-i="rowIndex">
+          <tr>
+            <td class="text-center">
+              {{ i + 1 }}
+            </td>
+            <td class="text-center">
+              {{ section.name }}
+            </td>
+            <td class="text-center">
+              <div
+                class="w-20rem overflow-hidden white-space-nowrap text-overflow-ellipsis text-center"
+              >
+                {{ section.description }}
+              </div>
+            </td>
+            <td class="text-center">
+              {{ section.vehicleCategory?.name }}
+            </td>
+            <td class="text-center">
+              {{ section.minPenalty | currency: "VND" }} -
+              {{ section.maxPenalty | currency: "VND" }}
+            </td>
+            <td class="text-center">
+              <button
+                pButton
+                type="button"
+                icon="pi pi-info"
+                class="p-button-rounded p-button-outlined btn-info"
+                style="width: 25px !important; height: 25px !important"
+                (click)="viewSectionInfo(section)"
+              ></button>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+
+  <!-- Right default -->
+  <div
+    [ngClass]="{
+      'h-full w-4 border-left-3 border-300 p-2': chosenSection === undefined,
+      hidden: chosenSection
+    }"
+  >
+    <div class="flex align-items-center mb-3">
+      <i class="pi pi-info-circle text-xl"></i>
+      <span class="text-xl ml-2">Thông tin</span>
+    </div>
+
+    <div id="right-default-content" class="text-lg">
+      <div class="mb-3">
+        <span>Bạn đang quản lý các Khoản trong: </span>
+      </div>
+
+      <div class="flex mb-3">
+        <div class="w-4">
+          <span>Nghị định: </span>
+        </div>
+        <div class="w-8">
+          <span> {{ decree?.name }}</span>
+        </div>
+      </div>
+
+      <div class="flex mb-3">
+        <div class="w-4">
+          <span>Mục: </span>
+        </div>
+        <div class="w-8">
+          <span> {{ column?.name }}</span>
+        </div>
+      </div>
+
+      <div class="flex mb-1">
+        <div class="w-4">
+          <span>Điều: </span>
+        </div>
+        <div class="w-8">
+          <span> {{ selectedStatue?.name }}</span>
+        </div>
+      </div>
+
+      <div class="flex align-items-center justify-content-center mb-2">
+        <div class="surface-200 w-12 border-left-2 border-400 p-2">
+          {{ selectedStatue?.description }}
+        </div>
+      </div>
+
+      <div>
+        <button
+          pButton
+          pRipple
+          type="button"
+          label="Quay lại quản lý các Điều"
+          class="p-button-outlined"
+          [style]="{ border: '3px solid #3B82F6', height: '40px' }"
+          (click)="returnToManegeStatues()"
+        ></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right with chosen section -->
+  <div
+    [ngClass]="{
+      'h-full w-4 border-left-3 border-300':
+        chosenSection && !isUpdatingChosenSection,
+      hidden: chosenSection === undefined || isUpdatingChosenSection
+    }"
+  >
+    <div class="border-bottom-3 border-300 p-2" style="height: 25%">
+      <div class="flex align-items-center text-xl mb-2">
+        <i class="pi pi-info-circle text-xl"></i>
+        <span class="ml-2">Thông tin chung</span>
+      </div>
+      <div class="flex text-lg mb-3">
+        <div class="w-4">
+          <span>Nghị định: </span>
+        </div>
+        <div class="w-8">
+          <span> {{ decree?.name }}</span>
+        </div>
+      </div>
+
+      <div class="flex text-lg mb-3">
+        <div class="w-4">
+          <span>Mục: </span>
+        </div>
+        <div class="w-8">
+          <span> {{ column?.name }}</span>
+        </div>
+      </div>
+
+      <div class="flex text-lg">
+        <div class="w-4">
+          <span>Điều: </span>
+        </div>
+        <div class="w-8">
+          <span> {{ selectedStatue?.name }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div style="height: 75%" class="p-2">
+      <div style="height: 80%">
+        <div class="text-xl mb-3">
+          <i class="pi pi-info-circle"></i>
+          <span class="ml-2">Chi tiết</span>
+        </div>
+
+        <div class="text-lg mb-2">
+          <div class="flex">
+            <div class="w-4">
+              <span>Khoản: </span>
+            </div>
+            <div class="w-8">
+              <span class="font-bold text-blue-500">
+                {{ chosenSection?.name }}</span
+              >
+            </div>
+          </div>
+        </div>
+
+        <div class="text-lg">Nội dung:</div>
+
+        <div
+          class="flex align-items-center justify-content-center text-lg mb-2 overflow-x-hidden overflow-y-auto surface-200 w-12 border-left-2 border-400"
+          style="max-height: 30%"
+        >
+          <div class="p-2 h-full">
+            {{ chosenSection?.description }}
+          </div>
+        </div>
+
+        <div class="text-lg mb-2">
+          <div class="flex">
+            <div class="w-4">
+              <span>Phương tiện: </span>
+            </div>
+            <div class="w-8">
+              <span> {{ chosenSection?.vehicleCategory?.name }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="text-lg mb-2">
+          <span>Mức phạt: </span>
+        </div>
+
+        <!-- If have min and max penalty -->
+        <div class="text-lg mb-2 ml-4">
+          <div class="flex" *ngIf="chosenSection?.minPenalty !== 0">
+            <div class="w-4">
+              <span>Tối thiểu: </span>
+            </div>
+            <div class="w-8">
+              <span class="text-blue-500">
+                {{ chosenSection?.minPenalty | currency: "VND" }}</span
+              >
+            </div>
+          </div>
+
+          <div class="flex" *ngIf="chosenSection?.maxPenalty !== 0">
+            <div class="w-4">
+              <span>Tối đa: </span>
+            </div>
+            <div class="w-8">
+              <span class="text-red-500">
+                {{ chosenSection?.maxPenalty | currency: "VND" }}</span
+              >
+            </div>
+          </div>
+        </div>
+
+        <!-- If do not have min and max penalty -->
+        <div
+          class="text-lg mb-2"
+          *ngIf="
+            chosenSection?.minPenalty === 0 && chosenSection?.maxPenalty === 0
+          "
+        >
+          <span class="font-bold text-red-500">Phạt cảnh cáo</span>
+        </div>
+      </div>
+      <div style="height: 20%">
+        <div class="mb-2">
+          <button
+            pButton
+            pRipple
+            type="button"
+            label="Quản lý các Điểm"
+            class="p-button-outlined"
+            [style]="{ border: '3px solid #3B82F6', height: '40px' }"
+          ></button>
+        </div>
+        <div class="flex">
+          <div class="w-6">
+            <button
+              pButton
+              pRipple
+              type="button"
+              label="Chỉnh sửa"
+              class="p-button-raised p-button-warning"
+              [style]="{ height: '40px' }"
+              (click)="openUpdateChosenSection()"
+            ></button>
+          </div>
+          <div class="w-6 text-right">
+            <button
+              pButton
+              pRipple
+              type="button"
+              label="Xóa "
+              class="p-button-raised p-button-danger"
+              [style]="{ height: '40px' }"
+              (click)="displayConfirmDeleteSectionDialog = true"
+            ></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right for updating chosenSection -->
+  <div
+    [ngClass]="{
+      'h-full w-4 border-left-3 border-300': isUpdatingChosenSection,
+      hidden: !isUpdatingChosenSection
+    }"
+  >
+    <div class="p-2" style="height: 90%">
+      <div class="flex align-items-center text-xl mb-2">
+        <i class="pi pi-file-edit text-xl"></i>
+        <span class="ml-2">Chỉnh sửa</span>
+      </div>
+
+      <div class="text-lg mb-2">
+        <div class="flex">
+          <div class="w-4">
+            <span>Khoản: </span>
+          </div>
+          <div class="w-8">
+            <span class="font-bold text-blue-500">
+              {{ chosenSection?.name }}</span
+            >
+          </div>
+        </div>
+      </div>
+
+      <div class="text-lg">Nội dung:</div>
+      <div class="text-lg">
+        <textarea
+          class="w-full h-7rem overflow-y-auto"
+          [rows]="10"
+          pInputTextarea
+          [autoResize]="true"
+          value="{{ newChosenSectionDesc }}"
+          [(ngModel)]="newChosenSectionDesc"
+          (keyup)="getUpdatedSectionDescription($event)"
+        ></textarea>
+      </div>
+      <span
+        class="p-error block"
+        *ngIf="invalidChosenSectionNewDesc || !tmpChosenSection?.description"
+        >Vui lòng nhập nội dung của khoản</span
+      >
+
+      <div class="text-lg mb-2">
+        <div class="flex">
+          <div class="w-4">
+            <span>Phương tiện: </span>
+          </div>
+          <div class="w-8 flex flex-row-reverse">
+            <p-dropdown
+              [options]="vehicleCats"
+              optionLabel="name"
+              optionValue="id"
+              [style]="{ width: '8rem', height: '35px' }"
+              [(ngModel)]="selectedChosenSectionVehicleCatId"
+              (onChange)="changeChosenSectionVehicleCat()"
+            ></p-dropdown>
+          </div>
+        </div>
+      </div>
+
+      <div class="text-lg mb-2">
+        <span>Mức phạt: </span>
+      </div>
+
+      <div class="text-lg mb-2 ml-4">
+        <div
+          class="flex align-items-center mb-2"
+          *ngIf="tmpChosenSection?.minPenalty !== 0"
+        >
+          <div class="w-4">
+            <span>Tối thiểu: </span>
+          </div>
+          <div class="w-8 flex flex-row-reverse">
+            <p-inputNumber
+              inputId="integeronly"
+              inputId="minmax"
+              [min]="10000"
+              [(ngModel)]="newChosenSectionMinPenalty"
+              [inputStyle]="{ width: '10rem', height: '35px' }"
+              (onInput)="checkChosenSectionNewMinPenalty($event)"
+            >
+            </p-inputNumber>
+          </div>
+        </div>
+
+        <div
+          class="flex align-items-center"
+          *ngIf="tmpChosenSection?.maxPenalty !== 0"
+        >
+          <div class="w-4">
+            <span>Tối đa: </span>
+          </div>
+          <div class="w-8 flex flex-row-reverse">
+            <p-inputNumber
+              inputId="integeronly"
+              inputId="minmax"
+              [min]="10000"
+              [(ngModel)]="newChosenSectionMaxPenalty"
+              [inputStyle]="{ width: '10rem', height: '35px' }"
+              (onInput)="checkChosenSectionNewMaxPenalty($event)"
+            >
+            </p-inputNumber>
+          </div>
+        </div>
+      </div>
+      <span class="p-error block" *ngIf="invalidChosenSectionNewPenaltyMsg">{{
+        invalidChosenSectionNewPenaltyMsg
+      }}</span>
+
+      <div class="text-lg flex align-items-center">
+        <div class="w-4">Gửi yêu cầu tới</div>
+        <div class="w-8 flex flex-row-reverse">
+          <p-dropdown
+            [options]="admins"
+            optionLabel="username"
+            [(ngModel)]="selectedAdmin"
+            [style]="{ width: '10rem', height: '35px' }"
+          ></p-dropdown>
+        </div>
+      </div>
+    </div>
+
+    <div class="p-2" style="height: 10%">
+      <div class="flex align-items-center">
+        <div class="w-6">
+          <button
+            pButton
+            pRipple
+            type="button"
+            label="Cập nhật"
+            class="p-button-raised p-button-success"
+            [style]="{ height: '40px' }"
+            [disabled]="!isValidUpdatingSection"
+            (click)="displayConfirmUpdateSectionDialog = true"
+          ></button>
+        </div>
+        <div class="w-6 flex flex-row-reverse">
+          <button
+            pButton
+            pRipple
+            type="button"
+            label="Hủy bỏ"
+            class="p-button-outlined p-button-danger"
+            [style]="{ border: '3px solid #EF4450', height: '40px' }"
+            (click)="cancelUpdateChosenSection()"
+          ></button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Screen 3: Section selected -> manage paragraphs -->
+<!-- <div
+  [ngClass]="{
+    'h-full flex p-0': selectedSection,
+    hidden: selectedSection === undefined
+  }"
+>
+  Left
+  <div class="h-full w-8">
+    <div style="height: 7%" class="p-2 pb-3">
+      <fa-icon class="fa-lg mr-2" [icon]="['fas', 'scale-balanced']"></fa-icon>
+      <span class="text-xl">Quản lý luật</span>
+    </div>
+
+    <div style="height: 8%" class="p-2">
+      <div class="flex mb-3">
+        <div class="flex justify-content-between" style="width: 35%">
+          <p-dropdown
+            [(ngModel)]="selectedStatue"
+            [options]="tmpStatues"
+            placeholder="Điều..."
+            optionLabel="name"
+            [showClear]="true"
+            [style]="{ height: '35px' }"
+            (onChange)="selectStatue()"
+            (onClear)="clearStatue()"
+          ></p-dropdown>
+
+          <p-dropdown
+            [(ngModel)]="selectedSection"
+            [options]="tmpSections"
+            placeholder="Khoản..."
+            optionLabel="name"
+            [showClear]="true"
+            [style]="{ height: '35px' }"
+            (onChange)="selectSection()"
+            (onClear)="clearSection()"
+          ></p-dropdown>
+        </div>
+        <div class="flex justify-content-end" style="width: 65%">
+          <button
+            pButton
+            type="button"
+            label="Tạo mới"
+            class="p-button-raised p-button-success"
+            [style]="{ height: '40px' }"
+          ></button>
+        </div>
+      </div>
+    </div>
+
+    <div style="height: 10%" class="p-2">
+      <div class="flex align-items-center">
+        <div class="flex justify-content-start" style="width: 35%">
+          <div class="w-full">
+            <span class="p-input-icon-right mr-3 w-full">
+              <i class="pi pi-search"></i>
+              <input
+                type="text"
+                pInputText
+                placeholder="Tìm kiếm khoản..."
+                [(ngModel)]="searchSectionStr"
+                [style]="{ height: '35px', width: '100%' }"
+                (keyup)="filterSectionData()"
+              />
+            </span>
+          </div>
+        </div>
+      </div>
+      <div class="flex">
+        <div style="margin-left: 50%">
+          <small class="p-error block">
+            {{ invalidFilterSectionMinPenaltyMsg || invalidFilterSectionMaxPenaltyMsg }}
+          </small>
+        </div>
+      </div>
+    </div>
+
+    <div style="height: 75%" class="p-2">
+      <p-table
+        [value]="sections"
+        [paginator]="true"
+        [rows]="8"
+        [showCurrentPageReport]="true"
+        responsiveLayout="scroll"
+        currentPageReportTemplate="{first} đến {last} trong tổng số {totalRecords} mục"
+        styleClass="p-datatable-gridlines p-datatable-sm"
+      >
+        <ng-template pTemplate="header">
+          <tr>
+            <th [ngStyle]="{ width: '5%', 'text-align': 'center' }">#</th>
+            <th [ngStyle]="{ width: '10%', 'text-align': 'center' }">Khoản</th>
+            <th [ngStyle]="{ width: '40%', 'text-align': 'center' }">
+              Nội dung
+            </th>
+            <th [ngStyle]="{ width: '15%', 'text-align': 'center' }">
+              Phương tiện
+            </th>
+            <th [ngStyle]="{ width: '25%', 'text-align': 'center' }">
+              Mức phạt
+            </th>
+            <th [ngStyle]="{ width: '5%', 'text-align': 'center' }"></th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-section let-i="rowIndex">
+          <tr>
+            <td class="text-center">
+              {{ i + 1 }}
+            </td>
+            <td class="text-center">
+              {{ section.name }}
+            </td>
+            <td class="text-center">
+              <div
+                class="w-20rem overflow-hidden white-space-nowrap text-overflow-ellipsis text-center"
+              >
+                {{ section.description }}
+              </div>
+            </td>
+            <td class="text-center">
+              {{ section.vehicleCategory?.name }}
+            </td>
+            <td class="text-center">
+              {{ section.minPenalty | currency: "VND" }} -
+              {{ section.maxPenalty | currency: "VND" }}
+            </td>
+            <td class="text-center">
+              <button
+                pButton
+                type="button"
+                icon="pi pi-info"
+                class="p-button-rounded p-button-outlined btn-info"
+                style="width: 25px !important; height: 25px !important"
+                (click)="viewSectionInfo(section)"
+              ></button>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+
+  Right default
+  <div
+    [ngClass]="{
+      'h-full w-4 border-left-3 border-300 p-2': chosenSection === undefined,
+      hidden: chosenSection
+    }"
+  >
+    <div class="flex align-items-center mb-3">
+      <i class="pi pi-info-circle text-xl"></i>
+      <span class="text-xl ml-2">Thông tin</span>
+    </div>
+
+    <div id="right-default-content" class="text-lg">
+      <div class="mb-3">
+        <span>Bạn đang quản lý các Khoản trong: </span>
+      </div>
+
+      <div class="flex mb-3">
+        <div class="w-4">
+          <span>Nghị định: </span>
+        </div>
+        <div class="w-8">
+          <span> {{ decree?.name }}</span>
+        </div>
+      </div>
+
+      <div class="flex mb-3">
+        <div class="w-4">
+          <span>Mục: </span>
+        </div>
+        <div class="w-8">
+          <span> {{ column?.name }}</span>
+        </div>
+      </div>
+
+      <div class="flex mb-1">
+        <div class="w-4">
+          <span>Điều: </span>
+        </div>
+        <div class="w-8">
+          <span> {{ selectedStatue?.name }}</span>
+        </div>
+      </div>
+
+      <div class="flex align-items-center justify-content-center mb-2">
+        <div class="surface-200 w-12 border-left-2 border-400 p-2">
+          {{ selectedStatue?.description }}
+        </div>
+      </div>
+
+      <div>
+        <button
+          pButton
+          pRipple
+          type="button"
+          label="Quay lại quản lý các Điều"
+          class="p-button-outlined"
+          [style]="{ border: '3px solid #3B82F6', height: '40px' }"
+          (click)="returnToManegeStatues()"
+        ></button>
+      </div>
+    </div>
+  </div>
+
+  Right with chosen section
+  <div
+    [ngClass]="{
+      'h-full w-4 border-left-3 border-300':
+        chosenSection && !isUpdatingChosenSection,
+      hidden: chosenSection === undefined || isUpdatingChosenSection
+    }"
+  >
+    <div class="border-bottom-3 border-300 p-2" style="height: 25%">
+      <div class="flex align-items-center text-xl mb-2">
+        <i class="pi pi-info-circle text-xl"></i>
+        <span class="ml-2">Thông tin chung</span>
+      </div>
+      <div class="flex text-lg mb-3">
+        <div class="w-4">
+          <span>Nghị định: </span>
+        </div>
+        <div class="w-8">
+          <span> {{ decree?.name }}</span>
+        </div>
+      </div>
+
+      <div class="flex text-lg mb-3">
+        <div class="w-4">
+          <span>Mục: </span>
+        </div>
+        <div class="w-8">
+          <span> {{ column?.name }}</span>
+        </div>
+      </div>
+
+      <div class="flex text-lg">
+        <div class="w-4">
+          <span>Điều: </span>
+        </div>
+        <div class="w-8">
+          <span> {{ selectedStatue?.name }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div style="height: 75%" class="p-2">
+      <div style="height: 80%">
+        <div class="text-xl mb-3">
+          <i class="pi pi-info-circle"></i>
+          <span class="ml-2">Chi tiết</span>
+        </div>
+
+        <div class="text-lg mb-2">
+          <div class="flex">
+            <div class="w-4">
+              <span>Khoản: </span>
+            </div>
+            <div class="w-8">
+              <span class="font-bold text-blue-500">
+                {{ chosenSection?.name }}</span
+              >
+            </div>
+          </div>
+        </div>
+
+        <div class="text-lg">Nội dung:</div>
+
+        <div
+          class="flex align-items-center justify-content-center text-lg mb-2 overflow-x-hidden overflow-y-auto surface-200 w-12 border-left-2 border-400"
+          style="max-height: 30%"
+        >
+          <div class="p-2 h-full">
+            {{ chosenSection?.description }}
+          </div>
+        </div>
+
+        <div class="text-lg mb-2">
+          <div class="flex">
+            <div class="w-4">
+              <span>Phương tiện: </span>
+            </div>
+            <div class="w-8">
+              <span> {{ chosenSection?.vehicleCategory?.name }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="text-lg mb-2">
+          <span>Mức phạt: </span>
+        </div>
+
+      </div>
+      <div style="height: 20%">
+        <div class="mb-2">
+          <button
+            pButton
+            pRipple
+            type="button"
+            label="Quản lý các Điểm"
+            class="p-button-outlined"
+            [style]="{ border: '3px solid #3B82F6', height: '40px' }"
+          ></button>
+        </div>
+        <div class="flex">
+          <div class="w-6">
+            <button
+              pButton
+              pRipple
+              type="button"
+              label="Chỉnh sửa"
+              class="p-button-raised p-button-warning"
+              [style]="{ height: '40px' }"
+              (click)="openUpdateChosenSection()"
+            ></button>
+          </div>
+          <div class="w-6 text-right">
+            <button
+              pButton
+              pRipple
+              type="button"
+              label="Xóa "
+              class="p-button-raised p-button-danger"
+              [style]="{ height: '40px' }"
+              (click)="displayConfirmDeleteSectionDialog = true"
+            ></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  Right for updating chosenSection
+  <div
+    [ngClass]="{
+      'h-full w-4 border-left-3 border-300': isUpdatingChosenSection,
+      hidden: !isUpdatingChosenSection
+    }"
+  >
+    <div class="p-2" style="height: 90%">
+      <div class="flex align-items-center text-xl mb-2">
+        <i class="pi pi-file-edit text-xl"></i>
+        <span class="ml-2">Chỉnh sửa</span>
+      </div>
+
+      <div class="text-lg mb-2">
+        <div class="flex">
+          <div class="w-4">
+            <span>Khoản: </span>
+          </div>
+          <div class="w-8">
+            <span class="font-bold text-blue-500">
+              {{ chosenSection?.name }}</span
+            >
+          </div>
+        </div>
+      </div>
+
+      <div class="text-lg">Nội dung:</div>
+      <div class="text-lg">
+        <textarea
+          class="w-full h-7rem overflow-y-auto"
+          [rows]="10"
+          pInputTextarea
+          [autoResize]="true"
+          value="{{ newChosenSectionDesc }}"
+          [(ngModel)]="newChosenSectionDesc"
+          (keyup)="getUpdatedSectionDescription($event)"
+        ></textarea>
+      </div>
+      <span
+        class="p-error block"
+        *ngIf="invalidChosenSectionNewDesc || !tmpChosenSection?.description"
+        >Vui lòng nhập nội dung của khoản</span
+      >
+
+      <div class="text-lg mb-2">
+        <div class="flex">
+          <div class="w-4">
+            <span>Phương tiện: </span>
+          </div>
+          <div class="w-8 flex flex-row-reverse">
+            <p-dropdown
+              [options]="vehicleCats"
+              optionLabel="name"
+              optionValue="id"
+              [style]="{ width: '8rem', height: '35px' }"
+              [(ngModel)]="selectedChosenSectionVehicleCatId"
+              (onChange)="changeChosenSectionVehicleCat()"
+            ></p-dropdown>
+          </div>
+        </div>
+      </div>
+
+      <div class="text-lg mb-2">
+        <span>Mức phạt: </span>
+      </div>
+
+      <div class="text-lg mb-2 ml-4">
+        <div
+          class="flex align-items-center mb-2"
+          *ngIf="tmpChosenSection?.minPenalty !== 0"
+        >
+          <div class="w-4">
+            <span>Tối thiểu: </span>
+          </div>
+          <div class="w-8 flex flex-row-reverse">
+            <p-inputNumber
+              inputId="integeronly"
+              inputId="minmax"
+              [min]="10000"
+              [(ngModel)]="newChosenSectionMinPenalty"
+              [inputStyle]="{ width: '10rem', height: '35px' }"
+              (onInput)="checkChosenSectionNewMinPenalty($event)"
+            >
+            </p-inputNumber>
+          </div>
+        </div>
+
+        <div
+          class="flex align-items-center"
+          *ngIf="tmpChosenSection?.maxPenalty !== 0"
+        >
+          <div class="w-4">
+            <span>Tối đa: </span>
+          </div>
+          <div class="w-8 flex flex-row-reverse">
+            <p-inputNumber
+              inputId="integeronly"
+              inputId="minmax"
+              [min]="10000"
+              [(ngModel)]="newChosenSectionMaxPenalty"
+              [inputStyle]="{ width: '10rem', height: '35px' }"
+              (onInput)="checkChosenSectionNewMaxPenalty($event)"
+            >
+            </p-inputNumber>
+          </div>
+        </div>
+      </div>
+      <span class="p-error block" *ngIf="invalidChosenSectionNewPenaltyMsg">{{
+        invalidChosenSectionNewPenaltyMsg
+      }}</span>
+
+      <div class="text-lg flex align-items-center">
+        <div class="w-4">Gửi yêu cầu tới</div>
+        <div class="w-8 flex flex-row-reverse">
+          <p-dropdown
+            [options]="admins"
+            optionLabel="username"
+            [(ngModel)]="selectedAdmin"
+            [style]="{ width: '10rem', height: '35px' }"
+          ></p-dropdown>
+        </div>
+      </div>
+    </div>
+
+    <div class="p-2" style="height: 10%">
+      <div class="flex align-items-center">
+        <div class="w-6">
+          <button
+            pButton
+            pRipple
+            type="button"
+            label="Cập nhật"
+            class="p-button-raised p-button-success"
+            [style]="{ height: '40px' }"
+            [disabled]="!isValidUpdatingSection"
+            (click)="displayConfirmUpdateSectionDialog = true"
+          ></button>
+        </div>
+        <div class="w-6 flex flex-row-reverse">
+          <button
+            pButton
+            pRipple
+            type="button"
+            label="Hủy bỏ"
+            class="p-button-outlined p-button-danger"
+            [style]="{ border: '3px solid #EF4450', height: '40px' }"
+            (click)="cancelUpdateChosenSection()"
+          ></button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> -->
+
+<!-- Confirm update statue dialog -->
+<p-dialog
+  [(visible)]="displayConfirmUpdateStatueDialog"
+  [style]="{ width: '30rem', height: '13rem' }"
+>
+  <ng-template pTemplate="header">
+    <span class="text-orange-500 font-bold text-xl">Chỉnh sửa</span>
+  </ng-template>
+  <div class="w-full text-center text-lg">
+    "{{ chosenStatue?.name }}"
+    <span> sẽ được chỉnh sửa. Bạn có chắc? </span>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <button
+      type="button"
+      pButton
+      icon="pi pi-times"
+      label="Hủy"
+      class="p-button-danger"
+      style="height: 40px"
+      (click)="displayConfirmUpdateStatueDialog = false"
+    ></button>
+    <button
+      type="button"
+      pButton
+      icon="pi pi-check"
+      label="Đồng ý"
+      class="p-button-success"
+      style="height: 40px"
+      (click)="updateChosenStatue()"
+    ></button>
+  </ng-template>
+</p-dialog>
+
+<!-- Confirm delete statue dialog -->
+<p-dialog
+  [(visible)]="displayConfirmDeleteStatueDialog"
+  [style]="{ width: '35vw', height: '40vh' }"
+>
+  <ng-template pTemplate="header">
+    <span class="text-red-500 font-bold text-xl">Xóa</span>
+  </ng-template>
+
+  <div class="mb-3">
+    <div class="flex justify-content-center align-items-center">
+      <div class="w-3">
+        <span class="text-lg font-bold">Gửi yêu cầu tới </span> <br />
+      </div>
+      <div class="w-9">
+        <p-dropdown
+          [(ngModel)]="selectedAdmin"
+          [options]="admins"
+          optionLabel="username"
+          [style]="{ height: '40px' }"
+        ></p-dropdown>
+      </div>
+    </div>
+  </div>
+  <div class="w-full text-center">
+    <span class="text-lg font-bold ml-4">
+      {{ chosenStatue?.name }}
+    </span>
+    <span class="text-lg"> sẽ bị yêu cầu xóa. Bạn có chắc chắn?</span>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <button
+      type="button"
+      pButton
+      icon="pi pi-times"
+      label="Hủy"
+      class="p-button-danger"
+      style="height: 40px"
+      (click)="displayConfirmDeleteStatueDialog = false"
+    ></button>
+    <button
+      type="button"
+      pButton
+      icon="pi pi-check"
+      label="Đồng ý"
+      class="p-button-success"
+      style="height: 40px"
+      (click)="deleteChosenStatue()"
+    ></button>
+  </ng-template>
+</p-dialog>
+
+<p-toast key="updateStatueSuccess" life="1000"></p-toast>
+<p-toast key="updateStatueError" life="1000"></p-toast>
+
+<p-toast key="deleteStatueSuccess" life="1000"></p-toast>
+<p-toast key="deleteStatueError" life="1000"></p-toast>
+
+<!-- Confirm update section dialog -->
+<p-dialog
+  [(visible)]="displayConfirmUpdateSectionDialog"
+  [style]="{ width: '30rem', height: '13rem' }"
+>
+  <ng-template pTemplate="header">
+    <span class="text-orange-500 font-bold text-xl">Chỉnh sửa</span>
+  </ng-template>
+  <div class="w-full text-center text-lg">
+    "{{ chosenSection?.name }}"
+    <span> sẽ được chỉnh sửa. Bạn có chắc? </span>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <button
+      type="button"
+      pButton
+      icon="pi pi-times"
+      label="Hủy"
+      class="p-button-danger"
+      style="height: 40px"
+      (click)="displayConfirmUpdateSectionDialog = false"
+    ></button>
+    <button
+      type="button"
+      pButton
+      icon="pi pi-check"
+      label="Đồng ý"
+      class="p-button-success"
+      style="height: 40px"
+      (click)="updateChosenSection()"
+    ></button>
+  </ng-template>
+</p-dialog>
+
+<!-- Confirm delete section dialog -->
+<p-dialog
+  [(visible)]="displayConfirmDeleteSectionDialog"
+  [style]="{ width: '35vw', height: '40vh' }"
+>
+  <ng-template pTemplate="header">
+    <span class="text-red-500 font-bold text-xl">Xóa</span>
+  </ng-template>
+
+  <div class="mb-3">
+    <div class="flex justify-content-center align-items-center">
+      <div class="w-3">
+        <span class="text-lg font-bold">Gửi yêu cầu tới </span> <br />
+      </div>
+      <div class="w-9">
+        <p-dropdown
+          [(ngModel)]="selectedAdmin"
+          [options]="admins"
+          optionLabel="username"
+          [style]="{ height: '40px' }"
+        ></p-dropdown>
+      </div>
+    </div>
+  </div>
+  <div class="w-full text-center">
+    <span class="text-lg font-bold ml-4">
+      {{ chosenSection?.name }}
+    </span>
+    <span class="text-lg"> sẽ bị yêu cầu xóa. Bạn có chắc chắn?</span>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <button
+      type="button"
+      pButton
+      icon="pi pi-times"
+      label="Hủy"
+      class="p-button-danger"
+      style="height: 40px"
+      (click)="displayConfirmDeleteSectionDialog = false"
+    ></button>
+    <button
+      type="button"
+      pButton
+      icon="pi pi-check"
+      label="Đồng ý"
+      class="p-button-success"
+      style="height: 40px"
+      (click)="deleteChosenSection()"
+    ></button>
+  </ng-template>
+</p-dialog>
+
+<p-toast key="updateSectionSuccess" life="1000"></p-toast>
+<p-toast key="updateSectionError" life="1000"></p-toast>
+
+<p-toast key="deleteSectionSuccess" life="1000"></p-toast>
+<p-toast key="deleteSectionError" life="1000"></p-toast>

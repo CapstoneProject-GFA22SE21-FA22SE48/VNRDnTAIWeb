@@ -60,6 +60,7 @@ import { AngularFireStorageModule } from '@angular/fire/compat/storage';
 import { AngularFireDatabaseModule } from '@angular/fire/compat/database';
 import { environment } from 'src/environments/environment';
 import {InputNumberModule} from 'primeng/inputnumber';
+import { SafePipe } from './shared/pipes/safe.pipe';
 
 @NgModule({
   declarations: [
@@ -81,6 +82,7 @@ import {InputNumberModule} from 'primeng/inputnumber';
     ManageQuestionsComponent,
     DatePipe,
     MyRequestComponent,
+    SafePipe,
   ],
   imports: [
     BrowserModule,

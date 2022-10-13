@@ -37,3 +37,19 @@ ul {
 .active { 
     background-color: #CBD6FE;
 }
+
+.sidebar-submenu-items {
+    text-decoration: none;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #3366FF;
+    display: block;
+    margin:0;
+    padding: 5%;
+    border-bottom: 2px solid #C2D1FF;
+    padding-left: 20%;
+}
+
+.sidebar-submenu-items:hover {
+    background-color: #CBD6FE;
+}

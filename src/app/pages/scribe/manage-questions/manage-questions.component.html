@@ -183,7 +183,8 @@
             pRipple
             type="button"
             label="Chỉnh sửa"
-            class="p-button-raised p-button-help"
+            class="p-button-raised p-button-warning"
+            [style]="{ height: '40px' }"
             (click)="displayUpdateDialog = true"
           ></button>
         </div>
@@ -194,6 +195,7 @@
             type="button"
             label="Xóa"
             class="p-button-raised p-button-danger"
+            [style]="{ height: '40px' }"
             (click)="displayDeleteDialog = true"
           ></button>
         </div>
@@ -367,7 +369,7 @@
             pButton
             type="button"
             icon="pi pi-file-edit"
-            class="p-button-rounded p-button-help p-button-text mr-2"
+            class="p-button-rounded p-button-warning p-button-text mr-2"
             (click)="enableEditNewQuestionAnswer(answer, i)"
           ></button>
           <button
@@ -429,7 +431,7 @@
         *ngIf="newQuestionImgUrl !== ''"
         [src]="newQuestionImgUrl"
         alt="Hình ảnh đính kèm"
-        [style]="{ width: '30rem', height: '30rem' }"
+        [style]="{ width: '30rem', height: 'auto' }"
       />
     </div>
   </div>
@@ -577,7 +579,7 @@
         [src]="tmpSelectedQuestion?.imageUrl"
         alt="Hình ảnh đính kèm"
         id="question-img"
-        [style]="{ width: '30rem', height: '30rem' }"
+        [style]="{ width: '30rem', height: 'auto' }"
       />
     </div>
   </div>
@@ -615,7 +617,7 @@
   <ng-template pTemplate="header">
     <span class="text-red-500 font-bold text-xl">Xóa</span>
   </ng-template>
-  <div class="mb-4">
+  <div class="mb-3">
     <div class="flex justify-content-center align-items-center">
       <div class="w-3">
         <span class="text-lg font-bold">Gửi yêu cầu tới </span> <br />
@@ -661,5 +663,8 @@
 <!-- End of confirm delete dialog -->
 
 <p-toast key="createAddROMSuccess" life="1000"></p-toast>
+<p-toast key="createAddROMError" life="1000"></p-toast>
 <p-toast key="createUpdateROMSuccess" life="1000"></p-toast>
+<p-toast key="createUpdateROMError" life="1000"></p-toast>
 <p-toast key="createDeleteROMSuccess" life="1000"></p-toast>
+<p-toast key="createDeleteROMError" life="1000"></p-toast>

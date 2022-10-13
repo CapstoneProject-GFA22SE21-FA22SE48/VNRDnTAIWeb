@@ -8,6 +8,12 @@ export interface Answer {
     question: Question
 }
 
+export interface AssignedColumn {
+    columnId: string,
+    userId: string,
+    isDeleted: boolean
+}
+
 export interface Column {
     id: string,
     name: string,
@@ -51,10 +57,15 @@ export interface Gpssign {
 export interface Keyword {
     id: string,
     name: number,
-    paragraphId: number,
     isDeleted: boolean,
 
     paragraph: Paragraph
+}
+
+export interface KeywordParagraph {
+    keywordId: string,
+    paragraphId: string,
+    isDeleted: boolean
 }
 
 export interface Paragraph {
@@ -66,14 +77,21 @@ export interface Paragraph {
     additionalPenalty: string,
     isDeleted: boolean,
 
+    referenceParagraphs: Paragraph[],
+
     section: Section,
     keywords: Keyword[],
-    paragraphModificationRequests: ParagraphModificationRequest[],
-    referenceParagraphs: Reference[],
+    LawModificationRequests: LawModificationRequest[],
+    // referenceParagraphs: Reference[],
     signParagraphs: SignParagraph[]
 }
 
-export interface ParagraphModificationRequest {
+export interface LawModificationRequest {
+    id: string;
+    modifiedStatueId: string,
+    modifyingStatueId: string,
+    modifiedSectionId: string,
+    modifyingSectionId: string,
     modifiedParagraphId: string,
     modifyingParagraphId: string,
     scribeId: string,
@@ -131,6 +149,7 @@ export interface Reference {
 export interface Section {
     id: string,
     name: string,
+    vehicleCategoryId: string,
     statueId: string,
     description: string,
     minPenalty: number,
@@ -138,6 +157,7 @@ export interface Section {
     ssDeleted: boolean,
 
     statue: Statue,
+    vehicleCategory: VehicleCategory;
     paragraphs: Paragraph[]
 }
 
@@ -193,13 +213,11 @@ export interface SignParagraph {
 export interface Statue {
     id: string, 
     name: string, 
-    vehicleCategoryId: string,
     columnId: string,
     description: string,
     isDeleted: boolean,
 
     column: Column,
-    vehicleCategory: VehicleCategory,
     sections: Section[]
 }
 
@@ -245,8 +263,8 @@ export interface User {
     createdDate: Date,
     isDeleted: boolean,
 
-    paragraphModificationRequestAdmins: ParagraphModificationRequest[],
-    paragraphModificationRequestScribes: ParagraphModificationRequest[],
+    LawModificationRequestAdmins: LawModificationRequest[],
+    LawModificationRequestScribes: LawModificationRequest[],
     userModificationRequestArbitratingAdmins: UserModificationRequest[],
     userModificationRequestModifiedUsers: UserModificationRequest[],
     userModificationRequestModifyingUsers: UserModificationRequest[],
