@@ -34,4 +34,5 @@ export const ScribeGetReferenceParagraphsByParagraphId: string = base + '/Paragr
 
 export const ScribeCreateStatueForROM: string = base + '/Statues';
 export const ScribeCreateSectionForROM: string = base + '/Sections';
+export const ScribeCreateParagraphForROM: string = base + '/Paragraphs';
 export const ScribeCreateLawModificationRequest: string = base + '/LawModificationRequests'; //used for statue, section, paragraph
