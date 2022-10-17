@@ -6,7 +6,7 @@ import { decodeToken, getStorageToken } from 'src/app/utilities/jwt.util';
 import { WrapperService } from 'src/services/wrapper.service';
 import * as paths from '../../../common/paths';
 import * as commonStr from '../../../common/commonStr';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-manage-laws',
@@ -63,10 +63,37 @@ export class ManageLawsComponent implements OnInit {
   //paragraph
   paragraphs: any;
   tmpParagraphs: any;
-  selectedparagraph: any;
+  selectedParagraph: any;
   chosenParagraph: any;
   tmpChosenParagraph: any;
   isUpdatingChosenParagraph: boolean = false;
+
+  isCollapsedChosenParagraph: boolean = false;
+
+  searchParagraphStr = '';
+
+  // used for updating chosen paragraph -> collect data to create new paragraph and ROM
+  newChosenParagraphDesc: any;
+  invalidChosenParagraphNewDesc: boolean = false;
+  newChosenParagraphReferenceList: any;
+  newChosenParagraphAdditionalPenalty: any;
+
+  isValidUpdatingParagraph: boolean = false;
+
+  displayAddChosenParagraphReference: boolean = false;
+
+  addingChosenParagraphStatueList: any;
+  addingChosenParagraphStatue: any;
+  addingChosenParagraphSectionList: any;
+  addingChosenParagraphSection: any;
+  addingChosenParagraphParagraphList: any;
+  addingChosenParagraphParagraph: any;
+  emptyParagraphSectionMsg: any;
+
+  tmpChosenParagraphAddingReferenceList: any[] = []; //used for displaying newly added included reference paragraphs in dialog
+  addingErrorChosenParagraphAddingReferenceListReferenceMsg: any;
+  isUpdatingChosenParagraphReferenceIncludedList: boolean = false;
+  isUpdatingChosenParagraphReferenceExcludedList: boolean = false;
   //end of paragraph
 
   vehicleCats: any;
@@ -81,6 +108,9 @@ export class ManageLawsComponent implements OnInit {
   displayConfirmUpdateSectionDialog: boolean = false;
   displayConfirmDeleteSectionDialog: boolean = false;
 
+  displayConfirmUpdateParagraphDialog: boolean = false;
+  displayConfirmDeleteParagraphDialog: boolean = false;
+
   constructor(
     private wrapperService: WrapperService,
     private isLoadingService: IsLoadingService,
@@ -90,6 +120,7 @@ export class ManageLawsComponent implements OnInit {
 
   ngOnInit(): void {
     this.activatedRoute.paramMap.subscribe((params) => {
+      this.clearStatue();
       this.subMenuSelectedColumnId = params.get('id');
       this.loadStatuesOfSubmenuSelectedAssignColumn();
       this.loadDecree();
@@ -200,6 +231,9 @@ export class ManageLawsComponent implements OnInit {
 
   checkFilterSectionMinPenalty(event: any) {
     this.filterSectionMinPenalty = event.value;
+    this.invalidFilterSectionMinPenalty = false;
+    this.invalidFilterSectionMaxPenalty = false;
+    this.invalidFilterSectionMaxPenaltyMsg = '';
 
     if (
       this.filterSectionMinPenalty &&
@@ -209,16 +243,15 @@ export class ManageLawsComponent implements OnInit {
       this.invalidFilterSectionMinPenalty = true;
       this.invalidFilterSectionMinPenaltyMsg =
         'Vui lòng nhập mức phạt tối thiểu nhỏ hơn mức phạt tối đa';
-    } else {
-      this.invalidFilterSectionMinPenalty = false;
-      this.invalidFilterSectionMinPenaltyMsg = '';
     }
-
     this.filterSectionData();
   }
 
   checkFilterSectionMaxPenalty(event: any) {
     this.filterSectionMaxPenalty = event.value;
+    this.invalidFilterSectionMinPenalty = false;
+    this.invalidFilterSectionMaxPenalty = false;
+    this.invalidFilterSectionMaxPenaltyMsg = '';
 
     if (
       this.filterSectionMinPenalty &&
@@ -228,9 +261,6 @@ export class ManageLawsComponent implements OnInit {
       this.invalidFilterSectionMaxPenalty = true;
       this.invalidFilterSectionMaxPenaltyMsg =
         'Vui lòng nhập mức phạt tối đa lớn hơn mức phạt tối thiểu';
-    } else {
-      this.invalidFilterSectionMaxPenalty = false;
-      this.invalidFilterSectionMaxPenaltyMsg = '';
     }
     this.filterSectionData();
   }
@@ -249,11 +279,11 @@ export class ManageLawsComponent implements OnInit {
       );
     }
 
-    if(this.filterSectionMinPenalty && this.filterSectionMaxPenalty){
+    if (this.filterSectionMinPenalty && this.filterSectionMaxPenalty) {
       this.sections = this.sections.filter(
         (s: any) =>
-          parseInt(s.minPenalty) >= parseInt(this.filterSectionMinPenalty)
-          && parseInt(s.maxPenalty) <= parseInt(this.filterSectionMaxPenalty)
+          parseInt(s.minPenalty) >= parseInt(this.filterSectionMinPenalty) &&
+          parseInt(s.maxPenalty) <= parseInt(this.filterSectionMaxPenalty)
       );
     } else if (this.filterSectionMinPenalty && !this.filterSectionMaxPenalty) {
       this.sections = this.sections.filter(
@@ -275,6 +305,23 @@ export class ManageLawsComponent implements OnInit {
     }
   }
 
+  filterParagraphData() {
+    this.paragraphs = this.tmpParagraphs;
+
+    //Search
+    if (this.searchParagraphStr != '') {
+      this.paragraphs = this.paragraphs.filter(
+        (p: any) =>
+          p.name
+            ?.toLowerCase()
+            .includes(this.searchParagraphStr.toLowerCase()) ||
+          p.description
+            ?.toLowerCase()
+            .includes(this.searchParagraphStr.toLowerCase())
+      );
+    }
+  }
+
   viewStatueInfo(statue: any) {
     this.chosenStatue = statue;
 
@@ -288,21 +335,28 @@ export class ManageLawsComponent implements OnInit {
     this.isUpdatingChosenSection = false;
     this.tmpChosenSection = JSON.parse(JSON.stringify(this.chosenSection));
 
-    // this.newChosenSectionDesc = undefined;
-
-    // this.selectedChosenSectionVehicleCatId =
-    //   this.chosenSection.vehicleCategoryId;
-    // this.tmpChosenSection.vehicleCategoryId =
-    //   this.selectedChosenSectionVehicleCatId;
-
-    // this.newChosenSectionMinPenalty = undefined;
-    // this.newChosenSectionMaxPenalty = undefined;
     this.clearChosenSectionData();
   }
 
-  selectStatue() { //when first select a statue or select for changing a statue
+  viewParagraphInfo(paragraph: any) {
+    this.chosenParagraph = paragraph;
+
+    this.isUpdatingChosenParagraph = false;
+    this.tmpChosenParagraph = JSON.parse(JSON.stringify(this.chosenParagraph));
+
+    this.clearChosenParagraphData();
+  }
+
+  selectStatue() {
+    //when first select a statue or select for changing a statue
     this.chosenStatue = undefined;
+    this.chosenSection = undefined;
+    this.chosenParagraph = undefined;
+
+    this.selectedSection = undefined;
+
     this.isUpdatingChosenSection = false;
+    this.isUpdatingChosenParagraph = false;
 
     if (this.selectedStatue) {
       this.isLoadingService.add();
@@ -311,7 +365,6 @@ export class ManageLawsComponent implements OnInit {
         getStorageToken(),
         {
           successCallback: (response) => {
-            this.chosenSection = undefined;
             this.sections = response.data;
             this.tmpSections = response.data;
             this.isLoadingService.remove();
@@ -325,8 +378,11 @@ export class ManageLawsComponent implements OnInit {
     }
   }
 
-  selectSection() { //when first select a section or select for changing a section
+  selectSection() {
+    //when first select a section or select for changing a section
     this.chosenSection = undefined;
+    this.chosenParagraph = undefined;
+    this.isUpdatingChosenSection = false;
     this.isUpdatingChosenParagraph = false;
 
     if (this.selectedSection) {
@@ -337,8 +393,18 @@ export class ManageLawsComponent implements OnInit {
         {
           successCallback: (response) => {
             this.paragraphs = response.data;
-            console.log(this.paragraphs);
-            this.tmpParagraphs = response.data;
+            this.paragraphs.forEach((p: any) => {
+              p.referenceParagraphs.forEach((r: any) => {
+                if (r.referenceParagraphIsExcluded) {
+                  p.hasExcluded = true;
+                }
+                if (!r.referenceParagraphIsExcluded) {
+                  p.hasIncluded = true;
+                }
+              });
+            });
+            this.tmpParagraphs = JSON.parse(JSON.stringify(this.paragraphs));
+
             this.isLoadingService.remove();
           },
           errorCallback: (error) => {
@@ -351,7 +417,6 @@ export class ManageLawsComponent implements OnInit {
   }
 
   clearStatue() {
-    //clear statue
     this.selectedStatue = undefined;
     this.chosenStatue = undefined;
     this.isUpdatingChosenStatue = false;
@@ -359,24 +424,48 @@ export class ManageLawsComponent implements OnInit {
     this.clearSection();
   }
 
-  clearSection(){
-    //clear section
+  clearSection() {
     this.selectedSection = undefined;
     this.chosenSection = undefined;
     this.isUpdatingChosenSection = false;
+
+    this.clearParagraph();
   }
 
-  returnToManegeStatues(){
+  clearParagraph() {
+    this.chosenParagraph = undefined;
+    this.isUpdatingChosenParagraph = false;
+  }
+
+  returnToManegeStatues() {
     this.clearStatue();
   }
 
-  goToManageSectionsOfChosenStatue(){
+  returnToManegeSections() {
+    this.clearSection();
+  }
+
+  goToManageSectionsOfChosenStatue() {
     this.selectedStatue = this.chosenStatue;
     this.selectStatue();
   }
 
+  goToManageParagraphsOfChosenSection() {
+    this.selectedSection = this.chosenSection;
+    this.selectSection();
+  }
+
+  openUpdateChosenStatue() {
+    this.isUpdatingChosenStatue = true;
+    this.isValidUpdatingStatue = false;
+    this.tmpChosenStatue = JSON.parse(JSON.stringify(this.chosenStatue));
+
+    this.newChosenStatueDesc = this.tmpChosenStatue.description;
+  }
+
   openUpdateChosenSection() {
     this.isUpdatingChosenSection = true;
+    this.isValidUpdatingSection = false;
     this.tmpChosenSection = JSON.parse(JSON.stringify(this.chosenSection));
 
     this.newChosenSectionDesc = this.tmpChosenSection.description;
@@ -386,11 +475,17 @@ export class ManageLawsComponent implements OnInit {
     this.newChosenSectionMaxPenalty = this.tmpChosenSection.maxPenalty;
   }
 
-  openUpdateChosenStatue() {
-    this.isUpdatingChosenStatue = true;
-    this.tmpChosenStatue = JSON.parse(JSON.stringify(this.chosenStatue));
+  openUpdateChosenParagraph() {
+    this.isUpdatingChosenParagraph = true;
+    this.isValidUpdatingParagraph = false;
+    this.tmpChosenParagraph = JSON.parse(JSON.stringify(this.chosenParagraph));
 
-    this.newChosenStatueDesc = this.tmpChosenStatue.description;
+    //Set default value for each field of new data for chosen paragraph
+    this.newChosenParagraphDesc = this.tmpChosenParagraph.description;
+    this.newChosenParagraphReferenceList =
+      this.tmpChosenParagraph.referenceParagraphs;
+    this.newChosenParagraphAdditionalPenalty =
+      this.tmpChosenParagraph.additionalPenalty;
   }
 
   getUpdatedSectionDescription(event: any) {
@@ -413,6 +508,22 @@ export class ManageLawsComponent implements OnInit {
       this.invalidChosenStatueNewDesc = true;
     }
     this.detectChangeStatue();
+  }
+
+  getUpdatedParagraphDescription(event: any) {
+    let newDesc = event.target.value;
+    if (newDesc !== '') {
+      this.invalidChosenParagraphNewDesc = false;
+      this.tmpChosenParagraph.description = newDesc;
+    } else {
+      this.invalidChosenParagraphNewDesc = true;
+    }
+    this.detectChangeParagraph();
+  }
+
+  getUpdatedParagraphAdditionalPenalty(event: any) {
+    this.tmpChosenParagraph.additionalPenalty = event.target.value;
+    this.detectChangeParagraph();
   }
 
   changeChosenSectionVehicleCat() {
@@ -483,6 +594,25 @@ export class ManageLawsComponent implements OnInit {
     }
   }
 
+  detectChangeParagraph() {
+    if (
+      JSON.stringify(this.chosenParagraph) !==
+        JSON.stringify(this.tmpChosenParagraph) &&
+      !this.invalidChosenParagraphNewDesc
+    ) {
+      this.isValidUpdatingParagraph = true;
+    } else {
+      this.isValidUpdatingParagraph = false;
+    }
+  }
+
+  clearChosenStatueData() {
+    this.newChosenStatueDesc = undefined;
+    this.invalidChosenStatueNewDesc = false;
+
+    this.isValidUpdatingStatue = false;
+  }
+
   clearChosenSectionData() {
     this.newChosenSectionDesc = undefined;
 
@@ -495,14 +625,26 @@ export class ManageLawsComponent implements OnInit {
     this.newChosenSectionMaxPenalty = undefined;
 
     this.invalidChosenStatueNewDesc = false;
-    this.isValidUpdatingStatue = false;
     this.invalidChosenSectionNewPenaltyMsg = undefined;
+    this.isValidUpdatingStatue = false;
+    this.isValidUpdatingSection = false;
   }
 
-  clearChosenStatueData() {
-    this.newChosenStatueDesc = undefined;
-    this.invalidChosenStatueNewDesc = false;
+  clearChosenParagraphData() {
+    this.newChosenParagraphDesc = undefined;
+    this.newChosenParagraphReferenceList = undefined;
+    this.newChosenParagraphAdditionalPenalty = undefined;
+
+    // this.tmpChosenParagraphAddingReferenceList = [];
+    // this.addingErrorChosenParagraphAddingReferenceListReferenceMsg = undefined;
+    this.tmpChosenParagraph.referenceParagraphs =
+      this.chosenParagraph.referenceParagraphs;
+
+    this.invalidChosenParagraphNewDesc = false;
+
     this.isValidUpdatingStatue = false;
+    this.isValidUpdatingSection = false;
+    this.isValidUpdatingParagraph = false;
   }
 
   cancelUpdateChosenStatue() {
@@ -517,6 +659,13 @@ export class ManageLawsComponent implements OnInit {
     this.clearChosenSectionData();
 
     this.detectChangeSection();
+  }
+
+  cancelUpdateChosenParagraph() {
+    this.isUpdatingChosenParagraph = false;
+    this.clearChosenParagraphData();
+
+    this.detectChangeParagraph();
   }
 
   updateChosenStatue() {
@@ -547,7 +696,7 @@ export class ManageLawsComponent implements OnInit {
                 this.isUpdatingChosenStatue = false;
                 this.clearChosenStatueData();
                 this.messageService.add({
-                  key: 'updateStatueSuccess',
+                  key: 'updateSuccess',
                   severity: 'success',
                   summary: commonStr.success,
                   detail: commonStr.romCreatedSuccessfully,
@@ -558,7 +707,7 @@ export class ManageLawsComponent implements OnInit {
                 console.log(error);
                 this.displayConfirmUpdateStatueDialog = false;
                 this.messageService.add({
-                  key: 'updateStatueError',
+                  key: 'updateError',
                   severity: 'error',
                   summary: commonStr.fail,
                   detail: commonStr.errorOccur,
@@ -572,7 +721,7 @@ export class ManageLawsComponent implements OnInit {
           console.log(error);
           this.displayConfirmUpdateStatueDialog = false;
           this.messageService.add({
-            key: 'updateStatueError',
+            key: 'updateError',
             severity: 'error',
             summary: commonStr.fail,
             detail: commonStr.errorOccur,
@@ -614,7 +763,7 @@ export class ManageLawsComponent implements OnInit {
                 this.isUpdatingChosenSection = false;
                 this.clearChosenSectionData();
                 this.messageService.add({
-                  key: 'updateSectionSuccess',
+                  key: 'updateSuccess',
                   severity: 'success',
                   summary: commonStr.success,
                   detail: commonStr.romCreatedSuccessfully,
@@ -625,7 +774,7 @@ export class ManageLawsComponent implements OnInit {
                 console.log(error);
                 this.displayConfirmUpdateSectionDialog = false;
                 this.messageService.add({
-                  key: 'updateSectionError',
+                  key: 'updateError',
                   severity: 'error',
                   summary: commonStr.fail,
                   detail: commonStr.errorOccur,
@@ -639,7 +788,67 @@ export class ManageLawsComponent implements OnInit {
           console.log(error);
           this.displayConfirmUpdateSectionDialog = false;
           this.messageService.add({
-            key: 'updateSectionError',
+            key: 'updateError',
+            severity: 'error',
+            summary: commonStr.fail,
+            detail: commonStr.errorOccur,
+          });
+          this.isLoadingService.remove();
+        },
+      }
+    );
+  }
+
+  updateChosenParagraph() {
+    this.isLoadingService.add();
+    this.wrapperService.post(
+      paths.ScribeCreateParagraphForROM,
+      this.tmpChosenParagraph,
+      getStorageToken(),
+      {
+        successCallback: (response) => {
+          this.wrapperService.post(
+            paths.ScribeCreateLawModificationRequest,
+            {
+              modifyingParagraphId: response.data?.id,
+              modifiedParagraphId: this.chosenParagraph.id,
+              scribeId: decodeToken(getStorageToken() || '').Id,
+              adminId: this.selectedAdmin.id,
+              operationType: OperationType.Update,
+            },
+            getStorageToken(),
+            {
+              successCallback: (response) => {
+                this.displayConfirmUpdateParagraphDialog = false;
+                this.isUpdatingChosenParagraph = false;
+                this.clearChosenParagraphData();
+                this.messageService.add({
+                  key: 'updateSuccess',
+                  severity: 'success',
+                  summary: commonStr.success,
+                  detail: commonStr.romCreatedSuccessfully,
+                });
+                this.isLoadingService.remove();
+              },
+              errorCallback: (error) => {
+                console.log(error);
+                this.displayConfirmUpdateParagraphDialog = false;
+                this.messageService.add({
+                  key: 'updateError',
+                  severity: 'error',
+                  summary: commonStr.fail,
+                  detail: commonStr.errorOccur,
+                });
+                this.isLoadingService.remove();
+              },
+            }
+          );
+        },
+        errorCallback: (error) => {
+          console.log(error);
+          this.displayConfirmUpdateParagraphDialog = false;
+          this.messageService.add({
+            key: 'updateError',
             severity: 'error',
             summary: commonStr.fail,
             detail: commonStr.errorOccur,
@@ -679,7 +888,7 @@ export class ManageLawsComponent implements OnInit {
                 this.isUpdatingChosenStatue = false;
                 this.clearChosenStatueData();
                 this.messageService.add({
-                  key: 'deleteStatueSuccess',
+                  key: 'deleteSuccess',
                   severity: 'success',
                   summary: commonStr.success,
                   detail: commonStr.romCreatedSuccessfully,
@@ -690,7 +899,7 @@ export class ManageLawsComponent implements OnInit {
                 console.log(error);
                 this.displayConfirmDeleteStatueDialog = false;
                 this.messageService.add({
-                  key: 'deleteStatueError',
+                  key: 'deleteError',
                   severity: 'error',
                   summary: commonStr.fail,
                   detail: commonStr.errorOccur,
@@ -704,7 +913,7 @@ export class ManageLawsComponent implements OnInit {
           console.log(error);
           this.displayConfirmDeleteStatueDialog = false;
           this.messageService.add({
-            key: 'deleteStatueError',
+            key: 'deleteError',
             severity: 'error',
             summary: commonStr.fail,
             detail: commonStr.errorOccur,
@@ -747,7 +956,7 @@ export class ManageLawsComponent implements OnInit {
                 this.isUpdatingChosenSection = false;
                 this.clearChosenSectionData();
                 this.messageService.add({
-                  key: 'deleteSectionSuccess',
+                  key: 'deleteSuccess',
                   severity: 'success',
                   summary: commonStr.success,
                   detail: commonStr.romCreatedSuccessfully,
@@ -758,7 +967,7 @@ export class ManageLawsComponent implements OnInit {
                 console.log(error);
                 this.displayConfirmDeleteSectionDialog = false;
                 this.messageService.add({
-                  key: 'deleteSectionError',
+                  key: 'deleteError',
                   severity: 'error',
                   summary: commonStr.fail,
                   detail: commonStr.errorOccur,
@@ -772,7 +981,7 @@ export class ManageLawsComponent implements OnInit {
           console.log(error);
           this.displayConfirmDeleteSectionDialog = false;
           this.messageService.add({
-            key: 'deleteSectionError',
+            key: 'deleteError',
             severity: 'error',
             summary: commonStr.fail,
             detail: commonStr.errorOccur,
@@ -783,4 +992,279 @@ export class ManageLawsComponent implements OnInit {
     );
   }
 
+  deleteChosenParagraph() {
+    this.isLoadingService.add();
+    this.wrapperService.post(
+      paths.ScribeCreateParagraphForROM,
+      {
+        sectionId: this.chosenParagraph.sectionId,
+        name: this.chosenParagraph.name,
+        description: this.chosenParagraph.description,
+        additionalPenalty: this.chosenParagraph.additionalPenalty,
+        isDeleted: true,
+      },
+      getStorageToken(),
+      {
+        successCallback: (response) => {
+          this.wrapperService.post(
+            paths.ScribeCreateLawModificationRequest,
+            {
+              modifyingParagraphId: response.data?.id,
+              modifiedParagraphId: this.chosenParagraph.id,
+              scribeId: decodeToken(getStorageToken() || '').Id,
+              adminId: this.selectedAdmin.id,
+              operationType: OperationType.Delete,
+            },
+            getStorageToken(),
+            {
+              successCallback: (response) => {
+                this.displayConfirmDeleteParagraphDialog = false;
+                this.isUpdatingChosenParagraph = false;
+                this.clearChosenParagraphData();
+                this.messageService.add({
+                  key: 'deleteSuccess',
+                  severity: 'success',
+                  summary: commonStr.success,
+                  detail: commonStr.romCreatedSuccessfully,
+                });
+                this.isLoadingService.remove();
+              },
+              errorCallback: (error) => {
+                console.log(error);
+                this.displayConfirmDeleteParagraphDialog = false;
+                this.messageService.add({
+                  key: 'deleteError',
+                  severity: 'error',
+                  summary: commonStr.fail,
+                  detail: commonStr.errorOccur,
+                });
+                this.isLoadingService.remove();
+              },
+            }
+          );
+        },
+        errorCallback: (error) => {
+          console.log(error);
+          this.displayConfirmDeleteParagraphDialog = false;
+          this.messageService.add({
+            key: 'deleteError',
+            severity: 'error',
+            summary: commonStr.fail,
+            detail: commonStr.errorOccur,
+          });
+          this.isLoadingService.remove();
+        },
+      }
+    );
+  }
+
+  //Remove chosen paragraph reference from referenc list in updating screen
+  removeChosenParagraphReferenceParagraphs(reference: any) {
+    this.newChosenParagraphReferenceList =
+      this.newChosenParagraphReferenceList.filter(
+        (r: any) => r.referenceParagraphId !== reference.referenceParagraphId
+      );
+
+    this.tmpChosenParagraph.referenceParagraphs =
+      this.newChosenParagraphReferenceList;
+
+    this.detectChangeParagraph();
+  }
+
+  // start of adding chosen paragraph reference
+  loadAddingChosenParagraphStatueList() {
+    this.displayAddChosenParagraphReference = true;
+    this.addingChosenParagraphStatueList = JSON.parse(
+      JSON.stringify(this.tmpStatues)
+    );
+  }
+
+  selectAddingChosenParagraphStatue(event: any) {
+    this.addingChosenParagraphSection = undefined;
+    this.addingChosenParagraphParagraph = undefined;
+
+    this.addingChosenParagraphStatue = event.value;
+
+    if (this.addingChosenParagraphStatue) {
+      this.isLoadingService.add();
+      this.wrapperService.get(
+        paths.ScribeGetSectionsByStatueId +
+          '/' +
+          this.addingChosenParagraphStatue?.id,
+        getStorageToken(),
+        {
+          successCallback: (response) => {
+            this.addingChosenParagraphSectionList = response.data;
+            this.isLoadingService.remove();
+          },
+          errorCallback: (error) => {
+            console.log(error);
+            this.isLoadingService.remove();
+          },
+        }
+      );
+    }
+  }
+
+  selectAddingChosenParagraphSection(event: any) {
+    this.addingChosenParagraphParagraph = undefined;
+
+    this.addingChosenParagraphSection = event.value;
+
+    if (this.addingChosenParagraphSection) {
+      this.isLoadingService.add();
+      this.wrapperService.get(
+        paths.ScribeGetParagraphsBySectionId +
+          '/' +
+          this.addingChosenParagraphSection?.id,
+        getStorageToken(),
+        {
+          successCallback: (response) => {
+            //This section has an empty paragraph
+            if (response.data.length === 1 && response.data[0].name === '') {
+              this.emptyParagraphSectionMsg = 'Khoản này không chứa điểm';
+            } else {
+              this.addingChosenParagraphParagraphList = response.data;
+
+              //Remove current chosen paragraph from the list of reference paragraph that will be added
+              this.addingChosenParagraphParagraphList.forEach(
+                (r: any, i: number) => {
+                  this.addingChosenParagraphParagraphList =
+                    this.addingChosenParagraphParagraphList.filter(
+                      (r: any) => r.id !== this.chosenParagraph.id
+                    );
+                }
+              );
+
+              //Remove added reference paragraphs from the list of reference paragraph that will be added
+              this.newChosenParagraphReferenceList.forEach((addedRef: any) => {
+                this.addingChosenParagraphParagraphList =
+                  this.addingChosenParagraphParagraphList.filter(
+                    (r: any) => r.id !== addedRef.referenceParagraphId
+                  );
+              });
+
+              this.emptyParagraphSectionMsg = '';
+            }
+            this.isLoadingService.remove();
+          },
+          errorCallback: (error) => {
+            console.log(error);
+            this.isLoadingService.remove();
+          },
+        }
+      );
+    }
+  }
+
+  selectAddingChosenParagraphParagraph(event: any) {
+    this.addingChosenParagraphParagraph = event.value;
+  }
+
+  // "Hủy" button clicked or dialog onHide
+  clearAddChosenParagraphReference() {
+    this.displayAddChosenParagraphReference = false;
+
+    this.isUpdatingChosenParagraphReferenceIncludedList = false;
+    this.isUpdatingChosenParagraphReferenceExcludedList = false;
+
+    this.addingChosenParagraphStatueList = undefined;
+    this.addingChosenParagraphStatue = null;
+    this.addingChosenParagraphSectionList = undefined;
+    this.addingChosenParagraphSection = undefined;
+    this.addingChosenParagraphParagraphList = undefined;
+    this.addingChosenParagraphParagraph = undefined;
+    this.emptyParagraphSectionMsg = undefined;
+    this.tmpChosenParagraphAddingReferenceList = [];
+    this.addingErrorChosenParagraphAddingReferenceListReferenceMsg = undefined;
+  }
+
+  //"Lưu lại" button clicked
+  addChosenParagraphIncludedReference() {
+    if (
+      !this.addingChosenParagraphParagraph ||
+      !this.addingChosenParagraphSection ||
+      !this.addingChosenParagraphStatue
+    ) {
+      this.addingErrorChosenParagraphAddingReferenceListReferenceMsg =
+        'Vui lòng chọn điều, khoản, điểm trước khi lưu lại';
+      return;
+    } else {
+      this.addingErrorChosenParagraphAddingReferenceListReferenceMsg = '';
+    }
+
+    let reference = {
+      referenceParagraphId: this.addingChosenParagraphParagraph.id,
+      referenceParagraphName: this.addingChosenParagraphParagraph.name,
+      referenceParagraphDesc: this.addingChosenParagraphParagraph.description,
+
+      referenceParagraphSectionId: this.addingChosenParagraphSection.id,
+      referenceParagraphSectionName: this.addingChosenParagraphSection.name,
+
+      referenceParagraphSectionStatueId: this.addingChosenParagraphStatue.id,
+      referenceParagraphSectionStatueName:
+        this.addingChosenParagraphStatue.name,
+      referenceParagraphIsExcluded: this
+        .isUpdatingChosenParagraphReferenceExcludedList
+        ? true
+        : false,
+    };
+
+    var existed = false;
+
+    //check with original reference list before adding
+    this.tmpChosenParagraph.referenceParagraphs.forEach((r: any) => {
+      if (
+        r.referenceParagraphId == reference.referenceParagraphId &&
+        r.referenceParagraphSectionId ==
+          reference.referenceParagraphSectionId &&
+        r.referenceParagraphSectionStatueId ==
+          reference.referenceParagraphSectionStatueId
+      ) {
+        this.addingErrorChosenParagraphAddingReferenceListReferenceMsg =
+          'Điểm đã tồn tại trong danh sách';
+      } else {
+        //check with temporary reference list before adding
+        existed = this.tmpChosenParagraphAddingReferenceList.some((r: any) => {
+          if (
+            r.referenceParagraphId == reference.referenceParagraphId &&
+            r.referenceParagraphSectionId ==
+              reference.referenceParagraphSectionId &&
+            r.referenceParagraphSectionStatueId ==
+              reference.referenceParagraphSectionStatueId
+          ) {
+            return true;
+          } else {
+            return false;
+          }
+        });
+      }
+    });
+
+    if (this.tmpChosenParagraphAddingReferenceList.length === 0 || !existed) {
+      this.tmpChosenParagraphAddingReferenceList.push(reference);
+      this.addingErrorChosenParagraphAddingReferenceListReferenceMsg = '';
+    } else {
+      this.addingErrorChosenParagraphAddingReferenceListReferenceMsg =
+        'Điểm đã tồn tại trong danh sách';
+    }
+  }
+
+  removeChosenParagraphIncludedReference(i: any) {
+    this.tmpChosenParagraphAddingReferenceList.splice(i, 1);
+    this.addingErrorChosenParagraphAddingReferenceListReferenceMsg = '';
+  }
+
+  //"Hoàn thành" button clicked
+  completeAddChosenParagraphIncludedReference() {
+    this.tmpChosenParagraphAddingReferenceList.forEach((r: any) => {
+      this.newChosenParagraphReferenceList.push(r);
+    });
+    this.tmpChosenParagraph.referenceParagraphs =
+      this.newChosenParagraphReferenceList;
+    this.displayAddChosenParagraphReference = false;
+
+    this.detectChangeParagraph();
+  }
+  // end of adding chosen paragraph reference
 }

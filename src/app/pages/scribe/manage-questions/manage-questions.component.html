@@ -121,7 +121,9 @@
         <i class="pi pi-info-circle text-xl"></i>
         <span class="text-xl ml-2">Chi tiết</span>
         <span class="text-lg font-bold ml-4">
-          {{ selectedQuestion?.name }} ({{ selectedQuestion?.testCategory?.name }})</span
+          {{ selectedQuestion?.name }} ({{
+            selectedQuestion?.testCategory?.name
+          }})</span
         >
       </div>
 
@@ -475,7 +477,11 @@
     <span class="text-purple-500 font-bold text-xl"> Chỉnh sửa</span>
   </ng-template>
   <div class="w-full text-center mb-2">
-    <span class="text-xl font-bold ml-4"> {{ tmpSelectedQuestion?.name }} ({{ selectedQuestion?.testCategory?.name }})</span>
+    <span class="text-xl font-bold ml-4">
+      {{ tmpSelectedQuestion?.name }} ({{
+        selectedQuestion?.testCategory?.name
+      }})</span
+    >
   </div>
 
   <div class="mb-2">
@@ -629,6 +635,9 @@
           optionLabel="username"
           [style]="{ height: '40px' }"
         ></p-dropdown>
+        <!-- scrollHeight="100px"
+          [filter]="true"
+          filterBy="username" -->
       </div>
     </div>
   </div>
@@ -636,7 +645,9 @@
     <span class="text-lg font-bold ml-4">
       {{ tmpSelectedQuestion?.name }}
     </span>
-    <span class="text-lg">cùng các đáp án sẽ bị yêu cầu xóa. Bạn có chắc chắn?</span>
+    <span class="text-lg"
+      >cùng các đáp án sẽ bị yêu cầu xóa. Bạn có chắc chắn?</span
+    >
   </div>
 
   <ng-template pTemplate="footer">

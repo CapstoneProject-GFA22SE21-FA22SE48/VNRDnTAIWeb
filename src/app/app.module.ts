@@ -61,7 +61,9 @@ import { AngularFireDatabaseModule } from '@angular/fire/compat/database';
 import { environment } from 'src/environments/environment';
 import {InputNumberModule} from 'primeng/inputnumber';
 import { SafePipe } from './shared/pipes/safe.pipe';
-
+import {TooltipModule} from 'primeng/tooltip';
+import { ChipModule } from 'primeng/chip';
+import { AutoCompleteModule } from 'primeng/autocomplete';
 @NgModule({
   declarations: [
     AppComponent,
@@ -118,7 +120,10 @@ import { SafePipe } from './shared/pipes/safe.pipe';
     AngularFireDatabaseModule,
     AngularFireStorageModule,
     AngularFireModule,
-    InputNumberModule
+    InputNumberModule,
+    TooltipModule,
+    ChipModule,
+    AutoCompleteModule
   ],
   providers: [ConfirmationService, MessageService],
   bootstrap: [AppComponent],

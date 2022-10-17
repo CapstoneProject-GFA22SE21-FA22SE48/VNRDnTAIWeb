@@ -27,6 +27,14 @@
   padding-top: .5rem;
 }
 
+/* ::ng-deep .p-dropdown-panel .p-dropdown-header {
+  padding: .5rem;
+}
+
+::ng-deep .p-dropdown-panel .p-dropdown-header .p-dropdown-filter-container .p-inputtext {
+  height: 35px;
+} */
+
 #question-info {
   border-left: 3px solid #EFEFEF;
 }

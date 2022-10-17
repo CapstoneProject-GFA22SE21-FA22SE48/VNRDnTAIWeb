@@ -29,5 +29,7 @@
     "T10",
     "T11",
     "T12"
-  ]
+  ],
+  "emptyMessage": "Không có dữ liệu",
+  "emptyFilterMessage": "Không có dữ liệu"
 }
