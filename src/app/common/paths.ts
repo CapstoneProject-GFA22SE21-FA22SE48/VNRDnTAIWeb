@@ -31,6 +31,7 @@ export const ScribeGetAssignedColumnData: string = base + '/Columns/AssignedColu
 export const ScribeGetSectionsByStatueId: string = base + '/Sections/ByStatue';
 export const ScribeGetParagraphsBySectionId: string = base + '/Paragraphs/BySection';
 export const ScribeGetReferenceParagraphsByParagraphId: string = base + '/Paragraphs/BySection';
+export const ScribeGetKeywords: string = base + '/Keywords';
 
 export const ScribeCreateStatueForROM: string = base + '/Statues';
 export const ScribeCreateSectionForROM: string = base + '/Sections';
