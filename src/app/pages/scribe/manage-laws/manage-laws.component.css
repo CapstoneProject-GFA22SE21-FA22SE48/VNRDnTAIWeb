@@ -10,16 +10,16 @@
   padding-right: 0;
 }
 
-#new-paragraph-dropdown-keywords ::ng-deep .p-dropdown .p-dropdown-label {
+ /* ::ng-deep .p-dropdown .p-dropdown-label #new-paragraph-dropdown-keywords{
   padding-right: 0 !important;
   font-size: 90% !important;
 }
 
 
-#new-paragraph-dropdown-keywords ::ng-deep .p-dropdown .p-dropdown-trigger{
+ ::ng-deep .p-dropdown .p-dropdown-trigger #new-paragraph-dropdown-keywords{
   width: 1.5rem !important;
   padding-right: 0.2rem !important;
-}
+} */
 
 
 

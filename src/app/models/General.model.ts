@@ -294,6 +294,39 @@ export interface VehicleCategory {
     statues: Statue[]
 }
 
+export interface ReferenceDTO {
+    referenceParagraphId: string,
+    referenceParagraphName: string,
+    referenceParagraphDesc: string,
+    referenceParagraphSectionId: string,
+    referenceParagraphSectionName: string,
+    referenceParagraphSectionStatueId: string,
+    referenceParagraphSectionStatueName: string,
+    referenceParagraphIsExcluded: boolean,
+}
+ 
+export interface NewParagraphDTO {
+    sectionId: string,
+    name: string,
+    description: string, 
+    additionalPenalty: string,
+    keywordId: string,
+    referenceParagraphs: ReferenceDTO[]
+}
+
+export interface NewSectionDTO {
+    statueId: string,
+    name: string,
+    description: string,
+    vehicleCategoryId: string,
+    minPenalty: number,
+    maxPenalty: number,
+    isSectionWithNoParagraph: boolean,
+    
+    paragraphs?: NewParagraphDTO[] //when not a section with no paragraph
+    referenceParagraphs?: ReferenceDTO[] //when a section with no paragraph and has references
+}
+
 //Enumeration
 export enum UserRole {
     ADMIN = 0,

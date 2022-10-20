@@ -2122,6 +2122,9 @@
 <p-toast key="deleteSuccess" life="1000"></p-toast>
 <p-toast key="deleteError" life="1000"></p-toast>
 
+<p-toast key="createSuccess" life="1000"></p-toast>
+<p-toast key="createError" life="1000"></p-toast>
+
 <!-- Add new -> start from statue screen dialog -->
 <p-dialog
   [(visible)]="displayAddNewLawDialog"
@@ -2141,10 +2144,12 @@
       "
     >
       <div class="w-12 flex justify-content-center" style="height: 20%">
-        <span class="text-xl font-bold text-black-500"> Mời chọn Điều </span>
+        <span class="text-2xl font-bold text-black-500 mb-4">
+          Mời chọn Điều
+        </span>
       </div>
 
-      <div class="w-12 flex justify-content-center mb-1" style="height: 25%">
+      <div class="w-12 flex justify-content-center mb-3" style="height: 25%">
         <div class="w-8">
           <p-dropdown
             [(ngModel)]="selectedStatueForAddNewLaw"
@@ -2196,13 +2201,13 @@
         </div>
       </div>
 
-      <div *ngIf="!isAddedNewSection">
+      <div *ngIf="!isAddedNewSection || isUpdatingNewSection">
         <div
           class="w-12 flex justify-content-center mb-1"
-          *ngIf="!isCollapsedCreatNewSection"
+          *ngIf="!isCollapsedCreatNewSection && !isUpdatingNewSection"
         >
           <div class="w-8 flex justify-content-center">
-            <span class="text-xl font-bold text-black-500">
+            <span class="text-2xl font-bold text-black-500 mb-4">
               Mời chọn Khoản
             </span>
           </div>
@@ -2210,7 +2215,7 @@
 
         <div
           class="w-12 flex justify-content-center mb-3"
-          *ngIf="!isCollapsedCreatNewSection"
+          *ngIf="!isCollapsedCreatNewSection && !isUpdatingNewSection"
         >
           <div class="w-8">
             <p-dropdown
@@ -2229,17 +2234,62 @@
           </div>
         </div>
 
-        <div *ngIf="isCollapsedCreatNewSection">
+        <div *ngIf="isCollapsedCreatNewSection && !isUpdatingNewSection">
           <div class="w-12 flex justify-content-center mb-1">
             <div class="w-8 flex justify-content-center">
-              <span class="text-xl font-bold text-black-500">
+              <span class="text-2xl font-bold text-black-500 mb-3">
                 Tạo mới khoản
               </span>
             </div>
           </div>
         </div>
 
-        <div class="w-12 flex justify-content-center mb-1">
+        <div *ngIf="isUpdatingNewSection">
+          <div class="w-12 flex justify-content-center">
+            <div class="w-8 flex">
+              <div class="w-6 mb-3">
+                <span class="text-xl font-bold text-black-500">
+                  Cập nhật {{ newSection?.name }}
+                </span>
+              </div>
+              <div class="w-6 flex justify-content-end mb-2">
+                <button
+                  pButton
+                  pRipple
+                  type="button"
+                  [disabled]="
+                    newSection.description !== '' &&
+                    newSection.minPenalty &&
+                    newSection.maxPenalty &&
+                    isValidNewSectionMinPenalty &&
+                    isValidNewSectionMaxPenalty
+                      ? false
+                      : true
+                  "
+                  label="Lưu"
+                  [style]="{ height: '35px', border: '3px solid' }"
+                  class="p-button-success p-button-outlined mr-2"
+                  (click)="saveUpdatedNewSection()"
+                ></button>
+
+                <button
+                  pButton
+                  pRipple
+                  type="button"
+                  label="Hủy"
+                  [style]="{ height: '35px', border: '3px solid' }"
+                  class="p-button-danger p-button-outlined mr-2"
+                  (click)="cancleUpdatedNewSection()"
+                ></button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div
+          class="w-12 flex justify-content-center mb-2"
+          *ngIf="!isUpdatingNewSection"
+        >
           <div class="w-8 flex">
             <div class="w-6 text-lg font-bold text-black-300">
               <span *ngIf="!isCollapsedCreatNewSection">hoặc</span>
@@ -2295,8 +2345,8 @@
           </div>
         </div>
 
-        <div *ngIf="isCollapsedCreatNewSection">
-          <div class="w-12 flex justify-content-center mb-1">
+        <div *ngIf="isCollapsedCreatNewSection || isUpdatingNewSection">
+          <div class="w-12 flex justify-content-center mb-3">
             <div class="w-8 flex">
               <div class="w-6">
                 <span class="text-lg">Khoản: </span>
@@ -2307,9 +2357,18 @@
             </div>
           </div>
 
-          <div class="w-12 flex justify-content-center mb-1">
+          <div class="w-12 flex justify-content-center">
+            <div class="w-8">
+              <div class="w-6">
+                <span class="text-lg">Nội dung : </span>
+              </div>
+            </div>
+          </div>
+
+          <div class="w-12 flex justify-content-center mb-3">
             <div class="w-8">
               <textarea
+                [(ngModel)]="newSection.description"
                 class="w-full h-4rem overflow-y-auto"
                 [rows]="10"
                 pInputTextarea
@@ -2332,7 +2391,7 @@
           <div class="w-12 flex justify-content-center align-items-center mb-3">
             <div class="w-8 flex">
               <div class="w-6">
-                <span class="text-lg">Phương tiện: </span>
+                <span class="text-lg">Phương tiện : </span>
               </div>
               <div class="w-6 flex justify-content-end">
                 <p-dropdown
@@ -2351,7 +2410,14 @@
             </div>
           </div>
 
-          <div class="w-12 flex justify-content-center mb-3">
+          <div class="w-12 flex justify-content-center">
+            <div class="w-8">
+              <div class="w-6">
+                <span class="text-lg">Mức phạt : </span>
+              </div>
+            </div>
+          </div>
+          <div class="w-12 flex justify-content-center mb-4">
             <div class="w-8 flex">
               <div class="w-6">
                 <p-inputNumber
@@ -2386,13 +2452,13 @@
           </div>
 
           <div
-            class="w-12 flex justify-content-center mb-3"
+            class="w-12 flex justify-content-center mb-4"
             *ngIf="newSectionPenaltyInvalidMsg"
           >
             <span class="p-error block">{{ newSectionPenaltyInvalidMsg }}</span>
           </div>
 
-          <div class="w-12 flex justify-content-center">
+          <div class="w-12 flex justify-content-center mb-2">
             <div class="w-8">
               <p-checkbox
                 class="text-lg"
@@ -2592,21 +2658,62 @@
         </div>
       </div>
 
-      <div *ngIf="isAddedNewSection">
+      <div *ngIf="isAddedNewSection && !isUpdatingNewSection">
         <div class="w-12 flex justify-content-center">
-          <div class="w-8 flex">
+          <div class="w-8 flex align-items-center">
             <div class="w-6">
               <span class="text-lg"> Khoản </span>
             </div>
-            <div class="w-6 flex justify-content-end">
+            <div class="w-6 flex justify-content-end align-items-center">
               <span class="text-lg font-bold">{{
                 selectedSectionForAddNewLaw?.name
               }}</span>
+              <button
+                pButton
+                pRipple
+                type="button"
+                icon="pi pi-file-edit"
+                class="p-button-rounded p-button-text"
+                (click)="openUpdateNewSection()"
+              ></button>
+              <button
+                pButton
+                rRipple
+                type="button"
+                icon="pi pi-trash"
+                class="p-button-rounded p-button-danger p-button-text"
+                (click)="confirmDeleteNewSection()"
+              ></button>
             </div>
           </div>
         </div>
 
-        <div
+        <!-- <div class="w-12 flex justify-content-center">
+          <div class="w-8 flex justify-content-end">
+            <button
+                pButton
+                pRipple
+                type="button"
+                label="Chỉnh sửa"
+                [style]="{ height: '35px', border: '3px solid' }"
+                class="p-button-success p-button-outlined mr-2"
+                (click)="openUpdateNewSection()"
+              ></button>
+
+              <button
+                pButton
+                pRipple
+                type="button"
+                label="Xóa"
+                [style]="{ height: '35px', border: '3px solid' }"
+                class="p-button-danger p-button-outlined"
+                (click)="confirmDeleteNewSection()"
+              ></button>
+
+          </div>
+        </div> -->
+
+        <!-- <div
           class="w-12 flex justify-content-center mb-1"
           *ngIf="isAddedNewSection"
         >
@@ -2623,7 +2730,7 @@
               </ng-template>
             </p-messages>
           </div>
-        </div>
+        </div> -->
       </div>
     </div>
 
@@ -2667,40 +2774,129 @@
         class="w-12 flex justify-content-center"
         *ngIf="
           newParagraphListOfSelectedSection &&
-          newParagraphListOfSelectedSection.length > 0
+          newParagraphListOfSelectedSection.length > 0 &&
+          !isUpdatingNewParagraph
         "
       >
         <div class="w-8">
           <span class="text-lg">Điểm: </span>
         </div>
-        
       </div>
-      <div class="w-12 flex justify-content-center">
+      <div
+        class="w-12 flex justify-content-center"
+        *ngIf="
+          !isUpdatingNewParagraph &&
+          newParagraphListOfSelectedSection &&
+          newParagraphListOfSelectedSection.length > 0
+        "
+      >
         <div class="w-8 max-h-5rem overflow-auto">
-          <ul class="list-disc">
-            <li *ngFor="let newParagraph of newParagraphListOfSelectedSection" class="flex align-items-center">
-              <div class="w-3">
-                {{ newParagraph?.name }} )
-              </div>
-              <div class="w-6 overflow-hidden text-overflow-ellipsis">
+          <ul>
+            <li
+              *ngFor="
+                let newParagraph of newParagraphListOfSelectedSection;
+                let i = index
+              "
+              class="flex align-items-center"
+            >
+              
+
+              <div class="w-3"><fa-icon class="mr-2 fa-2xs" [icon]="['fas', 'circle']"></fa-icon> {{ newParagraph?.name }} )</div>
+              <div
+                class="w-6 overflow-hidden white-space-nowrap text-overflow-ellipsis"
+              >
                 {{ newParagraph?.description }}
               </div>
               <div class="w-3 flex justify-content-end">
-                <button pButton pRipple type="button" icon="pi pi-file-edit" class="p-button-rounded p-button-text"></button>
-                <button pButton rRipple type="button" icon="pi pi-trash" class="p-button-rounded p-button-text"></button>
+                <button
+                  pButton
+                  pRipple
+                  type="button"
+                  icon="pi pi-file-edit"
+                  class="p-button-rounded p-button-text"
+                  (click)="openUpdateNewSectionParagraph(i)"
+                ></button>
+                <button
+                  pButton
+                  rRipple
+                  type="button"
+                  icon="pi pi-trash"
+                  class="p-button-rounded p-button-danger p-button-text"
+                  (click)="confirmDeleteNewParagraphInNewParagraphList(i)"
+                ></button>
               </div>
             </li>
           </ul>
         </div>
       </div>
 
-      <div class="w-12 flex justify-content-center mb-1">
+      <div
+        class="w-12 flex justify-content-center"
+        *ngIf="
+          !isUpdatingNewParagraph &&
+          newParagraphListOfSelectedSection &&
+          newParagraphListOfSelectedSection.length > 0
+        "
+      >
+        <hr class="w-6 border-top-1"/>
+      </div>
+
+      <div
+        class="w-12 flex justify-content-center mb-1"
+        *ngIf="!isUpdatingNewParagraph"
+      >
         <div class="w-8 flex justify-content-center">
-          <span class="text-xl font-bold text-black-500"> Tạo mới Điểm </span>
+          <span class="text-2xl font-bold text-black-500 mb-3"> Tạo mới Điểm </span>
+          <span
+            class="text-2xl font-bold text-black-500 mb-3"
+            *ngIf="isUpdatingNewParagraph"
+          >
+            Cập nhật Điểm
+          </span>
         </div>
       </div>
 
-      <div class="w-12 flex justify-content-center">
+      <div
+        class="w-12 flex justify-content-center mb-1"
+        *ngIf="isUpdatingNewParagraph"
+      >
+        <div class="w-8 flex justify-content-center mb-3">
+          <div class="w-6">
+            <span class="text-xl font-bold text-black-500">
+              Cập nhật
+              {{
+                newParagraphListOfSelectedSection[updatingParagraphIndex]?.name
+              }}
+            </span>
+          </div>
+          <div class="w-6 flex justify-content-end">
+            <button
+              pButton
+              pRipple
+              type="button"
+              label="Lưu"
+              [style]="{ height: '35px', border: '3px solid' }"
+              class="p-button-success p-button-outlined mr-2"
+              (click)="saveUpdatedNewParagraph()"
+            ></button>
+
+            <button
+              pButton
+              pRipple
+              type="button"
+              label="Hủy"
+              [style]="{ height: '35px', border: '3px solid' }"
+              class="p-button-danger p-button-outlined mr-2"
+              (click)="cancleUpdatedNewParagraph()"
+            ></button>
+          </div>
+        </div>
+      </div>
+
+      <div
+        class="w-12 flex justify-content-center mb-3"
+        *ngIf="!isUpdatingNewParagraph"
+      >
         <div class="w-8 flex">
           <div class="w-6">
             <span class="text-lg">Điểm: </span>
@@ -2713,7 +2909,14 @@
         </div>
       </div>
 
-      <div class="w-12 flex justify-content-center mb-1">
+      <div class="w-12 flex justify-content-center">
+        <div class="w-8">
+          <div class="w-6">
+            <span class="text-lg">Nội dung : </span>
+          </div>
+        </div>
+      </div>
+      <div class="w-12 flex justify-content-center">
         <div class="w-8">
           <textarea
             [(ngModel)]="newParagraphOfSelectedSectionDescription"
@@ -2726,7 +2929,7 @@
           <!-- [(ngModel)]="newParagraphOfSelectedSection.description" -->
         </div>
       </div>
-      <div class="w-12 flex justify-content-center mb-1">
+      <div class="w-12 flex justify-content-center mb-3">
         <div class="w-8">
           <span class="p-error block" *ngIf="newParagraphDescriptionInvalidMsg">
             {{ newParagraphDescriptionInvalidMsg }}
@@ -2734,21 +2937,29 @@
         </div>
       </div>
 
-      <div class="w-12 flex justify-content-center mb-1">
+      
+      <div class="w-12 flex justify-content-center">
+        <div class="w-8">
+          <div class="w-6">
+            <span class="text-lg">Hình phạt bổ sung (nếu có) : </span>
+          </div>
+        </div>
+      </div>
+      <div class="w-12 flex justify-content-center mb-3">
         <div class="w-8">
           <textarea
             [(ngModel)]="newParagraphOfSelectedSectionAdditionalPenalty"
             class="w-full h-4rem overflow-y-auto"
             [rows]="10"
             pInputTextarea
-            placeholder="Hình phạt bổ sung (nếu có)..."
+            placeholder="Hình phạt bổ sung..."
             (keyup)="getNewParagraphAdditionalPenalty($event)"
           ></textarea>
           <!-- [(ngModel)]="newParagraphOfSelectedSection.additionalPenalty" -->
         </div>
       </div>
 
-      <div class="w-12 flex justify-content-center mb-1">
+      <div class="w-12 flex justify-content-center mb-3">
         <div class="w-8 flex align-items-center">
           <div class="w-6">
             <span class="text-lg">Thuộc nhóm từ khóa (nếu có): </span>
@@ -2764,6 +2975,7 @@
               scrollHeight="6rem"
               [filter]="true"
               filterBy="name"
+              [showClear]="true"
               (onChange)="selectKeywordForNewParagraph($event)"
             ></p-dropdown>
           </div>
@@ -2921,22 +3133,49 @@
     </div>
 
     <!-- body for confirm create law -->
-    <div
-      class="p-2 h-full"
-      *ngIf="
-      
-      isShowingConfirmAddNewLaw
-      "
-    >
+    <div class="p-2 h-full" *ngIf="isShowingConfirmAddNewLaw">
       <div class="w-12 flex justify-content-center mb-4">
         <div class="w-8 flex justify-content-center">
-          <span class="text-lg font-bold">Tạo mới luật</span>
+          <span class="text-2xl font-bold mb-3">Tạo mới luật</span>
         </div>
       </div>
 
       <div class="w-12 flex justify-content-center mb-2">
         <div class="w-10">
-          <span class="text-xl text-700">Xác nhận tạo mới những điểm sau: </span>
+          <span
+            class="text-xl text-700"
+            *ngIf="
+              !isAddedNewSection ||
+              (isAddedNewSection &&
+                !selectedSectionForAddNewLaw?.isSectionWithNoParagraph)
+            "
+            >Xác nhận tạo mới những Điểm sau:
+          </span>
+          <span
+            class="text-xl text-700"
+            *ngIf="
+              isAddedNewSection &&
+              selectedSectionForAddNewLaw?.isSectionWithNoParagraph
+            "
+            >Xác nhận tạo mới Khoản sau:
+          </span>
+        </div>
+      </div>
+
+      <div class="w-12 flex justify-content-center mb-2">
+        <div class="w-8 flex">
+          <div class="w-6"> <span class="text-lg">Gửi yêu cầu tới:</span> </div>
+          <div class="w-6 flex justify-content-end">
+            <p-dropdown
+            [options]="admins"
+            optionLabel="username"
+            [(ngModel)]="selectedAdmin"
+            scrollHeight="6rem"
+            [filter]="true"
+            filterBy="username"
+            [style]="{ width: '10rem', height: '35px' }"
+          ></p-dropdown>
+          </div>
         </div>
       </div>
 
@@ -2946,50 +3185,86 @@
             <span class="text-lg">Điều: </span>
           </div>
           <div class="w-6 flex justify-content-end">
-            <span class="text-lg">{{ selectedStatueForAddNewLaw?.name }}</span>
+            <span class="text-lg font-bold">{{ selectedStatueForAddNewLaw?.name }}</span>
           </div>
         </div>
       </div>
 
-      <div class="w-12 flex justify-content-center mb-2">
-        <div class="w-8 flex align-items-center">
-          <div class="w-6">
-            <span class="text-lg">Khoản: </span>
+      <div
+        *ngIf="
+          !isAddedNewSection ||
+          (isAddedNewSection &&
+            !selectedSectionForAddNewLaw?.isSectionWithNoParagraph)
+        "
+      >
+        <div class="w-12 flex justify-content-center mb-2">
+          <div class="w-8 flex align-items-center">
+            <div class="w-6">
+              <span class="text-lg">Khoản: </span>
+            </div>
+            <div class="w-6 flex justify-content-end">
+              <span class="text-lg font-bold">{{
+                selectedSectionForAddNewLaw?.name
+              }}</span>
+            </div>
           </div>
-          <div class="w-6 flex justify-content-end">
-            <span class="text-lg">{{ selectedSectionForAddNewLaw?.name }}</span>
+        </div>
+
+        <div class="w-12 flex justify-content-center mb-2">
+          <div class="w-8 align-items-center">
+            <div class="w-6">
+              <span class="text-lg">Điểm: </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="w-12 flex justify-content-center">
+          <div class="w-8 p-3max-h-8rem overflow-y-auto overflow-x-hidden">
+            <ul
+              *ngFor="let newParagraph of newParagraphListOfSelectedSection"
+            >
+              <li class="flex align-items-center">
+                <div class="w-3"> <fa-icon class="mr-2 fa-2xs" [icon]="['fas', 'circle']"></fa-icon> {{ newParagraph?.name }} )</div>
+                <div
+                  class="w-9 overflow-hidden white-space-nowrap text-overflow-ellipsis"
+                >
+                  <span>{{ newParagraph?.description }}</span>
+                </div>
+              </li>
+            </ul>
           </div>
         </div>
       </div>
 
-      <div class="w-12 flex justify-content-center mb-2">
-        <div class="w-8 align-items-center">
-          <div class="w-6">
-            <span class="text-lg">Điểm: </span>
+      <div
+        *ngIf="
+          isAddedNewSection &&
+          selectedSectionForAddNewLaw?.isSectionWithNoParagraph
+        "
+      >
+        <div class="w-12 flex justify-content-center mb-2">
+          <div class="w-8 flex align-items-center">
+            <div class="w-6">
+              <span class="text-lg">Khoản: </span>
+            </div>
+            <div class="w-6 flex justify-content-end">
+              <span class="text-lg">{{
+                selectedSectionForAddNewLaw?.name
+              }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="w-12 flex justify-content-center">
+          <div class="w-8">
+            <div
+              class="surface-200 w-12 border-left-2 border-400 p-2 w-12 max-h-5rem overflow-y-auto overflow-x-hidden"
+            >
+              {{ selectedSectionForAddNewLaw?.description }}
+            </div>
           </div>
         </div>
       </div>
-
-
-      <div class="w-12 flex justify-content-center">
-        <div class="w-8 p-3 max-h-10rem overflow-auto">
-          <ul *ngFor="let newParagraph of newParagraphListOfSelectedSection" class="list-disc">
-            <li class="flex align-items-center">
-              <div class="w-3">
-                {{ newParagraph?.name }} )
-              </div>
-              <div class="w-9 overflow-hidden text-overflow-ellipsis">
-                {{ newParagraph?.description }}
-              </div>
-              <!-- <div class="w-3 flex justify-content-end">
-                <button pButton pRipple type="button" icon="pi pi-file-edit" class="p-button-rounded p-button-text"></button>
-                <button pButton rRipple type="button" icon="pi pi-trash" class="p-button-rounded p-button-text"></button>
-              </div> -->
-            </li>
-          </ul>
-        </div>
-      </div>
-      
     </div>
   </ng-template>
 
@@ -3069,6 +3344,7 @@
               type="button"
               pButton
               label="Quay lại"
+              [disabled]="!isValidGobackToStatue"
               class="p-button-outlined"
               style="height: 40px; margin: 0 0.5rem 0 0; border: 3px solid"
               (click)="
@@ -3113,6 +3389,9 @@
               [disabled]="!isValidFinishOnSectionDialog"
               class="p-button-outlined p-button-success"
               style="height: 40px; margin: 0; border: 3px solid"
+              (click)="
+                isShowingConfirmAddNewLaw = true
+              "
             ></button>
             <!-- this part commented is of disabled -->
             <!-- isSectionWithNoParagraph &&
@@ -3140,11 +3419,12 @@
         *ngIf="selectedStatueForAddNewLaw"
       >
         <div class="w-8 flex">
-          <div class="w-6 flex justify-content-start align-items-end">
+          <div class="w-5 flex justify-content-start align-items-end">
             <button
               type="button"
               pButton
               label="Quay lại"
+              [disabled]="!isValidGobackToSection"
               class="p-button-outlined"
               style="height: 40px; margin: 0 0.5rem 0 0; border: 3px solid"
               (click)="
@@ -3155,30 +3435,38 @@
             ></button>
           </div>
 
-          <div class="w-6">
-            <div class="w-12 flex justify-content-end mb-1">
+          <div
+            class="w-7 flex justify-content-end"
+            *ngIf="isValidDisplayFinishAndSaveOnParagraphDialog"
+          >
+            <div class="w-6 flex justify-content-end">
               <button
                 type="button"
                 pButton
                 label="Lưu lại"
                 [disabled]="!newParagraphOfSelectedSection?.description"
                 class="p-button-outlined p-button-warning"
-                style="height: 40px; margin: 0; border: 3px solid; width: 8rem"
+                style="height: 40px; margin: 0; border: 3px solid"
                 (click)="saveNewParagraph()"
               ></button>
             </div>
 
-            <div class="w-12 flex justify-content-end">
+            <div class="w-6 flex justify-content-end">
               <button
                 type="button"
                 pButton
                 label="Hoàn thành"
                 [disabled]="
-                (newParagraphListOfSelectedSection && newParagraphListOfSelectedSection.length >=1) ? false : true
+                  newParagraphListOfSelectedSection &&
+                  newParagraphListOfSelectedSection.length >= 1
+                    ? false
+                    : true
                 "
                 class="p-button-outlined p-button-success"
-                style="height: 40px; margin: 0; border: 3px solid; width: 8rem"
-                (click)="completeOnParagraphDialog(); isShowingConfirmAddNewLaw = true"
+                style="height: 40px; margin: 0; border: 3px solid"
+                (click)="
+                  isShowingConfirmAddNewLaw = true
+                "
               ></button>
             </div>
           </div>
@@ -3186,16 +3474,9 @@
       </div>
     </div>
 
-    <!-- footer for confirm add new law -->
-    <div
-      class="p-2"
-      *ngIf="
-        isShowingConfirmAddNewLaw
-      "
-    >
-      <div
-        class="w-12 flex justify-content-center"
-      >
+    <!-- footer for confirm add new law-->
+    <div class="p-2" *ngIf="isShowingConfirmAddNewLaw">
+      <div class="w-12 flex justify-content-center">
         <div class="w-8 flex">
           <div class="w-6 flex justify-content-start">
             <button
@@ -3205,26 +3486,106 @@
               class="p-button-outlined"
               style="height: 40px; margin: 0 0.5rem 0 0; border: 3px solid"
               (click)="
-              isShowingConfirmAddNewLaw = false;
-              isShowingStatueDialog = false;
-              isShowingSectionDialog = false;
-              isShowingParagraphDialog = true
+                isShowingConfirmAddNewLaw = false;
+                isShowingStatueDialog = false;
+                isShowingSectionDialog =
+                  isAddedNewSection &&
+                  selectedSectionForAddNewLaw?.isSectionWithNoParagraph
+                    ? true
+                    : false;
+                isShowingParagraphDialog =
+                  isAddedNewSection &&
+                  selectedSectionForAddNewLaw?.isSectionWithNoParagraph
+                    ? false
+                    : true
               "
             ></button>
           </div>
 
-            <div class="w-6 flex justify-content-end">
-              <button
-                type="button"
-                pButton
-                label="Hoàn thành"
-                class="p-button-outlined p-button-success"
-                style="height: 40px; margin: 0; border: 3px solid; width: 8rem"
-                (click)="confirmedAddNewLaw()"
-              ></button>
-            </div>
+          <div class="w-6 flex justify-content-end">
+            <button
+              type="button"
+              pButton
+              label="Hoàn thành"
+              class="p-button-outlined p-button-success"
+              style="height: 40px; margin: 0; border: 3px solid; width: 8rem"
+              (click)="confirmedAddNewLaw()"
+            ></button>
+          </div>
         </div>
       </div>
     </div>
+  </ng-template>
+</p-dialog>
+
+<!-- Confirm delete new paragraph in new paragraph list -->
+<p-dialog
+  [(visible)]="displayConfirmDeleteNewParagraphInNewParagraphList"
+  [modal]="true"
+>
+  <ng-template pTemplate="header">
+    <span class="text-red-500 font-bold text-xl">Xóa</span>
+  </ng-template>
+
+  <div class="w-full text-center">
+    <span class="text-lg"
+      >Các điểm trong danh sách sẽ bị đổi tên điểm tương ứng. Bạn có chắc
+      chắn?</span
+    >
+  </div>
+
+  <ng-template pTemplate="footer">
+    <button
+      type="button"
+      pButton
+      icon="pi pi-times"
+      label="Hủy"
+      class="p-button-danger"
+      style="height: 40px"
+      (click)="displayConfirmDeleteNewParagraphInNewParagraphList = false"
+    ></button>
+    <button
+      type="button"
+      pButton
+      icon="pi pi-check"
+      label="Đồng ý"
+      class="p-button-success"
+      style="height: 40px"
+      (click)="deleteNewParagraphInNewParagraphList()"
+    ></button>
+  </ng-template>
+</p-dialog>
+
+<!-- Confirm delete new section -->
+<p-dialog [(visible)]="displayConfirmDeleteNewSection" [modal]="true">
+  <ng-template pTemplate="header">
+    <span class="text-red-500 font-bold text-xl">Xóa</span>
+  </ng-template>
+
+  <div class="w-full text-center">
+    <span class="text-lg"
+      >{{ newSection?.name }} sẽ bị xóa. Bạn có chắc chắn?</span
+    >
+  </div>
+
+  <ng-template pTemplate="footer">
+    <button
+      type="button"
+      pButton
+      icon="pi pi-times"
+      label="Hủy"
+      class="p-button-danger"
+      style="height: 40px"
+      (click)="displayConfirmDeleteNewSection = false"
+    ></button>
+    <button
+      type="button"
+      pButton
+      icon="pi pi-check"
+      label="Đồng ý"
+      class="p-button-success"
+      style="height: 40px"
+      (click)="deleteNewSection()"
+    ></button>
   </ng-template>
 </p-dialog>
