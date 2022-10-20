@@ -406,6 +406,7 @@
             label="Tạo mới"
             class="p-button-raised p-button-success"
             [style]="{ height: '40px' }"
+            (click)="displayAddNewSection()"
           ></button>
         </div>
       </div>
@@ -993,6 +994,7 @@
             label="Tạo mới"
             class="p-button-raised p-button-success"
             [style]="{ height: '40px' }"
+            (click)="displayAddNewParagraph()"
           ></button>
         </div>
       </div>
@@ -2799,9 +2801,13 @@
               "
               class="flex align-items-center"
             >
-              
-
-              <div class="w-3"><fa-icon class="mr-2 fa-2xs" [icon]="['fas', 'circle']"></fa-icon> {{ newParagraph?.name }} )</div>
+              <div class="w-3">
+                <fa-icon
+                  class="mr-2 fa-2xs"
+                  [icon]="['fas', 'circle']"
+                ></fa-icon>
+                {{ newParagraph?.name }} )
+              </div>
               <div
                 class="w-6 overflow-hidden white-space-nowrap text-overflow-ellipsis"
               >
@@ -2838,7 +2844,7 @@
           newParagraphListOfSelectedSection.length > 0
         "
       >
-        <hr class="w-6 border-top-1"/>
+        <hr class="w-6 border-top-1" />
       </div>
 
       <div
@@ -2846,7 +2852,9 @@
         *ngIf="!isUpdatingNewParagraph"
       >
         <div class="w-8 flex justify-content-center">
-          <span class="text-2xl font-bold text-black-500 mb-3"> Tạo mới Điểm </span>
+          <span class="text-2xl font-bold text-black-500 mb-3">
+            Tạo mới Điểm
+          </span>
           <span
             class="text-2xl font-bold text-black-500 mb-3"
             *ngIf="isUpdatingNewParagraph"
@@ -2937,7 +2945,6 @@
         </div>
       </div>
 
-      
       <div class="w-12 flex justify-content-center">
         <div class="w-8">
           <div class="w-6">
@@ -3164,17 +3171,17 @@
 
       <div class="w-12 flex justify-content-center mb-2">
         <div class="w-8 flex">
-          <div class="w-6"> <span class="text-lg">Gửi yêu cầu tới:</span> </div>
+          <div class="w-6"><span class="text-lg">Gửi yêu cầu tới:</span></div>
           <div class="w-6 flex justify-content-end">
             <p-dropdown
-            [options]="admins"
-            optionLabel="username"
-            [(ngModel)]="selectedAdmin"
-            scrollHeight="6rem"
-            [filter]="true"
-            filterBy="username"
-            [style]="{ width: '10rem', height: '35px' }"
-          ></p-dropdown>
+              [options]="admins"
+              optionLabel="username"
+              [(ngModel)]="selectedAdmin"
+              scrollHeight="6rem"
+              [filter]="true"
+              filterBy="username"
+              [style]="{ width: '10rem', height: '35px' }"
+            ></p-dropdown>
           </div>
         </div>
       </div>
@@ -3185,7 +3192,9 @@
             <span class="text-lg">Điều: </span>
           </div>
           <div class="w-6 flex justify-content-end">
-            <span class="text-lg font-bold">{{ selectedStatueForAddNewLaw?.name }}</span>
+            <span class="text-lg font-bold">{{
+              selectedStatueForAddNewLaw?.name
+            }}</span>
           </div>
         </div>
       </div>
@@ -3220,11 +3229,15 @@
 
         <div class="w-12 flex justify-content-center">
           <div class="w-8 p-3max-h-8rem overflow-y-auto overflow-x-hidden">
-            <ul
-              *ngFor="let newParagraph of newParagraphListOfSelectedSection"
-            >
+            <ul *ngFor="let newParagraph of newParagraphListOfSelectedSection">
               <li class="flex align-items-center">
-                <div class="w-3"> <fa-icon class="mr-2 fa-2xs" [icon]="['fas', 'circle']"></fa-icon> {{ newParagraph?.name }} )</div>
+                <div class="w-3">
+                  <fa-icon
+                    class="mr-2 fa-2xs"
+                    [icon]="['fas', 'circle']"
+                  ></fa-icon>
+                  {{ newParagraph?.name }} )
+                </div>
                 <div
                   class="w-9 overflow-hidden white-space-nowrap text-overflow-ellipsis"
                 >
@@ -3389,9 +3402,7 @@
               [disabled]="!isValidFinishOnSectionDialog"
               class="p-button-outlined p-button-success"
               style="height: 40px; margin: 0; border: 3px solid"
-              (click)="
-                isShowingConfirmAddNewLaw = true
-              "
+              (click)="isShowingConfirmAddNewLaw = true"
             ></button>
             <!-- this part commented is of disabled -->
             <!-- isSectionWithNoParagraph &&
@@ -3464,9 +3475,7 @@
                 "
                 class="p-button-outlined p-button-success"
                 style="height: 40px; margin: 0; border: 3px solid"
-                (click)="
-                  isShowingConfirmAddNewLaw = true
-                "
+                (click)="isShowingConfirmAddNewLaw = true"
               ></button>
             </div>
           </div>
@@ -3507,7 +3516,7 @@
               type="button"
               pButton
               label="Hoàn thành"
-              class="p-button-outlined p-button-success"
+              class="p-button-success"
               style="height: 40px; margin: 0; border: 3px solid; width: 8rem"
               (click)="confirmedAddNewLaw()"
             ></button>
@@ -3587,5 +3596,570 @@
       style="height: 40px"
       (click)="deleteNewSection()"
     ></button>
+  </ng-template>
+</p-dialog>
+
+<!-- Add new -> start from paragraph screen dialog -->
+<p-dialog 
+  [(visible)]="displayAddNewParagraphDialog"
+  [style]="{ width: '50vw' }"
+  [modal]="true"
+  (onHide)="clearAddNewAllData()"
+>
+  <ng-template pTemplate="content">
+    <!-- body for create new paragraphs -->
+    <div class="p-2 h-full" *ngIf="!isShowingConfirmAddNewLaw">
+      <div class="w-12 flex justify-content-center mb-2">
+        <div class="w-8 flex">
+          <div class="w-6">
+            <span class="text-lg">Điều: </span>
+          </div>
+          <div class="w-6 flex justify-content-end">
+            <span class="text-lg font-bold">{{
+              selectedStatueForAddNewLaw?.name
+            }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="w-12 flex justify-content-center mb-2">
+        <div class="w-8 flex">
+          <div class="w-6">
+            <span class="text-lg">Khoản: </span>
+          </div>
+          <div class="w-6 flex justify-content-end">
+            <span class="text-lg font-bold">{{
+              selectedSectionForAddNewLaw?.name
+            }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div
+        class="w-12 flex justify-content-center"
+        *ngIf="
+          newParagraphListOfSelectedSection &&
+          newParagraphListOfSelectedSection.length > 0 &&
+          !isUpdatingNewParagraph
+        "
+      >
+        <div class="w-8">
+          <span class="text-lg">Điểm: </span>
+        </div>
+      </div>
+      <div
+        class="w-12 flex justify-content-center"
+        *ngIf="
+          !isUpdatingNewParagraph &&
+          newParagraphListOfSelectedSection &&
+          newParagraphListOfSelectedSection.length > 0
+        "
+      >
+        <div class="w-8 max-h-5rem overflow-auto">
+          <ul>
+            <li
+              *ngFor="
+                let newParagraph of newParagraphListOfSelectedSection;
+                let i = index
+              "
+              class="flex align-items-center"
+            >
+              <div class="w-3">
+                <fa-icon
+                  class="mr-2 fa-2xs"
+                  [icon]="['fas', 'circle']"
+                ></fa-icon>
+                {{ newParagraph?.name }} )
+              </div>
+              <div
+                class="w-6 overflow-hidden white-space-nowrap text-overflow-ellipsis"
+              >
+                {{ newParagraph?.description }}
+              </div>
+              <div class="w-3 flex justify-content-end">
+                <button
+                  pButton
+                  pRipple
+                  type="button"
+                  icon="pi pi-file-edit"
+                  class="p-button-rounded p-button-text"
+                  (click)="openUpdateNewSectionParagraph(i)"
+                ></button>
+                <button
+                  pButton
+                  rRipple
+                  type="button"
+                  icon="pi pi-trash"
+                  class="p-button-rounded p-button-danger p-button-text"
+                  (click)="confirmDeleteNewParagraphInNewParagraphList(i)"
+                ></button>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div
+        class="w-12 flex justify-content-center"
+        *ngIf="
+          !isUpdatingNewParagraph &&
+          newParagraphListOfSelectedSection &&
+          newParagraphListOfSelectedSection.length > 0
+        "
+      >
+        <hr class="w-6 border-top-1" />
+      </div>
+
+      <div
+        class="w-12 flex justify-content-center mb-1"
+        *ngIf="!isUpdatingNewParagraph"
+      >
+        <div class="w-8 flex justify-content-center">
+          <span class="text-2xl font-bold text-black-500 mb-3">
+            Tạo mới Điểm
+          </span>
+          <span
+            class="text-2xl font-bold text-black-500 mb-3"
+            *ngIf="isUpdatingNewParagraph"
+          >
+            Cập nhật Điểm
+          </span>
+        </div>
+      </div>
+
+      <div
+        class="w-12 flex justify-content-center mb-1"
+        *ngIf="isUpdatingNewParagraph"
+      >
+        <div class="w-8 flex justify-content-center mb-3">
+          <div class="w-6">
+            <span class="text-xl font-bold text-black-500">
+              Cập nhật
+              {{
+                newParagraphListOfSelectedSection[updatingParagraphIndex]?.name
+              }}
+            </span>
+          </div>
+          <div class="w-6 flex justify-content-end">
+            <button
+              pButton
+              pRipple
+              type="button"
+              label="Lưu"
+              [style]="{ height: '35px', border: '3px solid' }"
+              class="p-button-success p-button-outlined mr-2"
+              (click)="saveUpdatedNewParagraph()"
+            ></button>
+
+            <button
+              pButton
+              pRipple
+              type="button"
+              label="Hủy"
+              [style]="{ height: '35px', border: '3px solid' }"
+              class="p-button-danger p-button-outlined mr-2"
+              (click)="cancleUpdatedNewParagraph()"
+            ></button>
+          </div>
+        </div>
+      </div>
+
+      <div
+        class="w-12 flex justify-content-center mb-3"
+        *ngIf="!isUpdatingNewParagraph"
+      >
+        <div class="w-8 flex">
+          <div class="w-6">
+            <span class="text-lg">Điểm: </span>
+          </div>
+          <div class="w-6 flex justify-content-end">
+            <span class="text-lg font-bold">
+              {{ newParagraphOfSelectedSection?.name }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="w-12 flex justify-content-center">
+        <div class="w-8">
+          <div class="w-6">
+            <span class="text-lg">Nội dung : </span>
+          </div>
+        </div>
+      </div>
+      <div class="w-12 flex justify-content-center">
+        <div class="w-8">
+          <textarea
+            [(ngModel)]="newParagraphOfSelectedSectionDescription"
+            class="w-full h-4rem overflow-y-auto"
+            [rows]="10"
+            pInputTextarea
+            placeholder="Nội dung..."
+            (keyup)="getNewParagraphDescription($event)"
+          ></textarea>
+          <!-- [(ngModel)]="newParagraphOfSelectedSection.description" -->
+        </div>
+      </div>
+      <div class="w-12 flex justify-content-center mb-3">
+        <div class="w-8">
+          <span class="p-error block" *ngIf="newParagraphDescriptionInvalidMsg">
+            {{ newParagraphDescriptionInvalidMsg }}
+          </span>
+        </div>
+      </div>
+
+      <div class="w-12 flex justify-content-center">
+        <div class="w-8">
+          <div class="w-6">
+            <span class="text-lg">Hình phạt bổ sung (nếu có) : </span>
+          </div>
+        </div>
+      </div>
+      <div class="w-12 flex justify-content-center mb-3">
+        <div class="w-8">
+          <textarea
+            [(ngModel)]="newParagraphOfSelectedSectionAdditionalPenalty"
+            class="w-full h-4rem overflow-y-auto"
+            [rows]="10"
+            pInputTextarea
+            placeholder="Hình phạt bổ sung..."
+            (keyup)="getNewParagraphAdditionalPenalty($event)"
+          ></textarea>
+          <!-- [(ngModel)]="newParagraphOfSelectedSection.additionalPenalty" -->
+        </div>
+      </div>
+
+      <div class="w-12 flex justify-content-center mb-3">
+        <div class="w-8 flex align-items-center">
+          <div class="w-6">
+            <span class="text-lg">Thuộc nhóm từ khóa (nếu có): </span>
+          </div>
+          <div class="w-6 flex justify-content-end">
+            <p-dropdown
+              id="new-paragraph-dropdown-keywords"
+              [(ngModel)]="newParagraphSelectedKeyword"
+              [options]="newParagraphKeywordList"
+              optionLabel="name"
+              [style]="{ height: '35px', width: '14rem' }"
+              placeholder="Nhóm từ khóa..."
+              scrollHeight="6rem"
+              [filter]="true"
+              filterBy="name"
+              [showClear]="true"
+              (onChange)="selectKeywordForNewParagraph($event)"
+            ></p-dropdown>
+          </div>
+        </div>
+      </div>
+
+      <div class="w-12 flex justify-content-center mb-3">
+        <div class="w-8 flex">
+          <div class="w-6">
+            <span class="text-lg">Các hành vi liên quan (nếu có): </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="w-12 flex justify-content-center mb-2">
+        <div class="w-8 flex">
+          <div class="w-4 flex justify-content-start">
+            <p-dropdown
+              [(ngModel)]="newParagraphReferenceSelectedStatue"
+              [options]="newParagraphReferenceStatueList"
+              optionLabel="name"
+              [style]="{ height: '35px', width: '8rem' }"
+              placeholder="Điều..."
+              scrollHeight="6rem"
+              [filter]="true"
+              filterBy="name"
+              (onChange)="selectStatueReferenceForNewParagraph($event)"
+            ></p-dropdown>
+          </div>
+          <div class="w-4 flex justify-content-center">
+            <p-dropdown
+              [(ngModel)]="newParagraphReferenceSelectedSection"
+              [options]="newParagraphReferenceSectionList"
+              optionLabel="name"
+              [style]="{ height: '35px', width: '9rem' }"
+              placeholder="Khoản..."
+              scrollHeight="6rem"
+              [filter]="true"
+              filterBy="name"
+              (onChange)="selectSectionReferenceForNewParagraph($event)"
+            ></p-dropdown>
+          </div>
+          <div class="w-4 flex justify-content-end">
+            <p-dropdown
+              [(ngModel)]="newParagraphReferenceSelectedParagraph"
+              [options]="newParagraphReferenceParagraphList"
+              optionLabel="name"
+              [style]="{ height: '35px', width: '8rem' }"
+              placeholder="Điểm..."
+              scrollHeight="6rem"
+              [filter]="true"
+              filterBy="name"
+              (onChange)="selectParagraphReferenceForNewParagraph($event)"
+            ></p-dropdown>
+          </div>
+        </div>
+      </div>
+
+      <div class="w-12 flex justify-content-center align-items-center mb-5">
+        <div class="w-8 flex align-items-center">
+          <div class="w-10 flex">
+            <div class="w-6 flex">
+              <div class="p-field-radiobutton">
+                <p-radioButton
+                  [value]="false"
+                  [(ngModel)]="tmpReferenceOfNewParagraphIsExcluded"
+                  inputId="isIncluded"
+                  (onClick)="chooseNewParagraphIncludedExcluded($event)"
+                ></p-radioButton>
+                <label for="isIncluded" class="ml-2">Hành vi bao gồm</label>
+              </div>
+            </div>
+            <div class="w-6 flex">
+              <div class="p-field-radiobutton">
+                <p-radioButton
+                  [value]="true"
+                  [(ngModel)]="tmpReferenceOfNewParagraphIsExcluded"
+                  inputId="isExcluded"
+                  (onClick)="chooseNewParagraphIncludedExcluded($event)"
+                ></p-radioButton>
+                <label for="isExcluded" class="ml-2">Hành vi ngoại trừ</label>
+              </div>
+            </div>
+          </div>
+          <div class="w-2 flex justify-content-end">
+            <div class="w-12">
+              <button
+                pButton
+                pRipple
+                type="button"
+                label="Thêm"
+                [disabled]="
+                  newParagraphReferenceSelectedStatue &&
+                  newParagraphReferenceSelectedSection &&
+                  newParagraphReferenceSelectedParagraph &&
+                  tmpReferenceOfNewParagraph.referenceParagraphIsExcluded !==
+                    undefined
+                    ? false
+                    : true
+                "
+                [style]="{ height: '35px', border: '3px solid' }"
+                class="p-button-success p-button-outlined mr-2"
+                (click)="addNewParagraphReferenceToTmpReferenceList()"
+              ></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div
+        class="w-12 flex justify-content-center mb-2"
+        *ngIf="!isValidAddReferenceToNewParagraph"
+      >
+        <div class="w-8 flex justify-content-center">
+          <span class="font-bold text-red-400"
+            >Điểm đã tồn tại trong danh sách</span
+          >
+        </div>
+      </div>
+
+      <div class="w-12 flex justify-content-center mb-2">
+        <div class="w-8 h-7rem overflow-y-auto">
+          <div
+            *ngFor="
+              let newReference of tmpReferenceListOfNewParagraph;
+              let i = index
+            "
+            class="flex align-items-center ml-8"
+          >
+            <span>
+              {{ newReference.referenceParagraphSectionStatueName }} *
+              {{ newReference.referenceParagraphSectionName }} *
+              {{ newReference.referenceParagraphName }}
+            </span>
+            <span
+              *ngIf="newReference?.referenceParagraphIsExcluded"
+              class="text-blue-300"
+              >&nbsp;(ngoại trừ)
+            </span>
+            <span
+              *ngIf="!newReference?.referenceParagraphIsExcluded"
+              class="text-orange-300"
+              >&nbsp;(bao gồm)
+            </span>
+            <button
+              pButton
+              type="button"
+              icon="pi pi-times"
+              class="p-button-rounded p-button-danger p-button-text"
+              (click)="removeNewParagraphReference(i)"
+            ></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- body for confirm create paragraphs -->
+    <div class="p-2 h-full" *ngIf="isShowingConfirmAddNewLaw">
+      <div class="w-12 flex justify-content-center mb-4">
+        <div class="w-8 flex justify-content-center">
+          <span class="text-2xl font-bold mb-3">Tạo mới luật</span>
+        </div>
+      </div>
+
+      <div class="w-12 flex justify-content-center mb-2">
+        <div class="w-10">
+          <span class="text-xl text-700"
+            >Xác nhận tạo mới những Điểm sau:
+          </span>
+        </div>
+      </div>
+
+      <div class="w-12 flex justify-content-center mb-2">
+        <div class="w-8 flex">
+          <div class="w-6"><span class="text-lg">Gửi yêu cầu tới:</span></div>
+          <div class="w-6 flex justify-content-end">
+            <p-dropdown
+              [options]="admins"
+              optionLabel="username"
+              [(ngModel)]="selectedAdmin"
+              scrollHeight="6rem"
+              [filter]="true"
+              filterBy="username"
+              [style]="{ width: '10rem', height: '35px' }"
+            ></p-dropdown>
+          </div>
+        </div>
+      </div>
+
+      <div class="w-12 flex justify-content-center mb-2">
+        <div class="w-8 flex align-items-center">
+          <div class="w-6">
+            <span class="text-lg">Điều: </span>
+          </div>
+          <div class="w-6 flex justify-content-end">
+            <span class="text-lg font-bold">{{
+              selectedStatueForAddNewLaw?.name
+            }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="w-12 flex justify-content-center mb-2">
+        <div class="w-8 flex align-items-center">
+          <div class="w-6">
+            <span class="text-lg">Khoản: </span>
+          </div>
+          <div class="w-6 flex justify-content-end">
+            <span class="text-lg font-bold">{{
+              selectedSectionForAddNewLaw?.name
+            }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="w-12 flex justify-content-center mb-2">
+        <div class="w-8 align-items-center">
+          <div class="w-6">
+            <span class="text-lg">Điểm: </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="w-12 flex justify-content-center">
+        <div class="w-8 p-3max-h-8rem overflow-y-auto overflow-x-hidden">
+          <ul *ngFor="let newParagraph of newParagraphListOfSelectedSection">
+            <li class="flex align-items-center">
+              <div class="w-3">
+                <fa-icon
+                  class="mr-2 fa-2xs"
+                  [icon]="['fas', 'circle']"
+                ></fa-icon>
+                {{ newParagraph?.name }} )
+              </div>
+              <div
+                class="w-9 overflow-hidden white-space-nowrap text-overflow-ellipsis"
+              >
+                <span>{{ newParagraph?.description }}</span>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+
+  <ng-template pTemplate="footer">
+    <!-- footer for adding paragraphs -->
+    <div class="p-2" *ngIf="!isShowingConfirmAddNewLaw">
+      <div
+        class="w-12 flex justify-content-center"
+        *ngIf="selectedStatueForAddNewLaw"
+      >
+        <div class="w-8 flex justify-content-end">
+          <div *ngIf="isValidDisplayFinishAndSaveOnParagraphDialog">
+            <button
+              type="button"
+              pButton
+              label="Lưu lại"
+              [disabled]="!newParagraphOfSelectedSection?.description"
+              class="p-button-outlined p-button-warning mr-3"
+              style="height: 40px; margin: 0; border: 3px solid"
+              (click)="saveNewParagraph()"
+            ></button>
+            <button
+              type="button"
+              pButton
+              label="Hoàn thành"
+              [disabled]="
+                newParagraphListOfSelectedSection &&
+                newParagraphListOfSelectedSection.length >= 1
+                  ? false
+                  : true
+              "
+              class="p-button-outlined p-button-success"
+              style="height: 40px; margin: 0; border: 3px solid"
+              (click)="isShowingConfirmAddNewLaw = true"
+            ></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- footer for confirm add new paragraphs-->
+    <div class="p-2" *ngIf="isShowingConfirmAddNewLaw">
+      <div class="w-12 flex justify-content-center">
+        <div class="w-8 flex">
+          <div class="w-6 flex justify-content-start">
+            <button
+              type="button"
+              pButton
+              label="Quay lại"
+              class="p-button-outlined"
+              style="height: 40px; margin: 0 0.5rem 0 0; border: 3px solid"
+              (click)="
+                isShowingConfirmAddNewLaw = false;
+                isShowingParagraphDialog =
+                     true
+              "
+            ></button>
+          </div>
+
+          <div class="w-6 flex justify-content-end">
+            <button
+              type="button"
+              pButton
+              label="Hoàn thành"
+              class="p-button-success"
+              style="height: 40px; margin: 0; border: 3px solid; width: 8rem"
+              (click)="confirmedAddNewLaw()"
+            ></button>
+          </div>
+        </div>
+      </div>
+    </div>
   </ng-template>
 </p-dialog>

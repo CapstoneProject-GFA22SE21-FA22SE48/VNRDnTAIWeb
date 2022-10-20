@@ -188,6 +188,10 @@ export class ManageLawsComponent implements OnInit {
   isShowingConfirmAddNewLaw: boolean = false;
   //end of new paragraph
 
+  //start of add new paragraph from paragraph screen
+  displayAddNewParagraphDialog: boolean = false;
+  //end of add new paragraph from paragraph screen
+
   constructor(
     private wrapperService: WrapperService,
     private isLoadingService: IsLoadingService,
@@ -1865,15 +1869,6 @@ export class ManageLawsComponent implements OnInit {
     this.newParagraphSelectedKeyword = undefined;
   }
 
-  //"Hoàn thành" button on section dialog clicked -> section with no paragraph
-  completeOnSectionDialog() {
-    // Confirm
-    // 1.Check this section is a section with no paragraph
-    // 2.Bind only newSection to selectedStatue
-    // 3.Pass data to API
-  }
-
-  //TODO: create ROM -> clearAddNewAllData -> message success/error
   //"Hoàn thành" button on paragraph dialog clicked
   confirmedAddNewLaw() {
     // if new section created & that section is a section with no paragraph
@@ -2384,9 +2379,13 @@ export class ManageLawsComponent implements OnInit {
     this.newSectionPenaltyInvalidMsg = '';
     this.newSectionDescriptionInvalidMsg = '';
     this.isValidGoNextOnSectionDialog = true;
+    this.isValidFinishOnSectionDialog = false;
     this.isAddedNewSection = false;
 
     this.isUpdatingNewSection = false;
+    this.isValidGobackToStatue = true;
+
+  this.displayConfirmDeleteNewSection = false;
 
     //Clear data of new section reference list
     this.isSectionWithNoParagraph = false;
@@ -2432,6 +2431,56 @@ export class ManageLawsComponent implements OnInit {
     this.displayConfirmDeleteNewParagraphInNewParagraphList = false;
     this.isValidGobackToSection = true;
     this.isValidDisplayFinishAndSaveOnParagraphDialog = true;
+
+    this.displayAddNewParagraphDialog = false;
   }
   //end of admin ADD new section
+
+  //start of add new paragraph
+  displayAddNewParagraph(){
+    this.displayAddNewParagraphDialog = true;
+    this.selectedStatueForAddNewLaw = {...this.selectedStatue};
+    this.selectedSectionForAddNewLaw = {...this.selectedSection};
+    if (this.selectedSectionForAddNewLaw.paragraphs?.length > 0) {
+      this.isLoadingService.add();
+      this.wrapperService.get(
+        paths.ScribeGetParagraphsBySectionId +
+          '/' +
+          this.selectedSectionForAddNewLaw?.id,
+        getStorageToken(),
+        {
+          successCallback: (response) => {
+            this.existedParagraphCountOfSelectedSection = response.data.length;
+            this.initValueForNewParagraph();
+
+            this.isLoadingService.remove();
+          },
+          errorCallback: (error) => {
+            console.log(error);
+            this.isLoadingService.remove();
+          },
+        }
+      );
+    } else {
+      this.existedParagraphCountOfSelectedSection = 0;
+      this.initValueForNewParagraph();
+    }
+
+    this.loadKeywordListForNewParagraph();
+    this.loadStatuesForAddingReferenceOfNewParagraph();
+  }
+  //end of add new paragraph
+
+  //start of add new section
+  displayAddNewSection(){
+    this.selectedStatueForAddNewLaw = {...this.selectedStatue};
+    this.displayAddNewLawDialog = true; 
+    this.isShowingStatueDialog = false;
+    this.isShowingSectionDialog = true;
+    this.isShowingParagraphDialog = false;
+    this.isShowingConfirmAddNewLaw = false;
+    this.isValidGobackToStatue = false;
+    this.selectAnotherStatueOrDefaultStatueSelected();
+  }
+  //end of add new section
 }
