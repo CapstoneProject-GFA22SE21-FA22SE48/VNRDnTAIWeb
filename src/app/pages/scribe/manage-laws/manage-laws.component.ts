@@ -7,7 +7,8 @@ import { WrapperService } from 'src/services/wrapper.service';
 import * as paths from '../../../common/paths';
 import * as commonStr from '../../../common/commonStr';
 import { ActivatedRoute } from '@angular/router';
-
+import * as vietnameseAlphabet from '../../../../assets/i18n/vietnameseAlphabet.json';
+import { NewSectionDTO, NewParagraphDTO } from 'src/app/models/General.model';
 @Component({
   selector: 'app-manage-laws',
   templateUrl: './manage-laws.component.html',
@@ -111,6 +112,82 @@ export class ManageLawsComponent implements OnInit {
   displayConfirmUpdateParagraphDialog: boolean = false;
   displayConfirmDeleteParagraphDialog: boolean = false;
 
+  //Start of add new law
+  displayAddNewLawDialog: boolean = false;
+  isShowingStatueDialog: boolean = false;
+  isShowingSectionDialog: boolean = false;
+  isShowingParagraphDialog: boolean = false;
+
+  statueListForAddNewLaw: any;
+  selectedStatueForAddNewLaw: any;
+
+  selectedSectionForAddNewLaw: any;
+
+  isCollapsedCreatNewSection: boolean = false;
+
+  newSection: any;
+  isValidNewSectionMinPenalty: boolean = true;
+  isValidNewSectionMaxPenalty: boolean = true;
+  newSectionPenaltyInvalidMsg = '';
+  newSectionDescriptionInvalidMsg = '';
+  isValidGoNextOnSectionDialog: boolean = true;
+  isValidFinishOnSectionDialog: boolean = false;
+  isAddedNewSection: boolean = false;
+
+  isUpdatingNewSection: boolean = false;
+  isValidGobackToStatue: boolean = true;
+
+  displayConfirmDeleteNewSection: boolean = false;
+
+  //start of section with no paragraph
+  isSectionWithNoParagraph: boolean = false;
+  newSectionWithNoParagraphReferenceStatueList: any;
+  newSectionWithNoParagraphReferenceSelectedStatue: any;
+  newSectionWithNoParagraphReferenceSectionList: any;
+  newSectionWithNoParagraphReferenceSelectedSection: any;
+  newSectionWithNoParagraphReferenceParagraphList: any;
+  newSectionWithNoParagraphReferenceSelectedParagraph: any;
+
+  tmpReferenceNewSectionWithNoParagraph: any;
+  tmpReferenceNewSectionWithNoParagraphIsExcluded: any;
+  tmpReferenceListOfNewSectionWithNoParagraph: any[] = [];
+  isValidAddReferenceToNewSectionWithNoParagraph: boolean = true;
+  //end of section with no paragraph
+
+  //start of new paragraph
+  newParagraphListOfSelectedSection: any[] = [];
+  newParagraphOfSelectedSection: any;
+  newParagraphOfSelectedSectionDescription: any;
+  newParagraphOfSelectedSectionAdditionalPenalty: any;
+  newParagraphDescriptionInvalidMsg: any;
+
+  newParagraphReferenceStatueList: any;
+  newParagraphReferenceSelectedStatue: any;
+  newParagraphReferenceSectionList: any;
+  newParagraphReferenceSelectedSection: any;
+  newParagraphReferenceParagraphList: any;
+  newParagraphReferenceSelectedParagraph: any;
+
+  tmpReferenceListOfNewParagraph: any[] = [];
+  tmpReferenceOfNewParagraph: any;
+  tmpReferenceOfNewParagraphIsExcluded: any;
+  isValidAddReferenceToNewParagraph: boolean = true;
+
+  newParagraphKeywordList: any;
+  newParagraphSelectedKeyword: any;
+
+  existedParagraphCountOfSelectedSection: any;
+
+  isUpdatingNewParagraph: boolean = false;
+  updatingParagraphIndex: any;
+  deletingParagraphIndex: any;
+  displayConfirmDeleteNewParagraphInNewParagraphList: boolean = false;
+  isValidGobackToSection: boolean = true;
+  isValidDisplayFinishAndSaveOnParagraphDialog: boolean = true;
+
+  isShowingConfirmAddNewLaw: boolean = false;
+  //end of new paragraph
+
   constructor(
     private wrapperService: WrapperService,
     private isLoadingService: IsLoadingService,
@@ -183,6 +260,14 @@ export class ManageLawsComponent implements OnInit {
                     parseInt(s1.name.split(' ')[1]) -
                     parseInt(s2.name.split(' ')[1])
                 );
+
+                //Set default value for statue dropdown of add new from statue screen
+                this.statueListForAddNewLaw = JSON.parse(
+                  JSON.stringify(this.statues)
+                );
+                this.selectedStatueForAddNewLaw =
+                  this.statueListForAddNewLaw[0];
+
                 this.isLoadingService.remove();
               },
               errorCallback: (error) => {
@@ -1267,4 +1352,1086 @@ export class ManageLawsComponent implements OnInit {
     this.detectChangeParagraph();
   }
   // end of adding chosen paragraph reference
+
+  //start of admin ADD new section
+  initValueForNewSection() {
+    this.newSection = {};
+    if (this.selectedStatueForAddNewLaw?.sections?.length > 0) {
+      this.newSection.name =
+        'Khoản ' +
+        (parseInt(
+          JSON.parse(JSON.stringify(this.selectedStatueForAddNewLaw.sections))
+            .sort(
+              (sc1: any, sc2: any) =>
+                parseInt(sc2.name.split(' ')[1]) -
+                parseInt(sc1.name.split(' ')[1])
+            )[0]
+            .name?.split(' ')[1]
+        ) +
+          Number(1));
+    } else {
+      this.newSection.name = 'Khoản 1';
+    }
+
+    this.newSection.vehicleCategoryId = this.vehicleCats[0]?.id;
+  }
+
+  // loadSectionListForSelectedStatueInAddnewDialog() {
+  //   if (this.selectedStatueForAddNewLaw.sections?.length === 0) {
+  //     this.isLoadingService.add();
+  //     this.wrapperService.get(
+  //       paths.ScribeGetSectionsByStatueId +
+  //         '/' +
+  //         this.selectedStatueForAddNewLaw?.id,
+  //       getStorageToken(),
+  //       {
+  //         successCallback: (response) => {
+  //           this.selectedStatueForAddNewLaw.sections = response.data;
+  //           this.selectedSectionForAddNewLaw =
+  //             this.selectedStatueForAddNewLaw.sections[this.selectedStatueForAddNewLaw.sections?.length-1];
+
+  //           //Set init value for new section
+  //           this.initValueForNewSection();
+
+  //           this.isLoadingService.remove();
+  //         },
+  //         errorCallback: (error) => {
+  //           console.log(error);
+  //           this.isLoadingService.remove();
+  //         },
+  //       }
+  //     );
+  //   } else {
+  //     this.initValueForNewSection();
+  //   }
+  // }
+
+  getNewSectionName(event: any) {
+    this.newSection.description = event.target.value;
+    if (this.newSection.description === '') {
+      this.newSectionDescriptionInvalidMsg = 'Vui lòng nhập nội dung cho khoản';
+    } else {
+      this.newSectionDescriptionInvalidMsg = '';
+    }
+  }
+
+  checkNewSectionMinPenalty(event: any) {
+    this.newSection.minPenalty = event.value;
+    this.isValidNewSectionMinPenalty = true;
+    this.isValidNewSectionMaxPenalty = true;
+    this.newSectionPenaltyInvalidMsg = '';
+
+    if (
+      this.newSection.minPenalty &&
+      this.newSection.maxPenalty &&
+      this.newSection.minPenalty >= this.newSection.maxPenalty
+    ) {
+      this.isValidNewSectionMinPenalty = false;
+      this.newSectionPenaltyInvalidMsg =
+        'Vui lòng nhập mức phạt tối thiểu nhỏ hơn mức phạt tối đa';
+    }
+  }
+
+  checkNewSectionMaxPenalty(event: any) {
+    this.newSection.maxPenalty = event.value;
+    this.isValidNewSectionMinPenalty = true;
+    this.isValidNewSectionMaxPenalty = true;
+    this.newSectionPenaltyInvalidMsg = '';
+
+    if (
+      this.newSection.minPenalty &&
+      this.newSection.maxPenalty &&
+      this.newSection.maxPenalty <= this.newSection.minPenalty
+    ) {
+      this.isValidNewSectionMaxPenalty = false;
+      this.newSectionPenaltyInvalidMsg =
+        'Vui lòng nhập mức phạt tối đa lớn hơn mức phạt tối thiểu';
+    }
+  }
+
+  changeNewSectionVehicleCat(event: any) {
+    this.newSection.vehicleCategoryId = event.value;
+  }
+
+  //"Hủy" button of add new section clicked
+  clearNewSection() {
+    this.initValueForNewSection();
+    this.isCollapsedCreatNewSection = false;
+    this.isValidGoNextOnSectionDialog = true;
+    this.isAddedNewSection = false;
+
+    this.isValidNewSectionMinPenalty = true;
+    this.isValidNewSectionMaxPenalty = true;
+    this.newSectionPenaltyInvalidMsg = '';
+    this.newSectionDescriptionInvalidMsg = '';
+
+    this.isValidFinishOnSectionDialog = false;
+
+    //Clear data of new section REFERENCE list
+    this.isSectionWithNoParagraph = false;
+    this.newSectionWithNoParagraphReferenceStatueList = undefined;
+    this.newSectionWithNoParagraphReferenceSelectedStatue = undefined;
+    this.newSectionWithNoParagraphReferenceSectionList = undefined;
+    this.newSectionWithNoParagraphReferenceSelectedSection = undefined;
+    this.newSectionWithNoParagraphReferenceParagraphList = undefined;
+    this.newSectionWithNoParagraphReferenceSelectedParagraph = undefined;
+
+    this.tmpReferenceNewSectionWithNoParagraph = undefined;
+    this.tmpReferenceNewSectionWithNoParagraphIsExcluded = undefined;
+    this.tmpReferenceListOfNewSectionWithNoParagraph = [];
+    this.isValidAddReferenceToNewSectionWithNoParagraph = true;
+  }
+
+  //"Thêm" button of add new section clicked
+  addNewSectionDataToSectionList() {
+    this.isCollapsedCreatNewSection = false;
+
+    this.isAddedNewSection = true;
+    if (this.isSectionWithNoParagraph) {
+      this.isValidGoNextOnSectionDialog = false;
+      this.isValidFinishOnSectionDialog = true;
+
+      this.newSection.isSectionWithNoParagraph = true;
+      // if is a section with no paragraph and has reference list
+      if (this.tmpReferenceListOfNewSectionWithNoParagraph) {
+        this.newSection.referenceParagraphs =
+          this.tmpReferenceListOfNewSectionWithNoParagraph.slice();
+      }
+    } else {
+      this.isValidGoNextOnSectionDialog = true;
+      this.isValidFinishOnSectionDialog = false;
+
+      this.newSection.isSectionWithNoParagraph = false;
+    }
+    this.selectedSectionForAddNewLaw = this.newSection;
+
+    this.selectedStatueForAddNewLaw.sections.push(this.newSection);
+
+    // because only add one section at a time, so no need to init value for a second new section
+    // this.initValueForNewSection();
+
+    this.isSectionWithNoParagraph = false;
+  }
+
+  // start of adding reference for new section with no paragraph
+  toggleIsSectionWithNoParagraph(isSectionWithNoParagraph: boolean) {
+    if (isSectionWithNoParagraph === true) {
+      this.loadStatuesForAddingReferenceOfNewSectionWithNoParagraph();
+      if (this.newSection === undefined) {
+        this.newSection = {};
+        this.newSection.isSectionWithNoParagraph = true;
+      }
+    } else {
+      this.newSection.isSectionWithNoParagraph = false;
+    }
+  }
+
+  loadStatuesForAddingReferenceOfNewSectionWithNoParagraph() {
+    this.newSectionWithNoParagraphReferenceStatueList = JSON.parse(
+      JSON.stringify(this.statues)
+    );
+  }
+
+  selectStatueReferenceForNewSection(event: any) {
+    this.newSectionWithNoParagraphReferenceSelectedStatue = event.value;
+    this.newSectionWithNoParagraphReferenceSelectedSection = undefined;
+    this.newSectionWithNoParagraphReferenceSelectedParagraph = undefined;
+
+    if (this.tmpReferenceNewSectionWithNoParagraph === undefined)
+      this.tmpReferenceNewSectionWithNoParagraph = {};
+    this.tmpReferenceNewSectionWithNoParagraph.referenceParagraphSectionStatueId =
+      event.value.id;
+    this.tmpReferenceNewSectionWithNoParagraph.referenceParagraphSectionStatueName =
+      event.value.name;
+
+    this.isLoadingService.add();
+    this.wrapperService.get(
+      paths.ScribeGetSectionsByStatueId + '/' + event.value.id,
+      getStorageToken(),
+      {
+        successCallback: (response) => {
+          this.newSectionWithNoParagraphReferenceSectionList = response.data;
+          this.isLoadingService.remove();
+        },
+        errorCallback: (error) => {
+          console.log(error);
+          this.isLoadingService.remove();
+        },
+      }
+    );
+  }
+
+  selectSectionReferenceForNewSection(event: any) {
+    this.newSectionWithNoParagraphReferenceSelectedSection = event.value;
+    this.newSectionWithNoParagraphReferenceSelectedParagraph = undefined;
+
+    this.tmpReferenceNewSectionWithNoParagraph.referenceParagraphSectionId =
+      event.value.id;
+    this.tmpReferenceNewSectionWithNoParagraph.referenceParagraphSectionName =
+      event.value.name;
+
+    this.isLoadingService.add();
+    this.wrapperService.get(
+      paths.ScribeGetParagraphsBySectionId + '/' + event.value.id,
+      getStorageToken(),
+      {
+        successCallback: (response) => {
+          this.newSectionWithNoParagraphReferenceParagraphList = response.data;
+          this.isLoadingService.remove();
+        },
+        errorCallback: (error) => {
+          console.log(error);
+          this.isLoadingService.remove();
+        },
+      }
+    );
+  }
+
+  selectParagraphReferenceForNewSection(event: any) {
+    this.newSectionWithNoParagraphReferenceSelectedParagraph = event.value;
+
+    this.tmpReferenceNewSectionWithNoParagraph.referenceParagraphId =
+      event.value.id;
+    this.tmpReferenceNewSectionWithNoParagraph.referenceParagraphName =
+      event.value.name;
+    this.tmpReferenceNewSectionWithNoParagraph.referenceParagraphDescription =
+      event.value.description;
+  }
+
+  chooseNewSectionWithNoParagraphIncludedExcluded(event: any) {
+    if (this.tmpReferenceNewSectionWithNoParagraph === undefined) {
+      this.tmpReferenceNewSectionWithNoParagraph = {};
+    }
+
+    this.tmpReferenceNewSectionWithNoParagraphIsExcluded = event.value;
+
+    this.tmpReferenceNewSectionWithNoParagraph.referenceParagraphIsExcluded =
+      this.tmpReferenceNewSectionWithNoParagraphIsExcluded;
+  }
+
+  // "Thêm" button of adding references to new section
+  addNewSectionReference() {
+    this.isValidAddReferenceToNewSectionWithNoParagraph = true;
+
+    if (
+      this.tmpReferenceListOfNewSectionWithNoParagraph &&
+      this.tmpReferenceListOfNewSectionWithNoParagraph.length > 0
+    ) {
+      this.tmpReferenceListOfNewSectionWithNoParagraph.forEach((r: any) => {
+        if (
+          r.referenceParagraphId ===
+          this.tmpReferenceNewSectionWithNoParagraph.referenceParagraphId
+        ) {
+          this.isValidAddReferenceToNewSectionWithNoParagraph = false;
+        }
+      });
+    } else {
+      this.tmpReferenceListOfNewSectionWithNoParagraph = [];
+      this.isValidAddReferenceToNewSectionWithNoParagraph = true;
+    }
+
+    if (this.isValidAddReferenceToNewSectionWithNoParagraph) {
+      this.tmpReferenceListOfNewSectionWithNoParagraph.push(
+        JSON.parse(JSON.stringify(this.tmpReferenceNewSectionWithNoParagraph))
+      );
+      // this.tmpReferenceNewSectionWithNoParagraph = undefined;
+      // this.tmpReferenceNewSectionWithNoParagraph.referenceParagraphIsExcluded = undefined;
+    }
+  }
+
+  // "x" button of removing references from new section
+  removeNewSectionReference(i: number) {
+    this.tmpReferenceListOfNewSectionWithNoParagraph.splice(i, 1);
+    this.isValidAddReferenceToNewSectionWithNoParagraph = true;
+  }
+  // end of adding reference for new section with no paragraph
+
+  //start of add new paragraph
+  initValueForNewParagraph() {
+    this.newParagraphOfSelectedSection = {};
+
+    this.newParagraphOfSelectedSection.name =
+      'Điểm ' +
+      JSON.parse(JSON.stringify(vietnameseAlphabet))[
+        this.newParagraphListOfSelectedSection
+          ? this.newParagraphListOfSelectedSection?.length +
+            parseInt(this.existedParagraphCountOfSelectedSection)
+          : 0
+      ];
+  }
+
+  getNewParagraphDescription(event: any) {
+    this.newParagraphOfSelectedSectionDescription = event.target.value;
+
+    this.newParagraphOfSelectedSection.description = event.target.value;
+    if (this.newParagraphOfSelectedSection.description === '') {
+      this.newParagraphDescriptionInvalidMsg =
+        'Vui lòng nhập nội dung cho điều';
+    } else {
+      this.newParagraphDescriptionInvalidMsg = '';
+    }
+  }
+
+  getNewParagraphAdditionalPenalty(event: any) {
+    this.newParagraphOfSelectedSectionAdditionalPenalty = event.target.value;
+
+    this.newParagraphOfSelectedSection.additionalPenalty = event.target.value;
+  }
+
+  loadKeywordListForNewParagraph() {
+    this.isLoadingService.add();
+    this.wrapperService.get(paths.ScribeGetKeywords, getStorageToken(), {
+      successCallback: (response) => {
+        this.newParagraphKeywordList = response.data;
+        this.isLoadingService.remove();
+      },
+      errorCallback: (error) => {
+        console.log(error);
+        this.isLoadingService.remove();
+      },
+    });
+  }
+
+  selectKeywordForNewParagraph(event: any) {
+    if (event.value) {
+      this.newParagraphOfSelectedSection.keywordId = event.value.id;
+    }
+  }
+
+  loadStatuesForAddingReferenceOfNewParagraph() {
+    this.newParagraphReferenceStatueList = JSON.parse(
+      JSON.stringify(this.statues)
+    );
+  }
+
+  selectStatueReferenceForNewParagraph(event: any) {
+    this.newParagraphReferenceSelectedStatue = event.value;
+    this.newParagraphReferenceSelectedSection = undefined;
+    this.newParagraphReferenceSelectedParagraph = undefined;
+
+    if (this.tmpReferenceOfNewParagraph === undefined)
+      this.tmpReferenceOfNewParagraph = {};
+    this.tmpReferenceOfNewParagraph.referenceParagraphSectionStatueId =
+      event.value.id;
+    this.tmpReferenceOfNewParagraph.referenceParagraphSectionStatueName =
+      event.value.name;
+
+    this.isLoadingService.add();
+    this.wrapperService.get(
+      paths.ScribeGetSectionsByStatueId + '/' + event.value.id,
+      getStorageToken(),
+      {
+        successCallback: (response) => {
+          this.newParagraphReferenceSectionList = response.data;
+          this.isLoadingService.remove();
+        },
+        errorCallback: (error) => {
+          console.log(error);
+          this.isLoadingService.remove();
+        },
+      }
+    );
+  }
+
+  selectSectionReferenceForNewParagraph(event: any) {
+    this.newParagraphReferenceSelectedSection = event.value;
+    this.newParagraphReferenceSelectedParagraph = undefined;
+
+    this.tmpReferenceOfNewParagraph.referenceParagraphSectionId =
+      event.value.id;
+    this.tmpReferenceOfNewParagraph.referenceParagraphSectionName =
+      event.value.name;
+
+    this.isLoadingService.add();
+    this.wrapperService.get(
+      paths.ScribeGetParagraphsBySectionId + '/' + event.value.id,
+      getStorageToken(),
+      {
+        successCallback: (response) => {
+          this.newParagraphReferenceParagraphList = response.data;
+          this.isLoadingService.remove();
+        },
+        errorCallback: (error) => {
+          console.log(error);
+          this.isLoadingService.remove();
+        },
+      }
+    );
+  }
+
+  selectParagraphReferenceForNewParagraph(event: any) {
+    this.newParagraphReferenceSelectedParagraph = event.value;
+
+    this.tmpReferenceOfNewParagraph.referenceParagraphId = event.value.id;
+    this.tmpReferenceOfNewParagraph.referenceParagraphName = event.value.name;
+    this.tmpReferenceOfNewParagraph.referenceParagraphDescription =
+      event.value.description;
+  }
+
+  chooseNewParagraphIncludedExcluded(event: any) {
+    if (this.tmpReferenceOfNewParagraph === undefined) {
+      this.tmpReferenceOfNewParagraph = {};
+    }
+
+    this.tmpReferenceOfNewParagraphIsExcluded = event.value;
+
+    this.tmpReferenceOfNewParagraph.referenceParagraphIsExcluded =
+      this.tmpReferenceOfNewParagraphIsExcluded;
+  }
+
+  addNewParagraphReferenceToTmpReferenceList() {
+    this.isValidAddReferenceToNewParagraph = true;
+
+    this.tmpReferenceListOfNewParagraph.forEach((r: any) => {
+      if (
+        r.referenceParagraphId ===
+        this.tmpReferenceOfNewParagraph.referenceParagraphId
+      ) {
+        this.isValidAddReferenceToNewParagraph = false;
+      }
+    });
+    if (this.isValidAddReferenceToNewParagraph) {
+      this.tmpReferenceListOfNewParagraph.push(
+        JSON.parse(JSON.stringify(this.tmpReferenceOfNewParagraph))
+      );
+      // this.tmpReferenceNewSectionWithNoParagraph = undefined;
+      // this.tmpReferenceNewSectionWithNoParagraph.referenceParagraphIsExcluded = undefined;
+    }
+  }
+
+  removeNewParagraphReference(i: number) {
+    this.tmpReferenceListOfNewParagraph.splice(i, 1);
+    this.isValidAddReferenceToNewParagraph = true;
+  }
+
+  // "Lưu lại" button on paragraph dialog clicked -> add new paragraph to list new Paragraphs
+  saveNewParagraph() {
+    this.newParagraphOfSelectedSection.referenceParagraphs =
+      this.tmpReferenceListOfNewParagraph;
+    this.newParagraphListOfSelectedSection.push(
+      this.newParagraphOfSelectedSection
+    );
+    if (
+      this.selectedSectionForAddNewLaw.paragraphs &&
+      this.selectedSectionForAddNewLaw.paragraphs.length === 0
+    ) {
+      this.selectedSectionForAddNewLaw.paragraphs = [];
+    }
+    this.clearNewParagraphForAddingNextGround();
+  }
+
+  clearNewParagraphForAddingNextGround() {
+    this.initValueForNewParagraph();
+    this.newParagraphOfSelectedSectionDescription = undefined;
+    this.newParagraphOfSelectedSectionAdditionalPenalty = undefined;
+    this.newParagraphDescriptionInvalidMsg = undefined;
+
+    //Keep statue list for next creation of new paragraph
+    this.newParagraphReferenceSelectedStatue = null;
+    this.newParagraphReferenceSectionList = undefined;
+    this.newParagraphReferenceSelectedSection = null;
+    this.newParagraphReferenceParagraphList = undefined;
+    this.newParagraphReferenceSelectedParagraph = null;
+
+    //Clear new paragraph REFERENCE list
+    this.tmpReferenceListOfNewParagraph = [];
+    this.tmpReferenceOfNewParagraph = undefined;
+    this.tmpReferenceOfNewParagraphIsExcluded = undefined;
+    this.isValidAddReferenceToNewParagraph = true;
+
+    this.newParagraphSelectedKeyword = undefined;
+  }
+
+  clearAllNewParagraphs() {
+    this.newParagraphListOfSelectedSection = [];
+    this.newParagraphOfSelectedSection = undefined;
+    this.newParagraphOfSelectedSectionDescription = undefined;
+    this.newParagraphOfSelectedSectionAdditionalPenalty = undefined;
+    this.newParagraphDescriptionInvalidMsg = undefined;
+
+    this.newParagraphReferenceStatueList = undefined;
+    this.newParagraphReferenceSelectedStatue;
+    this.newParagraphReferenceSectionList = undefined;
+    this.newParagraphReferenceSelectedSection = undefined;
+    this.newParagraphReferenceParagraphList = undefined;
+    this.newParagraphReferenceSelectedParagraph = undefined;
+
+    this.tmpReferenceListOfNewParagraph = [];
+    this.tmpReferenceOfNewParagraph = undefined;
+    this.tmpReferenceOfNewParagraphIsExcluded = undefined;
+    this.isValidAddReferenceToNewParagraph = true;
+
+    this.newParagraphKeywordList = undefined;
+    this.newParagraphSelectedKeyword = undefined;
+  }
+
+  //"Hoàn thành" button on section dialog clicked -> section with no paragraph
+  completeOnSectionDialog() {
+    // Confirm
+    // 1.Check this section is a section with no paragraph
+    // 2.Bind only newSection to selectedStatue
+    // 3.Pass data to API
+  }
+
+  //TODO: create ROM -> clearAddNewAllData -> message success/error
+  //"Hoàn thành" button on paragraph dialog clicked
+  confirmedAddNewLaw() {
+    // if new section created & that section is a section with no paragraph
+    if (
+      this.isAddedNewSection &&
+      this.selectedSectionForAddNewLaw?.isSectionWithNoParagraph
+    ) {
+      var payload1: NewSectionDTO = {
+        statueId: this.selectedStatueForAddNewLaw?.id,
+        name: this.selectedSectionForAddNewLaw?.name,
+        description: this.selectedSectionForAddNewLaw?.description,
+        vehicleCategoryId: this.selectedSectionForAddNewLaw?.vehicleCategoryId,
+        minPenalty: this.selectedSectionForAddNewLaw?.minPenalty,
+        maxPenalty: this.selectedSectionForAddNewLaw?.maxPenalty,
+        isSectionWithNoParagraph:
+          this.selectedSectionForAddNewLaw?.isSectionWithNoParagraph,
+
+        referenceParagraphs:
+          this.selectedSectionForAddNewLaw?.referenceParagraphs,
+      };
+
+      this.isLoadingService.add();
+      this.wrapperService.post(
+        paths.ScribeCreateNewSection,
+        payload1,
+        getStorageToken(),
+        {
+          successCallback: (response) => {
+            this.wrapperService.post(
+              paths.ScribeCreateLawModificationRequest,
+              {
+                modifyingSectionId: response.data?.id,
+                modifiedSectionId: null,
+                scribeId: decodeToken(getStorageToken() || '').Id,
+                adminId: this.selectedAdmin.id,
+                operationType: OperationType.Add,
+              },
+              getStorageToken(),
+              {
+                successCallback: (response) => {
+                  this.messageService.add({
+                    key: 'createSuccess',
+                    severity: 'success',
+                    summary: commonStr.success,
+                    detail: commonStr.romCreatedSuccessfully,
+                  });
+                  this.isLoadingService.remove();
+                },
+                errorCallback: (error) => {
+                  console.log(error);
+                  this.messageService.add({
+                    key: 'createError',
+                    severity: 'error',
+                    summary: commonStr.fail,
+                    detail: commonStr.errorOccur,
+                  });
+                  this.isLoadingService.remove();
+                },
+              }
+            );
+          },
+          errorCallback: (error) => {
+            console.log(error);
+            this.messageService.add({
+              key: 'createError',
+              severity: 'error',
+              summary: commonStr.fail,
+              detail: commonStr.errorOccur,
+            });
+            this.isLoadingService.remove();
+          },
+        }
+      );
+    } else if (
+      this.isAddedNewSection &&
+      !this.selectedSectionForAddNewLaw?.isSectionWithNoParagraph
+    ) {
+      var payload2: NewSectionDTO = {
+        statueId: this.selectedStatueForAddNewLaw?.id,
+        name: this.selectedSectionForAddNewLaw?.name,
+        description: this.selectedSectionForAddNewLaw?.description,
+        vehicleCategoryId: this.selectedSectionForAddNewLaw?.vehicleCategoryId,
+        minPenalty: this.selectedSectionForAddNewLaw?.minPenalty,
+        maxPenalty: this.selectedSectionForAddNewLaw?.maxPenalty,
+        isSectionWithNoParagraph:
+          this.selectedSectionForAddNewLaw?.isSectionWithNoParagraph,
+
+        paragraphs: this.newParagraphListOfSelectedSection,
+      };
+
+      this.isLoadingService.add();
+      this.wrapperService.post(
+        paths.ScribeCreateNewSection,
+        payload2,
+        getStorageToken(),
+        {
+          successCallback: (response) => {
+            this.wrapperService.post(
+              paths.ScribeCreateLawModificationRequest,
+              {
+                modifyingSectionId: response.data?.id,
+                modifiedSectionId: null,
+                scribeId: decodeToken(getStorageToken() || '').Id,
+                adminId: this.selectedAdmin.id,
+                operationType: OperationType.Add,
+              },
+              getStorageToken(),
+              {
+                successCallback: (response) => {
+                  this.messageService.add({
+                    key: 'createSuccess',
+                    severity: 'success',
+                    summary: commonStr.success,
+                    detail: commonStr.romCreatedSuccessfully,
+                  });
+                  this.isLoadingService.remove();
+                },
+                errorCallback: (error) => {
+                  console.log(error);
+                  this.messageService.add({
+                    key: 'createError',
+                    severity: 'error',
+                    summary: commonStr.fail,
+                    detail: commonStr.errorOccur,
+                  });
+                  this.isLoadingService.remove();
+                },
+              }
+            );
+          },
+          errorCallback: (error) => {
+            console.log(error);
+            this.messageService.add({
+              key: 'createError',
+              severity: 'error',
+              summary: commonStr.fail,
+              detail: commonStr.errorOccur,
+            });
+            this.isLoadingService.remove();
+          },
+        }
+      );
+    } else {
+      var payload3: NewParagraphDTO[] = this.newParagraphListOfSelectedSection;
+      payload3.forEach((p: NewParagraphDTO) => {
+        p.sectionId = this.selectedSectionForAddNewLaw?.id;
+        this.isLoadingService.add();
+        this.wrapperService.post(
+          paths.ScribeCreateParagraphForROM,
+          p,
+          getStorageToken(),
+          {
+            successCallback: (response) => {
+              this.wrapperService.post(
+                paths.ScribeCreateLawModificationRequest,
+                {
+                  modifyingParagraphId: response.data?.id,
+                  modifiedParagraphId: null,
+                  scribeId: decodeToken(getStorageToken() || '').Id,
+                  adminId: this.selectedAdmin.id,
+                  operationType: OperationType.Add,
+                },
+                getStorageToken(),
+                {
+                  successCallback: (response) => {
+                    this.messageService.add({
+                      key: 'createSuccess',
+                      severity: 'success',
+                      summary: commonStr.success,
+                      detail: commonStr.romCreatedSuccessfully,
+                    });
+                    this.isLoadingService.remove();
+                  },
+                  errorCallback: (error) => {
+                    console.log(error);
+                    this.messageService.add({
+                      key: 'createError',
+                      severity: 'error',
+                      summary: commonStr.fail,
+                      detail: commonStr.errorOccur,
+                    });
+                    this.isLoadingService.remove();
+                  },
+                }
+              );
+            },
+            errorCallback: (error) => {
+              console.log(error);
+              this.messageService.add({
+                key: 'createError',
+                severity: 'error',
+                summary: commonStr.fail,
+                detail: commonStr.errorOccur,
+              });
+              this.isLoadingService.remove();
+            },
+          }
+        );
+      });
+    }
+
+    this.clearAddNewAllData();
+  }
+
+  selectAnotherStatueOrDefaultStatueSelected() {
+    this.clearNewSection();
+    this.clearAllNewParagraphs();
+    this.isLoadingService.add();
+    this.wrapperService.get(
+      paths.ScribeGetSectionsByStatueId +
+        '/' +
+        this.selectedStatueForAddNewLaw?.id,
+      getStorageToken(),
+      {
+        successCallback: (response) => {
+          this.selectedStatueForAddNewLaw.sections = response.data;
+          this.selectedSectionForAddNewLaw =
+            // this.selectedStatueForAddNewLaw.sections[this.selectedStatueForAddNewLaw.sections?.length-1];
+            this.selectedStatueForAddNewLaw.sections[0];
+
+          //Set init value for new section
+          this.initValueForNewSection();
+
+          this.isLoadingService.remove();
+        },
+        errorCallback: (error) => {
+          console.log(error);
+          this.isLoadingService.remove();
+        },
+      }
+    );
+  }
+
+  selectAnotherSectionOrDefaultSectionSelected() {
+    this.clearAllNewParagraphs();
+    //load existing paragraph data to get length to init paragraph name for new paragraph
+    if (this.selectedSectionForAddNewLaw.paragraphs?.length > 0) {
+      this.isLoadingService.add();
+      this.wrapperService.get(
+        paths.ScribeGetParagraphsBySectionId +
+          '/' +
+          this.selectedSectionForAddNewLaw?.id,
+        getStorageToken(),
+        {
+          successCallback: (response) => {
+            this.existedParagraphCountOfSelectedSection = response.data.length;
+            this.initValueForNewParagraph();
+
+            this.isLoadingService.remove();
+          },
+          errorCallback: (error) => {
+            console.log(error);
+            this.isLoadingService.remove();
+          },
+        }
+      );
+    } else {
+      this.existedParagraphCountOfSelectedSection = 0;
+      this.initValueForNewParagraph();
+    }
+  }
+
+  openUpdateNewSectionParagraph(i: number) {
+    this.updatingParagraphIndex = i;
+
+    this.newParagraphOfSelectedSectionDescription =
+      this.newParagraphListOfSelectedSection[i].description;
+    this.newParagraphOfSelectedSectionAdditionalPenalty =
+      this.newParagraphListOfSelectedSection[i].additionalPenalty;
+    this.newParagraphSelectedKeyword = this.newParagraphKeywordList.filter(
+      (k: any) => k.id === this.newParagraphListOfSelectedSection[i]?.keywordId
+    )[0];
+    this.tmpReferenceListOfNewParagraph =
+      this.newParagraphListOfSelectedSection[i].referenceParagraphs.slice();
+
+    this.isUpdatingNewParagraph = true;
+    this.isValidGobackToSection = false;
+    this.isValidDisplayFinishAndSaveOnParagraphDialog = false;
+    this.isValidAddReferenceToNewParagraph = true;
+  }
+
+  saveUpdatedNewParagraph() {
+    this.newParagraphListOfSelectedSection[this.updatingParagraphIndex] = {
+      name: this.newParagraphListOfSelectedSection[this.updatingParagraphIndex]
+        .name,
+      description: this.newParagraphOfSelectedSectionDescription,
+      additionalPenalty: this.newParagraphOfSelectedSectionAdditionalPenalty,
+      keywordId: this.newParagraphSelectedKeyword?.id,
+      referenceParagraphs: this.tmpReferenceListOfNewParagraph,
+    };
+    this.updatingParagraphIndex = undefined;
+
+    this.newParagraphOfSelectedSectionDescription = undefined;
+    this.newParagraphOfSelectedSectionAdditionalPenalty = undefined;
+    this.newParagraphSelectedKeyword = undefined;
+    this.tmpReferenceListOfNewParagraph = [];
+
+    this.isUpdatingNewParagraph = false;
+    this.isValidGobackToSection = true;
+    this.isValidDisplayFinishAndSaveOnParagraphDialog = true;
+    this.isValidAddReferenceToNewParagraph = true;
+
+    this.newParagraphOfSelectedSection.description = undefined;
+  }
+
+  cancleUpdatedNewParagraph() {
+    this.updatingParagraphIndex = undefined;
+
+    this.newParagraphOfSelectedSectionDescription = undefined;
+    this.newParagraphOfSelectedSectionAdditionalPenalty = undefined;
+    this.newParagraphSelectedKeyword = undefined;
+    this.tmpReferenceListOfNewParagraph = [];
+
+    this.isUpdatingNewParagraph = false;
+    this.isValidGobackToSection = true;
+    this.isValidDisplayFinishAndSaveOnParagraphDialog = true;
+    this.isValidAddReferenceToNewParagraph = true;
+  }
+
+  confirmDeleteNewParagraphInNewParagraphList(i: number) {
+    this.deletingParagraphIndex = i;
+    this.displayConfirmDeleteNewParagraphInNewParagraphList = true;
+  }
+
+  deleteNewParagraphInNewParagraphList() {
+    this.newParagraphListOfSelectedSection.splice(
+      this.deletingParagraphIndex,
+      1
+    );
+
+    let i = 0;
+    this.newParagraphListOfSelectedSection.forEach((p: any) => {
+      p.name =
+        'Điểm ' +
+        JSON.parse(JSON.stringify(vietnameseAlphabet))[
+          this.newParagraphListOfSelectedSection
+            ? parseInt(this.existedParagraphCountOfSelectedSection) + i
+            : 0
+        ];
+      i++;
+    });
+    this.displayConfirmDeleteNewParagraphInNewParagraphList = false;
+    this.initValueForNewParagraph();
+  }
+
+  openUpdateNewSection() {
+    this.isUpdatingNewSection = true;
+    this.isValidGobackToStatue = false;
+    this.isValidGoNextOnSectionDialog = false;
+    this.isValidFinishOnSectionDialog = false;
+    this.isValidAddReferenceToNewSectionWithNoParagraph = true;
+
+    //render data for newSection from selectedStatueForAddNewLaw.sections
+    this.newSection = {
+      name: this.selectedStatueForAddNewLaw.sections[
+        this.selectedStatueForAddNewLaw.sections?.length - 1
+      ]?.name,
+      description:
+        this.selectedStatueForAddNewLaw.sections[
+          this.selectedStatueForAddNewLaw.sections?.length - 1
+        ]?.description,
+      vehicleCategoryId:
+        this.selectedStatueForAddNewLaw.sections[
+          this.selectedStatueForAddNewLaw.sections?.length - 1
+        ]?.vehicleCategoryId,
+      minPenalty:
+        this.selectedStatueForAddNewLaw.sections[
+          this.selectedStatueForAddNewLaw.sections?.length - 1
+        ]?.minPenalty,
+      maxPenalty:
+        this.selectedStatueForAddNewLaw.sections[
+          this.selectedStatueForAddNewLaw.sections?.length - 1
+        ]?.maxPenalty,
+      isSectionWithNoParagraph:
+        this.selectedStatueForAddNewLaw.sections[
+          this.selectedStatueForAddNewLaw.sections?.length - 1
+        ]?.isSectionWithNoParagraph,
+      referenceParagraphs:
+        this.selectedStatueForAddNewLaw.sections[
+          this.selectedStatueForAddNewLaw.sections?.length - 1
+        ]?.referenceParagraphs?.slice(),
+    };
+
+    this.isSectionWithNoParagraph = this.newSection.isSectionWithNoParagraph;
+
+    this.tmpReferenceListOfNewSectionWithNoParagraph =
+      this.newSection.referenceParagraphs;
+  }
+
+  saveUpdatedNewSection() {
+    this.isAddedNewSection = true;
+    if (this.isSectionWithNoParagraph) {
+      this.isValidGoNextOnSectionDialog = false;
+      this.isValidFinishOnSectionDialog = true;
+
+      this.newSection.isSectionWithNoParagraph = true;
+      // if is a section with no paragraph and has reference list
+      if (this.tmpReferenceListOfNewSectionWithNoParagraph) {
+        this.newSection.referenceParagraphs =
+          this.tmpReferenceListOfNewSectionWithNoParagraph;
+      }
+    } else {
+      this.isValidGoNextOnSectionDialog = true;
+      this.isValidFinishOnSectionDialog = false;
+
+      this.newSection.isSectionWithNoParagraph = false;
+    }
+    this.selectedSectionForAddNewLaw = this.newSection;
+
+    //pop selectedStatueForAddNewLaw.sections last -> push newSection again to it
+    this.selectedStatueForAddNewLaw.sections.pop();
+    this.selectedStatueForAddNewLaw.sections.push({ ...this.newSection });
+
+    this.isUpdatingNewSection = false;
+    this.isValidGobackToStatue = false;
+    this.isValidAddReferenceToNewSectionWithNoParagraph = true;
+    this.isValidGobackToStatue = true;
+  }
+
+  cancleUpdatedNewSection() {
+    this.isUpdatingNewSection = false;
+    this.isValidGobackToStatue = true;
+    if (this.isSectionWithNoParagraph) {
+      this.isValidGoNextOnSectionDialog = false;
+      this.isValidFinishOnSectionDialog = true;
+    } else {
+      this.isValidGoNextOnSectionDialog = true;
+      this.isValidFinishOnSectionDialog = false;
+    }
+    this.isValidAddReferenceToNewSectionWithNoParagraph = true;
+
+    //rollback data for newSection from selectedStatueForAddNewLaw.sections
+    this.newSection = {
+      name: this.selectedStatueForAddNewLaw.sections[
+        this.selectedStatueForAddNewLaw.sections?.length - 1
+      ]?.name,
+      description:
+        this.selectedStatueForAddNewLaw.sections[
+          this.selectedStatueForAddNewLaw.sections?.length - 1
+        ]?.description,
+      vehicleCategoryId:
+        this.selectedStatueForAddNewLaw.sections[
+          this.selectedStatueForAddNewLaw.sections?.length - 1
+        ]?.vehicleCategoryId,
+      minPenalty:
+        this.selectedStatueForAddNewLaw.sections[
+          this.selectedStatueForAddNewLaw.sections?.length - 1
+        ]?.minPenalty,
+      maxPenalty:
+        this.selectedStatueForAddNewLaw.sections[
+          this.selectedStatueForAddNewLaw.sections?.length - 1
+        ]?.maxPenalty,
+      isSectionWithNoParagraph:
+        this.selectedStatueForAddNewLaw.sections[
+          this.selectedStatueForAddNewLaw.sections?.length - 1
+        ]?.isSectionWithNoParagraph,
+      referenceParagraphs:
+        this.selectedStatueForAddNewLaw.sections[
+          this.selectedStatueForAddNewLaw.sections?.length - 1
+        ]?.referenceParagraphs?.slice(),
+    };
+
+    this.isSectionWithNoParagraph = this.newSection.isSectionWithNoParagraph;
+
+    this.tmpReferenceListOfNewSectionWithNoParagraph =
+      this.newSection.referenceParagraphs;
+  }
+
+  confirmDeleteNewSection() {
+    this.displayConfirmDeleteNewSection = true;
+  }
+
+  deleteNewSection() {
+    this.selectedStatueForAddNewLaw.sections?.splice(
+      [this.selectedStatueForAddNewLaw.sections?.length - 1],
+      1
+    );
+    this.displayConfirmDeleteNewSection = false;
+    this.selectedSectionForAddNewLaw =
+      this.selectedStatueForAddNewLaw.sections[0];
+    this.clearNewSection();
+    this.isAddedNewSection = false;
+    this.selectAnotherSectionOrDefaultSectionSelected();
+  }
+
+  //end of add new paragraph
+
+  //clearing all data if dialog hide
+  clearAddNewAllData() {
+    this.displayAddNewLawDialog = false;
+
+    this.isShowingStatueDialog = false;
+    this.isShowingSectionDialog = false;
+    this.isShowingParagraphDialog = false;
+    this.isShowingConfirmAddNewLaw = false;
+
+    //Set default value for statue dropdown of add new from statue screen
+    this.statueListForAddNewLaw = JSON.parse(JSON.stringify(this.statues));
+    this.selectedStatueForAddNewLaw = this.statueListForAddNewLaw[0];
+
+    this.selectedSectionForAddNewLaw = undefined;
+
+    this.isCollapsedCreatNewSection = false;
+
+    this.newSection = undefined;
+    this.isValidNewSectionMinPenalty = true;
+    this.isValidNewSectionMaxPenalty = true;
+    this.newSectionPenaltyInvalidMsg = '';
+    this.newSectionDescriptionInvalidMsg = '';
+    this.isValidGoNextOnSectionDialog = true;
+    this.isAddedNewSection = false;
+
+    this.isUpdatingNewSection = false;
+
+    //Clear data of new section reference list
+    this.isSectionWithNoParagraph = false;
+    this.newSectionWithNoParagraphReferenceStatueList = undefined;
+    this.newSectionWithNoParagraphReferenceSelectedStatue = undefined;
+    this.newSectionWithNoParagraphReferenceSectionList = undefined;
+    this.newSectionWithNoParagraphReferenceSelectedSection = undefined;
+    this.newSectionWithNoParagraphReferenceParagraphList = undefined;
+    this.newSectionWithNoParagraphReferenceSelectedParagraph = undefined;
+
+    this.tmpReferenceNewSectionWithNoParagraph = undefined;
+    this.tmpReferenceNewSectionWithNoParagraphIsExcluded = undefined;
+    this.tmpReferenceListOfNewSectionWithNoParagraph = [];
+    this.isValidAddReferenceToNewSectionWithNoParagraph = true;
+
+    //clear data of new paragraph
+    this.newParagraphListOfSelectedSection = [];
+    this.newParagraphOfSelectedSection = undefined;
+    this.newParagraphOfSelectedSectionDescription = undefined;
+    this.newParagraphOfSelectedSectionAdditionalPenalty = undefined;
+    this.newParagraphDescriptionInvalidMsg = undefined;
+
+    this.newParagraphReferenceStatueList = undefined;
+    this.newParagraphReferenceSelectedStatue = undefined;
+    this.newParagraphReferenceSectionList = undefined;
+    this.newParagraphReferenceSelectedSection = undefined;
+    this.newParagraphReferenceParagraphList = undefined;
+    this.newParagraphReferenceSelectedParagraph = undefined;
+
+    this.tmpReferenceListOfNewParagraph = [];
+    this.tmpReferenceOfNewParagraph = undefined;
+    this.tmpReferenceOfNewParagraphIsExcluded = undefined;
+    this.isValidAddReferenceToNewParagraph = true;
+
+    this.newParagraphKeywordList = undefined;
+    this.newParagraphSelectedKeyword = undefined;
+
+    this.existedParagraphCountOfSelectedSection = undefined;
+
+    this.isUpdatingNewParagraph = false;
+    this.updatingParagraphIndex = undefined;
+    this.deletingParagraphIndex = undefined;
+    this.displayConfirmDeleteNewParagraphInNewParagraphList = false;
+    this.isValidGobackToSection = true;
+    this.isValidDisplayFinishAndSaveOnParagraphDialog = true;
+  }
+  //end of admin ADD new section
 }
