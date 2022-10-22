@@ -6,6 +6,7 @@ import { User, Comment } from 'src/app/models/General.model';
 import { getStorageToken } from 'src/app/utilities/jwt.util';
 import { WrapperService } from 'src/services/wrapper.service';
 import * as paths from '../../../common/paths';
+import { toNonAccentVietnamese } from 'src/app/utilities/nonAccentVietnamese';
 @Component({
   selector: 'app-manage-users',
   templateUrl: './manage-users.component.html',
@@ -91,9 +92,9 @@ export class ManageUsersComponent implements OnInit {
     this.members = this.tmpMembers;
 
     //Search
-    if (this.searchStr != '') {
+    if (this.searchStr && this.searchStr.trim() != '') {
       this.members = this.members.filter((m) =>
-        m.username?.toLowerCase().includes(this.searchStr.toLowerCase())
+      toNonAccentVietnamese(m.username?.toLowerCase()).includes(toNonAccentVietnamese(this.searchStr.toLowerCase()))
       );
     } else {
       this.members = this.tmpMembers;

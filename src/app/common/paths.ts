@@ -17,7 +17,7 @@ export const AdminReEnableMember: string = base + '/Users/Members/ReEnable';
 export const AdminGetScribes: string = base + '/Users/Scribes'
 
 // Scribe
-export const ScribeGetQuestions: string = base + '/Questions';
+export const ScribeGetAssignedQuestions: string = base + '/Questions/AssignedQuestions/Scribes';
 export const ScribeGetTestCategories: string = base + '/TestCategories';
 export const ScribeGetAnswersByQuestionId: string = base + '/Answers/Question';
 export const ScribeGetAdmins: string = base + '/Users/Admins';
@@ -39,3 +39,9 @@ export const ScribeCreateParagraphForROM: string = base + '/Paragraphs';
 export const ScribeCreateLawModificationRequest: string = base + '/LawModificationRequests'; //used for statue, section, paragraph
 
 export const ScribeCreateNewSection: string = base + '/Sections/NewSection';    
+
+export const ScribeGetAssignedSignCategories: string = base + '/SignCategories/AssigedSignCategories/Scribes';    
+export const ScribeGetAssignedSigns: string = base + '/Signs/AssignedSigns/Scribes';    
+
+export const ScribeCreateSignForROM: string = base + '/Signs';
+export const ScribeCreateSignModificationRequest: string = base + '/SignModificationRequests';
