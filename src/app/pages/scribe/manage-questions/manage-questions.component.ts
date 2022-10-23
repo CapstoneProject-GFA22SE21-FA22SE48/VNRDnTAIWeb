@@ -198,13 +198,22 @@ export class ManageQuestionsComponent implements OnInit {
     this.selectedQuestion = undefined;
   }
 
+  openUpdateQuestion(){
+    this.resetDataUpdateQuestion();
+    this.displayUpdateDialog = true;
+  }
+
   resetDataUpdateQuestion() {
     this.tmpSelectedQuestion = JSON.parse(
       JSON.stringify(this.selectedQuestion)
     );
+    
+    this.newQuestionContent = this.tmpSelectedQuestion?.content;
     this.selectedAdmin = this.admins[0];
     this.displayUpdateDialog = false;
     this.isChanging = false;
+    this.invalidUpdatedQuestionAnswer = false;
+    this.invalidUpdatedQuestionContent = false;
   }
 
   detectChange() {
@@ -262,6 +271,7 @@ export class ManageQuestionsComponent implements OnInit {
       event.files[0].objectURL?.changingThisBreaksApplicationSecurity;
     this.updateQuestionImgFile = event.files[0];
     imageUploaded.clear();
+    this.detectChange();
   }
 
   updateQuestion() {
@@ -469,6 +479,7 @@ export class ManageQuestionsComponent implements OnInit {
       event.files[0].objectURL?.changingThisBreaksApplicationSecurity;
     this.newQuestionImgFile = event.files[0];
     newQuestionImageUploaded.clear();
+    this.validateNewQuestion();
   }
 
   validateNewQuestion() {

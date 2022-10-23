@@ -1,0 +1,329 @@
+<div class="flex h-full p-0">
+  <!-- Left -->
+  <div
+    [ngClass]="{
+      'w-12 h-full': selectedMember === undefined,
+      'w-8 h-full': selectedMember
+    }"
+  >
+    <div class="p-2 pb-3" style="height: 6%">
+      <fa-icon class="fa-lg mr-2" [icon]="['far', 'circle-user']"></fa-icon>
+      <span class="text-xl">Quản lý thành viên</span>
+    </div>
+    <div class="p-2" style="height: 10%">
+      <div class="w-12 flex align-items-center">
+        <div class="w-6 flex align-items-center">
+          <span class="p-input-icon-right mr-3">
+            <i class="pi pi-search"></i>
+            <input
+              type="text"
+              pInputText
+              placeholder="Tìm kiếm..."
+              [style]="{height: '40px'}"
+              [(ngModel)]="searchStr"
+              (keyup)="filterData()"
+            />
+          </span>
+          <p-dropdown
+            [(ngModel)]="filterStatus"
+            [options]="status"
+            placeholder="Trạng thái"
+            optionLabel="name"
+            [showClear]="true"
+            [style]="{ height: '40px' }"
+            (onChange)="filterData()"
+          ></p-dropdown>
+        </div>
+        <div class="w-6 flex justify-content-end">
+          <p-calendar
+            #calendar
+            [(ngModel)]="filterRangeDates"
+            [showIcon]="true"
+            dateFormat="dd/mm/yy"
+            [readonlyInput]="true"
+            selectionMode="range"
+            [showButtonBar]="true"
+            [style]="{ height: '40px', 'font-size': '.9rem', width: '16rem' }"
+            placeholder="Từ ngày - đến ngày"
+            (onSelect)="closeDateRangePick()"
+            (onClearClick)="filterData()"
+          ></p-calendar>
+        </div>
+      </div>
+    </div>
+
+    <div class="p-1 overflow-auto" style="height: 84%">
+      <p-table
+        [value]="members"
+        [paginator]="
+          members !== undefined && members.length > 10 ? true : false
+        "
+        [rows]="10"
+        [showCurrentPageReport]="
+          members !== undefined && members.length > 10 ? true : false
+        "
+        responsiveLayout="scroll"
+        currentPageReportTemplate="{first} đến {last} trong tổng số {totalRecords} mục"
+        styleClass="p-datatable-gridlines p-datatable-sm"
+      >
+        <ng-template pTemplate="header">
+          <tr>
+            <th [ngStyle]="{ width: '5%', 'text-align': 'center' }">#</th>
+            <th [ngStyle]="{ width: '16%', 'text-align': 'center' }">
+              Tên đăng nhập
+            </th>
+            <th [ngStyle]="{ width: '16%', 'text-align': 'center' }">
+              Mật khẩu
+            </th>
+            <th [ngStyle]="{ width: '15%', 'text-align': 'center' }">
+              Email (nếu có)
+            </th>
+            <th [ngStyle]="{ width: '10%', 'text-align': 'center' }">
+              Ngày tạo
+            </th>
+            <th [ngStyle]="{ width: '13%', 'text-align': 'center' }">
+              Trạng thái
+            </th>
+            <th [ngStyle]="{ width: '20%', 'text-align': 'center' }">
+              Tác vụ
+            </th>
+            <th [ngStyle]="{ width: '5%', 'text-align': 'center' }"></th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-member let-i="rowIndex">
+          <tr>
+            <td [ngStyle]="{ 'text-align': 'center' }">{{ i + 1 }}</td>
+            <td [className]="!member.username ? 'surface-200' : 'text-center'">
+              <div
+                [className]="
+                  selectedMember === undefined
+                    ? 'w-15rem white-space-nowrap overflow-hidden text-overflow-ellipsis'
+                    : 'w-7rem white-space-nowrap overflow-hidden text-overflow-ellipsis'
+                "
+              >
+                <span>{{ member.username }}</span>
+              </div>
+            </td>
+            <td [className]="!member.password ? 'surface-200' : 'text-center'">
+              <div *ngIf="member.password"
+                [className]="
+                  selectedMember === undefined
+                    ? 'w-15rem white-space-nowrap overflow-hidden text-overflow-ellipsis flex justify-content-center'
+                    : 'w-7rem white-space-nowrap overflow-hidden text-overflow-ellipsis flex justify-content-center'
+                "
+              >
+              <span>
+                <p-password
+                  [(ngModel)]="member.password"
+                  [toggleMask]="true"
+                  [feedback]="false"
+                  [disabled]="true"
+                ></p-password>
+              </span>
+              </div>
+            </td>
+            <td [className]="!member.gmail ? 'surface-200' : 'text-center'">
+              <div
+                [className]="
+                  selectedMember === undefined
+                    ? 'w-15rem white-space-nowrap overflow-hidden text-overflow-ellipsis'
+                    : 'w-7rem white-space-nowrap overflow-hidden text-overflow-ellipsis'
+                "
+              >
+                <span>{{ member.gmail }}</span>
+              </div>
+            </td>
+            <td [ngStyle]="{ 'text-align': 'center' }">
+              {{ member.createdDate | date: "dd/MM/yyyy" }}
+            </td>
+            <td [ngStyle]="{ 'text-align': 'center' }">
+              <div 
+              [className]="
+                  selectedMember === undefined
+                    ? 'w-7rem white-space-nowrap overflow-hidden text-overflow-ellipsis'
+                    : 'w-5rem white-space-nowrap overflow-hidden text-overflow-ellipsis'
+                ">
+                <span *ngIf="member.status == 5" class="text-green-600"
+                  >Hoạt động</span
+                >
+                <span *ngIf="member.status == 6" class="text-red-600"
+                  >Ngưng hoạt động</span
+                  >
+              </div>
+              
+            </td>
+            <td [ngStyle]="{ 'text-align': 'center' }">
+              <button
+                *ngIf="member?.status === 5"
+                pButton
+                type="button"
+                label="Ngưng hoạt động"
+                [style]="{padding: '.3rem .5rem .3rem .5rem', height: '25px', border: '3px solid'}"
+                class="p-button-outlined p-button-danger"
+                (click)="confirmDeactivateMember(i)"
+              ></button>
+
+              <button
+                *ngIf="member?.status === 6"
+                pButton
+                type="button"
+                label="Kích hoạt lại"
+                [style]="{padding: '.3rem .5rem .3rem .5rem', height: '25px', border: '3px solid'}"
+                class="p-button-outlined p-button-success"
+                (click)="confirmReEnableMember(i)"
+              ></button>
+            </td>
+            <td [ngStyle]="{ 'text-align': 'center' }">
+              <button
+                pButton
+                type="button"
+                icon="pi pi-info"
+                class="p-button-rounded p-button-outlined"
+                [style]="{ width: '25px', height: '25px' }"
+                (click)="viewInfo(member)"
+              ></button>
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="7">
+              <span class="font-bold">Không tìm thấy kết quả</span>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+
+  <!-- Right -->
+  <div
+    class="p-2"
+    [ngClass]="{
+      'hidden h-full border-left-3 border-200 overflow-auto':
+        selectedMember === undefined,
+      'w-4 h-full border-left-3 border-200  overflow-auto': selectedMember
+    }"
+  >
+    <div style="height: 20%;">
+      <div class="w-12 flex align-items-center">
+        <div class="w-6 flex align-items-center">
+          <i class="pi pi-info-circle text-xl"></i>
+          <span class="text-xl ml-2">Thông tin</span>
+        </div>
+        <div class="w-6 flex justify-content-end">
+          <button
+            pButton
+            pRipple
+            type="button"
+            icon="pi pi-times"
+            class="p-button-rounded p-button-danger p-button-text"
+            (click)="selectedMember = undefined"
+          ></button>
+        </div>
+      </div>
+
+      <div class="flex mt-3 p-2" *ngIf="selectedMember?.username">
+        <div class="w-3">
+          <span class="text-lg text-color-secondary">Người dùng: </span>
+        </div>
+        <div class="w-9 p-0 m-0 white-space-nowrap overflow-x-auto overflow-y-hidden">
+          <span class="text-lg font-bold ml-3">
+            {{ selectedMember?.username }}
+            </span>
+        </div>
+      </div>
+
+      <div class="flex mt-3 p-2" *ngIf="selectedMember?.gmail">
+        <div class="w-3">
+          <span class="text-lg text-color-secondary">Email: </span>
+        </div>
+        <div class="w-9 p-0 m-0 white-space-nowrap overflow-x-auto overflow-y-hidden">
+          <span class="text-lg font-bold ml-3">
+            {{ selectedMember?.gmail }}
+            </span>
+        </div>
+      </div>
+    </div>
+
+    <div class="overflow-y-auto border-round-lg surface-200" style="height: 80%">
+      <div *ngIf="userComments.length > 0">
+        <div
+          class="flex align-items-center justify-content-center"
+          *ngFor="let comment of userComments"
+        >
+          <div class="h-7rem mt-2 mb-2 comment">
+            <div class="p-2 comment-content">
+              <span>{{ comment.content }}</span>
+            </div>
+            <div class="text-right pr-3 pb-1 comment-time">
+              <span>{{ comment.createdDate | dateAgo }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="userComments.length === 0" class="p-2">
+        <span class="text-blue-400 text-lg font-bold">
+          Người dùng này chưa có bình luận nào hoặc bình luận đã bị xóa
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- confirm deactivate member -->
+<p-confirmDialog key="cdDeactivate" #cd icon="pi pi-exclamation-triangle">
+  <ng-template pTemplate="header">
+    <h3 class="text-red-500">Cảnh báo</h3>
+  </ng-template>
+  <ng-template pTemplate="footer">
+    <button
+      type="button"
+      pButton
+      icon="pi pi-times"
+      label="Hủy"
+      class="p-button-danger"
+      style="height: 40px"
+      (click)="cd.reject()"
+    ></button>
+    <button
+      type="button"
+      pButton
+      icon="pi pi-check"
+      label="Đồng ý"
+      class="p-button-success"
+      style="height: 40px"
+      (click)="cd.accept()"
+    ></button>
+  </ng-template>
+</p-confirmDialog>
+
+<!-- confirm re-enable member -->
+<p-confirmDialog key="cdReEnable" #cr icon="pi pi-info-circle">
+  <ng-template pTemplate="header">
+    <h3 class="text-blue-500">Thông báo</h3>
+  </ng-template>
+  <ng-template pTemplate="footer">
+    <button
+      type="button"
+      pButton
+      icon="pi pi-times"
+      label="Hủy"
+      class="p-button-danger"
+      (click)="cr.reject()"
+    ></button>
+    <button
+      type="button"
+      pButton
+      icon="pi pi-check"
+      label="Đồng ý"
+      class="p-button-success"
+      (click)="cr.accept()"
+    ></button>
+  </ng-template>
+</p-confirmDialog>
+<p-toast key="deactivateSuccess" life="1500"></p-toast>
+<p-toast key="deactivateFail" life="1500"></p-toast>
+<p-toast key="reEnableSuccess" life="1500"></p-toast>
+<p-toast key="reEnableFail" life="1500"></p-toast>

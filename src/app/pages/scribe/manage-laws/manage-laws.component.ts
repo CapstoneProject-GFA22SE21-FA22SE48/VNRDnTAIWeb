@@ -566,6 +566,15 @@ export class ManageLawsComponent implements OnInit {
   }
 
   openUpdateChosenParagraph() {
+    console.log(this.paragraphs);
+    console.log(this.tmpChosenParagraph);
+    
+    
+    // if selected an empty paragraph of section with no paragraph, then disabled invalid new paragraph description 
+    if(this.tmpChosenParagraph?.name === '' && this.tmpChosenParagraph?.description === ''){
+      this.invalidChosenParagraphNewDesc = false;
+    }
+
     this.isUpdatingChosenParagraph = true;
     this.isValidUpdatingParagraph = false;
     this.tmpChosenParagraph = JSON.parse(JSON.stringify(this.chosenParagraph));
@@ -580,7 +589,7 @@ export class ManageLawsComponent implements OnInit {
 
   getUpdatedSectionDescription(event: any) {
     let newDesc = event.target.value;
-    if (newDesc !== '') {
+    if (newDesc.trim() !== '') {
       this.invalidChosenSectionNewDesc = false;
       this.tmpChosenSection.desc = newDesc;
     } else {
@@ -591,7 +600,7 @@ export class ManageLawsComponent implements OnInit {
 
   getUpdatedStatueDescription(event: any) {
     let newDesc = event.target.value;
-    if (newDesc !== '') {
+    if (newDesc.trim() !== '') {
       this.invalidChosenStatueNewDesc = false;
       this.tmpChosenStatue.desc = newDesc;
     } else {
@@ -602,7 +611,7 @@ export class ManageLawsComponent implements OnInit {
 
   getUpdatedParagraphDescription(event: any) {
     let newDesc = event.target.value;
-    if (newDesc !== '') {
+    if (newDesc.trim() !== '') {
       this.invalidChosenParagraphNewDesc = false;
       this.tmpChosenParagraph.description = newDesc;
     } else {

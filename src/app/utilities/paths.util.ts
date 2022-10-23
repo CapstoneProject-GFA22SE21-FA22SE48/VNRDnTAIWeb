@@ -10,7 +10,7 @@ export const paths = {
     dashboard: 'admin/dashboard',
     manageScribes: 'admin/manage-scribes',
     manageRoMs: 'admin/manage-roms',
-    manageUsers: 'admin/manage-users'
+    manageMembers: 'admin/manage-members'
   },
   scribe: {
     myRequests: 'scribe/my-request',

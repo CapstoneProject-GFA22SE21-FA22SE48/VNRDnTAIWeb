@@ -136,12 +136,20 @@
                 pButton
                 type="button"
                 icon="pi pi-info"
-                class="p-button-rounded p-button-outlined btn-info"
+                class="p-button-rounded p-button-outlined"
+                [style]="{width: '25px', height: '25px'}"
                 (click)="viewInfo(question)"
               ></button>
             </td>
           </tr>
         </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+              <td colspan="5">
+                <span class="font-bold">Không tìm thấy kết quả</span>
+              </td>
+          </tr>
+      </ng-template>
       </p-table>
     </div>
   </div>
@@ -151,8 +159,8 @@
     id="question-info"
     class="p-2"
     [ngClass]="{
-      hide: selectedQuestion === undefined,
-      show: selectedQuestion
+      'hidden h-full border-left-3 border-200 overflow-auto': selectedQuestion === undefined,
+      'w-4 h-full border-left-3 border-200  overflow-auto': selectedQuestion
     }"
   >
     <button (click)="closeInfo()" id="btn-closeInfo">
@@ -225,7 +233,7 @@
             label="Chỉnh sửa"
             class="p-button-raised p-button-warning"
             [style]="{ height: '40px' }"
-            (click)="displayUpdateDialog = true"
+            (click)="openUpdateQuestion()"
           ></button>
         </div>
         <div class="w-6 text-center">
@@ -578,12 +586,13 @@
     </div>
     <div>
       <textarea
-        #newQuestionContent
+        #newContent
         [rows]="3"
         pInputTextarea
         style="width: 100%"
-        (change)="changeTxtQuestionContent(newQuestionContent.value)"
-        [value]="tmpSelectedQuestion?.content"
+        (change)="changeTxtQuestionContent(newContent.value)"
+        ngDefaultControl
+        [(ngModel)]="newQuestionContent"
       ></textarea>
     </div>
     <div class="mb-2">

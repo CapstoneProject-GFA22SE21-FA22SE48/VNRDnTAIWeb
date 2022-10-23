@@ -1,18 +1,3 @@
-.btn-info {
-  width: 25px !important;
-  height: 25px !important;
-}
-
-.hide {
-  display: none;
-  width: 0;
-}
-
-.show {
-  display: block;
-  width: 33.3333%;
-}
-
 /* custom dropdown */
 ::ng-deep .p-dropdown .p-placeholder {
   padding-top: .45rem;
@@ -23,19 +8,6 @@
 }
 /* end custom dropdown */
 
-
-/* ::ng-deep .p-dropdown-panel .p-dropdown-header {
-  padding: .5rem;
-}
-
-::ng-deep .p-dropdown-panel .p-dropdown-header .p-dropdown-filter-container .p-inputtext {
-  height: 35px;
-} */
-
-#question-info {
-  border-left: 3px solid #EFEFEF;
-}
-
 #btn-closeInfo {
   border: none;
   background: none;
@@ -43,20 +15,6 @@
   top: 0;
   right: 0;
   margin: 1rem 1rem 0 0;
-}
-
-.txt-content {
-  width: 50rem;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.txt-content-sm {
-  width: 30rem;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 #right {
