@@ -9,6 +9,7 @@ import * as commonStr from '../../../common/commonStr';
 import { ActivatedRoute } from '@angular/router';
 import * as vietnameseAlphabet from '../../../../assets/i18n/vietnameseAlphabet.json';
 import { NewSectionDTO, NewParagraphDTO } from 'src/app/models/General.model';
+import { toNonAccentVietnamese } from 'src/app/utilities/nonAccentVietnamese';
 @Component({
   selector: 'app-manage-laws',
   templateUrl: './manage-laws.component.html',
@@ -307,13 +308,13 @@ export class ManageLawsComponent implements OnInit {
     this.statues = this.tmpStatues;
 
     //Search
-    if (this.searchStatueStr != '') {
+    if (this.searchStatueStr && this.searchStatueStr.trim() != '') {
       this.statues = this.statues.filter(
         (s: any) =>
-          s.name?.toLowerCase().includes(this.searchStatueStr.toLowerCase()) ||
-          s.description
-            ?.toLowerCase()
-            .includes(this.searchStatueStr.toLowerCase())
+        toNonAccentVietnamese(s.name?.toLowerCase()).includes(toNonAccentVietnamese(this.searchStatueStr.toLowerCase())) ||
+        toNonAccentVietnamese(s.description
+            ?.toLowerCase())
+            .includes(toNonAccentVietnamese(this.searchStatueStr.toLowerCase()))
       );
     }
   }
@@ -358,13 +359,13 @@ export class ManageLawsComponent implements OnInit {
     this.sections = this.tmpSections;
 
     //Search
-    if (this.searchSectionStr != '') {
+    if (this.searchSectionStr && this.searchSectionStr.trim() != '') {
       this.sections = this.sections.filter(
         (s: any) =>
-          s.name?.toLowerCase().includes(this.searchSectionStr.toLowerCase()) ||
-          s.description
-            ?.toLowerCase()
-            .includes(this.searchSectionStr.toLowerCase())
+        toNonAccentVietnamese(s.name?.toLowerCase()).includes(toNonAccentVietnamese(this.searchSectionStr.toLowerCase())) ||
+        toNonAccentVietnamese(s.description
+            ?.toLowerCase())
+            .includes(toNonAccentVietnamese(this.searchSectionStr.toLowerCase()))
       );
     }
 
@@ -398,15 +399,15 @@ export class ManageLawsComponent implements OnInit {
     this.paragraphs = this.tmpParagraphs;
 
     //Search
-    if (this.searchParagraphStr != '') {
+    if (this.searchParagraphStr && this.searchParagraphStr.trim() != '') {
       this.paragraphs = this.paragraphs.filter(
         (p: any) =>
-          p.name
-            ?.toLowerCase()
-            .includes(this.searchParagraphStr.toLowerCase()) ||
-          p.description
-            ?.toLowerCase()
-            .includes(this.searchParagraphStr.toLowerCase())
+        toNonAccentVietnamese(p.name
+            ?.toLowerCase())
+            .includes(toNonAccentVietnamese(this.searchParagraphStr.toLowerCase())) ||
+            toNonAccentVietnamese(p.description
+            ?.toLowerCase())
+            .includes(toNonAccentVietnamese(this.searchParagraphStr.toLowerCase()))
       );
     }
   }

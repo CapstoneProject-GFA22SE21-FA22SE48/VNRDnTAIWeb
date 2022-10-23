@@ -14,6 +14,18 @@ export interface AssignedColumn {
     isDeleted: boolean
 }
 
+export interface AssignedSignCategory {
+    signCategoryId: string,
+    userId: string,
+    isDeleted: boolean
+}
+
+export interface AssignedQuestionCategory {
+    questionCategoryId: string,
+    userId: string,
+    isDeleted: boolean
+}
+
 export interface Column {
     id: string,
     name: string,
@@ -111,7 +123,7 @@ export interface LawModificationRequest {
 export interface Question {
     id: string,
     testCategoryId: string,
-    name: string,
+    questionCategoryId: string,
     content: string,
     imageUrl: string,
     status: number,
@@ -119,6 +131,17 @@ export interface Question {
 
     testCategory: TestCategory,
     answers: Answer[]
+}
+
+export interface QuestionDTO {
+    id: string,
+    content: string,
+    imageUrl: string,
+
+    testCategoryId: string,
+    testCategoryName: string,
+    questionCategoryId: string,
+    questionCategoryName: string
 }
 
 export interface QuestionModificationRequest {

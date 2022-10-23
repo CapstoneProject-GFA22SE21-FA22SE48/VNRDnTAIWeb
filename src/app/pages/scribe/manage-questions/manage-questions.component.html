@@ -1,41 +1,53 @@
-<div class="flex p-0" id="container">
+<div class="flex p-0 h-full">
+  <!-- Left -->
   <div
     [ngClass]="{
-      'w-12': selectedQuestion === undefined,
-      'w-8': selectedQuestion
+      'w-12 h-full': selectedQuestion === undefined,
+      'w-8 h-full': selectedQuestion
     }"
   >
-    <div class="p-2 mb-1">
+    <div class="p-2 pb-3" style="height: 6%">
       <fa-icon class="fa-lg mr-2" [icon]="['far', 'circle-question']"></fa-icon>
       <span class="text-xl">Quản lý câu hỏi</span>
     </div>
-    <div class="p-2">
-      <div class="flex mb-3">
-        <div class="w-6">
-          <div>
-            <span class="p-input-icon-right mr-3">
-              <i class="pi pi-search"></i>
-              <input
-                type="text"
-                pInputText
-                placeholder="Tìm kiếm..."
-                id="input-search"
-                [(ngModel)]="searchStr"
-                (keyup)="filterData()"
-              />
-            </span>
-            <p-dropdown
-              [(ngModel)]="filterTestCategory"
-              [options]="testCategories"
-              placeholder="Loại bằng"
-              optionLabel="name"
-              [showClear]="true"
+    <div class="p-2" style="height: 10%">
+      <div class="w-12 flex align-items-center">
+        <div class="w-9 flex align-items-center">
+          <span class="p-input-icon-right mr-3">
+            <i class="pi pi-search"></i>
+            <input
+              type="text"
+              pInputText
+              placeholder="Tìm kiếm..."
               [style]="{ height: '40px' }"
-              (onChange)="changeCategory()"
-            ></p-dropdown>
-          </div>
+              [(ngModel)]="searchStr"
+              (keyup)="filterData()"
+            />
+          </span>
+
+          <p-dropdown
+            class="mr-3"
+            [(ngModel)]="filterTestCategoryId"
+            [options]="testCategories"
+            placeholder="Loại bằng"
+            optionLabel="name"
+            optionValue="id"
+            [showClear]="true"
+            [style]="{ height: '40px' }"
+            (onChange)="filterData()"
+          ></p-dropdown>
+          <p-dropdown
+            [(ngModel)]="filterQuestionCategoryId"
+            [options]="questionCategories"
+            placeholder="Loại câu hỏi"
+            optionLabel="name"
+            optionValue="id"
+            [showClear]="true"
+            [style]="{ height: '40px' }"
+            (onChange)="filterData()"
+          ></p-dropdown>
         </div>
-        <div class="w-6 text-right">
+        <div class="w-3 flex justify-content-end">
           <button
             pButton
             pRipple
@@ -43,51 +55,81 @@
             label="Tạo mới"
             class="p-button-raised p-button-success"
             [style]="{ height: '40px' }"
-            (click)="displayCreateDialog = true"
+            (click)="displayCreateDialog = true; initValueForCreateNew()"
           ></button>
         </div>
       </div>
+    </div>
 
+    <div class="p-1 overflow-auto" style="height: 84%">
       <p-table
         [value]="questions"
-        [paginator]="true"
-        [rows]="9"
-        [showCurrentPageReport]="true"
+        [paginator]="questions?.length > 10 ? true : false"
+        [rows]="10"
+        [showCurrentPageReport]="questions?.length > 10 ? true : false"
         responsiveLayout="scroll"
         currentPageReportTemplate="{first} đến {last} trong tổng số {totalRecords} mục"
         styleClass="p-datatable-gridlines p-datatable-sm"
       >
         <ng-template pTemplate="header">
           <tr>
-            <th [ngStyle]="{ width: '10%', 'text-align': 'center' }">Tên</th>
-            <th [ngStyle]="{ width: '70%', 'text-align': 'center' }">
+            <th [ngStyle]="{ width: '7%', 'text-align': 'center' }">#</th>
+            <th [ngStyle]="{ width: '50%', 'text-align': 'center' }">
               Nội dung
             </th>
-            <th [ngStyle]="{ width: '10%', 'text-align': 'center' }">
+            <th [ngStyle]="{ width: '13%', 'text-align': 'center' }">
               Loại bằng
             </th>
-            <th [ngStyle]="{ width: '10%', 'text-align': 'center' }">
-              Chi tiết
+            <th [ngStyle]="{ width: '25%', 'text-align': 'center' }">
+              Loại câu hỏi
             </th>
+            <th [ngStyle]="{ width: '5%', 'text-align': 'center' }"></th>
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-question let-i="rowIndex">
           <tr>
             <td [ngStyle]="{ 'text-align': 'center' }">
-              {{ question.name }}
+              {{ i + 1 }}
             </td>
             <td>
-              <div
-                [ngClass]="{
-                  'txt-content-sm': selectedQuestion,
-                  'txt-content': selectedQuestion === undefined
-                }"
-              >
-                {{ question.content }}
+              <div class="w-12 flex justify-content-center">
+                <div
+                  [className]="
+                    selectedQuestion === undefined
+                      ? 'w-30rem text-center white-space-nowrap overflow-hidden text-overflow-ellipsis'
+                      : 'w-20rem text-center white-space-nowrap overflow-hidden text-overflow-ellipsis'
+                  "
+                >
+                  <span>{{ question.content }}</span>
+                </div>
               </div>
             </td>
             <td [ngStyle]="{ 'text-align': 'center' }">
-              {{ question.testCategory?.name }}
+              <div class="w-12 flex justify-content-center">
+                <div
+                  [className]="
+                    selectedQuestion === undefined
+                      ? 'w-15rem white-space-nowrap overflow-hidden text-overflow-ellipsis'
+                      : 'w-10rem white-space-nowrap overflow-hidden text-overflow-ellipsis'
+                  "
+                >
+                  <span>{{ question.testCategoryName }}</span>
+                </div>
+              </div>
+            </td>
+
+            <td [ngStyle]="{ 'text-align': 'center' }">
+              <div class="w-12 flex justify-content-center">
+                <div
+                  [className]="
+                    selectedQuestion === undefined
+                      ? 'w-15rem white-space-nowrap overflow-hidden text-overflow-ellipsis'
+                      : 'w-10rem white-space-nowrap overflow-hidden text-overflow-ellipsis'
+                  "
+                >
+                  <span>{{ question.questionCategoryName }}</span>
+                </div>
+              </div>
             </td>
             <td [ngStyle]="{ 'text-align': 'center' }">
               <button
@@ -104,6 +146,7 @@
     </div>
   </div>
 
+  <!-- Right -->
   <div
     id="question-info"
     class="p-2"
@@ -120,11 +163,6 @@
       <div class="flex align-items-center" id="right-header">
         <i class="pi pi-info-circle text-xl"></i>
         <span class="text-xl ml-2">Chi tiết</span>
-        <span class="text-lg font-bold ml-4">
-          {{ selectedQuestion?.name }} ({{
-            selectedQuestion?.testCategory?.name
-          }})</span
-        >
       </div>
 
       <div
@@ -210,237 +248,273 @@
 <p-dialog
   #createDialog
   [(visible)]="displayCreateDialog"
-  [style]="{ width: '45vw' }"
+  [style]="{ width: '50vw' }"
+  [modal]="true"
   (onHide)="resetDataCreateQuestion()"
 >
   <ng-template pTemplate="header">
     <span class="text-green-500 font-bold text-xl">Tạo mới</span>
   </ng-template>
 
-  <div class="mb-2">
-    <div class="flex justify-content-center align-items-center">
-      <div class="w-3">
-        <span class="text-lg font-bold">Gửi yêu cầu tới </span> <br />
+  <ng-template pTemplate="content">
+    <div class="p-2">
+      <div class="w-12 flex mb-2">
+        <div class="w-3">
+          <span class="text-lg font-bold">Gửi yêu cầu tới </span> <br />
+        </div>
+        <div class="w-9 flex justify-content-end">
+          <p-dropdown
+            [(ngModel)]="selectedAdmin"
+            [options]="admins"
+            placeholder="Quản trị viên"
+            optionLabel="username"
+            [style]="{ height: '40px', width: '12rem' }"
+            scrollHeight="8rem"
+            [filter]="true"
+            filterBy="username"
+          ></p-dropdown>
+        </div>
       </div>
-      <div class="w-9">
-        <p-dropdown
-          [(ngModel)]="selectedAdmin"
-          [options]="admins"
-          placeholder="Quản trị viên"
-          optionLabel="username"
-          [style]="{ height: '40px' }"
-        ></p-dropdown>
+
+      <div class="w-12 flex mb-2">
+        <div class="w-3">
+          <span class="text-lg font-bold mr-2">Loại bằng </span>
+        </div>
+        <div class="w-9 flex justify-content-end">
+          <p-dropdown
+            [(ngModel)]="selectedTestCategoryId"
+            [options]="testCategories"
+            optionValue="id"
+            placeholder="Loại bằng"
+            optionLabel="name"
+            [style]="{ height: '40px', width: '12rem' }"
+            scrollHeight="8rem"
+            [filter]="true"
+            filterBy="name"
+          ></p-dropdown>
+        </div>
       </div>
-    </div>
-  </div>
 
-  <div class="mb-2">
-    <div class="flex justify-content-center align-items-center">
-      <div class="w-3">
-        <span class="text-lg font-bold mr-2">Loại bằng </span>
+      <div class="w-12 flex mb-2">
+        <div class="w-3">
+          <span class="text-lg font-bold mr-2">Loại câu hỏi </span>
+        </div>
+        <div class="w-9 flex justify-content-end">
+          <p-dropdown
+            [(ngModel)]="selectedQuestionCategoryId"
+            [options]="questionCategories"
+            optionValue="id"
+            placeholder="Loại câu hỏi"
+            optionLabel="name"
+            [style]="{ height: '40px', width: '12rem' }"
+            scrollHeight="8rem"
+            [filter]="true"
+            filterBy="name"
+          ></p-dropdown>
+        </div>
       </div>
-      <div class="w-9">
-        <p-dropdown
-          [(ngModel)]="selectedTestCategory"
-          [options]="loadedTestCategories"
-          placeholder="Loại bằng"
-          optionLabel="name"
-          [style]="{ height: '40px' }"
-        ></p-dropdown>
+
+      <div class="mb-2">
+        <div>
+          <span class="font-bold text-lg">Nội dung</span>
+        </div>
+        <div>
+          <textarea
+            [rows]="3"
+            pInputTextarea
+            style="width: 100%"
+            placeholder="Nội dung câu hỏi..."
+            (change)="getNewQuestionContent($event)"
+          ></textarea>
+        </div>
+        <div *ngIf="inValidNewQuestionContent">
+          <small class="p-block p-error">Vui lòng nhập nội dung câu hỏi</small>
+        </div>
       </div>
-    </div>
-  </div>
 
-  <div class="mb-2">
-    <div class="flex align-items-center justify-content-center">
-      <span class="text-lg font-bold mr-2">Câu số </span>
-      <p-inputNumber
-        inputId="integeronly"
-        inputId="minmax"
-        [min]="1"
-        [(ngModel)]="newQuestionName"
-        [inputStyle]="{ width: '5rem', height: '40px' }"
-        (onInput)="checkNewQuestionName($event)"
-      >
-      </p-inputNumber>
-    </div>
-    <div class="flex align-items-center justify-content-center">
-      <small class="p-error block ml-5" *ngIf="!isValidNewQuestionName"
-        >Câu số {{ newQuestionName }} đã tồn tại</small
-      >
-    </div>
-  </div>
-
-  <div class="mb-2">
-    <div>
-      <span class="font-bold text-lg">Nội dung</span>
-    </div>
-    <div>
-      <textarea
-        [rows]="3"
-        pInputTextarea
-        style="width: 100%"
-        placeholder="Nội dung câu hỏi"
-        (change)="getNewQuestionContent($event)"
-      ></textarea>
-    </div>
-  </div>
-
-  <div class="mb-2">
-    <div>
-      <span class="font-bold text-lg">Đáp án</span>
-    </div>
-    <div class="p-inputgroup mb-2">
-      <input
-        type="text"
-        pInputText
-        placeholder="Nội dung đáp án"
-        [(ngModel)]="newQuestionAnswer"
-      />
-      <button
-        type="button"
-        pButton
-        class="p-button-success"
-        icon="pi pi-plus"
-        [disabled]="newQuestionAnswer === undefined || newQuestionAnswer === ''"
-        (click)="addNewQuestionAnswer()"
-      ></button>
-    </div>
-    <div
-      *ngFor="let answer of newQuestionAnswers; let i = index"
-      class="flex justify-content-center align-items-center"
-    >
-      <div class="w-10">
+      <div class="mb-4">
+        <div>
+          <span class="font-bold text-lg">Đáp án</span>
+        </div>
+        <div class="p-inputgroup">
+          <input
+            type="text"
+            pInputText
+            placeholder="Nội dung đáp án..."
+            [(ngModel)]="newQuestionAnswer"
+            (keyup)="getNewQuestionAnswer()"
+          />
+          <button
+            type="button"
+            pButton
+            class="p-button-success"
+            icon="pi pi-plus"
+            [disabled]="
+              newQuestionAnswer === undefined || newQuestionAnswer === ''
+            "
+            (click)="addNewQuestionAnswer()"
+          ></button>
+        </div>
+        <div class="mb-2">
+          <small *ngIf="inValidNewQuestionAnswer" class="p-block p-error"
+            >Vui lòng nhập nội dung đáp án để thêm mới</small
+          >
+        </div>
         <div
-          style="display: flex; justify-content: center; align-items: center"
+          *ngFor="let answer of newQuestionAnswers; let i = index"
+          class="w-12 flex justify-content-center align-items-center"
         >
-          <div style="width: 5%">
-            <input
-              name="answerCheck"
-              type="radio"
-              (change)="pickNewAnswersCorrectAnswer(i)"
-            />
+          <div class="w-10 flex align-items-center">
+            <!-- <div class="flex align-items-center" style="width: 5%">
+                <input
+                  name="answerCheck"
+                  type="radio"
+                  (change)="pickNewAnswersCorrectAnswer(i)"
+                />
+              </div> -->
+            <div style="width: 85%">
+              <div
+                class="flex align-items-center"
+                *ngIf="
+                  !isEditingNewQuestionAnswer ||
+                  (isEditingNewQuestionAnswer &&
+                    i !== editingNewQuestionAnswerIndex)
+                "
+              >
+                <label class="flex align-items-center">
+                  <input
+                    name="answerCheck"
+                    type="radio"
+                    (change)="pickNewAnswersCorrectAnswer(i)"
+                  />
+                  <div
+                    class="white-space-nowrap overflow-x-auto overflow-y-hidden max-w-27rem ml-3"
+                  >
+                    <span class="text-lg">{{ answer.description }}</span>
+                  </div>
+                </label>
+              </div>
+
+              <div
+                class="w-full"
+                *ngIf="
+                  isEditingNewQuestionAnswer &&
+                  i === editingNewQuestionAnswerIndex
+                "
+              >
+                <input
+                  class="w-full"
+                  *ngIf="
+                    isEditingNewQuestionAnswer &&
+                    i === editingNewQuestionAnswerIndex
+                  "
+                  type="text"
+                  pInputText
+                  [(ngModel)]="txtEditNewQuestionAnswer"
+                  [value]="answer.description"
+                  [style]="{ height: '40px' }"
+                />
+              </div>
+            </div>
+            <div style="width: 15%">
+              <span *ngIf="answer.isCorrect" class="text-lg text-green-300 ml-1"
+                >(câu đúng)
+              </span>
+            </div>
           </div>
-          <div style="width: 80%; overflow-x: auto; overflow-y: hidden">
+          <div class="w-2 flex">
             <div
+              class="w-12 flex"
               *ngIf="
                 !isEditingNewQuestionAnswer ||
                 (isEditingNewQuestionAnswer &&
                   i !== editingNewQuestionAnswerIndex)
               "
             >
-              <span> {{ answer.description }} </span>
+              <div class="w-6">
+                <button
+                  pButton
+                  type="button"
+                  icon="pi pi-file-edit"
+                  class="p-button-rounded p-button-warning p-button-text mr-2"
+                  (click)="enableEditNewQuestionAnswer(answer, i)"
+                ></button>
+              </div>
+              <div class="w-6">
+                <button
+                  pButton
+                  type="button"
+                  icon="pi pi-trash"
+                  class="p-button-rounded p-button-danger p-button-text"
+                  (click)="deleteNewQuestionAnswer(i)"
+                ></button>
+              </div>
             </div>
 
             <div
-              class="w-full"
+              class="w-12 flex"
               *ngIf="
                 isEditingNewQuestionAnswer &&
                 i === editingNewQuestionAnswerIndex
               "
             >
-              <input
-                class="w-full"
-                *ngIf="
-                  isEditingNewQuestionAnswer &&
-                  i === editingNewQuestionAnswerIndex
-                "
-                type="text"
-                pInputText
-                [(ngModel)]="txtEditNewQuestionAnswer"
-                [value]="answer.description"
-                [style]="{ height: '40px' }"
-              />
+              <div class="w-6">
+                <button
+                  pButton
+                  type="button"
+                  icon="pi pi-save"
+                  class="p-button-rounded p-button-success p-button-text mr-2"
+                  (click)="saveEditNewQuestionAnswer(i)"
+                  [disabled]="txtEditNewQuestionAnswer === ''"
+                ></button>
+              </div>
+              <div class="w-6">
+                <button
+                  pButton
+                  type="button"
+                  icon="pi pi-times"
+                  class="p-button-rounded p-button-danger p-button-text"
+                  (click)="disableEditNewQuestionAnswer()"
+                ></button>
+              </div>
             </div>
           </div>
-          <div style="width: 15%">
-            <span *ngIf="answer.isCorrect" class="text-lg text-green-300 ml-1"
-              >(câu đúng)
-            </span>
-          </div>
         </div>
       </div>
-      <div class="w-2">
-        <div
-          *ngIf="
-            !isEditingNewQuestionAnswer ||
-            (isEditingNewQuestionAnswer && i !== editingNewQuestionAnswerIndex)
-          "
-        >
-          <button
-            pButton
-            type="button"
-            icon="pi pi-file-edit"
-            class="p-button-rounded p-button-warning p-button-text mr-2"
-            (click)="enableEditNewQuestionAnswer(answer, i)"
-          ></button>
-          <button
-            pButton
-            type="button"
-            icon="pi pi-trash"
-            class="p-button-rounded p-button-danger p-button-text"
-            (click)="deleteNewQuestionAnswer(i)"
-          ></button>
+
+      <div class="mb-2">
+        <div class="mb-1">
+          <span class="font-bold text-lg">Hình ảnh đính kèm (nếu có)</span>
+        </div>
+        <div class="mb-1">
+          <p-fileUpload
+            #newQuestionImageUploaded
+            mode="basic"
+            [customUpload]="true"
+            [auto]="true"
+            (uploadHandler)="
+              addNewQuestionImage($event, newQuestionImageUploaded)
+            "
+            accept="image/*"
+            [maxFileSize]="1000000"
+            chooseLabel="Chọn hình"
+            chooseIcon="pi pi-image"
+            [style]="{ height: '40px' }"
+          >
+          </p-fileUpload>
         </div>
 
-        <div
-          *ngIf="
-            isEditingNewQuestionAnswer && i === editingNewQuestionAnswerIndex
-          "
-        >
-          <button
-            pButton
-            type="button"
-            icon="pi pi-save"
-            class="p-button-rounded p-button-success p-button-text mr-2"
-            (click)="saveEditNewQuestionAnswer(i)"
-            [disabled]="txtEditNewQuestionAnswer === ''"
-          ></button>
-          <button
-            pButton
-            type="button"
-            icon="pi pi-times"
-            class="p-button-rounded p-button-danger p-button-text"
-            (click)="disableEditNewQuestionAnswer()"
-          ></button>
+        <div class="text-center">
+          <img
+            *ngIf="newQuestionImgUrl !== ''"
+            [src]="newQuestionImgUrl | safe: 'resourceUrl'"
+            alt="Hình ảnh đính kèm"
+            [style]="{ width: '20rem', height: 'auto' }"
+          />
         </div>
       </div>
     </div>
-  </div>
-
-  <div class="mb-2">
-    <div class="mb-1">
-      <span class="font-bold text-lg">Hình ảnh đính kèm (nếu có)</span>
-    </div>
-    <div class="mb-1">
-      <p-fileUpload
-        #newQuestionImageUploaded
-        mode="basic"
-        [customUpload]="true"
-        [auto]="true"
-        (uploadHandler)="addNewQuestionImage($event, newQuestionImageUploaded)"
-        accept="image/*"
-        [maxFileSize]="1000000"
-        chooseLabel="Chọn hình"
-        chooseIcon="pi pi-image"
-        [style]="{ height: '40px' }"
-      >
-      </p-fileUpload>
-    </div>
-
-    <div class="text-center">
-      <img
-        *ngIf="newQuestionImgUrl !== ''"
-        [src]="newQuestionImgUrl"
-        alt="Hình ảnh đính kèm"
-        [style]="{ width: '30rem', height: 'auto' }"
-      />
-    </div>
-  </div>
-
-  <!-- <div style="height: 100%;">
-    <pre style="height: fit-content" class="text-base text-orange-300 font-bold"> {{ inValidMsg }}</pre>
-  </div> -->
+  </ng-template>
 
   <ng-template pTemplate="footer">
     <button
@@ -471,31 +545,28 @@
   #updateDialog
   [(visible)]="displayUpdateDialog"
   [style]="{ width: '40vw' }"
+  [modal]="true"
   (onHide)="resetDataUpdateQuestion()"
 >
   <ng-template pTemplate="header">
     <span class="text-purple-500 font-bold text-xl"> Chỉnh sửa</span>
   </ng-template>
-  <div class="w-full text-center mb-2">
-    <span class="text-xl font-bold ml-4">
-      {{ tmpSelectedQuestion?.name }} ({{
-        selectedQuestion?.testCategory?.name
-      }})</span
-    >
-  </div>
 
   <div class="mb-2">
     <div class="flex justify-content-center align-items-center">
       <div class="w-3">
         <span class="text-lg font-bold">Gửi yêu cầu tới </span>
       </div>
-      <div class="w-9">
+      <div class="w-9 flex justify-content-end">
         <p-dropdown
           [(ngModel)]="selectedAdmin"
           [options]="admins"
           placeholder="Quản trị viên"
           optionLabel="username"
           [style]="{ height: '40px' }"
+          scrollHeight="8rem"
+          [filter]="true"
+          filterBy="username"
         ></p-dropdown>
       </div>
     </div>
@@ -514,6 +585,11 @@
         (change)="changeTxtQuestionContent(newQuestionContent.value)"
         [value]="tmpSelectedQuestion?.content"
       ></textarea>
+    </div>
+    <div class="mb-2">
+      <small *ngIf="invalidUpdatedQuestionContent" class="p-block p-error"
+        >Vui lòng nhập nội dung câu hỏi</small
+      >
     </div>
   </div>
 
@@ -557,6 +633,11 @@
         />
       </div>
     </div>
+    <div class="mb-2">
+      <small *ngIf="invalidUpdatedQuestionAnswer" class="p-block p-error"
+        >Vui lòng nhập nội đáp án</small
+      >
+    </div>
   </div>
 
   <div class="mb-2">
@@ -582,10 +663,10 @@
     <div class="text-center">
       <img
         *ngIf="tmpSelectedQuestion?.imageUrl"
-        [src]="tmpSelectedQuestion?.imageUrl"
+        [src]="tmpSelectedQuestion?.imageUrl | safe: 'resourceUrl'"
         alt="Hình ảnh đính kèm"
         id="question-img"
-        [style]="{ width: '30rem', height: 'auto' }"
+        [style]="{ width: '20rem', height: 'auto' }"
       />
     </div>
   </div>
@@ -618,35 +699,32 @@
 <p-dialog
   #updateDialog
   [(visible)]="displayDeleteDialog"
-  [style]="{ width: '35vw', height: '40vh' }"
+  [modal]="true"
+  [style]="{ width: '35vw', height: '50vh' }"
+  [modal]="true"
 >
   <ng-template pTemplate="header">
     <span class="text-red-500 font-bold text-xl">Xóa</span>
   </ng-template>
-  <div class="mb-3">
-    <div class="flex justify-content-center align-items-center">
-      <div class="w-3">
-        <span class="text-lg font-bold">Gửi yêu cầu tới </span> <br />
-      </div>
-      <div class="w-9">
-        <p-dropdown
-          [(ngModel)]="selectedAdmin"
-          [options]="admins"
-          optionLabel="username"
-          [style]="{ height: '40px' }"
-        ></p-dropdown>
-        <!-- scrollHeight="100px"
-          [filter]="true"
-          filterBy="username" -->
-      </div>
+  <div class="w-12 flex mb-5 align-items-center">
+    <div class="w-3">
+      <span class="text-lg font-bold">Gửi yêu cầu tới </span> <br />
+    </div>
+    <div class="w-9 flex justify-content-end">
+      <p-dropdown
+        [(ngModel)]="selectedAdmin"
+        [options]="admins"
+        optionLabel="username"
+        [style]="{ height: '40px' }"
+        scrollHeight="8rem"
+        [filter]="true"
+        filterBy="username"
+      ></p-dropdown>
     </div>
   </div>
-  <div class="w-full text-center">
-    <span class="text-lg font-bold ml-4">
-      {{ tmpSelectedQuestion?.name }}
-    </span>
+  <div class="w-12">
     <span class="text-lg"
-      >cùng các đáp án sẽ bị yêu cầu xóa. Bạn có chắc chắn?</span
+      >Câu hỏi cùng các đáp án sẽ bị yêu cầu xóa. Bạn có chắc chắn?</span
     >
   </div>
 

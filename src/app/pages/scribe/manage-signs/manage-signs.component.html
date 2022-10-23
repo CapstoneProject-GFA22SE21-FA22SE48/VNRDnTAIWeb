@@ -1,0 +1,508 @@
+<div class="flex p-0 h-full">
+  <!-- Left -->
+  <div
+    [ngClass]="{
+      'w-12 h-full': chosenSign === undefined,
+      'w-8 h-full': chosenSign
+    }"
+  >
+    <div class="p-2 pb-3" style="height: 6%">
+      <fa-icon class="fa-lg mr-2" [icon]="['far', 'circle-question']"></fa-icon>
+      <span class="text-xl">Quản lý biển báo</span>
+    </div>
+    <div class="p-2" style="height: 10%">
+      <div class="w-12 flex align-items-center">
+        <div class="w-9 flex align-items-center">
+          <span class="p-input-icon-right mr-3">
+            <i class="pi pi-search"></i>
+            <input
+              type="text"
+              pInputText
+              placeholder="Tìm kiếm..."
+              [style]="{ height: '40px' }"
+              [(ngModel)]="filterSearchStr"
+              (keyup)="filterData()"
+            />
+          </span>
+          <p-dropdown
+            class="mr-3"
+            [(ngModel)]="filterchosenSignCategoryId"
+            [options]="signCategories"
+            optionLabel="name"
+            optionValue="id"
+            placeholder="Loại biển báo"
+            [showClear]="true"
+            [style]="{ height: '40px', width: '15rem' }"
+            (onChange)="filterData()"
+          ></p-dropdown>
+
+          <p-dropdown
+            [(ngModel)]="filterSelectedStatusCode"
+            [options]="status"
+            optionLabel="name"
+            optionValue="statusCode"
+            placeholder="Trạng thái"
+            [showClear]="true"
+            [style]="{ height: '40px' }"
+            (onChange)="filterData()"
+          ></p-dropdown>
+        </div>
+        <div class="w-3 flex justify-content-end">
+          <button
+            pButton
+            type="button"
+            label="Tạo mới"
+            class="p-button-raised p-button-success"
+            [style]="{ height: '40px' }"
+          ></button>
+        </div>
+      </div>
+    </div>
+
+    <div class="p-1 overflow-auto" style="height: 84%">
+      <p-table
+        [value]="signs"
+        [paginator]="signs.length > 10 ? true : false"
+        [rows]="10"
+        [showCurrentPageReport]="signs.length > 10 ? true : false"
+        responsiveLayout="scroll"
+        currentPageReportTemplate="{first} đến {last} trong tổng số {totalRecords} mục"
+        styleClass="p-datatable-gridlines p-datatable-sm"
+      >
+        <ng-template pTemplate="header">
+          <tr>
+            <th [ngStyle]="{ width: '5%', 'text-align': 'center' }">#</th>
+            <th [ngStyle]="{ width: '15%', 'text-align': 'center' }">Tên</th>
+            <th [ngStyle]="{ width: '40%', 'text-align': 'center' }">Mô tả</th>
+            <th [ngStyle]="{ width: '20%', 'text-align': 'center' }">
+              Loại biển báo
+            </th>
+            <th [ngStyle]="{ width: '15%', 'text-align': 'center' }">
+              Trạng thái
+            </th>
+            <th [ngStyle]="{ width: '5%', 'text-align': 'center' }"></th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-sign let-i="rowIndex">
+          <tr>
+            <td [ngStyle]="{ 'text-align': 'center' }">
+              {{ i + 1 }}
+            </td>
+            <td [ngStyle]="{ 'text-align': 'center' }">
+              <div
+                [className]="
+                  chosenSign === undefined
+                    ? 'w-10rem white-space-nowrap overflow-hidden text-overflow-ellipsis'
+                    : 'w-6rem white-space-nowrap overflow-hidden text-overflow-ellipsis'
+                "
+              >
+                <span>{{ sign.name }}</span>
+              </div>
+            </td>
+            <td [ngStyle]="{ 'text-align': 'center' }">
+              <div
+                [className]="
+                  chosenSign === undefined
+                    ? 'w-30rem white-space-nowrap overflow-hidden text-overflow-ellipsis'
+                    : 'w-20rem white-space-nowrap overflow-hidden text-overflow-ellipsis'
+                "
+              >
+                <span>{{ sign.description }}</span>
+              </div>
+            </td>
+
+            <td [ngStyle]="{ 'text-align': 'center' }">
+              <div
+                [className]="
+                  chosenSign === undefined
+                    ? 'w-15rem white-space-nowrap overflow-hidden text-overflow-ellipsis'
+                    : 'w-10rem white-space-nowrap overflow-hidden text-overflow-ellipsis'
+                "
+              >
+                <span>{{ sign.signCategory?.name }}</span>
+              </div>
+            </td>
+
+            <td [ngStyle]="{ 'text-align': 'center' }">
+              <div
+                [className]="
+                  chosenSign === undefined
+                    ? 'w-10rem white-space-nowrap overflow-hidden text-overflow-ellipsis'
+                    : 'w-6rem white-space-nowrap overflow-hidden text-overflow-ellipsis'
+                "
+              >
+                <span *ngIf="sign.status === 5" class="text-green-500">
+                  Hoạt động</span
+                >
+                <span *ngIf="sign.status === 6" class="text-red-500">
+                  Ngưng hoạt động</span
+                >
+              </div>
+            </td>
+            <td [ngStyle]="{ 'text-align': 'center' }">
+              <button
+                pButton
+                type="button"
+                icon="pi pi-info"
+                class="p-button-rounded p-button-outlined btn-info"
+                style="width: 25px !important; height: 25px !important"
+                (click)="chosenSign = sign"
+              ></button>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+
+  <!-- Right -->
+  <div
+    class="p-2"
+    [ngClass]="{
+      'hidden h-full border-left-3 border-200 overflow-auto':
+        chosenSign === undefined,
+      'w-4 h-full border-left-3 border-200  overflow-auto': chosenSign
+    }"
+  >
+    <!-- Default -->
+    <div *ngIf="!isUpdatingChosenSign" class="h-full">
+      <!-- Header -->
+      <div class="w-12 flex align-items-center text-xl" style="height: 7.5%">
+        <div class="w-6 flex align-items-center">
+          <i class="pi pi-info-circle text-xl"></i>
+          <span class="ml-2">Chi tiết</span>
+        </div>
+        <div class="w-6 flex justify-content-end">
+          <button
+            pButton
+            pRipple
+            type="button"
+            icon="pi pi-times"
+            class="p-button-rounded p-button-danger p-button-text"
+            (click)="chosenSign = undefined"
+          ></button>
+        </div>
+      </div>
+
+      <!-- Main -->
+      <div style="height: 85%">
+        <div class="w-12 flex text-lg mb-3 align-items-center">
+          <div class="w-2">Tên:</div>
+          <div
+            class="w-10 white-space-nowrap overflow-x-auto overflow-y-hidden"
+          >
+            <span class="font-bold">{{ chosenSign?.name }}</span>
+          </div>
+        </div>
+
+        <div class="w-12 flex text-lg mb-3 align-items-center">
+          <div class="w-2">Loại:</div>
+          <div
+            class="w-10 white-space-nowrap overflow-x-auto overflow-y-hidden"
+          >
+            <span>{{ chosenSign?.signCategory?.name }}</span>
+          </div>
+        </div>
+
+        <div class="w-12 flex text-lg mb-1 align-items-center">
+          <div>Mô tả:</div>
+        </div>
+        <div
+          class="w-12 flex text-lg mb-3 surface-200 border-left-2 border-400 overflow-x-hidden overflow-y-auto max-h-4rem p-2 align-items-center"
+        >
+          <span>{{ chosenSign?.name }}</span>
+        </div>
+
+        <div class="w-12 flex text-lg mb-1 align-items-center">
+          <div class="w-6">Hình ảnh:</div>
+        </div>
+        <div class="w-12 flex text-lg mb-3">
+          <div class="text-center w-12 h-auto p-2 border-200 border-2">
+            <img
+              class="w-15rem h-auto max-h-15rem"
+              *ngIf="chosenSign?.imageUrl"
+              [src]="chosenSign?.imageUrl"
+              alt="Hình ảnh"
+            />
+          </div>
+        </div>
+      </div>
+
+      <!-- Buttons -->
+      <div style="height: 7.5%">
+        <div class="w-12 flex">
+          <div class="w-6 text-center">
+            <button
+              pButton
+              pRipple
+              type="button"
+              label="Chỉnh sửa"
+              class="p-button-raised p-button-warning"
+              [style]="{ height: '40px' }"
+              (click)="openUpdateChosenSign()"
+            ></button>
+          </div>
+          <div class="w-6 text-center">
+            <button
+              pButton
+              pRipple
+              type="button"
+              label="Xóa"
+              class="p-button-raised p-button-danger"
+              [style]="{ height: '40px' }"
+              (click)="displayConfirmDeleteChosenSign = true"
+            ></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- When updating chosen sign -->
+    <div *ngIf="isUpdatingChosenSign" class="h-full">
+      <!-- Header -->
+      <div class="w-12 flex align-items-center text-xl" style="height: 7.5%">
+        <div class="w-6 flex align-items-center">
+          <i class="pi pi-info-file-edit text-xl"></i>
+          <span class="ml-2">Chỉnh sửa</span>
+        </div>
+      </div>
+
+      <!-- Main -->
+      <div style="height: 85%">
+        <div class="w-12 flex text-lg align-items-center">
+          <div class="w-2">Tên:</div>
+          <div class="w-10">
+            <input
+              ngDefaultControl
+              type="text"
+              pInputText
+              placeholder="Tên biển..."
+              [(ngModel)]="tmpChosenSignNewName"
+              [style]="{ height: '35px', width: '100%' }"
+              (keyup)="getTmpChosenSignNewName()"
+            />
+          </div>
+        </div>
+        <div class="w-12 mb-3 flex justify-content-end">
+          <div class="w-10">
+            <small class="p-block p-error" *ngIf="!tmpChosenSignNewName"
+              >Vui lòng nhập tên biển</small
+            >
+          </div>
+        </div>
+
+        <div class="w-12 flex text-lg mb-3 align-items-center">
+          <div class="w-2">Loại:</div>
+          <div class="w-10 flex justify-content-end">
+            <p-dropdown
+              ngDefaultControl
+              [(ngModel)]="tmpChosenSignNewSignCategoryId"
+              [options]="signCategories"
+              optionLabel="name"
+              optionValue="id"
+              placeholder="Loại biển báo"
+              [style]="{ height: '35px', width: '15rem' }"
+              (onChange)="getTmpChosenSignNewSignCategoryId()"
+            ></p-dropdown>
+          </div>
+        </div>
+
+        <div class="w-12 flex text-lg mb-1 align-items-center">
+          <div>Mô tả:</div>
+        </div>
+        <div class="w-12">
+          <textarea
+            ngDefaultControl
+            class="w-full"
+            [rows]="3"
+            pInputTextarea
+            [(ngModel)]="tmpChosenSignNewDescription"
+            (keyup)="getTmpChosenSignNewDescription()"
+          ></textarea>
+        </div>
+        <div class="w-12 mb-3">
+          <div class="w-12">
+            <small class="p-block p-error" *ngIf="!tmpChosenSignNewDescription"
+              >Vui lòng nhập nội dung biển</small
+            >
+          </div>
+        </div>
+
+        <div class="w-12 flex text-lg mb-1 align-items-center">
+          <div class="w-6">Hình ảnh:</div>
+          <div class="w-6 flex justify-content-end">
+            <p-fileUpload
+              #imageUploaded
+              mode="basic"
+              [customUpload]="true"
+              [auto]="true"
+              (uploadHandler)="
+                gettmpChosenSignNewImageUrl($event, imageUploaded)
+              "
+              accept="image/*"
+              [maxFileSize]="1000000"
+              chooseLabel="Tải lên"
+              chooseIcon="pi pi-image"
+              [style]="{ height: '35px', border: '3px solid' }"
+            >
+            </p-fileUpload>
+          </div>
+        </div>
+        <div class="w-12 flex text-lg mb-3">
+          <div class="text-center w-12 h-auto p-2 border-200 border-2">
+            <img
+              ngDefaultControl
+              [(ngModel)]="tmpChosenSignNewImageUrl"
+              class="w-12rem h-auto max-h-12rem"
+              [src]="tmpChosenSignNewImageUrl | safe: 'resourceUrl'"
+              alt="Hình ảnh"
+            />
+          </div>
+        </div>
+      </div>
+
+      <!-- Buttons -->
+      <div style="height: 7.5%">
+        <div class="w-12 flex">
+          <div class="w-6 text-center">
+            <button
+              pButton
+              pRipple
+              type="button"
+              label="Cập nhật"
+              [disabled]="!isValidUpdateChosenSign"
+              class="p-button-raised p-button-success"
+              [style]="{ height: '40px' }"
+              (click)="displayConfirmUpdateChosenSign = true"
+            ></button>
+          </div>
+          <div class="w-6 text-center">
+            <button
+              pButton
+              pRipple
+              type="button"
+              label="Hủy bỏ"
+              class="p-button-raised p-button-danger"
+              [style]="{ height: '40px' }"
+              (click)="cancleUpdateChosenSign()"
+            ></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- When adding new sign -->
+  </div>
+</div>
+
+<!-- Confirm update dialog -->
+<p-dialog
+  #updateDialog
+  [(visible)]="displayConfirmUpdateChosenSign"
+  [style]="{ width: '35vw', height: '50vh' }"
+  [modal]="true"
+>
+  <ng-template pTemplate="header">
+    <span class="text-purple-500 font-bold text-xl">Cập nhật</span>
+  </ng-template>
+  <div class="w-12 flex mb-5 align-items-center">
+    <div class="w-3">
+      <span class="text-lg font-bold">Gửi yêu cầu tới </span> <br />
+    </div>
+    <div class="w-9 flex justify-content-end">
+      <p-dropdown
+        [(ngModel)]="selectedAdmin"
+        [options]="admins"
+        optionLabel="username"
+        [style]="{ height: '40px' }"
+        scrollHeight="8rem"
+        [filter]="true"
+        filterBy="username"
+      ></p-dropdown>
+    </div>
+  </div>
+  <div class="w-12">
+    <span class="text-lg font-bold">
+      {{ chosenSign?.name }}
+    </span>
+    <span class="text-lg">sẽ bị yêu cầu sửa đổi. Bạn có chắc chắn?</span>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <button
+      type="button"
+      pButton
+      icon="pi pi-times"
+      label="Hủy"
+      class="p-button-danger"
+      style="height: 40px"
+      (click)="displayConfirmUpdateChosenSign = false"
+    ></button>
+    <button
+      type="button"
+      pButton
+      icon="pi pi-check"
+      label="Đồng ý"
+      class="p-button-success"
+      style="height: 40px"
+      (click)="updateChosenSign()"
+    ></button>
+  </ng-template>
+</p-dialog>
+
+<!-- Confirm delete dialog -->
+<p-dialog
+  #updateDialog
+  [(visible)]="displayConfirmDeleteChosenSign"
+  [style]="{ width: '35vw', height: '50vh' }"
+  [modal]="true"
+>
+  <ng-template pTemplate="header">
+    <span class="text-red-500 font-bold text-xl">Xóa</span>
+  </ng-template>
+  <div class="w-12 flex mb-5 align-items-center">
+    <div class="w-3">
+      <span class="text-lg font-bold">Gửi yêu cầu tới </span> <br />
+    </div>
+    <div class="w-9 flex justify-content-end">
+      <p-dropdown
+        [(ngModel)]="selectedAdmin"
+        [options]="admins"
+        optionLabel="username"
+        [style]="{ height: '40px' }"
+        scrollHeight="8rem"
+        [filter]="true"
+        filterBy="username"
+      ></p-dropdown>
+    </div>
+  </div>
+  <div class="w-12">
+    <span class="text-lg font-bold">
+      {{ chosenSign?.name }}
+    </span>
+    <span class="text-lg">sẽ bị yêu cầu xóa. Bạn có chắc chắn?</span>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <button
+      type="button"
+      pButton
+      icon="pi pi-times"
+      label="Hủy"
+      class="p-button-danger"
+      style="height: 40px"
+      (click)="displayConfirmDeleteChosenSign = false"
+    ></button>
+    <button
+      type="button"
+      pButton
+      icon="pi pi-check"
+      label="Đồng ý"
+      class="p-button-success"
+      style="height: 40px"
+      (click)="deleteChosenSign()"
+    ></button>
+  </ng-template>
+</p-dialog>
+
+<p-toast life="1000"></p-toast>
