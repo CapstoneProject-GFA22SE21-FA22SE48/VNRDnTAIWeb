@@ -1,20 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { IsLoadingService } from '@service-work/is-loading';
-import { AnyARecord } from 'dns';
-import { ConfirmationService, MessageService } from 'primeng/api';
+import { MessageService } from 'primeng/api';
 import { OperationType } from 'src/app/common/operationType';
-import {
-  Answer,
-  Question,
-  TestCategory,
-  User,
-} from 'src/app/models/General.model';
+import { Answer, Question, User } from 'src/app/models/General.model';
 import { decodeToken, getStorageToken } from 'src/app/utilities/jwt.util';
-import { vietNameseNormalize } from 'src/app/utilities/string.util';
 import { FileUploadService } from 'src/services/file-upload.service';
 import { WrapperService } from 'src/services/wrapper.service';
 import * as paths from '../../../common/paths';
 import * as commonStr from '../../../common/commonStr';
+import { toNonAccentVietnamese } from 'src/app/utilities/nonAccentVietnamese';
 
 @Component({
   selector: 'app-manage-questions',
@@ -22,45 +16,45 @@ import * as commonStr from '../../../common/commonStr';
   styleUrls: ['./manage-questions.component.css'],
 })
 export class ManageQuestionsComponent implements OnInit {
-  questions: Question[] = [];
-  tmpQuestions: Question[] = [];
-  testCats: TestCategory[] = [];
+  questions: any;
+  tmpQuestions: any;
   selectedQuestion: any;
   tmpSelectedQuestion: any;
-  testCategories: any = [{ name: 'A1' }, { name: 'A2' }, { name: 'B1, B2' }]; //used for filtering
+  testCategories: any;
+  questionCategories: any;
 
   loadedTestCategories: any;
-  selectedTestCategory: any; //used for creating new question
+  selectedTestCategoryId: any;
+  selectedQuestionCategoryId: any;
 
-  filterTestCategory: any;
+  filterTestCategoryId: any;
+  filterQuestionCategoryId: any;
   searchStr: string = '';
 
   displayUpdateDialog: boolean = false;
+  invalidUpdatedQuestionContent: boolean = false;
+  invalidUpdatedQuestionAnswer: boolean = false;
   txtAnswerChange: string = '';
   isChanging: boolean = false;
   imageSrc: any;
+  updateQuestionImgFile: any;
 
   displayDeleteDialog: boolean = false;
 
   displayCreateDialog: boolean = false;
   newQuestion: any;
-  isValidNewQuestionName: boolean = true;
   newQuestionName: any;
-  newQuestionContent: string = '';
+  newQuestionContent: any;
   newQuestionAnswer: any;
   editingNewQuestionAnswerIndex: any;
   txtEditNewQuestionAnswer: any;
   newQuestionAnswers: any[] = [];
   isEditingNewQuestionAnswer: boolean = false;
   newQuestionImgUrl: string = '';
+  newQuestionImgFile: any;
   isValidNewQuestion: boolean = false;
-  inValidMsg: string = `Vui lòng nhập: - Số câu 
-                  - Nội dung 
-                  - Tối thiểu 2 đáp án 
-                  - Chọn đáp án đúng
-                  - Hình ảnh đính kèm (nếu có)
-  Để tiến hành tạo yêu cầu tạo mới câu hỏi
-  `;
+  inValidNewQuestionContent: boolean = false;
+  inValidNewQuestionAnswer: boolean = false;
 
   admins: User[] = [];
   selectedAdmin: any;
@@ -73,41 +67,58 @@ export class ManageQuestionsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.loadQuestions();
+    this.loadAssigedQuestions();
     this.loadAdmins();
   }
 
-  loadQuestions() {
+  loadAssigedQuestions() {
     this.isLoadingService.add();
-    this.wrapperService.get(paths.ScribeGetQuestions, getStorageToken(), {
-      successCallback: (response) => {
-        this.questions = response.data;
-        this.tmpQuestions = response.data;
-        this.wrapperService.get(
-          paths.ScribeGetTestCategories,
-          getStorageToken(),
-          {
-            successCallback: (response) => {
-              this.loadedTestCategories = response.data;
-              this.selectedTestCategory = this.loadedTestCategories[0];
-              this.questions.forEach((q) => {
-                response.data.forEach((r: any) => {
-                  if (r.id === q.testCategoryId) q.testCategory = r;
-                });
+    this.wrapperService.get(
+      paths.ScribeGetAssignedQuestions +
+        '/' +
+        decodeToken(getStorageToken() || '').Id,
+      getStorageToken(),
+      {
+        successCallback: (response) => {
+          this.questions = response.data;
+          this.tmpQuestions = response.data;
+
+          this.testCategories = [];
+          this.questionCategories = [];
+
+          this.questions.forEach((q: any) => {
+            if (
+              !this.testCategories.find((tc: any) => q.testCategoryId === tc.id)
+            ) {
+              this.testCategories.push({
+                id: q.testCategoryId,
+                name: q.testCategoryName,
               });
-            },
-            errorCallback: (error) => {
-              console.log(error);
-            },
-          }
-        );
-        this.isLoadingService.remove();
-      },
-      errorCallback: (error) => {
-        console.log(error);
-        this.isLoadingService.remove();
-      },
-    });
+            }
+
+            if (
+              !this.questionCategories.find(
+                (qc: any) => q.questionCategoryId === qc.id
+              )
+            ) {
+              this.questionCategories.push({
+                id: q.questionCategoryId,
+                name: q.questionCategoryName,
+              });
+            }
+          });
+
+          this.selectedTestCategoryId = this.testCategories[0]?.id;
+          this.selectedQuestionCategoryId = this.questionCategories[0]?.id;
+
+          this.isLoadingService.remove();
+        },
+        errorCallback: (error) => {
+          console.log(error);
+          this.isLoadingService.remove();
+        },
+      }
+    );
   }
 
   loadAdmins() {
@@ -125,37 +136,35 @@ export class ManageQuestionsComponent implements OnInit {
     });
   }
 
-  changeCategory() {
-    this.filterData();
-  }
-
   filterData() {
     this.questions = this.tmpQuestions;
 
     //Search
-    if (this.searchStr != '') {
+    if (this.searchStr && this.searchStr.trim() != '') {
       this.questions = this.questions.filter(
-        (q) =>
-          q.content?.toLowerCase().includes(this.searchStr.toLowerCase()) ||
-          q.name?.toLowerCase().includes(this.searchStr.toLowerCase())
+        (q: any) =>
+          toNonAccentVietnamese(q.content?.toLowerCase()).includes(
+            toNonAccentVietnamese(this.searchStr.toLowerCase())
+          ) || q.name?.toLowerCase().includes(this.searchStr.toLowerCase())
       );
     } else {
       this.questions = this.tmpQuestions;
     }
 
     //Filter test category
-    if (this.filterTestCategory?.name === 'A1') {
-      this.questions = this.questions.filter((q) => {
-        q.testCategory.name === 'A1';
-      });
-    } else if (this.filterTestCategory?.name === 'A2') {
-      this.questions = this.questions.filter((q) => {
-        q.testCategory.name === 'A2';
-      });
-    } else if (this.filterTestCategory?.name === 'B1,B2') {
-      this.questions = this.questions.filter((q) => {
-        q.testCategory.name === this.filterTestCategory?.name;
-      });
+    if (this.filterTestCategoryId) {
+      this.questions = this.questions.filter(
+        (q: any) => q.testCategoryId === this.filterTestCategoryId
+      );
+    }
+
+    console.log(this.filterQuestionCategoryId);
+
+    //Filter test category
+    if (this.filterQuestionCategoryId) {
+      this.questions = this.questions.filter(
+        (q: any) => q.questionCategoryId === this.filterQuestionCategoryId
+      );
     }
   }
 
@@ -201,7 +210,9 @@ export class ManageQuestionsComponent implements OnInit {
   detectChange() {
     if (
       JSON.stringify(this.selectedQuestion) !==
-      JSON.stringify(this.tmpSelectedQuestion)
+        JSON.stringify(this.tmpSelectedQuestion) &&
+      !this.invalidUpdatedQuestionContent &&
+      !this.invalidUpdatedQuestionAnswer
     ) {
       this.isChanging = true;
     } else {
@@ -210,7 +221,12 @@ export class ManageQuestionsComponent implements OnInit {
   }
 
   changeTxtQuestionContent(newQuestionContent: string) {
-    this.tmpSelectedQuestion.content = newQuestionContent;
+    if (newQuestionContent.trim() !== '') {
+      this.tmpSelectedQuestion.content = newQuestionContent;
+      this.invalidUpdatedQuestionContent = false;
+    } else {
+      this.invalidUpdatedQuestionContent = true;
+    }
     this.detectChange();
   }
 
@@ -228,11 +244,13 @@ export class ManageQuestionsComponent implements OnInit {
   changeTxtAnswer(answer: Answer, newAnswer: string) {
     this.tmpSelectedQuestion.answers.forEach((a: Answer) => {
       if (a.id === answer.id) {
-        if (a.description !== newAnswer.trim()) {
+        if (newAnswer.trim() !== '' && a.description !== newAnswer.trim()) {
           a.description = newAnswer;
           this.isChanging = true;
+          this.invalidUpdatedQuestionAnswer = false;
         } else {
           this.isChanging = false;
+          this.invalidUpdatedQuestionAnswer = true;
         }
       }
     });
@@ -240,72 +258,79 @@ export class ManageQuestionsComponent implements OnInit {
   }
 
   updateImage(event: any, imageUploaded: any): void {
-    this.fileUploadService
-      .uploadImageToFirebase(event.files[0],  `images/mock-test/new/${event.files[0]?.name}`)
-      .then((imgUrl: any) => {
-        this.tmpSelectedQuestion.imageUrl = imgUrl;
-        this.detectChange();
-        imageUploaded.clear();
-      });
+    this.tmpSelectedQuestion.imageUrl =
+      event.files[0].objectURL?.changingThisBreaksApplicationSecurity;
+    this.updateQuestionImgFile = event.files[0];
+    imageUploaded.clear();
   }
 
   updateQuestion() {
-    this.isLoadingService.add();
-    this.wrapperService.post(
-      paths.ScribeCreateQuestionForROM,
-      this.tmpSelectedQuestion,
-      getStorageToken(),
-      {
-        successCallback: (response) => {
-          this.wrapperService.post(
-            paths.ScribeCreateQuestionModificationRequest,
-            {
-              modifiedQuestionId: this.selectedQuestion.id,
-              modifyingQuestionId: response.data.id,
-              scribeId: decodeToken(getStorageToken() || '').Id,
-              adminId: this.selectedAdmin.id,
-              operationType: OperationType.Update,
+    this.fileUploadService
+      .uploadImageToFirebase(
+        this.updateQuestionImgFile,
+        `images/mock-test/new/`
+      )
+      .then((imgUrl: any) => {
+        this.tmpSelectedQuestion.imageUrl = imgUrl;
+      })
+      .then(() => {
+        this.isLoadingService.add();
+        this.wrapperService.post(
+          paths.ScribeCreateQuestionForROM,
+          this.tmpSelectedQuestion,
+          getStorageToken(),
+          {
+            successCallback: (response) => {
+              this.wrapperService.post(
+                paths.ScribeCreateQuestionModificationRequest,
+                {
+                  modifiedQuestionId: this.selectedQuestion.id,
+                  modifyingQuestionId: response.data.id,
+                  scribeId: decodeToken(getStorageToken() || '').Id,
+                  adminId: this.selectedAdmin.id,
+                  operationType: OperationType.Update,
+                },
+                getStorageToken(),
+                {
+                  successCallback: (response) => {
+                    this.resetDataUpdateQuestion();
+                    this.displayUpdateDialog = false;
+                    this.messageService.add({
+                      key: 'createUpdateROMSuccess',
+                      severity: 'success',
+                      summary: commonStr.success,
+                      detail: commonStr.romCreatedSuccessfully,
+                    });
+                    this.isLoadingService.remove();
+                  },
+                  errorCallback: (error) => {
+                    console.log(error);
+                    this.displayUpdateDialog = false;
+                    this.messageService.add({
+                      key: 'createUpdateROMError',
+                      severity: 'error',
+                      summary: commonStr.fail,
+                      detail: commonStr.errorOccur,
+                    });
+                    this.isLoadingService.remove();
+                  },
+                }
+              );
             },
-            getStorageToken(),
-            {
-              successCallback: (response) => {
-                this.resetDataUpdateQuestion();
-                this.displayUpdateDialog = false;
-                this.messageService.add({
-                  key: 'createUpdateROMSuccess',
-                  severity: 'success',
-                  summary: commonStr.success,
-                  detail: commonStr.romCreatedSuccessfully,
-                });
-                this.isLoadingService.remove();
-              },
-              errorCallback: (error) => {
-                console.log(error);
-                this.displayUpdateDialog = false;
-                this.messageService.add({
-                  key: 'createUpdateROMError',
-                  severity: 'error',
-                  summary: commonStr.fail,
-                  detail: commonStr.errorOccur,
-                });
-                this.isLoadingService.remove();
-              },
-            }
-          );
-        },
-        errorCallback: (error) => {
-          console.log(error);
-          this.displayUpdateDialog = false;
-          this.messageService.add({
-            key: 'createUpdateROMError',
-            severity: 'error',
-            summary: commonStr.fail,
-            detail: commonStr.errorOccur,
-          });
-          this.isLoadingService.remove();
-        },
-      }
-    );
+            errorCallback: (error) => {
+              console.log(error);
+              this.displayUpdateDialog = false;
+              this.messageService.add({
+                key: 'createUpdateROMError',
+                severity: 'error',
+                summary: commonStr.fail,
+                detail: commonStr.errorOccur,
+              });
+              this.isLoadingService.remove();
+            },
+          }
+        );
+      });
   }
 
   deleteQuestion() {
@@ -365,7 +390,7 @@ export class ManageQuestionsComponent implements OnInit {
             key: 'createDeleteROMError',
             severity: 'error',
             summary: commonStr.fail,
-                  detail: commonStr.errorOccur,
+            detail: commonStr.errorOccur,
           });
           this.isLoadingService.remove();
         },
@@ -373,27 +398,27 @@ export class ManageQuestionsComponent implements OnInit {
     );
   }
 
-  checkNewQuestionName(event: any) {
-    this.newQuestionName = event.value;
-    let isDuplicated = false;
-
-    this.tmpQuestions.forEach((q: Question) => {
-      if (parseInt(q.name.split(' ')[1]) === parseInt(this.newQuestionName)) {
-        isDuplicated = true;
-      }
-    });
-
-    if (isDuplicated) {
-      this.isValidNewQuestionName = false;
-    } else {
-      this.isValidNewQuestionName = true;
-    }
-
-    this.validateNewQuestion();
+  initValueForCreateNew() {
+    this.selectedTestCategoryId = this.testCategories[0]?.id;
+    this.selectedQuestionCategoryId = this.questionCategories[0]?.id;
   }
 
   getNewQuestionContent(event: any) {
     this.newQuestionContent = event.target.value;
+    if (this.newQuestionContent.trim() === '') {
+      this.inValidNewQuestionContent = true;
+    } else {
+      this.inValidNewQuestionContent = false;
+    }
+    this.validateNewQuestion();
+  }
+
+  getNewQuestionAnswer() {
+    if (this.newQuestionAnswer.trim() === '') {
+      this.inValidNewQuestionAnswer = true;
+    } else {
+      this.inValidNewQuestionAnswer = false;
+    }
     this.validateNewQuestion();
   }
 
@@ -440,13 +465,10 @@ export class ManageQuestionsComponent implements OnInit {
   }
 
   addNewQuestionImage(event: any, newQuestionImageUploaded: any): void {
-    this.fileUploadService
-      .uploadImageToFirebase(event.files[0], `images/mock-test/new/${event.files[0].name}`)
-      .then((imgUrl: any) => {
-        this.newQuestionImgUrl = imgUrl;
-        this.detectChange();
-        newQuestionImageUploaded.clear();
-      });
+    this.newQuestionImgUrl =
+      event.files[0].objectURL?.changingThisBreaksApplicationSecurity;
+    this.newQuestionImgFile = event.files[0];
+    newQuestionImageUploaded.clear();
   }
 
   validateNewQuestion() {
@@ -455,10 +477,7 @@ export class ManageQuestionsComponent implements OnInit {
       if (a.isCorrect) hasCorrectAnswer = true;
     });
 
-    this.isValidNewQuestionName &&
-    this.newQuestionName !== undefined &&
-    this.newQuestion !== '' &&
-    this.newQuestionContent !== '' &&
+    this.newQuestionContent.trim() !== '' &&
     this.newQuestionAnswers.length >= 2 &&
     hasCorrectAnswer
       ? (this.isValidNewQuestion = true)
@@ -471,82 +490,91 @@ export class ManageQuestionsComponent implements OnInit {
     this.newQuestionAnswers = [];
     this.newQuestionImgUrl = '';
     this.selectedAdmin = this.admins[0];
-    this.selectedTestCategory = this.loadedTestCategories[0];
-    this.isValidNewQuestionName = true;
+    this.selectedTestCategoryId = undefined;
+    this.selectedQuestionCategoryId = undefined;
     this.displayCreateDialog = false;
+    this.inValidNewQuestionContent = false;
+    this.inValidNewQuestionAnswer = false;
   }
 
   createQuestion() {
-    var newAnswers: any[] = [];
-    this.newQuestionAnswers.forEach((a: any) => {
-      newAnswers.push({
-        description: a.description,
-        isCorrect: a.isCorrect,
-      });
-    });
+    this.fileUploadService
+      .uploadImageToFirebase(this.newQuestionImgFile, `images/mock-test/new/`)
+      .then((imgUrl: any) => {
+        this.newQuestionImgUrl = imgUrl;
+      })
+      .then(() => {
+        var newAnswers: any[] = [];
+        this.newQuestionAnswers.forEach((a: any) => {
+          newAnswers.push({
+            description: a.description,
+            isCorrect: a.isCorrect,
+          });
+        });
 
-    this.newQuestion = {
-      testCategoryId: this.selectedTestCategory.id,
-      name: 'Câu ' + this.newQuestionName,
-      content: this.newQuestionContent,
-      imageUrl: this.newQuestionImgUrl,
-      answers: newAnswers,
-    };
+        this.newQuestion = {
+          testCategoryId: this.selectedTestCategoryId,
+          questionCategoryId: this.selectedQuestionCategoryId,
+          content: this.newQuestionContent,
+          imageUrl: this.newQuestionImgUrl,
+          answers: newAnswers,
+        };
 
-    this.isLoadingService.add();
-    this.wrapperService.post(
-      paths.ScribeCreateQuestionForROM,
-      this.newQuestion,
-      getStorageToken(),
-      {
-        successCallback: (response) => {
-          this.wrapperService.post(
-            paths.ScribeCreateQuestionModificationRequest,
-            {
-              // create new question -> no modifiedQuestionId
-              modifyingQuestionId: response.data.id,
-              scribeId: decodeToken(getStorageToken() || '').Id,
-              adminId: this.selectedAdmin.id,
-              operationType: OperationType.Add,
+        this.isLoadingService.add();
+        this.wrapperService.post(
+          paths.ScribeCreateQuestionForROM,
+          this.newQuestion,
+          getStorageToken(),
+          {
+            successCallback: (response) => {
+              this.wrapperService.post(
+                paths.ScribeCreateQuestionModificationRequest,
+                {
+                  // create new question -> no modifiedQuestionId
+                  modifyingQuestionId: response.data.id,
+                  scribeId: decodeToken(getStorageToken() || '').Id,
+                  adminId: this.selectedAdmin.id,
+                  operationType: OperationType.Add,
+                },
+                getStorageToken(),
+                {
+                  successCallback: (response) => {
+                    this.displayCreateDialog = false;
+                    this.messageService.add({
+                      key: 'createAddROMSuccess',
+                      severity: 'success',
+                      summary: commonStr.success,
+                      detail: commonStr.romCreatedSuccessfully,
+                    });
+                    this.isLoadingService.remove();
+                  },
+                  errorCallback: (error) => {
+                    console.log(error);
+                    this.displayCreateDialog = false;
+                    this.messageService.add({
+                      key: 'createAddROMError',
+                      severity: 'error',
+                      summary: commonStr.fail,
+                      detail: commonStr.errorOccur,
+                    });
+                    this.isLoadingService.remove();
+                  },
+                }
+              );
             },
-            getStorageToken(),
-            {
-              successCallback: (response) => {
-                this.displayCreateDialog = false;
-                this.messageService.add({
-                  key: 'createAddROMSuccess',
-                  severity: 'success',
-                  summary: commonStr.success,
-                  detail: commonStr.romCreatedSuccessfully,
-                });
-                this.isLoadingService.remove();
-              },
-              errorCallback: (error) => {
-                console.log(error);
-                this.displayCreateDialog = false;
-                this.messageService.add({
-                  key: 'createAddROMError',
-                  severity: 'error',
-                  summary: commonStr.fail,
-                  detail: commonStr.errorOccur,
-                });
-                this.isLoadingService.remove();
-              },
-            }
-          );
-        },
-        errorCallback: (error) => {
-          console.log(error);
-          this.displayCreateDialog = false;
-                this.messageService.add({
-                  key: 'createAddROMError',
-                  severity: 'error',
-                  summary: commonStr.fail,
-                  detail: commonStr.errorOccur,
-                });
-          this.isLoadingService.remove();
-        },
-      }
-    );
+            errorCallback: (error) => {
+              console.log(error);
+              this.displayCreateDialog = false;
+              this.messageService.add({
+                key: 'createAddROMError',
+                severity: 'error',
+                summary: commonStr.fail,
+                detail: commonStr.errorOccur,
+              });
+              this.isLoadingService.remove();
+            },
+          }
+        );
+      });
   }
 }
