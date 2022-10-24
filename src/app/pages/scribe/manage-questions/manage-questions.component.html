@@ -336,7 +336,7 @@
           ></textarea>
         </div>
         <div *ngIf="inValidNewQuestionContent">
-          <small class="p-block p-error">Vui lòng nhập nội dung câu hỏi</small>
+          <small class="p-block p-error">Vui lòng nhập nội dung câu hỏi (tối đa 2000 ký tự)</small>
         </div>
       </div>
 
@@ -365,7 +365,7 @@
         </div>
         <div class="mb-2">
           <small *ngIf="inValidNewQuestionAnswer" class="p-block p-error"
-            >Vui lòng nhập nội dung đáp án để thêm mới</small
+            >Vui lòng nhập nội dung đáp án (tối đa 2000 ký tự) để thêm mới</small
           >
         </div>
         <div
@@ -597,7 +597,7 @@
     </div>
     <div class="mb-2">
       <small *ngIf="invalidUpdatedQuestionContent" class="p-block p-error"
-        >Vui lòng nhập nội dung câu hỏi</small
+        >Vui lòng nhập nội dung câu hỏi (tối đa 2000 ký tự)</small
       >
     </div>
   </div>
@@ -644,7 +644,7 @@
     </div>
     <div class="mb-2">
       <small *ngIf="invalidUpdatedQuestionAnswer" class="p-block p-error"
-        >Vui lòng nhập nội đáp án</small
+        >Vui lòng nhập nội đáp án (tối đa 2000 ký tự)</small
       >
     </div>
   </div>

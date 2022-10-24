@@ -312,7 +312,7 @@
       <span
         class="p-error block"
         *ngIf="invalidChosenStatueNewDesc || !tmpChosenStatue?.description"
-        >Vui lòng nhập nội dung của điều</span
+        >Vui lòng nhập nội dung của điều (tối đa 2000 ký tự)</span
       >
 
       <div class="text-lg flex align-items-center">
@@ -836,7 +836,7 @@
       <span
         class="p-error block"
         *ngIf="invalidChosenSectionNewDesc || !tmpChosenSection?.description"
-        >Vui lòng nhập nội dung của khoản</span
+        >Vui lòng nhập nội dung của khoản (tối đa 2000 ký tự)</span
       >
 
       <div class="text-lg mb-2">
@@ -876,7 +876,8 @@
             <p-inputNumber
               inputId="integeronly"
               inputId="minmax"
-              [min]="10000"
+              [min]="50000"
+              [max]="75000000"
               [(ngModel)]="newChosenSectionMinPenalty"
               [inputStyle]="{ width: '10rem', height: '35px' }"
               (onInput)="checkChosenSectionNewMinPenalty($event)"
@@ -896,7 +897,8 @@
             <p-inputNumber
               inputId="integeronly"
               inputId="minmax"
-              [min]="10000"
+              [min]="50000"
+              [max]="75000000"
               [(ngModel)]="newChosenSectionMaxPenalty"
               [inputStyle]="{ width: '10rem', height: '35px' }"
               (onInput)="checkChosenSectionNewMaxPenalty($event)"
@@ -905,9 +907,9 @@
           </div>
         </div>
       </div>
-      <span class="p-error block" *ngIf="invalidChosenSectionNewPenaltyMsg">{{
+      <small class="p-error block" *ngIf="invalidChosenSectionNewPenaltyMsg">{{
         invalidChosenSectionNewPenaltyMsg
-      }}</span>
+      }}</small>
 
       <div class="text-lg flex align-items-center">
         <div class="w-4">Gửi yêu cầu tới</div>
@@ -1577,7 +1579,7 @@
         ></textarea>
       </div>
       <span class="p-error block" *ngIf="invalidChosenParagraphNewDesc"
-        >Vui lòng nhập nội dung của điểm</span
+        >Vui lòng nhập nội dung của điểm (tối đa 2000 ký tự)</span
       >
 
       <div class="text-lg flex align-items-center justify-content-between mb-1">
@@ -2393,7 +2395,9 @@
                 type="button"
                 label="Thêm"
                 [disabled]="
+                  newSection.description !== undefined &&
                   newSection.description !== '' &&
+                  newSectionDescriptionInvalidMsg === '' &&
                   newSection.minPenalty &&
                   newSection.maxPenalty &&
                   isValidNewSectionMinPenalty &&
@@ -2440,7 +2444,7 @@
             </div>
           </div>
 
-          <div class="w-12 flex justify-content-center mb-3">
+          <div class="w-12 flex justify-content-center">
             <div class="w-8">
               <textarea
                 [(ngModel)]="newSection.description"
@@ -2452,14 +2456,14 @@
               ></textarea>
             </div>
           </div>
-          <div class="w-12 flex justify-content-center mb-1">
+          <div class="w-12 flex justify-content-center mb-3">
             <div class="w-8">
-              <span
+              <small
                 class="p-error block"
                 *ngIf="newSectionDescriptionInvalidMsg"
               >
                 {{ newSectionDescriptionInvalidMsg }}
-              </span>
+              </small>
             </div>
           </div>
 
@@ -2502,7 +2506,8 @@
                   }"
                   inputId="integeronly"
                   inputId="minmax"
-                  [min]="10000"
+                  [min]="50000"
+                  [max]="75000000"
                   placeholder="Mức phạt tối thiểu..."
                   [style]="{ height: '35px', width: '13rem' }"
                   (onInput)="checkNewSectionMinPenalty($event)"
@@ -2517,7 +2522,8 @@
                   }"
                   inputId="integeronly"
                   inputId="mixmax"
-                  [min]="10000"
+                  [min]="50000"
+                  [max]="75000000"
                   placeholder="Mức phạt tối đa..."
                   [style]="{ height: '35px', width: '13rem' }"
                   (onInput)="checkNewSectionMaxPenalty($event)"
@@ -2912,6 +2918,7 @@
               pRipple
               type="button"
               label="Lưu"
+              [disabled]="!isValidSaveNewParagraph"
               [style]="{ height: '35px', border: '3px solid' }"
               class="p-button-success p-button-outlined mr-2"
               (click)="saveUpdatedNewParagraph()"
@@ -2963,7 +2970,6 @@
             placeholder="Nội dung..."
             (keyup)="getNewParagraphDescription($event)"
           ></textarea>
-          <!-- [(ngModel)]="newParagraphOfSelectedSection.description" -->
         </div>
       </div>
       <div class="w-12 flex justify-content-center mb-3">
@@ -2991,7 +2997,14 @@
             placeholder="Hình phạt bổ sung..."
             (keyup)="getNewParagraphAdditionalPenalty($event)"
           ></textarea>
-          <!-- [(ngModel)]="newParagraphOfSelectedSection.additionalPenalty" -->
+        </div>
+      </div>
+
+      <div class="w-12 flex justify-content-center mb-3">
+        <div class="w-8">
+          <span class="p-error block" *ngIf="newParagraphAdditionalPenaltyInvalidMsg">
+            {{ newParagraphAdditionalPenaltyInvalidMsg }}
+          </span>
         </div>
       </div>
 
@@ -3484,7 +3497,7 @@
                 type="button"
                 pButton
                 label="Lưu lại"
-                [disabled]="!newParagraphOfSelectedSection?.description"
+                [disabled]="!isValidSaveNewParagraph"
                 class="p-button-outlined p-button-warning"
                 style="height: 40px; margin: 0; border: 3px solid"
                 (click)="saveNewParagraph()"
@@ -3775,6 +3788,7 @@
               pRipple
               type="button"
               label="Lưu"
+              [disabled]="!isValidSaveNewParagraph"
               [style]="{ height: '35px', border: '3px solid' }"
               class="p-button-success p-button-outlined mr-2"
               (click)="saveUpdatedNewParagraph()"
@@ -3826,7 +3840,6 @@
             placeholder="Nội dung..."
             (keyup)="getNewParagraphDescription($event)"
           ></textarea>
-          <!-- [(ngModel)]="newParagraphOfSelectedSection.description" -->
         </div>
       </div>
       <div class="w-12 flex justify-content-center mb-3">
@@ -3854,7 +3867,14 @@
             placeholder="Hình phạt bổ sung..."
             (keyup)="getNewParagraphAdditionalPenalty($event)"
           ></textarea>
-          <!-- [(ngModel)]="newParagraphOfSelectedSection.additionalPenalty" -->
+        </div>
+      </div>
+
+      <div class="w-12 flex justify-content-center mb-3">
+        <div class="w-8">
+          <span class="p-error block" *ngIf="newParagraphAdditionalPenaltyInvalidMsg">
+            {{ newParagraphAdditionalPenaltyInvalidMsg }}
+          </span>
         </div>
       </div>
 
@@ -4134,7 +4154,7 @@
               type="button"
               pButton
               label="Lưu lại"
-              [disabled]="!newParagraphOfSelectedSection?.description"
+              [disabled]="!isValidSaveNewParagraph"
               class="p-button-outlined p-button-warning mr-3"
               style="height: 40px; margin: 0; border: 3px solid"
               (click)="saveNewParagraph()"
