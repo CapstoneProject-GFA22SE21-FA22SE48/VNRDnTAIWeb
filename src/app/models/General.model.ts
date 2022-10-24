@@ -351,6 +351,12 @@ export interface NewSectionDTO {
     referenceParagraphs?: ReferenceDTO[] //when a section with no paragraph and has references
 }
 
+export interface AdminDTO {
+    id: string,
+    name: string,
+    pendingRequests: string
+}
+
 //Enumeration
 export enum UserRole {
     ADMIN = 0,

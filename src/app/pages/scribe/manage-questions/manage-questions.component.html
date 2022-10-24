@@ -280,7 +280,16 @@
             scrollHeight="8rem"
             [filter]="true"
             filterBy="username"
-          ></p-dropdown>
+            class="dropdown-admins"
+            >
+              <ng-template let-admin pTemplate="item" class="dropdown-admins-tooltip">
+                <div [pTooltip]="admin.pendingRequests"
+                tooltipPosition="left" class="w-full h-3rem flex justify-content-center 
+                align-items-center whitespace-no-wrap text-overflow-ellipsis ">
+                    <span>{{admin.username}}</span>
+                </div>
+              </ng-template>
+            </p-dropdown>
         </div>
       </div>
 
@@ -575,7 +584,16 @@
           scrollHeight="8rem"
           [filter]="true"
           filterBy="username"
-        ></p-dropdown>
+          class="dropdown-admins"
+          >
+            <ng-template let-admin pTemplate="item" class="dropdown-admins-tooltip">
+              <div [pTooltip]="admin.pendingRequests"
+              tooltipPosition="left" class="w-full h-3rem flex justify-content-center 
+              align-items-center whitespace-no-wrap text-overflow-ellipsis ">
+                  <span>{{admin.username}}</span>
+              </div>
+            </ng-template>
+          </p-dropdown>
       </div>
     </div>
   </div>
@@ -728,7 +746,16 @@
         scrollHeight="8rem"
         [filter]="true"
         filterBy="username"
-      ></p-dropdown>
+        class="dropdown-admins"
+        >
+          <ng-template let-admin pTemplate="item" class="dropdown-admins-tooltip">
+            <div [pTooltip]="admin.pendingRequests"
+            tooltipPosition="left" class="w-full h-3rem flex justify-content-center 
+            align-items-center whitespace-no-wrap text-overflow-ellipsis ">
+                <span>{{admin.username}}</span>
+            </div>
+          </ng-template>
+        </p-dropdown>
     </div>
   </div>
   <div class="w-12">

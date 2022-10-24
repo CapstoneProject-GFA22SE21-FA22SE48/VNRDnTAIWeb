@@ -326,7 +326,16 @@
             [filter]="true"
             filterBy="username"
             [style]="{ width: '10rem', height: '35px' }"
-          ></p-dropdown>
+            class="dropdown-admins"
+          >
+            <ng-template let-admin pTemplate="item" class="dropdown-admins-tooltip">
+              <div [pTooltip]="admin.pendingRequests"
+              tooltipPosition="left" class="w-full h-3rem flex justify-content-center 
+              align-items-center whitespace-no-wrap text-overflow-ellipsis ">
+                  <span>{{admin.username}}</span>
+              </div>
+            </ng-template>
+          </p-dropdown>
         </div>
       </div>
     </div>
@@ -922,7 +931,16 @@
             [filter]="true"
             filterBy="username"
             [style]="{ width: '10rem', height: '35px' }"
-          ></p-dropdown>
+            class="dropdown-admins"
+            >
+              <ng-template let-admin pTemplate="item" class="dropdown-admins-tooltip">
+                <div [pTooltip]="admin.pendingRequests"
+                tooltipPosition="left" class="w-full h-3rem flex justify-content-center 
+                align-items-center whitespace-no-wrap text-overflow-ellipsis ">
+                    <span>{{admin.username}}</span>
+                </div>
+              </ng-template>
+            </p-dropdown>
         </div>
       </div>
     </div>
@@ -1522,7 +1540,13 @@
               (click)="openUpdateChosenParagraph()"
             ></button>
           </div>
-          <div class="w-6 text-right" *ngIf="chosenParagraph?.name !== '' && chosenParagraph?.description !== ''">
+          <div
+            class="w-6 text-right"
+            *ngIf="
+              chosenParagraph?.name !== '' &&
+              chosenParagraph?.description !== ''
+            "
+          >
             <button
               pButton
               pRipple
@@ -1690,7 +1714,16 @@
             [filter]="true"
             filterBy="username"
             [style]="{ width: '10rem', height: '35px' }"
-          ></p-dropdown>
+            class="dropdown-admins"
+            >
+              <ng-template let-admin pTemplate="item" class="dropdown-admins-tooltip">
+                <div [pTooltip]="admin.pendingRequests"
+                tooltipPosition="left" class="w-full h-3rem flex justify-content-center 
+                align-items-center whitespace-no-wrap text-overflow-ellipsis ">
+                    <span>{{admin.username}}</span>
+                </div>
+              </ng-template>
+            </p-dropdown>
         </div>
       </div>
     </div>
@@ -1974,7 +2007,16 @@
           [filter]="true"
           filterBy="username"
           [style]="{ height: '40px' }"
-        ></p-dropdown>
+          class="dropdown-admins"
+          >
+            <ng-template let-admin pTemplate="item" class="dropdown-admins-tooltip">
+              <div [pTooltip]="admin.pendingRequests"
+              tooltipPosition="left" class="w-full h-3rem flex justify-content-center 
+              align-items-center whitespace-no-wrap text-overflow-ellipsis ">
+                  <span>{{admin.username}}</span>
+              </div>
+            </ng-template>
+          </p-dropdown>
       </div>
     </div>
   </div>
@@ -2058,7 +2100,7 @@
       <div class="w-3">
         <span class="text-lg font-bold">Gửi yêu cầu tới </span> <br />
       </div>
-      <div class="w-9  flex justify-content-end">
+      <div class="w-9 flex justify-content-end">
         <p-dropdown
           [(ngModel)]="selectedAdmin"
           [options]="admins"
@@ -2067,7 +2109,16 @@
           [filter]="true"
           filterBy="username"
           [style]="{ height: '40px' }"
-        ></p-dropdown>
+          class="dropdown-admins"
+          >
+            <ng-template let-admin pTemplate="item" class="dropdown-admins-tooltip">
+              <div [pTooltip]="admin.pendingRequests"
+              tooltipPosition="left" class="w-full h-3rem flex justify-content-center 
+              align-items-center whitespace-no-wrap text-overflow-ellipsis ">
+                  <span>{{admin.username}}</span>
+              </div>
+            </ng-template>
+          </p-dropdown>
       </div>
     </div>
   </div>
@@ -2151,7 +2202,7 @@
       <div class="w-3">
         <span class="text-lg font-bold">Gửi yêu cầu tới </span> <br />
       </div>
-      <div class="w-9  flex justify-content-end">
+      <div class="w-9 flex justify-content-end">
         <p-dropdown
           [(ngModel)]="selectedAdmin"
           [options]="admins"
@@ -2160,7 +2211,16 @@
           [filter]="true"
           filterBy="username"
           [style]="{ height: '40px' }"
-        ></p-dropdown>
+          class="dropdown-admins"
+          >
+            <ng-template let-admin pTemplate="item" class="dropdown-admins-tooltip">
+              <div [pTooltip]="admin.pendingRequests"
+              tooltipPosition="left" class="w-full h-3rem flex justify-content-center 
+              align-items-center whitespace-no-wrap text-overflow-ellipsis ">
+                  <span>{{admin.username}}</span>
+              </div>
+            </ng-template>
+          </p-dropdown>
       </div>
     </div>
   </div>
@@ -3002,7 +3062,10 @@
 
       <div class="w-12 flex justify-content-center mb-3">
         <div class="w-8">
-          <span class="p-error block" *ngIf="newParagraphAdditionalPenaltyInvalidMsg">
+          <span
+            class="p-error block"
+            *ngIf="newParagraphAdditionalPenaltyInvalidMsg"
+          >
             {{ newParagraphAdditionalPenaltyInvalidMsg }}
           </span>
         </div>
@@ -3223,7 +3286,16 @@
               [filter]="true"
               filterBy="username"
               [style]="{ width: '10rem', height: '35px' }"
-            ></p-dropdown>
+              class="dropdown-admins"
+              >
+                <ng-template let-admin pTemplate="item" class="dropdown-admins-tooltip">
+                  <div [pTooltip]="admin.pendingRequests"
+                  tooltipPosition="left" class="w-full h-3rem flex justify-content-center 
+                  align-items-center whitespace-no-wrap text-overflow-ellipsis ">
+                      <span>{{admin.username}}</span>
+                  </div>
+                </ng-template>
+              </p-dropdown>
           </div>
         </div>
       </div>
@@ -3872,7 +3944,10 @@
 
       <div class="w-12 flex justify-content-center mb-3">
         <div class="w-8">
-          <span class="p-error block" *ngIf="newParagraphAdditionalPenaltyInvalidMsg">
+          <span
+            class="p-error block"
+            *ngIf="newParagraphAdditionalPenaltyInvalidMsg"
+          >
             {{ newParagraphAdditionalPenaltyInvalidMsg }}
           </span>
         </div>
@@ -4079,7 +4154,16 @@
               [filter]="true"
               filterBy="username"
               [style]="{ width: '10rem', height: '35px' }"
-            ></p-dropdown>
+              class="dropdown-admins"
+              >
+                <ng-template let-admin pTemplate="item" class="dropdown-admins-tooltip">
+                  <div [pTooltip]="admin.pendingRequests"
+                  tooltipPosition="left" class="w-full h-3rem flex justify-content-center 
+                  align-items-center whitespace-no-wrap text-overflow-ellipsis ">
+                      <span>{{admin.username}}</span>
+                  </div>
+                </ng-template>
+              </p-dropdown>
           </div>
         </div>
       </div>
