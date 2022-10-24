@@ -17,6 +17,9 @@ export const AdminReEnableMember: string = base + '/Users/Members/ReEnable';
 
 export const AdminGetScribes: string = base + '/Users/Scribes'
 
+export const AdminGetColumns: string = base + '/Columns'
+export const AdminGetAssignedColumns: string = base + '/AssignedColumns'
+
 // Scribe
 export const ScribeGetAssignedQuestions: string = base + '/Questions/AssignedQuestions/Scribes';
 export const ScribeGetTestCategories: string = base + '/TestCategories';

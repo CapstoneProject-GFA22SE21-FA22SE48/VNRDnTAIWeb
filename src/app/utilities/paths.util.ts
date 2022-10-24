@@ -10,7 +10,8 @@ export const paths = {
     dashboard: 'admin/dashboard',
     manageScribes: 'admin/manage-scribes',
     manageRoMs: 'admin/manage-roms',
-    manageUsers: 'admin/manage-users'
+    manageUsers: 'admin/manage-users',
+    manageTask: 'admin/manage-task'
   },
   scribe: {
     myRequests: 'scribe/my-request',

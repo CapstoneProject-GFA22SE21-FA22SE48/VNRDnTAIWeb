@@ -13,6 +13,7 @@ import { ManageUsersComponent } from './pages/admin/manage-users/manage-users.co
 import { ManageSignsComponent } from './pages/scribe/manage-signs/manage-signs.component';
 import { ManageQuestionsComponent } from './pages/scribe/manage-questions/manage-questions.component';
 import { MyRequestComponent } from './pages/scribe/my-request/my-request.component';
+import { ManageTaskComponent } from './pages/admin/manage-task/manage-task.component';
 
 const routes: Routes = [
   // {
@@ -49,6 +50,11 @@ const routes: Routes = [
   {
     path: paths.admin.manageUsers,
     component: ManageUsersComponent,
+    canActivate: [AuthGuard],
+  },
+  {
+    path: paths.admin.manageTask,
+    component: ManageTaskComponent,
     canActivate: [AuthGuard],
   },
   {
