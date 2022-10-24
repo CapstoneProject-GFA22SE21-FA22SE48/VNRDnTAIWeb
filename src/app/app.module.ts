@@ -26,7 +26,7 @@ import { MessageModule } from 'primeng/message';
 import { NotFoundComponent } from './pages/not-found/not-found.component';
 import { AvatarModule } from 'primeng/avatar';
 import { HeaderComponent } from './shared/layout/header/header.component';
-import { ManageUsersComponent } from './pages/admin/manage-users/manage-users.component';
+import { ManageMembersComponent } from './pages/admin/manage-members/manage-members.component';
 import { ManageSignsComponent } from './pages/scribe/manage-signs/manage-signs.component';
 import { ManageQuestionsComponent } from './pages/scribe/manage-questions/manage-questions.component';
 import { MenuModule } from 'primeng/menu';
@@ -79,7 +79,7 @@ import { AutoCompleteModule } from 'primeng/autocomplete';
     SpinnerComponent,
     NotFoundComponent,
     HeaderComponent,
-    ManageUsersComponent,
+    ManageMembersComponent,
     ManageSignsComponent,
     ManageQuestionsComponent,
     DatePipe,

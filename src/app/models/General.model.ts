@@ -281,6 +281,7 @@ export interface User {
     id: string, 
     username: string, 
     password: string,
+    gmail: string,
     role: number,
     status: number,
     createdDate: Date,

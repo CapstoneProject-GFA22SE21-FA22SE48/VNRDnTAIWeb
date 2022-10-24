@@ -198,13 +198,22 @@ export class ManageQuestionsComponent implements OnInit {
     this.selectedQuestion = undefined;
   }
 
+  openUpdateQuestion(){
+    this.resetDataUpdateQuestion();
+    this.displayUpdateDialog = true;
+  }
+
   resetDataUpdateQuestion() {
     this.tmpSelectedQuestion = JSON.parse(
       JSON.stringify(this.selectedQuestion)
     );
+    
+    this.newQuestionContent = this.tmpSelectedQuestion?.content;
     this.selectedAdmin = this.admins[0];
     this.displayUpdateDialog = false;
     this.isChanging = false;
+    this.invalidUpdatedQuestionAnswer = false;
+    this.invalidUpdatedQuestionContent = false;
   }
 
   detectChange() {
@@ -221,7 +230,7 @@ export class ManageQuestionsComponent implements OnInit {
   }
 
   changeTxtQuestionContent(newQuestionContent: string) {
-    if (newQuestionContent.trim() !== '') {
+    if (newQuestionContent?.trim() !== '' && newQuestionContent?.length <= 2000) {
       this.tmpSelectedQuestion.content = newQuestionContent;
       this.invalidUpdatedQuestionContent = false;
     } else {
@@ -244,7 +253,7 @@ export class ManageQuestionsComponent implements OnInit {
   changeTxtAnswer(answer: Answer, newAnswer: string) {
     this.tmpSelectedQuestion.answers.forEach((a: Answer) => {
       if (a.id === answer.id) {
-        if (newAnswer.trim() !== '' && a.description !== newAnswer.trim()) {
+        if (newAnswer?.trim() !== '' && newAnswer?.length <=2000 && a.description !== newAnswer?.trim()) {
           a.description = newAnswer;
           this.isChanging = true;
           this.invalidUpdatedQuestionAnswer = false;
@@ -262,6 +271,7 @@ export class ManageQuestionsComponent implements OnInit {
       event.files[0].objectURL?.changingThisBreaksApplicationSecurity;
     this.updateQuestionImgFile = event.files[0];
     imageUploaded.clear();
+    this.detectChange();
   }
 
   updateQuestion() {
@@ -405,7 +415,7 @@ export class ManageQuestionsComponent implements OnInit {
 
   getNewQuestionContent(event: any) {
     this.newQuestionContent = event.target.value;
-    if (this.newQuestionContent.trim() === '') {
+    if (this.newQuestionContent?.trim() === '' || this.newQuestionContent?.length > 2000) {
       this.inValidNewQuestionContent = true;
     } else {
       this.inValidNewQuestionContent = false;
@@ -414,7 +424,7 @@ export class ManageQuestionsComponent implements OnInit {
   }
 
   getNewQuestionAnswer() {
-    if (this.newQuestionAnswer.trim() === '') {
+    if (this.newQuestionAnswer?.trim() === '' || this.newQuestionAnswer?.length > 2000) {
       this.inValidNewQuestionAnswer = true;
     } else {
       this.inValidNewQuestionAnswer = false;
@@ -469,6 +479,7 @@ export class ManageQuestionsComponent implements OnInit {
       event.files[0].objectURL?.changingThisBreaksApplicationSecurity;
     this.newQuestionImgFile = event.files[0];
     newQuestionImageUploaded.clear();
+    this.validateNewQuestion();
   }
 
   validateNewQuestion() {
@@ -477,8 +488,8 @@ export class ManageQuestionsComponent implements OnInit {
       if (a.isCorrect) hasCorrectAnswer = true;
     });
 
-    this.newQuestionContent.trim() !== '' &&
-    this.newQuestionAnswers.length >= 2 &&
+    this.newQuestionContent?.trim() !== '' &&
+    this.newQuestionAnswers?.length >= 2 &&
     hasCorrectAnswer
       ? (this.isValidNewQuestion = true)
       : (this.isValidNewQuestion = false);
