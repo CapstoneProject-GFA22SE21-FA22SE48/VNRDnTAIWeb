@@ -16,6 +16,8 @@ export const AdminDeactivateMember: string = base + '/Users/Members/Deactivate';
 export const AdminReEnableMember: string = base + '/Users/Members/ReEnable';
 
 export const AdminGetScribes: string = base + '/Users/Scribes'
+export const AdminDeactivateScribe: string = base + '/Users/Scribes/Deactivate';
+export const AdminReEnableScribe: string = base + '/Users/Scribes/ReEnable';
 
 export const AdminGetColumns: string = base + '/Columns'
 export const AdminGetAssignedColumns: string = base + '/AssignedColumns'

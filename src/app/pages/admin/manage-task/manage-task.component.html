@@ -12,6 +12,7 @@
       <h2>{{scribe.username}}</h2>
       <div cdkDropList id="{{scribe.id}}" [cdkDropListData]="assignedTasks"
         class="example-list" (cdkDropListDropped)="drop($event)">
+        <div *ngIf=" "></div>
         <!-- <div class="example-box" *ngFor="let task of assignedTasks" cdkDrag>{{task?.taskName}}</div> -->
       </div>
     </div>
