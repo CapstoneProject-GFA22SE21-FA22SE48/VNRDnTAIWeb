@@ -6,31 +6,25 @@
   Prime
 
 </div>
-<div cdkDropListGroup class="row p-2 mb-1">
-  <div class="col-5">
-    <div class="example-container">
-      <h2>Scribe01</h2>
-      <div cdkDropList #doneList="cdkDropList" [cdkDropListData]="scribe01" [cdkDropListConnectedTo]="[todoList]"
+<div cdkDropListGroup class="p-2 mb-1">
+  <div class="scribe-container">    
+    <div *ngFor="let scribe of scribes" class="example-container  card-task">
+      <h2>{{scribe.username}}</h2>
+      <div cdkDropList id="{{scribe.id}}" [cdkDropListData]="assignedTasks"
         class="example-list" (cdkDropListDropped)="drop($event)">
-        <div class="example-box" *ngFor="let item of scribe01" cdkDrag>{{item}}</div>
-      </div>
-    </div>
-
-    <div class="example-container">
-      <h2>Scribe02</h2>
-      <div cdkDropList #done2List="cdkDropList" [cdkDropListData]="scribe02" class="example-list"
-        (cdkDropListDropped)="drop($event)">
-        <div class="example-box" *ngFor="let item of scribe02" cdkDrag>{{item}}</div>
+        <!-- <div class="example-box" *ngFor="let task of assignedTasks" cdkDrag>{{task?.taskName}}</div> -->
       </div>
     </div>
   </div>
-
-
-  <div class="example-container col-6">
+  <div class="">
+  <div class="ua-task-container">
     <h2>Unassigned Column</h2>
-    <div cdkDropList #todoList="cdkDropList" [cdkDropListData]="unassignedColumns" class="example-list"
+    <div cdkDropList #unassignedTaskList="cdkDropList" [cdkDropListData]="unAssignedTasks" class="example-list"
       (cdkDropListDropped)="drop($event)">
-      <div class="example-box" *ngFor="let item of unassignedColumns" cdkDrag>{{item}}</div>
+      <div class="example-box" *ngFor="let task of unAssignedTasks" cdkDrag>{{task?.taskName}}</div>
     </div>
   </div>
 </div>
+
+
+

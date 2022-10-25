@@ -1,7 +1,7 @@
 /* paths.ts was created to provide shrinked links for API calling. */
 // Base path
-// const base = 'https://localhost:5001/api';
-const base = 'https://vnrdntaiapi.azurewebsites.net/api';
+const base = 'https://localhost:5001/api';
+// const base = 'https://vnrdntaiapi.azurewebsites.net/api';
 
 //Login
 export const Login: string = base + '/Users/Login';
@@ -49,3 +49,7 @@ export const ScribeGetAssignedSigns: string = base + '/Signs/AssignedSigns/Scrib
 
 export const ScribeCreateSignForROM: string = base + '/Signs';
 export const ScribeCreateSignModificationRequest: string = base + '/SignModificationRequests';
+
+
+//Admin 
+export const AdminGetTasks: string = base + "/AssignedColumns/Tasks";
