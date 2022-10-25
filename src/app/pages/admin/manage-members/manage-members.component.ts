@@ -91,10 +91,6 @@ export class ManageMembersComponent implements OnInit {
   filterData() {
     this.members = this.tmpMembers;
 
-    console.log(this.searchStr);
-    console.log(this.filterStatus);
-    console.log(this.filterRangeDates);
-
     //Search
     if (this.searchStr && this.searchStr.trim() != '') {
       this.members = this.members.filter((m) => {
@@ -112,12 +108,8 @@ export class ManageMembersComponent implements OnInit {
     if (this.filterStatus) {
       if (this.filterStatus.name === 'Hoạt động') {
         this.members = this.members.filter((m) => m.status === 5);
-        console.log("1");
-        
       } else {
         this.members = this.members.filter((m) => m.status === 6);
-        console.log("2");
-
       }
     }
 

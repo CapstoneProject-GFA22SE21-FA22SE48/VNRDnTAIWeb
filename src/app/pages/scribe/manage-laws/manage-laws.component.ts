@@ -807,6 +807,7 @@ export class ManageLawsComponent implements OnInit {
                 this.displayConfirmUpdateStatueDialog = false;
                 this.isUpdatingChosenStatue = false;
                 this.clearChosenStatueData();
+                this.loadAdmins();
                 this.messageService.add({
                   key: 'updateSuccess',
                   severity: 'success',
@@ -874,6 +875,7 @@ export class ManageLawsComponent implements OnInit {
                 this.displayConfirmUpdateSectionDialog = false;
                 this.isUpdatingChosenSection = false;
                 this.clearChosenSectionData();
+                this.loadAdmins();
                 this.messageService.add({
                   key: 'updateSuccess',
                   severity: 'success',
@@ -934,6 +936,7 @@ export class ManageLawsComponent implements OnInit {
                 this.displayConfirmUpdateParagraphDialog = false;
                 this.isUpdatingChosenParagraph = false;
                 this.clearChosenParagraphData();
+                this.loadAdmins();
                 this.messageService.add({
                   key: 'updateSuccess',
                   severity: 'success',
@@ -999,6 +1002,7 @@ export class ManageLawsComponent implements OnInit {
                 this.displayConfirmDeleteStatueDialog = false;
                 this.isUpdatingChosenStatue = false;
                 this.clearChosenStatueData();
+                this.loadAdmins();
                 this.messageService.add({
                   key: 'deleteSuccess',
                   severity: 'success',
@@ -1067,6 +1071,7 @@ export class ManageLawsComponent implements OnInit {
                 this.displayConfirmDeleteSectionDialog = false;
                 this.isUpdatingChosenSection = false;
                 this.clearChosenSectionData();
+                this.loadAdmins();
                 this.messageService.add({
                   key: 'deleteSuccess',
                   severity: 'success',
@@ -1133,6 +1138,7 @@ export class ManageLawsComponent implements OnInit {
                 this.displayConfirmDeleteParagraphDialog = false;
                 this.isUpdatingChosenParagraph = false;
                 this.clearChosenParagraphData();
+                this.loadAdmins();
                 this.messageService.add({
                   key: 'deleteSuccess',
                   severity: 'success',
@@ -1971,6 +1977,7 @@ export class ManageLawsComponent implements OnInit {
               getStorageToken(),
               {
                 successCallback: (response) => {
+                  this.loadAdmins();
                   this.messageService.add({
                     key: 'createSuccess',
                     severity: 'success',
@@ -2040,6 +2047,7 @@ export class ManageLawsComponent implements OnInit {
               getStorageToken(),
               {
                 successCallback: (response) => {
+                  this.loadAdmins();
                   this.messageService.add({
                     key: 'createSuccess',
                     severity: 'success',
@@ -2096,6 +2104,7 @@ export class ManageLawsComponent implements OnInit {
                 getStorageToken(),
                 {
                   successCallback: (response) => {
+                    this.loadAdmins();
                     this.messageService.add({
                       key: 'createSuccess',
                       severity: 'success',

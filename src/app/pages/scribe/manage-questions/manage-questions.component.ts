@@ -311,6 +311,7 @@ export class ManageQuestionsComponent implements OnInit {
                       summary: commonStr.success,
                       detail: commonStr.romCreatedSuccessfully,
                     });
+                    this.loadAdmins();
                     this.isLoadingService.remove();
                   },
                   errorCallback: (error) => {
@@ -377,6 +378,7 @@ export class ManageQuestionsComponent implements OnInit {
                   summary: commonStr.success,
                   detail: commonStr.romCreatedSuccessfully,
                 });
+                this.loadAdmins();
                 this.isLoadingService.remove();
               },
               errorCallback: (error) => {
@@ -557,6 +559,7 @@ export class ManageQuestionsComponent implements OnInit {
                       summary: commonStr.success,
                       detail: commonStr.romCreatedSuccessfully,
                     });
+                    this.loadAdmins();
                     this.isLoadingService.remove();
                   },
                   errorCallback: (error) => {
