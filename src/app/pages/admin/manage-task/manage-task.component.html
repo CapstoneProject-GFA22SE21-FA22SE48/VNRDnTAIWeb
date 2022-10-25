@@ -1,0 +1,30 @@
+<div class="" id="container">
+  <div class="p-2 mb-1">
+    <span>icon</span>
+    <span class="text-xl">Quản lý công việc</span>
+  </div>
+  Prime
+
+</div>
+<div cdkDropListGroup class="p-2 mb-1">
+  <div class="scribe-container">    
+    <div *ngFor="let scribe of scribes" class="example-container  card-task">
+      <h2>{{scribe.username}}</h2>
+      <div cdkDropList id="{{scribe.id}}" [cdkDropListData]="assignedTasks"
+        class="example-list" (cdkDropListDropped)="drop($event)">
+        <!-- <div class="example-box" *ngFor="let task of assignedTasks" cdkDrag>{{task?.taskName}}</div> -->
+      </div>
+    </div>
+  </div>
+  <div class="">
+  <div class="ua-task-container">
+    <h2>Unassigned Column</h2>
+    <div cdkDropList #unassignedTaskList="cdkDropList" [cdkDropListData]="unAssignedTasks" class="example-list"
+      (cdkDropListDropped)="drop($event)">
+      <div class="example-box" *ngFor="let task of unAssignedTasks" cdkDrag>{{task?.taskName}}</div>
+    </div>
+  </div>
+</div>
+
+
+

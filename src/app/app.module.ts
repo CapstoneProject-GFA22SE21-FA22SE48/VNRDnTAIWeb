@@ -64,6 +64,8 @@ import { SafePipe } from './shared/pipes/safe.pipe';
 import {TooltipModule} from 'primeng/tooltip';
 import { ChipModule } from 'primeng/chip';
 import { AutoCompleteModule } from 'primeng/autocomplete';
+import { ManageTaskComponent } from './pages/admin/manage-task/manage-task.component';
+import { DragDropModule } from '@angular/cdk/drag-drop';
 @NgModule({
   declarations: [
     AppComponent,
@@ -85,6 +87,7 @@ import { AutoCompleteModule } from 'primeng/autocomplete';
     DatePipe,
     MyRequestComponent,
     SafePipe,
+    ManageTaskComponent
   ],
   imports: [
     BrowserModule,
@@ -123,7 +126,8 @@ import { AutoCompleteModule } from 'primeng/autocomplete';
     InputNumberModule,
     TooltipModule,
     ChipModule,
-    AutoCompleteModule
+    AutoCompleteModule,
+    DragDropModule
   ],
   providers: [ConfirmationService, MessageService],
   bootstrap: [AppComponent],
