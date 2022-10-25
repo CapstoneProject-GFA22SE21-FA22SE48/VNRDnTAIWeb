@@ -49,9 +49,9 @@
 
       <p-table
         [value]="scribes"
-        [paginator]="true"
+        [paginator]="(scribes !== undefined && scribes.length > 9) ? true : false"
         [rows]="9"
-        [showCurrentPageReport]="true"
+        [showCurrentPageReport]="(scribes !== undefined && scribes.length > 9) ? true : false"
         responsiveLayout="scroll"
         currentPageReportTemplate="Hiển thị {first} đến {last} trong tổng số {totalRecords} mục"
         styleClass="p-datatable-gridlines p-datatable-sm"
@@ -112,6 +112,13 @@
                 (click)="viewInfo(scribe)"
               ></button>
             </td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+              <td colspan="6">
+                <span class="font-bold">Không tìm thấy kết quả</span>
+              </td>
           </tr>
         </ng-template>
       </p-table>

@@ -161,6 +161,8 @@ export class ManageLawsComponent implements OnInit {
   newParagraphOfSelectedSectionDescription: any;
   newParagraphOfSelectedSectionAdditionalPenalty: any;
   newParagraphDescriptionInvalidMsg: any;
+  newParagraphAdditionalPenaltyInvalidMsg: any;
+  isValidSaveNewParagraph: boolean = false;
 
   newParagraphReferenceStatueList: any;
   newParagraphReferenceSelectedStatue: any;
@@ -311,10 +313,12 @@ export class ManageLawsComponent implements OnInit {
     if (this.searchStatueStr && this.searchStatueStr.trim() != '') {
       this.statues = this.statues.filter(
         (s: any) =>
-        toNonAccentVietnamese(s.name?.toLowerCase()).includes(toNonAccentVietnamese(this.searchStatueStr.toLowerCase())) ||
-        toNonAccentVietnamese(s.description
-            ?.toLowerCase())
-            .includes(toNonAccentVietnamese(this.searchStatueStr.toLowerCase()))
+          toNonAccentVietnamese(s.name?.toLowerCase()).includes(
+            toNonAccentVietnamese(this.searchStatueStr.toLowerCase())
+          ) ||
+          toNonAccentVietnamese(s.description?.toLowerCase()).includes(
+            toNonAccentVietnamese(this.searchStatueStr.toLowerCase())
+          )
       );
     }
   }
@@ -326,9 +330,9 @@ export class ManageLawsComponent implements OnInit {
     this.invalidFilterSectionMaxPenaltyMsg = '';
 
     if (
-      this.filterSectionMinPenalty &&
+      (this.filterSectionMinPenalty &&
       this.filterSectionMaxPenalty &&
-      this.filterSectionMinPenalty >= this.filterSectionMaxPenalty
+      this.filterSectionMinPenalty >= this.filterSectionMaxPenalty)
     ) {
       this.invalidFilterSectionMinPenalty = true;
       this.invalidFilterSectionMinPenaltyMsg =
@@ -362,10 +366,12 @@ export class ManageLawsComponent implements OnInit {
     if (this.searchSectionStr && this.searchSectionStr.trim() != '') {
       this.sections = this.sections.filter(
         (s: any) =>
-        toNonAccentVietnamese(s.name?.toLowerCase()).includes(toNonAccentVietnamese(this.searchSectionStr.toLowerCase())) ||
-        toNonAccentVietnamese(s.description
-            ?.toLowerCase())
-            .includes(toNonAccentVietnamese(this.searchSectionStr.toLowerCase()))
+          toNonAccentVietnamese(s.name?.toLowerCase()).includes(
+            toNonAccentVietnamese(this.searchSectionStr.toLowerCase())
+          ) ||
+          toNonAccentVietnamese(s.description?.toLowerCase()).includes(
+            toNonAccentVietnamese(this.searchSectionStr.toLowerCase())
+          )
       );
     }
 
@@ -402,12 +408,12 @@ export class ManageLawsComponent implements OnInit {
     if (this.searchParagraphStr && this.searchParagraphStr.trim() != '') {
       this.paragraphs = this.paragraphs.filter(
         (p: any) =>
-        toNonAccentVietnamese(p.name
-            ?.toLowerCase())
-            .includes(toNonAccentVietnamese(this.searchParagraphStr.toLowerCase())) ||
-            toNonAccentVietnamese(p.description
-            ?.toLowerCase())
-            .includes(toNonAccentVietnamese(this.searchParagraphStr.toLowerCase()))
+          toNonAccentVietnamese(p.name?.toLowerCase()).includes(
+            toNonAccentVietnamese(this.searchParagraphStr.toLowerCase())
+          ) ||
+          toNonAccentVietnamese(p.description?.toLowerCase()).includes(
+            toNonAccentVietnamese(this.searchParagraphStr.toLowerCase())
+          )
       );
     }
   }
@@ -566,6 +572,14 @@ export class ManageLawsComponent implements OnInit {
   }
 
   openUpdateChosenParagraph() {
+    // if selected an empty paragraph of section with no paragraph, then disabled invalid new paragraph description
+    if (
+      this.tmpChosenParagraph?.name === '' &&
+      this.tmpChosenParagraph?.description === ''
+    ) {
+      this.invalidChosenParagraphNewDesc = false;
+    }
+
     this.isUpdatingChosenParagraph = true;
     this.isValidUpdatingParagraph = false;
     this.tmpChosenParagraph = JSON.parse(JSON.stringify(this.chosenParagraph));
@@ -580,7 +594,7 @@ export class ManageLawsComponent implements OnInit {
 
   getUpdatedSectionDescription(event: any) {
     let newDesc = event.target.value;
-    if (newDesc !== '') {
+    if (newDesc?.trim() !== '' && newDesc?.length <= 2000) {
       this.invalidChosenSectionNewDesc = false;
       this.tmpChosenSection.desc = newDesc;
     } else {
@@ -591,7 +605,7 @@ export class ManageLawsComponent implements OnInit {
 
   getUpdatedStatueDescription(event: any) {
     let newDesc = event.target.value;
-    if (newDesc !== '') {
+    if (newDesc?.trim() !== '' && newDesc?.length <= 2000) {
       this.invalidChosenStatueNewDesc = false;
       this.tmpChosenStatue.desc = newDesc;
     } else {
@@ -602,7 +616,7 @@ export class ManageLawsComponent implements OnInit {
 
   getUpdatedParagraphDescription(event: any) {
     let newDesc = event.target.value;
-    if (newDesc !== '') {
+    if (newDesc.trim() !== '' && newDesc?.length < 2000) {
       this.invalidChosenParagraphNewDesc = false;
       this.tmpChosenParagraph.description = newDesc;
     } else {
@@ -625,18 +639,19 @@ export class ManageLawsComponent implements OnInit {
   checkChosenSectionNewMinPenalty(event: any) {
     if (event.value) {
       this.newChosenSectionMinPenalty = event.value;
-      this.tmpChosenSection.minPenalty = this.newChosenSectionMinPenalty;
     }
 
     if (
-      this.newChosenSectionMinPenalty &&
-      this.newChosenSectionMaxPenalty &&
-      this.newChosenSectionMinPenalty >= this.newChosenSectionMaxPenalty
+      this.newChosenSectionMinPenalty < 50000 ||
+      this.newChosenSectionMinPenalty > 75000000 ||
+      (this.newChosenSectionMinPenalty > this.newChosenSectionMaxPenalty)
     ) {
       this.invalidChosenSectionNewPenaltyMsg =
-        'Vui lòng nhập mức phạt tối thiểu nhỏ hơn mức phạt tối đa';
+        'Vui lòng nhập mức phạt tối thiểu nhỏ hơn mức phạt tối đa (50.000đ - 75.000.000đ)';
+        this.tmpChosenSection.minPenalty = undefined;
     } else {
       this.invalidChosenSectionNewPenaltyMsg = '';
+      this.tmpChosenSection.minPenalty = this.newChosenSectionMinPenalty;
     }
     this.detectChangeSection();
   }
@@ -644,17 +659,18 @@ export class ManageLawsComponent implements OnInit {
   checkChosenSectionNewMaxPenalty(event: any) {
     if (event.value) {
       this.newChosenSectionMaxPenalty = event.value;
-      this.tmpChosenSection.maxPenalty = this.newChosenSectionMaxPenalty;
     }
     if (
-      this.newChosenSectionMinPenalty &&
-      this.newChosenSectionMaxPenalty &&
-      this.newChosenSectionMaxPenalty <= this.newChosenSectionMinPenalty
+      this.newChosenSectionMinPenalty < 50000 ||
+      this.newChosenSectionMinPenalty > 75000000 ||
+      (this.newChosenSectionMaxPenalty < this.newChosenSectionMinPenalty)
     ) {
       this.invalidChosenSectionNewPenaltyMsg =
-        'Vui lòng nhập mức phạt tối đa lớn hơn mức phạt tối thiểu';
+        'Vui lòng nhập mức phạt tối đa lớn hơn mức phạt tối thiểu (50.000đ - 75.000.000đ)';
+        this.tmpChosenSection.maxPenalty = undefined;
     } else {
       this.invalidChosenSectionNewPenaltyMsg = '';
+      this.tmpChosenSection.maxPenalty = this.newChosenSectionMaxPenalty;
     }
     this.detectChangeSection();
   }
@@ -672,11 +688,17 @@ export class ManageLawsComponent implements OnInit {
   }
 
   detectChangeSection() {
+
+    // console.log(this.tmpChosenSection);
+    
+
     if (
-      JSON.stringify(this.chosenSection) !==
-        JSON.stringify(this.tmpChosenSection) &&
+      (JSON.stringify(this.chosenSection) !==
+        JSON.stringify(this.tmpChosenSection)) &&
       !this.invalidChosenSectionNewDesc &&
-      !this.invalidChosenSectionNewPenaltyMsg
+      !this.invalidChosenSectionNewPenaltyMsg &&
+      this.tmpChosenSection?.minPenalty !== undefined &&
+      this.tmpChosenSection?.maxPenalty !== undefined
     ) {
       this.isValidUpdatingSection = true;
     } else {
@@ -714,7 +736,7 @@ export class ManageLawsComponent implements OnInit {
     this.newChosenSectionMinPenalty = undefined;
     this.newChosenSectionMaxPenalty = undefined;
 
-    this.invalidChosenStatueNewDesc = false;
+    this.invalidChosenSectionNewDesc = false;
     this.invalidChosenSectionNewPenaltyMsg = undefined;
     this.isValidUpdatingStatue = false;
     this.isValidUpdatingSection = false;
@@ -1413,8 +1435,12 @@ export class ManageLawsComponent implements OnInit {
 
   getNewSectionName(event: any) {
     this.newSection.description = event.target.value;
-    if (this.newSection.description === '') {
-      this.newSectionDescriptionInvalidMsg = 'Vui lòng nhập nội dung cho khoản';
+    if (
+      this.newSection?.description?.trim() === '' ||
+      this.newSection?.description?.length > 2000
+    ) {
+      this.newSectionDescriptionInvalidMsg =
+        'Vui lòng nhập nội dung cho khoản (tối đa 2000 ký tự)';
     } else {
       this.newSectionDescriptionInvalidMsg = '';
     }
@@ -1427,13 +1453,15 @@ export class ManageLawsComponent implements OnInit {
     this.newSectionPenaltyInvalidMsg = '';
 
     if (
-      this.newSection.minPenalty &&
-      this.newSection.maxPenalty &&
-      this.newSection.minPenalty >= this.newSection.maxPenalty
+      this.newSection.minPenalty < 50000 ||
+      this.newSection.minPenalty > 75000000 ||
+      (this.newSection.minPenalty &&
+        this.newSection.maxPenalty &&
+        this.newSection.minPenalty >= this.newSection.maxPenalty)
     ) {
       this.isValidNewSectionMinPenalty = false;
       this.newSectionPenaltyInvalidMsg =
-        'Vui lòng nhập mức phạt tối thiểu nhỏ hơn mức phạt tối đa';
+        'Vui lòng nhập mức phạt tối thiểu nhỏ hơn mức phạt tối đa (50.000đ - 75.000.000đ)';
     }
   }
 
@@ -1444,13 +1472,15 @@ export class ManageLawsComponent implements OnInit {
     this.newSectionPenaltyInvalidMsg = '';
 
     if (
-      this.newSection.minPenalty &&
-      this.newSection.maxPenalty &&
-      this.newSection.maxPenalty <= this.newSection.minPenalty
+      this.newSection.maxPenalty < 50000 ||
+      this.newSection.maxPenalty > 75000000 ||
+      (this.newSection.minPenalty &&
+        this.newSection.maxPenalty &&
+        this.newSection.maxPenalty <= this.newSection.minPenalty)
     ) {
       this.isValidNewSectionMaxPenalty = false;
       this.newSectionPenaltyInvalidMsg =
-        'Vui lòng nhập mức phạt tối đa lớn hơn mức phạt tối thiểu';
+        'Vui lòng nhập mức phạt tối đa lớn hơn mức phạt tối thiểu (50.000đ - 75.000.000đ)';
     }
   }
 
@@ -1669,18 +1699,45 @@ export class ManageLawsComponent implements OnInit {
     this.newParagraphOfSelectedSectionDescription = event.target.value;
 
     this.newParagraphOfSelectedSection.description = event.target.value;
-    if (this.newParagraphOfSelectedSection.description === '') {
+    if (
+      this.newParagraphOfSelectedSection?.description === '' ||
+      this.newParagraphOfSelectedSection?.description?.length > 2000
+    ) {
       this.newParagraphDescriptionInvalidMsg =
-        'Vui lòng nhập nội dung cho điều';
+        'Vui lòng nhập nội dung cho điều (tối đa 2000 ký tự)';
     } else {
       this.newParagraphDescriptionInvalidMsg = '';
+    }
+    
+    this.checkValidSaveNewParagraph();
+  }
+
+  checkValidSaveNewParagraph(){
+    if(
+      (this.newParagraphOfSelectedSection.description !== undefined && 
+        this.newParagraphDescriptionInvalidMsg === '' && 
+          (this.newParagraphAdditionalPenaltyInvalidMsg === undefined ||
+      this.newParagraphAdditionalPenaltyInvalidMsg === '')
+        )
+    ){
+      this.isValidSaveNewParagraph = true;
+    } else {
+      this.isValidSaveNewParagraph = false;
+
     }
   }
 
   getNewParagraphAdditionalPenalty(event: any) {
     this.newParagraphOfSelectedSectionAdditionalPenalty = event.target.value;
-
+    if (this.newParagraphOfSelectedSectionAdditionalPenalty?.length > 2000) {
+      this.newParagraphAdditionalPenaltyInvalidMsg =
+        'Nội dung hình phạt bổ sung không được vượt quá 2000 ký tự';
+    } else {
+      this.newParagraphAdditionalPenaltyInvalidMsg = '';
+    }
     this.newParagraphOfSelectedSection.additionalPenalty = event.target.value;
+
+    this.checkValidSaveNewParagraph();
   }
 
   loadKeywordListForNewParagraph() {
@@ -1830,6 +1887,8 @@ export class ManageLawsComponent implements OnInit {
     this.newParagraphOfSelectedSectionDescription = undefined;
     this.newParagraphOfSelectedSectionAdditionalPenalty = undefined;
     this.newParagraphDescriptionInvalidMsg = undefined;
+    this.newParagraphAdditionalPenaltyInvalidMsg = undefined;
+    this.isValidSaveNewParagraph = false;
 
     //Keep statue list for next creation of new paragraph
     this.newParagraphReferenceSelectedStatue = null;
@@ -1853,6 +1912,8 @@ export class ManageLawsComponent implements OnInit {
     this.newParagraphOfSelectedSectionDescription = undefined;
     this.newParagraphOfSelectedSectionAdditionalPenalty = undefined;
     this.newParagraphDescriptionInvalidMsg = undefined;
+    this.newParagraphAdditionalPenaltyInvalidMsg = undefined;
+    this.isValidSaveNewParagraph = false;
 
     this.newParagraphReferenceStatueList = undefined;
     this.newParagraphReferenceSelectedStatue;
@@ -2187,6 +2248,10 @@ export class ManageLawsComponent implements OnInit {
     this.isValidGobackToSection = true;
     this.isValidDisplayFinishAndSaveOnParagraphDialog = true;
     this.isValidAddReferenceToNewParagraph = true;
+
+    this.isValidSaveNewParagraph = false;
+    this.newParagraphDescriptionInvalidMsg = undefined;
+    this.newParagraphAdditionalPenaltyInvalidMsg = undefined;
   }
 
   confirmDeleteNewParagraphInNewParagraphList(i: number) {
@@ -2386,7 +2451,7 @@ export class ManageLawsComponent implements OnInit {
     this.isUpdatingNewSection = false;
     this.isValidGobackToStatue = true;
 
-  this.displayConfirmDeleteNewSection = false;
+    this.displayConfirmDeleteNewSection = false;
 
     //Clear data of new section reference list
     this.isSectionWithNoParagraph = false;
@@ -2408,6 +2473,8 @@ export class ManageLawsComponent implements OnInit {
     this.newParagraphOfSelectedSectionDescription = undefined;
     this.newParagraphOfSelectedSectionAdditionalPenalty = undefined;
     this.newParagraphDescriptionInvalidMsg = undefined;
+    this.newParagraphAdditionalPenaltyInvalidMsg = undefined;
+    this.isValidSaveNewParagraph = false;
 
     this.newParagraphReferenceStatueList = undefined;
     this.newParagraphReferenceSelectedStatue = undefined;
@@ -2438,10 +2505,10 @@ export class ManageLawsComponent implements OnInit {
   //end of admin ADD new section
 
   //start of add new paragraph
-  displayAddNewParagraph(){
+  displayAddNewParagraph() {
     this.displayAddNewParagraphDialog = true;
-    this.selectedStatueForAddNewLaw = {...this.selectedStatue};
-    this.selectedSectionForAddNewLaw = {...this.selectedSection};
+    this.selectedStatueForAddNewLaw = { ...this.selectedStatue };
+    this.selectedSectionForAddNewLaw = { ...this.selectedSection };
     if (this.selectedSectionForAddNewLaw.paragraphs?.length > 0) {
       this.isLoadingService.add();
       this.wrapperService.get(
@@ -2473,9 +2540,9 @@ export class ManageLawsComponent implements OnInit {
   //end of add new paragraph
 
   //start of add new section
-  displayAddNewSection(){
-    this.selectedStatueForAddNewLaw = {...this.selectedStatue};
-    this.displayAddNewLawDialog = true; 
+  displayAddNewSection() {
+    this.selectedStatueForAddNewLaw = { ...this.selectedStatue };
+    this.displayAddNewLawDialog = true;
     this.isShowingStatueDialog = false;
     this.isShowingSectionDialog = true;
     this.isShowingParagraphDialog = false;

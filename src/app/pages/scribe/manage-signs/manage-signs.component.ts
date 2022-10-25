@@ -26,17 +26,13 @@ export class ManageSignsComponent implements OnInit {
   chosenSign: any;
   tmpChosenSign: any;
 
-  status: any[] = [
-    { statusCode: 5, name: 'Hoạt động' },
-    { statusCode: 6, name: 'Ngưng hoạt động' },
-  ];
   filterchosenSignCategoryId: any;
-  filterSelectedStatusCode: any;
   filterSearchStr: any;
 
   //start of update
   isUpdatingChosenSign: boolean = false;
   tmpChosenSignNewName: any;
+  isValidChosenSignNewName: boolean = true;
   tmpChosenSignNewDescription: any;
   tmpChosenSignNewSignCategoryId: any;
   tmpChosenSignNewImageUrl: any;
@@ -44,10 +40,30 @@ export class ManageSignsComponent implements OnInit {
   tmpChosenSignNewImageFile: any;
 
   isValidUpdateChosenSign: boolean = false;
+
+  isValidClickOnCreate: boolean = true;
   //end of update
- 
+
+  //start of create
+  isCreatingNewSign: boolean = false;
+
+  newSignName: any;
+  isValidNewSignName: boolean = true;
+
+  newSignDescription: any;
+  isValidNewSignDescription: boolean = true;
+
+  newSignSignCategoryId: any;
+
+  newSignImageUrl: any;
+  newSignImageFile: any;
+
+  isValidCreateNewSign: boolean = false;
+  //end of create
+
   displayConfirmUpdateChosenSign: boolean = false;
   displayConfirmDeleteChosenSign: boolean = false;
+  displayConfirmCreateNewSign: boolean = false;
 
   constructor(
     private wrapperService: WrapperService,
@@ -76,7 +92,6 @@ export class ManageSignsComponent implements OnInit {
       },
     });
   }
-
 
   loadAssignedSignCategories() {
     this.isLoadingService.add();
@@ -114,9 +129,7 @@ export class ManageSignsComponent implements OnInit {
       getStorageToken(),
       {
         successCallback: (response) => {
-          response.data.forEach((s: Sign) => {
-            this.signs.push(s);
-          });
+          this.signs = response.data;
           this.signs.sort((s1: Sign, s2: Sign) => (s1.name > s2.name ? 1 : -1));
           this.tmpSigns = this.signs.slice();
           this.isLoadingService.remove();
@@ -129,7 +142,6 @@ export class ManageSignsComponent implements OnInit {
     );
   }
 
-  //filter data
   filterData() {
     this.signs = this.tmpSigns;
 
@@ -138,15 +150,6 @@ export class ManageSignsComponent implements OnInit {
       this.isLoadingService.add();
       this.signs = this.signs.filter(
         (sign: Sign) => sign.signCategoryId === this.filterchosenSignCategoryId
-      );
-      this.isLoadingService.remove();
-    }
-
-    //filter by status
-    if (this.filterSelectedStatusCode) {
-      this.isLoadingService.add();
-      this.signs = this.signs.filter(
-        (sign: Sign) => sign.status === this.filterSelectedStatusCode
       );
       this.isLoadingService.remove();
     }
@@ -174,6 +177,8 @@ export class ManageSignsComponent implements OnInit {
     this.tmpChosenSignNewSignCategoryId = this.tmpChosenSign?.signCategoryId;
     this.tmpChosenSignNewDescription = this.tmpChosenSign?.description;
     this.tmpChosenSignNewImageUrl = this.tmpChosenSign?.imageUrl;
+
+    this.isValidClickOnCreate = false;
   }
 
   cancleUpdateChosenSign() {
@@ -184,6 +189,7 @@ export class ManageSignsComponent implements OnInit {
 
   clearTmpChosenSignNewData() {
     this.tmpChosenSignNewName = undefined;
+    this.isValidChosenSignNewName = true;
     this.tmpChosenSignNewSignCategoryId = undefined;
     this.tmpChosenSignNewDescription = undefined;
     this.tmpChosenSignNewImageUrl = undefined;
@@ -197,11 +203,13 @@ export class ManageSignsComponent implements OnInit {
   }
 
   getTmpChosenSignNewName() {
-    if (this.tmpChosenSignNewName && this.tmpChosenSignNewName.trim() !== '') {
+    if (!this.tmpChosenSignNewName || this.tmpChosenSignNewName.trim() === '' || !this.tmpChosenSignNewName.match('^Biển số [0-9]{3}[a-z]? ".*"$')) {
+      this.isValidUpdateChosenSign = false;
+      this.isValidChosenSignNewName = false;
+    } else {
+      this.isValidChosenSignNewName = true;
       this.tmpChosenSign.name = this.tmpChosenSignNewName;
       this.detectChange();
-    } else {
-      this.isValidUpdateChosenSign = false;
     }
   }
 
@@ -222,8 +230,9 @@ export class ManageSignsComponent implements OnInit {
     }
   }
 
-  gettmpChosenSignNewImageUrl(event: any, imageUploaded: any){
-    this.tmpChosenSignNewImageUrl = event.files[0].objectURL?.changingThisBreaksApplicationSecurity;
+  getTmpChosenSignNewImageUrl(event: any, imageUploaded: any) {
+    this.tmpChosenSignNewImageUrl =
+      event.files[0].objectURL?.changingThisBreaksApplicationSecurity;
     this.tmpChosenSignNewImageFile = event.files[0];
     this.tmpChosenSign.imageUrl = this.tmpChosenSignNewImageUrl;
     imageUploaded.clear();
@@ -232,7 +241,7 @@ export class ManageSignsComponent implements OnInit {
 
   detectChange() {
     if (
-      (JSON.stringify(this.tmpChosenSign) !== JSON.stringify(this.chosenSign)) &&
+      JSON.stringify(this.tmpChosenSign) !== JSON.stringify(this.chosenSign) &&
       this.tmpChosenSign?.name.trim() !== '' &&
       this.tmpChosenSign?.signCategoryId.trim() !== '' &&
       this.tmpChosenSign?.description !== '' &&
@@ -246,11 +255,14 @@ export class ManageSignsComponent implements OnInit {
 
   updateChosenSign() {
     this.fileUploadService
-      .uploadImageToFirebase(this.tmpChosenSignNewImageFile,  `images/sign-collection/new/${this.tmpChosenSign.name.split(" ")[2]}`)
+      .uploadImageToFirebase(
+        this.tmpChosenSignNewImageFile,
+        `images/sign-collection/new/${this.tmpChosenSign.name.split(' ')[2]}`
+      )
       .then((imgUrl: any) => {
         this.tmpChosenSign.imageUrl = imgUrl;
       })
-      .then( () => {
+      .then(() => {
         this.isLoadingService.add();
         this.wrapperService.post(
           paths.ScribeCreateSignForROM,
@@ -304,14 +316,10 @@ export class ManageSignsComponent implements OnInit {
             },
           }
         );
-        
-      }
-        
-      );
-    
+      });
   }
 
-  deleteChosenSign(){
+  deleteChosenSign() {
     this.tmpChosenSign.isDeleted = true;
 
     this.isLoadingService.add();
@@ -367,5 +375,126 @@ export class ManageSignsComponent implements OnInit {
         },
       }
     );
+  }
+
+  openCreateSign(){    
+    this.isCreatingNewSign = true;
+    this.newSignSignCategoryId = this.signCategories[0].id;
+  }
+
+  clearNewSignData() {
+    this.isCreatingNewSign = false;
+    this.newSignName = undefined;
+    this.isValidNewSignName = true;
+    this.newSignDescription = undefined;
+    this.isValidNewSignDescription = true;
+    this.newSignSignCategoryId = undefined;
+    this.newSignImageUrl = undefined;
+    this.newSignImageFile = undefined;
+    this.isValidCreateNewSign = false;
+  }
+
+  getNewSignName() {
+    if(this.newSignName?.trim() === '' || this.newSignName?.length > 150 || !this.newSignName.match('^Biển số [0-9]{3}[a-z]? ".*"$')) {
+      this.isValidNewSignName = false;
+    } else {
+      this.isValidNewSignName = true;
+    }
+    this.checkIsValidNewSign();
+  }
+
+  getNewSignDescription() {
+    if(this.newSignDescription?.trim() === '' || this.newSignDescription?.length > 2000) {
+      this.isValidNewSignDescription = false;
+    } else {
+      this.isValidNewSignDescription = true;
+    }
+    this.checkIsValidNewSign();
+  }
+
+  getNewSignImageUrl(event: any, imageUploaded: any) {
+    this.newSignImageUrl =
+      event.files[0].objectURL?.changingThisBreaksApplicationSecurity;
+    this.newSignImageFile = event.files[0];
+    imageUploaded.clear();
+    this.checkIsValidNewSign();
+  }
+
+  checkIsValidNewSign(){
+    (this.newSignName?.trim() !== '' && this.isValidNewSignName &&
+    this.newSignDescription?.trim() !== '' && this.isValidNewSignDescription &&
+    this.newSignImageFile !== undefined) ? this.isValidCreateNewSign = true: this.isValidCreateNewSign = false;
+  }
+
+  createNewSign() {
+    this.fileUploadService
+      .uploadImageToFirebase(
+        this.newSignImageFile,
+        `images/sign-collection/new/${this.newSignName.split(' ')[2]}`
+      )
+      .then((imgUrl: any) => {
+        this.newSignImageUrl = imgUrl;
+      }).then(
+        () => {
+          this.isLoadingService.add();
+          this.wrapperService.post(
+            paths.ScribeCreateSignForROM,
+            {
+              name: this.newSignName,
+              description: this.newSignDescription,
+              signCategoryId: this.newSignSignCategoryId,
+              imageUrl: this.newSignImageUrl
+            },
+            getStorageToken(),
+            {
+              successCallback: (response) => {
+                this.wrapperService.post(
+                  paths.ScribeCreateSignModificationRequest,
+                  {
+                    modifyingSignId: response.data.id,
+                    scribeId: decodeToken(getStorageToken() || '').Id,
+                    adminId: this.selectedAdmin.id,
+                    operationType: OperationType.Add,
+                  },
+                  getStorageToken(),
+                  {
+                    successCallback: (response) => {
+                      this.clearNewSignData();
+                      this.displayConfirmCreateNewSign = false;
+                      this.messageService.add({
+                        severity: 'success',
+                        summary: commonStr.success,
+                        detail: commonStr.romCreatedSuccessfully,
+                      });
+                      this.isLoadingService.remove();
+                    },
+                    errorCallback: (error) => {
+                      console.log(error);
+                      this.displayConfirmCreateNewSign = false;
+                      this.messageService.add({
+                        severity: 'error',
+                        summary: commonStr.fail,
+                        detail: commonStr.errorOccur,
+                      });
+                      this.isLoadingService.remove();
+                    },
+                  }
+                );
+              },
+              errorCallback: (error) => {
+                console.log(error);
+                this.displayConfirmCreateNewSign = false;
+                this.messageService.add({
+                  severity: 'error',
+                  summary: commonStr.fail,
+                  detail: commonStr.errorOccur,
+                });
+                this.isLoadingService.remove();
+              },
+            }
+          );
+        }
+      )
+    
   }
 }

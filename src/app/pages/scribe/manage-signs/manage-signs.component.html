@@ -2,8 +2,8 @@
   <!-- Left -->
   <div
     [ngClass]="{
-      'w-12 h-full': chosenSign === undefined,
-      'w-8 h-full': chosenSign
+      'w-12 h-full': chosenSign === undefined && !isCreatingNewSign,
+      'w-8 h-full': chosenSign || isCreatingNewSign
     }"
   >
     <div class="p-2 pb-3" style="height: 6%">
@@ -35,25 +35,16 @@
             [style]="{ height: '40px', width: '15rem' }"
             (onChange)="filterData()"
           ></p-dropdown>
-
-          <p-dropdown
-            [(ngModel)]="filterSelectedStatusCode"
-            [options]="status"
-            optionLabel="name"
-            optionValue="statusCode"
-            placeholder="Trạng thái"
-            [showClear]="true"
-            [style]="{ height: '40px' }"
-            (onChange)="filterData()"
-          ></p-dropdown>
         </div>
         <div class="w-3 flex justify-content-end">
           <button
             pButton
             type="button"
             label="Tạo mới"
+            [disabled]="!isValidClickOnCreate"
             class="p-button-raised p-button-success"
             [style]="{ height: '40px' }"
+            (click)="openCreateSign()"
           ></button>
         </div>
       </div>
@@ -71,16 +62,13 @@
       >
         <ng-template pTemplate="header">
           <tr>
-            <th [ngStyle]="{ width: '5%', 'text-align': 'center' }">#</th>
-            <th [ngStyle]="{ width: '15%', 'text-align': 'center' }">Tên</th>
+            <th [ngStyle]="{ width: '7%', 'text-align': 'center' }">#</th>
+            <th [ngStyle]="{ width: '26%', 'text-align': 'center' }">Tên</th>
             <th [ngStyle]="{ width: '40%', 'text-align': 'center' }">Mô tả</th>
             <th [ngStyle]="{ width: '20%', 'text-align': 'center' }">
               Loại biển báo
             </th>
-            <th [ngStyle]="{ width: '15%', 'text-align': 'center' }">
-              Trạng thái
-            </th>
-            <th [ngStyle]="{ width: '5%', 'text-align': 'center' }"></th>
+            <th [ngStyle]="{ width: '7%', 'text-align': 'center' }"></th>
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-sign let-i="rowIndex">
@@ -91,9 +79,9 @@
             <td [ngStyle]="{ 'text-align': 'center' }">
               <div
                 [className]="
-                  chosenSign === undefined
-                    ? 'w-10rem white-space-nowrap overflow-hidden text-overflow-ellipsis'
-                    : 'w-6rem white-space-nowrap overflow-hidden text-overflow-ellipsis'
+                  chosenSign === undefined && !isCreatingNewSign
+                    ? 'w-18rem white-space-nowrap overflow-hidden text-overflow-ellipsis'
+                    : 'w-10rem white-space-nowrap overflow-hidden text-overflow-ellipsis'
                 "
               >
                 <span>{{ sign.name }}</span>
@@ -102,7 +90,7 @@
             <td [ngStyle]="{ 'text-align': 'center' }">
               <div
                 [className]="
-                  chosenSign === undefined
+                  chosenSign === undefined && !isCreatingNewSign
                     ? 'w-30rem white-space-nowrap overflow-hidden text-overflow-ellipsis'
                     : 'w-20rem white-space-nowrap overflow-hidden text-overflow-ellipsis'
                 "
@@ -114,29 +102,12 @@
             <td [ngStyle]="{ 'text-align': 'center' }">
               <div
                 [className]="
-                  chosenSign === undefined
+                  chosenSign === undefined && !isCreatingNewSign
                     ? 'w-15rem white-space-nowrap overflow-hidden text-overflow-ellipsis'
                     : 'w-10rem white-space-nowrap overflow-hidden text-overflow-ellipsis'
                 "
               >
                 <span>{{ sign.signCategory?.name }}</span>
-              </div>
-            </td>
-
-            <td [ngStyle]="{ 'text-align': 'center' }">
-              <div
-                [className]="
-                  chosenSign === undefined
-                    ? 'w-10rem white-space-nowrap overflow-hidden text-overflow-ellipsis'
-                    : 'w-6rem white-space-nowrap overflow-hidden text-overflow-ellipsis'
-                "
-              >
-                <span *ngIf="sign.status === 5" class="text-green-500">
-                  Hoạt động</span
-                >
-                <span *ngIf="sign.status === 6" class="text-red-500">
-                  Ngưng hoạt động</span
-                >
               </div>
             </td>
             <td [ngStyle]="{ 'text-align': 'center' }">
@@ -146,8 +117,19 @@
                 icon="pi pi-info"
                 class="p-button-rounded p-button-outlined btn-info"
                 style="width: 25px !important; height: 25px !important"
-                (click)="chosenSign = sign"
+                (click)="
+                  chosenSign = sign;
+                  clearNewSignData();
+                  isValidClickOnCreate = false
+                "
               ></button>
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="6">
+              <span class="font-bold">Không tìm thấy kết quả</span>
             </td>
           </tr>
         </ng-template>
@@ -155,8 +137,9 @@
     </div>
   </div>
 
-  <!-- Right -->
+  <!-- Right with chosen sign -->
   <div
+    *ngIf="!isCreatingNewSign"
     class="p-2"
     [ngClass]="{
       'hidden h-full border-left-3 border-200 overflow-auto':
@@ -179,7 +162,7 @@
             type="button"
             icon="pi pi-times"
             class="p-button-rounded p-button-danger p-button-text"
-            (click)="chosenSign = undefined"
+            (click)="chosenSign = undefined; isValidClickOnCreate = true"
           ></button>
         </div>
       </div>
@@ -262,7 +245,7 @@
       <!-- Header -->
       <div class="w-12 flex align-items-center text-xl" style="height: 7.5%">
         <div class="w-6 flex align-items-center">
-          <i class="pi pi-info-file-edit text-xl"></i>
+          <i class="pi pi-file-edit text-xl"></i>
           <span class="ml-2">Chỉnh sửa</span>
         </div>
       </div>
@@ -284,9 +267,9 @@
           </div>
         </div>
         <div class="w-12 mb-3 flex justify-content-end">
-          <div class="w-10">
-            <small class="p-block p-error" *ngIf="!tmpChosenSignNewName"
-              >Vui lòng nhập tên biển</small
+          <div class="w-12">
+            <small class="p-block p-error" *ngIf="!isValidChosenSignNewName"
+              >Vui lòng nhập tên biển (tối đa 150 ký tự) theo mẫu: Biển số 201a "Tên biển"</small
             >
           </div>
         </div>
@@ -322,8 +305,8 @@
         </div>
         <div class="w-12 mb-3">
           <div class="w-12">
-            <small class="p-block p-error" *ngIf="!tmpChosenSignNewDescription"
-              >Vui lòng nhập nội dung biển</small
+            <small class="p-block p-error" *ngIf="!tmpChosenSignNewDescription || tmpChosenSignNewDescription.length > 2000"
+              >Vui lòng nhập nội dung biển (tối đa 2000 ký tự)</small
             >
           </div>
         </div>
@@ -337,7 +320,7 @@
               [customUpload]="true"
               [auto]="true"
               (uploadHandler)="
-                gettmpChosenSignNewImageUrl($event, imageUploaded)
+                getTmpChosenSignNewImageUrl($event, imageUploaded)
               "
               accept="image/*"
               [maxFileSize]="1000000"
@@ -390,8 +373,159 @@
         </div>
       </div>
     </div>
+  </div>
 
-    <!-- When adding new sign -->
+  <!-- Right for creating new sign -->
+  <div
+    *ngIf="isCreatingNewSign"
+    class="p-2"
+    [ngClass]="{
+      'hidden h-full border-left-3 border-200 overflow-auto':
+        !isCreatingNewSign,
+      'w-4 h-full border-left-3 border-200  overflow-auto': isCreatingNewSign
+    }"
+  >
+    <div *ngIf="!isUpdatingChosenSign" class="h-full">
+      <!-- Header -->
+      <div class="w-12 flex align-items-center text-xl" style="height: 7.5%">
+        <div class="w-6 flex align-items-center">
+          <i class="pi pi-plus-circle text-xl"></i>
+          <span class="ml-2">Tạo mới</span>
+        </div>
+        <div class="w-6 flex justify-content-end">
+          <button
+            pButton
+            pRipple
+            type="button"
+            icon="pi pi-times"
+            class="p-button-rounded p-button-danger p-button-text"
+            (click)="clearNewSignData()"
+          ></button>
+        </div>
+      </div>
+
+      <!-- Main -->
+      <div style="height: 85%">
+        <div class="w-12 flex text-lg align-items-center">
+          <div class="w-2">Tên:</div>
+          <div class="w-10">
+            <input
+              ngDefaultControl
+              type="text"
+              pInputText
+              placeholder='Ví dụ: Biển số 201a "Tên biển"'
+              [(ngModel)]="newSignName"
+              [style]="{ height: '35px', width: '100%' }"
+              (keyup)="getNewSignName()"
+            />
+          </div>
+        </div>
+        <div class="w-12 mb-3 flex justify-content-end">
+          <div class="w-10">
+            <small class="p-block p-error" *ngIf="!isValidNewSignName"
+              >Vui lòng nhập tên biển theo ví dụ mô tả (tối đa 150 ký tự)</small
+            >
+          </div>
+        </div>
+
+        <div class="w-12 flex text-lg mb-3 align-items-center">
+          <div class="w-2">Loại:</div>
+          <div class="w-10 flex justify-content-end">
+            <p-dropdown
+              ngDefaultControl
+              [(ngModel)]="newSignSignCategoryId"
+              [options]="signCategories"
+              optionLabel="name"
+              optionValue="id"
+              placeholder="Loại biển báo"
+              [style]="{ height: '35px', width: '15rem' }"
+            ></p-dropdown>
+          </div>
+        </div>
+
+        <div class="w-12 flex text-lg mb-1 align-items-center">
+          <div>Mô tả:</div>
+        </div>
+        <div class="w-12">
+          <textarea
+            ngDefaultControl
+            class="w-full"
+            [rows]="3"
+            pInputTextarea
+            [(ngModel)]="newSignDescription"
+            (keyup)="getNewSignDescription()"
+          ></textarea>
+        </div>
+        <div class="w-12 mb-3">
+          <div class="w-12">
+            <small class="p-block p-error" *ngIf="!isValidNewSignDescription"
+              >Vui lòng nhập nội dung biển (tối đa 2000 ký tự)</small
+            >
+          </div>
+        </div>
+
+        <div class="w-12 flex text-lg mb-1 align-items-center">
+          <div class="w-6">Hình ảnh:</div>
+          <div class="w-6 flex justify-content-end">
+            <p-fileUpload
+              #imageUploaded
+              mode="basic"
+              [customUpload]="true"
+              [auto]="true"
+              (uploadHandler)="
+              getNewSignImageUrl($event, imageUploaded)
+              "
+              accept="image/*"
+              [maxFileSize]="1000000"
+              chooseLabel="Tải lên"
+              chooseIcon="pi pi-image"
+              [style]="{ height: '35px', border: '3px solid' }"
+            >
+            </p-fileUpload>
+          </div>
+        </div>
+        <div class="w-12 flex text-lg mb-3">
+          <div class="text-center w-12 h-auto p-2 border-200 border-2" *ngIf="newSignImageUrl">
+            <img
+              ngDefaultControl
+              [(ngModel)]="newSignImageUrl"
+              class="w-12rem h-auto max-h-12rem"
+              [src]="newSignImageUrl | safe: 'resourceUrl'"
+              alt="Hình ảnh"
+            />
+          </div>
+        </div>
+      </div>
+
+      <!-- Buttons -->
+      <div style="height: 7.5%">
+        <div class="w-12 flex">
+          <div class="w-6 text-center">
+            <button
+              pButton
+              pRipple
+              type="button"
+              [disabled]="!isValidCreateNewSign"
+              label="Tạo mới"
+              class="p-button-raised p-button-success"
+              [style]="{ height: '40px' }"
+              (click)="displayConfirmCreateNewSign = true"
+            ></button>
+          </div>
+          <div class="w-6 text-center">
+            <button
+              pButton
+              pRipple
+              type="button"
+              label="Hủy bỏ"
+              class="p-button-raised p-button-danger"
+              [style]="{ height: '40px' }"
+              (click)="clearNewSignData()"
+            ></button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -501,6 +635,61 @@
       class="p-button-success"
       style="height: 40px"
       (click)="deleteChosenSign()"
+    ></button>
+  </ng-template>
+</p-dialog>
+
+<!-- Confirm create dialog -->
+<p-dialog
+  #updateDialog
+  [(visible)]="displayConfirmCreateNewSign"
+  [style]="{ width: '35vw', height: '50vh' }"
+  [modal]="true"
+>
+  <ng-template pTemplate="header">
+    <span class="text-green-500 font-bold text-xl">Tạo mới</span>
+  </ng-template>
+  <div class="w-12 flex mb-5 align-items-center">
+    <div class="w-3">
+      <span class="text-lg font-bold">Gửi yêu cầu tới </span> <br />
+    </div>
+    <div class="w-9 flex justify-content-end">
+      <p-dropdown
+        [(ngModel)]="selectedAdmin"
+        [options]="admins"
+        optionLabel="username"
+        [style]="{ height: '40px' }"
+        scrollHeight="8rem"
+        [filter]="true"
+        filterBy="username"
+      ></p-dropdown>
+    </div>
+  </div>
+  <div class="w-12">
+    <span class="text-lg font-bold">
+      {{ newSignName }}
+    </span>
+    <span class="text-lg">sẽ được yêu cầu tạo mới. Bạn có chắc chắn?</span>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <button
+      type="button"
+      pButton
+      icon="pi pi-times"
+      label="Hủy"
+      class="p-button-danger"
+      style="height: 40px"
+      (click)="displayConfirmCreateNewSign = false"
+    ></button>
+    <button
+      type="button"
+      pButton
+      icon="pi pi-check"
+      label="Đồng ý"
+      class="p-button-success"
+      style="height: 40px"
+      (click)="createNewSign()"
     ></button>
   </ng-template>
 </p-dialog>
