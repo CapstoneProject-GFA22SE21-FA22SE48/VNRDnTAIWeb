@@ -1,0 +1,317 @@
+<div class="flex h-full p-0">
+  <!-- Left -->
+  <div
+    [ngClass]="{
+      'w-12 h-full': selectedRom === undefined,
+      'w-8 h-full': selectedRom
+    }"
+  >
+    <div class="p-2 pb-3" style="height: 6%">
+      <fa-icon
+        class="fa-lg mr-2"
+        [icon]="['fas', 'code-pull-request']"
+      ></fa-icon>
+      <span class="text-xl">Quản lý yêu cầu</span>
+    </div>
+    <div class="p-2 w-12 flex align-items-center" style="height: 9%">
+      <div class="w-6 flex align-items-center">
+        <p-dropdown
+          [(ngModel)]="filterRomTypeCode"
+          [options]="romTypes"
+          placeholder="Loại"
+          optionLabel="romTypeName"
+          optionValue="romTypeCode"
+          [showClear]="true"
+          [style]="{ height: '40px' }"
+          class="mr-2"
+          (onChange)="filterData()"
+        ></p-dropdown>
+      </div>
+
+      <div class="w-6 flex justify-content-end">
+        <span class="p-input-icon-right">
+          <i class="pi pi-search"></i>
+          <input
+            type="text"
+            pInputText
+            placeholder="Tìm kiếm..."
+            [style]="{ height: '40px', width: '16rem' }"
+            [(ngModel)]="filterSearchStr"
+            (keyup)="filterData()"
+          />
+        </span>
+      </div>
+    </div>
+
+    <div class="p-2 w-12 flex align-items-center" style="height: 9%">
+      <div class="w-6">
+        <p-dropdown
+          [(ngModel)]="filterRequesterId"
+          [options]="requesters"
+          placeholder="Người yêu cầu"
+          optionLabel="requesterName"
+          optionValue="requesterId"
+          [showClear]="true"
+          [style]="{ height: '40px' }"
+          class="mr-2"
+          (onChange)="filterData()"
+        ></p-dropdown>
+
+        <p-dropdown
+          [(ngModel)]="filterStatusCode"
+          [options]="status"
+          placeholder="Trạng thái"
+          optionLabel="statusName"
+          optionValue="statusCode"
+          [showClear]="true"
+          [style]="{ height: '40px' }"
+          (onChange)="filterData()"
+        ></p-dropdown>
+      </div>
+      <div class="w-6 flex justify-content-end">
+        <p-calendar
+          #calendar
+          [(ngModel)]="filterRangeDates"
+          [showIcon]="true"
+          dateFormat="dd/mm/yy"
+          [readonlyInput]="true"
+          selectionMode="range"
+          [showButtonBar]="true"
+          [style]="{ height: '40px', 'font-size': '.9rem', width: '16rem' }"
+          placeholder="Từ ngày - đến ngày"
+          (onSelect)="closeDateRangePick()"
+          (onClearClick)="filterData()"
+        ></p-calendar>
+      </div>
+    </div>
+    <div class="p-1 overflow-auto" style="height: 76%">
+      <p-table
+        [value]="roms"
+        [paginator]="roms !== undefined && roms.length > 9 ? true : false"
+        [rows]="9"
+        [showCurrentPageReport]="
+          roms !== undefined && roms.length > 9 ? true : false
+        "
+        responsiveLayout="scroll"
+        currentPageReportTemplate="{first} đến {last} trong tổng số {totalRecords} mục"
+        styleClass="p-datatable-gridlines p-datatable-sm"
+      >
+        <ng-template pTemplate="header">
+          <tr>
+            <th [ngStyle]="{ width: '5%', 'text-align': 'center' }">#</th>
+            <th [ngStyle]="{ width: '15%', 'text-align': 'center' }">
+              Yêu cầu về
+            </th>
+            <th [ngStyle]="{ width: '30%', 'text-align': 'center' }">Mô tả</th>
+            <th [ngStyle]="{ width: '15%', 'text-align': 'center' }">
+              Người yêu cầu
+            </th>
+            <th [ngStyle]="{ width: '10%', 'text-align': 'center' }">
+              Loại yêu cầu
+            </th>
+            <th [ngStyle]="{ width: '10%', 'text-align': 'center' }">
+              Trạng thái
+            </th>
+            <th [ngStyle]="{ width: '10%', 'text-align': 'center' }">
+              Ngày tạo
+            </th>
+            <th [ngStyle]="{ width: '5%', 'text-align': 'center' }"></th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-rom let-i="rowIndex">
+          <tr>
+            <td [ngStyle]="{ 'text-align': 'center' }">{{ i + 1 }}</td>
+            <td [ngStyle]="{ 'text-align': 'center' }">
+              <div
+                class="w-12 white-space-nowrap overflow-hidden text-overflow-ellipsis"
+              >
+                <span
+                  *ngIf="
+                    rom.modifyingStatueName ||
+                    rom.modifyingSectionName ||
+                    rom.modifyingParagraphName
+                  "
+                  class="text-green-500 font-bold"
+                >
+                  Luật
+                </span>
+                <span
+                  *ngIf="rom.modifyingSignName || rom.modifyingGpssignName"
+                  class="text-orange-500 font-bold"
+                >
+                  Biển báo
+                </span>
+                <span
+                  *ngIf="rom.modifyingQuestionContent"
+                  class="text-blue-500 font-bold"
+                >
+                  Câu hỏi
+                </span>
+                <span
+                  *ngIf="rom.modfifyingUserName"
+                  class="text-red-500 font-bold"
+                >
+                  Đề xuất
+                </span>
+              </div>
+            </td>
+            <td [ngStyle]="{ 'text-align': 'center' }">
+              <div
+                [className]="
+                  selectedRom === undefined
+                    ? 'w-22rem white-space-nowrap overflow-hidden text-overflow-ellipsis'
+                    : 'w-14rem white-space-nowrap overflow-hidden text-overflow-ellipsis'
+                "
+              >
+                <span>{{
+                  rom.modifyingStatueName ||
+                    rom.modifyingSectionName ||
+                    rom.modifyingParagraphName ||
+                    rom.modifyingSignName ||
+                    rom.modifyingGpssignName ||
+                    rom.modifyingQuestionContent ||
+                    rom.modfifyingUserName
+                }}</span>
+              </div>
+            </td>
+            <td [ngStyle]="{ 'text-align': 'center' }">
+              <div
+                [className]="
+                  selectedRom === undefined
+                    ? 'w-10rem white-space-nowrap overflow-hidden text-overflow-ellipsis'
+                    : 'w-6rem white-space-nowrap overflow-hidden text-overflow-ellipsis'
+                "
+              >
+                <span>{{ rom.username || rom.promotingAdminUsername }}</span>
+              </div>
+            </td>
+
+            <td [ngStyle]="{ 'text-align': 'center' }">
+              <div
+                class="w-12 white-space-nowrap overflow-hidden text-overflow-ellipsis"
+              >
+                <span *ngIf="rom.operationType === 0">Thêm mới</span>
+                <span *ngIf="rom.operationType === 1">Chỉnh sửa</span>
+                <span *ngIf="rom.operationType === 2">Xóa</span>
+              </div>
+            </td>
+
+            <td [ngStyle]="{ 'text-align': 'center' }">
+              <div
+                class="w-12 white-space-nowrap overflow-hidden text-overflow-ellipsis"
+              >
+                <span *ngFor="let st of status">
+                  <span *ngIf="st.statusCode === rom.status">
+                    {{ st.statusName }}
+                  </span>
+                </span>
+              </div>
+            </td>
+            <td [ngStyle]="{ 'text-align': 'center' }">
+              <div
+                class="w-12 white-space-nowrap overflow-hidden text-overflow-ellipsis"
+              >
+                <span>
+                  {{ rom.createdDate | date: "dd/MM/yyyy" }}
+                </span>
+              </div>
+            </td>
+
+            <td [ngStyle]="{ 'text-align': 'center' }">
+              <button
+                pButton
+                type="button"
+                icon="pi pi-info"
+                class="p-button-rounded p-button-outlined"
+                [style]="{ width: '25px', height: '25px' }"
+                (click)="viewInfo(rom)"
+              ></button>
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="7">
+              <span class="font-bold">Không tìm thấy kết quả</span>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+
+  <!-- Right -->
+  <div
+    class="p-2"
+    [ngClass]="{
+      'hidden h-full border-left-3 border-200 overflow-auto':
+        selectedRom === undefined,
+      'w-4 h-full border-left-3 border-200  overflow-auto': selectedRom
+    }"
+  >
+    <div style="height: 20%">
+      <div class="w-12 flex align-items-center">
+        <div class="w-6 flex align-items-center">
+          <i class="pi pi-info-circle text-xl"></i>
+          <span class="text-xl ml-2">Thông tin</span>
+        </div>
+        <div class="w-6 flex justify-content-end">
+          <button
+            pButton
+            pRipple
+            type="button"
+            icon="pi pi-times"
+            class="p-button-rounded p-button-danger p-button-text"
+            (click)="selectedRom = undefined"
+          ></button>
+        </div>
+      </div>
+      <!--   
+        <div class="flex mt-3 p-2" *ngIf="selectedMember?.username">
+          <div class="w-3">
+            <span class="text-lg text-color-secondary">Người dùng: </span>
+          </div>
+          <div class="w-9 p-0 m-0 white-space-nowrap overflow-x-auto overflow-y-hidden">
+            <span class="text-lg font-bold ml-3">
+              {{ selectedMember?.username }}
+              </span>
+          </div>
+        </div>
+  
+        <div class="flex mt-3 p-2" *ngIf="selectedMember?.gmail">
+          <div class="w-3">
+            <span class="text-lg text-color-secondary">Email: </span>
+          </div>
+          <div class="w-9 p-0 m-0 white-space-nowrap overflow-x-auto overflow-y-hidden">
+            <span class="text-lg font-bold ml-3">
+              {{ selectedMember?.gmail }}
+              </span>
+          </div>
+        </div> -->
+    </div>
+
+    <!-- <div class="overflow-y-auto border-round-lg surface-200" style="height: 80%">
+        <div *ngIf="userComments.length > 0">
+          <div
+            class="flex align-items-center justify-content-center"
+            *ngFor="let comment of userComments"
+          >
+            <div class="h-7rem mt-2 mb-2 comment">
+              <div class="p-2 comment-content">
+                <span>{{ comment.content }}</span>
+              </div>
+              <div class="text-right pr-3 pb-1 comment-time">
+                <span>{{ comment.createdDate | dateAgo }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+  
+        <div *ngIf="userComments.length === 0" class="p-2">
+          <span class="text-blue-400 text-lg font-bold">
+            Người dùng này chưa có bình luận nào hoặc bình luận đã bị xóa
+          </span>
+        </div>
+      </div> -->
+  </div>
+</div>

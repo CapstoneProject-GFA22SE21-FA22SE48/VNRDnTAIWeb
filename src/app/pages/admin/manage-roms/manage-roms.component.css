@@ -1,0 +1,9 @@
+/* custom dropdown */
+::ng-deep .p-dropdown .p-placeholder {
+    padding-top: .4rem;
+  }
+  
+  ::ng-deep .p-dropdown .p-element {
+    padding-top: .4rem;
+  }
+  /* end custom dropdown */
