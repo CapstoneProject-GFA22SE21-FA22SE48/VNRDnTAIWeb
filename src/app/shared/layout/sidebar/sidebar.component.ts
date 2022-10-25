@@ -36,6 +36,10 @@ export class SidebarComponent implements OnInit {
       label: 'Quản lý thành viên',
       routerLink: '/admin/manage-members',
     },
+    {
+      label: 'Quản lý công việc',
+      routerLink: '/admin/manage-task',
+    },
   ];
 
   scribeSidebarItems: any[] = [

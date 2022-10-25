@@ -19,6 +19,9 @@ export const AdminGetScribes: string = base + '/Users/Scribes';
 
 export const AdminGetRomList: string = base + '/LawModificationRequests/AdminROMList';
 
+export const AdminGetColumns: string = base + '/Columns'
+export const AdminGetAssignedColumns: string = base + '/AssignedColumns'
+
 // Scribe
 export const ScribeGetAssignedQuestions: string = base + '/Questions/AssignedQuestions/Scribes';
 export const ScribeGetTestCategories: string = base + '/TestCategories';
@@ -48,3 +51,7 @@ export const ScribeGetAssignedSigns: string = base + '/Signs/AssignedSigns/Scrib
 
 export const ScribeCreateSignForROM: string = base + '/Signs';
 export const ScribeCreateSignModificationRequest: string = base + '/SignModificationRequests';
+
+
+//Admin 
+export const AdminGetTasks: string = base + "/AssignedColumns/Tasks";

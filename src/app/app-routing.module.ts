@@ -12,6 +12,7 @@ import { ManageMembersComponent } from './pages/admin/manage-members/manage-memb
 import { ManageSignsComponent } from './pages/scribe/manage-signs/manage-signs.component';
 import { ManageQuestionsComponent } from './pages/scribe/manage-questions/manage-questions.component';
 import { MyRequestComponent } from './pages/scribe/my-request/my-request.component';
+import { ManageTaskComponent } from './pages/admin/manage-task/manage-task.component';
 
 const routes: Routes = [
   // {
@@ -48,6 +49,11 @@ const routes: Routes = [
   {
     path: paths.admin.manageMembers,
     component: ManageMembersComponent,
+    canActivate: [AuthGuard],
+  },
+  {
+    path: paths.admin.manageTask,
+    component: ManageTaskComponent,
     canActivate: [AuthGuard],
   },
   {

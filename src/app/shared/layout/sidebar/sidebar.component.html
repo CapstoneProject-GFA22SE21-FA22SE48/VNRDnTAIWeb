@@ -43,6 +43,11 @@
         ></fa-icon>
         <fa-icon
           class="mr-3"
+          *ngIf="item.label == 'Quản lý công việc'"
+          [icon]="['fas', 'user']"
+        ></fa-icon>
+        <fa-icon
+          class="mr-3"
           *ngIf="item.label == 'Yêu cầu của tôi'"
           [icon]="['fas', 'code-pull-request']"
         ></fa-icon>
