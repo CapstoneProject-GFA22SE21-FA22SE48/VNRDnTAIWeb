@@ -1,25 +1,27 @@
-<div class="flex p-0" id="container">
+<div class="flex h-full p-0" id="container">
   <div
-    [ngClass]="{ 'w-12': selectedScribe === undefined, 'w-8': selectedScribe }"
+    [ngClass]="{ 'w-12 h-full': selectedScribe === undefined, 'w-8 h-full': selectedScribe }"
   >
-    <div class="p-2 mb-1">
+    <div class="p-2 pb-3" style="height: 6%">
       <fa-icon class="fa-lg mr-2" [icon]="['far', 'circle-user']"></fa-icon>
       <span class="text-xl">Quản lý nhân viên</span>
     </div>
-    <div class="p-2">
-      <div class="mb-3 flex">
-        <div class="w-7">
+    <div class="p-2" style="height: 10%">
+      <div class="w-12 mb-3 flex">
+        <div class="w-6 flex align-items-center">
           <span class="p-input-icon-right mr-3">
             <i class="pi pi-search"></i>
             <input
               type="text"
               pInputText
               placeholder="Tìm kiếm..."
-              id="input-search"
+              [style]="{height: '40px'}"
               [(ngModel)]="searchStr"
-            />
-            <!-- (keyup)="filterData()" -->
+              (keyup)="filterData()"
+            />          
+            
           </span>
+          
           <p-dropdown
             [(ngModel)]="filterStatus"
             [options]="status"
@@ -27,10 +29,11 @@
             optionLabel="name"
             [showClear]="true"
             [style]="{ height: '40px' }"
+            (onChange)="filterData()"
           ></p-dropdown>
           <!-- (onChange)="filterData()" -->
         </div>
-        <div class="w-5 text-right">
+        <div class="w-6 flex justify-content-end">
           <p-calendar
             #calendar
             [(ngModel)]="filterRangeDates"
@@ -41,12 +44,14 @@
             [showButtonBar]="true"
             [style]="{ height: '40px', 'font-size': '.9rem', width: '16rem' }"
             placeholder="Từ ngày - đến ngày"
+            (onSelect)="closeDateRangePick()" (onClearClick)="filterData()"
           ></p-calendar>
           <!-- (onSelect)="closeDateRangePick()"
               (onClearClick)="filterData()" -->
         </div>
       </div>
-
+    </div>
+      <div class="p-2 overflow-auto" style="height: 84%;">
       <p-table
         [value]="scribes"
         [paginator]="(scribes !== undefined && scribes.length > 9) ? true : false"
@@ -59,10 +64,10 @@
         <ng-template pTemplate="header">
           <tr>
             <th [ngStyle]="{ width: '5%', 'text-align': 'center' }">#</th>
-            <th [ngStyle]="{ width: '30%', 'text-align': 'center' }">
+            <th [ngStyle]="{ width: '20%', 'text-align': 'center' }">
               Tên đăng nhập
             </th>
-            <th [ngStyle]="{ width: '30%', 'text-align': 'center' }">
+            <th [ngStyle]="{ width: '20%', 'text-align': 'center' }">
               Mật khẩu
             </th>
             <th [ngStyle]="{ width: '15%', 'text-align': 'center' }">
@@ -71,7 +76,9 @@
             <th [ngStyle]="{ width: '15%', 'text-align': 'center' }">
               Trạng thái
             </th>
-            <th [ngStyle]="{ width: '5%', 'text-align': 'center' }"></th>
+            <th [ngStyle]="{ width: '15%', 'text-align': 'center' }">
+              Tác vụ
+            </th>
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-scribe let-i="rowIndex">
@@ -105,11 +112,23 @@
             </td>
             <td [ngStyle]="{ 'text-align': 'center' }">
               <button
+                *ngIf="scribe?.status === 5"
                 pButton
                 type="button"
-                icon="pi pi-info"
-                class="p-button-rounded p-button-outlined btn-info"
-                (click)="viewInfo(scribe)"
+                label="Ngưng hoạt động"
+                [style]="{padding: '.3rem .5rem .3rem .5rem', height: '25px', border: '3px solid'}"
+                class="p-button-outlined p-button-danger"
+                (click)="confirmDeactivateMember(i)"
+              ></button>
+
+              <button
+                *ngIf="scribe?.status === 6"
+                pButton
+                type="button"
+                label="Kích hoạt lại"
+                [style]="{padding: '.3rem .5rem .3rem .5rem', height: '25px', border: '3px solid'}"
+                class="p-button-outlined p-button-success"
+                (click)="confirmReEnableMember(i)"
               ></button>
             </td>
           </tr>
@@ -122,7 +141,8 @@
           </tr>
         </ng-template>
       </p-table>
-    </div>
+      </div>
+    
   </div>
 
   <div
@@ -251,3 +271,33 @@
       </div> -->
   </div>
 </div>
+
+<!-- Confirm Deactivate Scribe -->
+<p-confirmDialog key="cdDeactivate" #cd icon="pi pi-exclamation-triangle">
+  <ng-template pTemplate="header">
+    <h3 class="text-red-500">Cảnh báo</h3>
+  </ng-template>
+  <ng-template pTemplate="footer">
+    <button type="button" pButton icon="pi pi-times" label="Hủy" class="p-button-danger" style="height: 40px"
+      (click)="cd.reject()"></button>
+    <button type="button" pButton icon="pi pi-check" label="Đồng ý" class="p-button-success" style="height: 40px"
+      (click)="cd.accept()"></button>
+  </ng-template>
+</p-confirmDialog>
+
+<!-- Confirm Re-Enable Scribe -->
+<p-confirmDialog key="cdReEnable" #cr icon="pi pi-info-circle">
+  <ng-template pTemplate="header">
+    <h3 class="text-blue-500">Thông báo</h3>
+  </ng-template>
+  <ng-template pTemplate="footer">
+    <button type="button" pButton icon="pi pi-times" label="Hủy" class="p-button-danger" (click)="cr.reject()"></button>
+    <button type="button" pButton icon="pi pi-check" label="Đồng ý" class="p-button-success"
+      (click)="cr.accept()"></button>
+  </ng-template>
+</p-confirmDialog>
+
+<p-toast key="deactivateSuccess" life="1500"></p-toast>
+<p-toast key="deactivateFail" life="1500"></p-toast>
+<p-toast key="reEnableSuccess" life="1500"></p-toast>
+<p-toast key="reEnableFail" life="1500"></p-toast>
