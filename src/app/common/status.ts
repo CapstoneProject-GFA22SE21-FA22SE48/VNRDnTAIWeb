@@ -3,8 +3,8 @@ export enum Status {
     Unclaimed = 1,
     Claimed = 2,
     Confirmed = 3,
-    Approved = 4,
-    Denied = 5,
-    Active = 6,
-    Deactivated = 7
+    Denied = 4,
+    Active = 5,
+    Deactivated = 6,
+    Approved = 7
 }

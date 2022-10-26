@@ -321,8 +321,6 @@ export class ManageSignsComponent implements OnInit {
   }
 
   deleteChosenSign() {
-    console.log(this.chosenSign);
-    
     this.chosenSign.isDeleted = true;
 
     this.isLoadingService.add();

@@ -22,7 +22,11 @@ export const AdminDeactivateScribe: string = base + '/Users/Scribes/Deactivate';
 export const AdminReEnableScribe: string = base + '/Users/Scribes/ReEnable';
 
 export const AdminGetColumns: string = base + '/Columns'
-export const AdminGetAssignedColumns: string = base + '/AssignedColumns'
+export const AdminGetAssignedColumns: string = base + '/AssignedColumns';
+
+export const AdminGetTasks: string = base + "/AssignedColumns/Tasks";
+
+export const AdminGetLawRomDetail: string = base + '/LawModificationRequests/ROMDetail';
 
 // Scribe
 export const ScribeGetAssignedQuestions: string = base + '/Questions/AssignedQuestions/Scribes';
@@ -53,7 +57,3 @@ export const ScribeGetAssignedSigns: string = base + '/Signs/AssignedSigns/Scrib
 
 export const ScribeCreateSignForROM: string = base + '/Signs';
 export const ScribeCreateSignModificationRequest: string = base + '/SignModificationRequests';
-
-
-//Admin 
-export const AdminGetTasks: string = base + "/AssignedColumns/Tasks";

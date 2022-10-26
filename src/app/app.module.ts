@@ -66,6 +66,7 @@ import { ChipModule } from 'primeng/chip';
 import { AutoCompleteModule } from 'primeng/autocomplete';
 import { ManageTaskComponent } from './pages/admin/manage-task/manage-task.component';
 import { DragDropModule } from '@angular/cdk/drag-drop';
+import { MonacoEditorModule } from 'ngx-monaco-editor-v2';
 @NgModule({
   declarations: [
     AppComponent,
@@ -127,7 +128,8 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
     TooltipModule,
     ChipModule,
     AutoCompleteModule,
-    DragDropModule
+    DragDropModule,
+    MonacoEditorModule.forRoot(),
   ],
   providers: [ConfirmationService, MessageService],
   bootstrap: [AppComponent],
