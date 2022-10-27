@@ -67,6 +67,7 @@ import { AutoCompleteModule } from 'primeng/autocomplete';
 import { ManageTaskComponent } from './pages/admin/manage-task/manage-task.component';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { MonacoEditorModule } from 'ngx-monaco-editor-v2';
+import {ConfirmPopupModule} from 'primeng/confirmpopup';
 @NgModule({
   declarations: [
     AppComponent,
@@ -130,6 +131,7 @@ import { MonacoEditorModule } from 'ngx-monaco-editor-v2';
     AutoCompleteModule,
     DragDropModule,
     MonacoEditorModule.forRoot(),
+    ConfirmPopupModule
   ],
   providers: [ConfirmationService, MessageService],
   bootstrap: [AppComponent],

@@ -1,6 +1,7 @@
 import { Component, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { IsLoadingService } from '@service-work/is-loading';
 import { DiffEditorModel } from 'ngx-monaco-editor-v2';
+import { ConfirmationService } from 'primeng/api';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { OperationType } from 'src/app/common/operationType';
 import { decodeToken, getStorageToken } from 'src/app/utilities/jwt.util';
@@ -26,7 +27,7 @@ export class ManageRomsComponent implements OnInit {
     // { statusName: 'Ngưng hoạt động', statusCode: 6 },
     { statusName: 'Đã duyệt', statusCode: 7 },
     { statusName: 'Đã từ chối', statusCode: 4 },
-    { statusName: 'Đã xác nhận', statusCode: 3 },
+    { statusName: 'Đã xử lý', statusCode: 3 },
   ];
   filterStatusCode: any;
 
@@ -74,7 +75,8 @@ export class ManageRomsComponent implements OnInit {
 
   constructor(
     private wrapperService: WrapperService,
-    private isLoadingService: IsLoadingService
+    private isLoadingService: IsLoadingService,
+    private confirmationService: ConfirmationService
   ) {}
 
   ngOnInit(): void {
@@ -249,7 +251,7 @@ export class ManageRomsComponent implements OnInit {
                   r.referenceParagraphSectionName
                 } > ${r.referenceParagraphName} (${
                   r.referenceParagraphIsExcluded ? 'ngoại trừ' : 'bao gồm'
-                })`
+                })\n`
               );
             }
 
@@ -299,7 +301,10 @@ export class ManageRomsComponent implements OnInit {
                   `\t${this.selectedRom.modifiedStatue?.name}\n` +
                   `Nội dung:\n` +
                   `\t${this.selectedRom.modifiedStatue?.description}\n`;
+              } else {
+                this.originalModel.code = ' '; //must be a whitespace to open text compare
               }
+
             } else if (response.data.modifyingSection !== null) {
               this.selectedRom.modifyingSection =
                 response.data.modifyingSection;
@@ -368,7 +373,10 @@ export class ManageRomsComponent implements OnInit {
                   `\t${this.selectedRom.modifiedSection?.maxPenalty?.toLocaleString(
                     'vi'
                   )}\n`;
-              }
+              } else {
+                this.originalModel.code = ' '; //must be a whitespace to open text compare
+              } 
+
             } else if (response.data.modifyingParagraph !== null) {
               this.selectedRom.modifyingParagraph =
                 response.data.modifyingParagraph;
@@ -396,14 +404,13 @@ export class ManageRomsComponent implements OnInit {
               }
 
               if (
-                this.selectedRom.modifiedParagraph !== null &&
-                this.selectedRom.modifiedParagraph !== undefined
+                this.selectedRom.modifiedParagraph !== null
               ) {
                 this.selectedRom.modifiedParagraph =
                   response.data.modifiedParagraph;
 
-                tmpChangedModelCode = '';
-                tmpChangedModelCode =
+                var tmpOriginalModelCode = '';
+                tmpOriginalModelCode =
                   `Tên điểm:\n` +
                   `\t${this.selectedRom.modifiedParagraph?.name}\n` +
                   `Nội dung:\n` +
@@ -411,14 +418,16 @@ export class ManageRomsComponent implements OnInit {
                   `Hình phạt bổ sung (nếu có):\n` +
                   `\t${this.selectedRom.modifiedParagraph?.additionalPenalty}\n`;
                 this.paragraphReferencesObservable(
-                  this.selectedRom.modifiedParagraph
+                  this.selectedRom.modifiedParagraph?.id
                 ).subscribe({
-                  next: (v) => (tmpChangedModelCode += `${v}`),
+                  next: (v) => (tmpOriginalModelCode += `${v}`),
                   error: (e) => console.log(e),
                   complete: () => {
-                    this.changedModel.code = tmpChangedModelCode;
+                    this.originalModel.code = tmpOriginalModelCode;
                   },
                 });
+              } else {
+                this.originalModel.code = ' '; //must be a whitespace to open text compare
               }
             }
 
@@ -600,5 +609,19 @@ export class ManageRomsComponent implements OnInit {
     }
   }
 
+  confirmApproveRom(event: any){
+    this.confirmationService.confirm({
+      target: event?.target,
+      message: 'Thao tác này sẽ cập nhật dữ liệu của hệ thống. Bạn có chắc?',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+
+      },
+      reject: () => {}
+    })
+  }
+
   approveRom() {}
+
+  denyRom(){}
 }
