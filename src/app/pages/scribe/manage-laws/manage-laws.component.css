@@ -1,9 +1,9 @@
 ::ng-deep .p-dropdown .p-placeholder {
-  padding-top: .3rem;
+  padding-top: .2rem;
 }
 
 ::ng-deep .p-dropdown .p-element {
-  padding-top: .3rem;
+  padding-top: .2rem;
 }
 
 #section-dropdown-vehicleCat ::ng-deep .p-dropdown .p-placeholder {
@@ -72,3 +72,15 @@
 ::ng-deep .p-button-outlined.p-button-warning:disabled{
   color: grey;
 }
+
+
+/* start of info of pending requests of admin */
+.dropdown-admins ::ng-deep .p-dropdown-panel .p-dropdown-items .p-dropdown-item{
+  padding: 0;
+}
+
+::ng-deep .p-tooltip-left .p-tooltip-text{
+  height: 3rem;
+  width: 12rem;
+}
+/* end of info of pending requests of admin */

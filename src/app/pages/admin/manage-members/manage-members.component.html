@@ -27,7 +27,7 @@
         </div>
       </div>
     </div>    
-    <div class="p-2 overflow-auto" style="height: 84%;">
+    <div class="p-1 overflow-auto" style="height: 84%;">
       <p-table [value]="members" [paginator]="
           members !== undefined && members.length > 10 ? true : false
         " [rows]="10" [showCurrentPageReport]="
@@ -97,8 +97,8 @@
             <td [ngStyle]="{ 'text-align': 'center' }">
               <div [className]="
                   selectedMember === undefined
-                    ? 'w-11rem white-space-nowrap overflow-hidden text-overflow-ellipsis'
-                    : 'w-7rem white-space-nowrap overflow-hidden text-overflow-ellipsis'
+                    ? 'w-7rem white-space-nowrap overflow-hidden text-overflow-ellipsis'
+                    : 'w-5rem white-space-nowrap overflow-hidden text-overflow-ellipsis'
                 ">
                 <span *ngIf="member.status == 5" class="text-green-600"
                   >Hoạt động</span

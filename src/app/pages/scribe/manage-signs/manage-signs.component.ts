@@ -289,6 +289,7 @@ export class ManageSignsComponent implements OnInit {
                       summary: commonStr.success,
                       detail: commonStr.romCreatedSuccessfully,
                     });
+                    this.loadAdmins();
                     this.isLoadingService.remove();
                   },
                   errorCallback: (error) => {
@@ -320,12 +321,12 @@ export class ManageSignsComponent implements OnInit {
   }
 
   deleteChosenSign() {
-    this.tmpChosenSign.isDeleted = true;
+    this.chosenSign.isDeleted = true;
 
     this.isLoadingService.add();
     this.wrapperService.post(
       paths.ScribeCreateSignForROM,
-      this.tmpChosenSign,
+      this.chosenSign,
       getStorageToken(),
       {
         successCallback: (response) => {
@@ -348,6 +349,7 @@ export class ManageSignsComponent implements OnInit {
                   summary: commonStr.success,
                   detail: commonStr.romCreatedSuccessfully,
                 });
+                this.loadAdmins();
                 this.isLoadingService.remove();
               },
               errorCallback: (error) => {
@@ -466,6 +468,7 @@ export class ManageSignsComponent implements OnInit {
                         summary: commonStr.success,
                         detail: commonStr.romCreatedSuccessfully,
                       });
+                      this.loadAdmins();
                       this.isLoadingService.remove();
                     },
                     errorCallback: (error) => {

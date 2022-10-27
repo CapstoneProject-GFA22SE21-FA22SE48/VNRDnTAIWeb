@@ -54,8 +54,6 @@ export class DashboardComponent implements OnInit {
     this.isLoadingService.add();
     this.wrapperService.get(paths.AdminGetAllMemberData, getStorageToken(), {
       successCallback: (response) => {
-        console.log(response);
-
         response.data?.membersByYear?.forEach((e: string) => {
           this.chartAllMemberLabels.push(e.split('-')[0]);
           this.chartAllMemberDatasetData.push(parseInt(e.split('-')[1]));
