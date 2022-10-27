@@ -217,7 +217,7 @@
         <div class="text-center" style="height: 90%">
           <img
             *ngIf="selectedQuestion?.imageUrl"
-            [src]="selectedQuestion?.imageUrl"
+            [src]="selectedQuestion?.imageUrl  | safe: 'resourceUrl'"
             alt="Hình ảnh đính kèm"
             id="question-img"
           />

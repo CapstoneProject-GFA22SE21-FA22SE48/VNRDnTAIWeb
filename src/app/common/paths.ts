@@ -27,6 +27,9 @@ export const AdminGetAssignedColumns: string = base + '/AssignedColumns';
 export const AdminGetTasks: string = base + "/AssignedColumns/Tasks";
 
 export const AdminGetLawRomDetail: string = base + '/LawModificationRequests/ROMDetail';
+export const AdminGetParagraphRomDetailReference: string = base + '/LawModificationRequests/ParagraphROMDetail/References';
+export const AdminGetSignRomDetail: string = base + '/SignModificationRequests/SignROMDetail';
+export const AdminGetQuestionRomDetail: string = base + '/QuestionModificationRequests/QuestionROMDetail';
 
 // Scribe
 export const ScribeGetAssignedQuestions: string = base + '/Questions/AssignedQuestions/Scribes';

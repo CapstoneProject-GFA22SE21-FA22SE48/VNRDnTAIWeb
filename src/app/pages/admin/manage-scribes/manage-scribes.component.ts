@@ -137,10 +137,6 @@ export class ManageScribesComponent implements OnInit {
   filterData() {
     this.scribes = this.tmpScribes;
 
-    console.log(this.searchStr);
-    console.log(this.filterStatus);
-    console.log(this.filterRangeDates);
-
     //Search
     if (this.searchStr && this.searchStr.trim() != '') {
       this.scribes = this.scribes.filter((m) => {
@@ -158,12 +154,8 @@ export class ManageScribesComponent implements OnInit {
     if (this.filterStatus) {
       if (this.filterStatus.name === 'Hoạt động') {
         this.scribes = this.scribes.filter((m) => m.status === 5);
-        console.log("1");
-        
       } else {
         this.scribes = this.scribes.filter((m) => m.status === 6);
-        console.log("2");
-
       }
     }
 

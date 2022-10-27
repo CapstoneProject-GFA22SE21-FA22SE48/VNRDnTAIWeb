@@ -158,8 +158,6 @@ export class ManageQuestionsComponent implements OnInit {
       );
     }
 
-    console.log(this.filterQuestionCategoryId);
-
     //Filter test category
     if (this.filterQuestionCategoryId) {
       this.questions = this.questions.filter(
@@ -214,6 +212,7 @@ export class ManageQuestionsComponent implements OnInit {
     this.isChanging = false;
     this.invalidUpdatedQuestionAnswer = false;
     this.invalidUpdatedQuestionContent = false;
+    this.updateQuestionImgFile = undefined;
   }
 
   detectChange() {
@@ -275,7 +274,8 @@ export class ManageQuestionsComponent implements OnInit {
   }
 
   updateQuestion() {
-    this.fileUploadService
+    if(this.updateQuestionImgFile !== undefined && this.tmpSelectedQuestion.imgUrl !== ''){
+      this.fileUploadService
       .uploadImageToFirebase(
         this.updateQuestionImgFile,
         `images/mock-test/new/`
@@ -342,6 +342,66 @@ export class ManageQuestionsComponent implements OnInit {
           }
         );
       });
+    } else {
+      this.isLoadingService.add();
+        this.wrapperService.post(
+          paths.ScribeCreateQuestionForROM,
+          this.tmpSelectedQuestion,
+          getStorageToken(),
+          {
+            successCallback: (response) => {
+              this.wrapperService.post(
+                paths.ScribeCreateQuestionModificationRequest,
+                {
+                  modifiedQuestionId: this.selectedQuestion.id,
+                  modifyingQuestionId: response.data.id,
+                  scribeId: decodeToken(getStorageToken() || '').Id,
+                  adminId: this.selectedAdmin.id,
+                  operationType: OperationType.Update,
+                },
+                getStorageToken(),
+                {
+                  successCallback: (response) => {
+                    this.resetDataUpdateQuestion();
+                    this.displayUpdateDialog = false;
+                    this.messageService.add({
+                      key: 'createUpdateROMSuccess',
+                      severity: 'success',
+                      summary: commonStr.success,
+                      detail: commonStr.romCreatedSuccessfully,
+                    });
+                    this.loadAdmins();
+                    this.isLoadingService.remove();
+                  },
+                  errorCallback: (error) => {
+                    console.log(error);
+                    this.displayUpdateDialog = false;
+                    this.messageService.add({
+                      key: 'createUpdateROMError',
+                      severity: 'error',
+                      summary: commonStr.fail,
+                      detail: commonStr.errorOccur,
+                    });
+                    this.isLoadingService.remove();
+                  },
+                }
+              );
+            },
+            errorCallback: (error) => {
+              console.log(error);
+              this.displayUpdateDialog = false;
+              this.messageService.add({
+                key: 'createUpdateROMError',
+                severity: 'error',
+                summary: commonStr.fail,
+                detail: commonStr.errorOccur,
+              });
+              this.isLoadingService.remove();
+            },
+          }
+        );
+    }
+    
   }
 
   deleteQuestion() {
@@ -508,10 +568,12 @@ export class ManageQuestionsComponent implements OnInit {
     this.displayCreateDialog = false;
     this.inValidNewQuestionContent = false;
     this.inValidNewQuestionAnswer = false;
+    this.newQuestionImgFile = undefined;
   }
 
   createQuestion() {
-    this.fileUploadService
+    if(this.newQuestionImgFile !== undefined && this.newQuestionImgUrl !== ''){
+      this.fileUploadService
       .uploadImageToFirebase(this.newQuestionImgFile, `images/mock-test/new/`)
       .then((imgUrl: any) => {
         this.newQuestionImgUrl = imgUrl;
@@ -552,6 +614,7 @@ export class ManageQuestionsComponent implements OnInit {
                 getStorageToken(),
                 {
                   successCallback: (response) => {
+                    this.resetDataCreateQuestion();
                     this.displayCreateDialog = false;
                     this.messageService.add({
                       key: 'createAddROMSuccess',
@@ -590,5 +653,79 @@ export class ManageQuestionsComponent implements OnInit {
           }
         );
       });
+    } else {
+      var newAnswers: any[] = [];
+        this.newQuestionAnswers.forEach((a: any) => {
+          newAnswers.push({
+            description: a.description,
+            isCorrect: a.isCorrect,
+          });
+        });
+
+        this.newQuestion = {
+          testCategoryId: this.selectedTestCategoryId,
+          questionCategoryId: this.selectedQuestionCategoryId,
+          content: this.newQuestionContent,
+          answers: newAnswers,
+        };
+
+      this.isLoadingService.add();
+      this.wrapperService.post(
+        paths.ScribeCreateQuestionForROM,
+        this.newQuestion,
+        getStorageToken(),
+        {
+          successCallback: (response) => {
+            this.wrapperService.post(
+              paths.ScribeCreateQuestionModificationRequest,
+              {
+                // create new question -> no modifiedQuestionId
+                modifyingQuestionId: response.data.id,
+                scribeId: decodeToken(getStorageToken() || '').Id,
+                adminId: this.selectedAdmin.id,
+                operationType: OperationType.Add,
+              },
+              getStorageToken(),
+              {
+                successCallback: (response) => {
+                  this.resetDataCreateQuestion();
+                  this.displayCreateDialog = false;
+                  this.messageService.add({
+                    key: 'createAddROMSuccess',
+                    severity: 'success',
+                    summary: commonStr.success,
+                    detail: commonStr.romCreatedSuccessfully,
+                  });
+                  this.loadAdmins();
+                  this.isLoadingService.remove();
+                },
+                errorCallback: (error) => {
+                  console.log(error);
+                  this.displayCreateDialog = false;
+                  this.messageService.add({
+                    key: 'createAddROMError',
+                    severity: 'error',
+                    summary: commonStr.fail,
+                    detail: commonStr.errorOccur,
+                  });
+                  this.isLoadingService.remove();
+                },
+              }
+            );
+          },
+          errorCallback: (error) => {
+            console.log(error);
+            this.displayCreateDialog = false;
+            this.messageService.add({
+              key: 'createAddROMError',
+              severity: 'error',
+              summary: commonStr.fail,
+              detail: commonStr.errorOccur,
+            });
+            this.isLoadingService.remove();
+          },
+        }
+      );
+    }
   }
 }

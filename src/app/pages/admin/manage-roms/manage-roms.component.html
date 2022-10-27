@@ -240,8 +240,8 @@
   <ng-template pTemplate="content">
     <div class="w-12" style="height: 35%" *ngIf="selectedRom">
       <div class="w-12 flex p-2">
-        <div class="w-6 text-lg">
-          <span>Yêu cầu về: </span>
+        <div class="w-6">
+          <span class="text-lg font-bold">Yêu cầu về: </span>
         </div>
         <div class="w-6 text-lg flex justify-content-end">
           <span
@@ -279,7 +279,7 @@
 
       <div class="w-12 flex p-2">
         <div class="w-6">
-          <span class="text-lg">Loại yêu cầu: </span>
+          <span class="text-lg font-bold">Loại yêu cầu: </span>
         </div>
         <div class="w-6 text-lg font-italic flex justify-content-end">
           <span *ngIf="selectedRom.operationType === 0">Thêm mới</span>
@@ -290,7 +290,7 @@
 
       <div class="w-12 flex p-2">
         <div class="w-6">
-          <span class="text-lg">Trạng thái: </span>
+          <span class="text-lg font-bold">Trạng thái: </span>
         </div>
         <div class="w-6 text-lg flex justify-content-end">
           <span *ngFor="let st of status">
@@ -303,7 +303,7 @@
 
       <div class="w-12 flex p-2">
         <div class="w-6">
-          <span class="text-lg">Ngày tạo: </span>
+          <span class="text-lg font-bold">Ngày tạo: </span>
         </div>
         <div class="w-6 text-lg flex justify-content-end">
           <span>
@@ -314,20 +314,54 @@
     </div>
 
     <div class="w-12 overflow-y-auto" style="height: 55%">
-      <div class="w-12 flex p-2" style="height: 10%;">
+      <div class="w-12 flex p-2" style="height: 10%">
         <div class="w-6">
-          <span class="text-lg">Các thay đổi: </span>
+          <span class="text-lg font-bold">Các thay đổi: </span>
         </div>
       </div>
 
-      <div class="w-12 text-lg" style="height: 90%;">
-        <ngx-monaco-diff-editor
-        [options]="options"
-        [originalModel]="originalModel"
-        [modifiedModel]="changedModel"
-      ></ngx-monaco-diff-editor>
+      <div
+        class="w-12 text-lg"
+        style="height: 90%"
+        *ngIf="changedModel.code !== ''"
+      >
+        <div class="w-12 p-2 border-200 border-1 border-round-lg">
+          <ngx-monaco-diff-editor
+            [options]="options"
+            [originalModel]="originalModel"
+            [modifiedModel]="changedModel"
+          ></ngx-monaco-diff-editor>
+        </div>
+
+        
       </div>
-      
+
+      <div class="w-12 flex p-2" style="height: 10%" *ngIf="changedModelImg || originalModelImg">
+        <div class="w-6">
+          <span class="text-lg font-bold">Hình ảnh đính kèm: </span>
+        </div>
+      </div>
+      <div
+          class="w-12 flex p-2 border-200 border-1 border-round-lg overflow-hidden"
+          *ngIf="changedModelImg || originalModelImg"
+        >
+          <div class="w-6 flex justify-content-center align-items-center">
+            <img
+              *ngIf="originalModelImg"
+              class="w-15rem h-auto"
+              [src]="originalModelImg | safe: 'resourceUrl'"
+              alt="Hình ảnh"
+            />
+          </div>
+          <div class="w-6  flex justify-content-center align-items-center">
+            <img
+              *ngIf="changedModelImg"
+              class="w-15rem h-auto"
+              [src]="changedModelImg | safe: 'resourceUrl'"
+              alt="Hình ảnh"
+            />
+          </div>
+        </div>
     </div>
   </ng-template>
 

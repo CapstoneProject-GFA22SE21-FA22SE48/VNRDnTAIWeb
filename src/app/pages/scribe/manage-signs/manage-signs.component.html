@@ -204,7 +204,7 @@
             <img
               class="w-15rem h-auto max-h-15rem"
               *ngIf="chosenSign?.imageUrl"
-              [src]="chosenSign?.imageUrl"
+              [src]="chosenSign?.imageUrl  | safe: 'resourceUrl'"
               alt="Hình ảnh"
             />
           </div>
