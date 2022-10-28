@@ -124,6 +124,8 @@ export class ManageRomsComponent implements OnInit {
             }
           });
 
+          this.filterData();
+
           this.isLoadingService.remove();
         },
         errorCallback: (error) => {
@@ -255,13 +257,12 @@ export class ManageRomsComponent implements OnInit {
       paths.AdminGetParagraphRomDetailReference + '/' + paragraphId,
       getStorageToken(),
       {
-        successCallback: (response) => {
-          if (response.data?.length > 0) {
+        successCallback: async (response) => {
+           if (response.data?.length > 0) {
             this.selectedParagraphRomReferenceSub.next(
               `Các hành vi liên quan:\n`
             );
-
-            // for await (const r of response.data) {
+            // response.data.forEach((r: any, i: number) => {
             //   this.selectedParagraphRomReferenceSub.next(
             //     `\t${r.referenceParagraphSectionStatueName} > ${
             //       r.referenceParagraphSectionName
@@ -269,26 +270,33 @@ export class ManageRomsComponent implements OnInit {
             //       r.referenceParagraphIsExcluded ? 'ngoại trừ' : 'bao gồm'
             //     })\n`
             //   );
-            // }
-            response.data.forEach((r: any, i: number) => {
-              this.selectedParagraphRomReferenceSub.next(
-                `\t${r.referenceParagraphSectionStatueName} > ${
-                  r.referenceParagraphSectionName
-                } > ${r.referenceParagraphName} (${
-                  r.referenceParagraphIsExcluded ? 'ngoại trừ' : 'bao gồm'
-                })\n`
-              );
-              if(i === response.data?.length -1){
-                this.selectedParagraphRomReferenceSub.complete();
-              }
-            });
+            //   if(i === response.data?.length -1){
+            //     this.selectedParagraphRomReferenceSub.complete();
+            //     this.isLoadingService.remove();
+            //   }
+            // });
 
+              for await (const r of response.data) {
+                this.selectedParagraphRomReferenceSub.next(
+                  `\t${r.referenceParagraphSectionStatueName} > ${
+                    r.referenceParagraphSectionName
+                  } > ${r.referenceParagraphName} (${
+                    r.referenceParagraphIsExcluded ? 'ngoại trừ' : 'bao gồm'
+                  })\n`
+                );
+                if(response.data?.indexOf(r) === response.data?.length -1){
+                  console.log(response.data?.indexOf(r));
+                this.selectedParagraphRomReferenceSub.complete();
+              this.isLoadingService.remove();
+                }
+              };
+          } else if(response.data?.length === 0){
+              this.selectedParagraphRomReferenceSub.complete();
+              this.isLoadingService.remove();
           }
-          this.isLoadingService.remove();
         },
         errorCallback: (error) => {
           console.log(error);
-
           this.isLoadingService.remove();
         },
       }
@@ -300,6 +308,9 @@ export class ManageRomsComponent implements OnInit {
     this.selectedRom = rom;
     this.originalModel.code = '';
     this.changedModel.code = '';
+    this.changedModelImg = undefined;
+    this.originalModelImg = undefined;    
+
 
     if (this.selectedRom.lawRomId) {
       this.isLoadingService.add();
@@ -416,7 +427,7 @@ export class ManageRomsComponent implements OnInit {
                   `Nội dung:\n` +
                   `\t${this.selectedRom.modifyingParagraph?.description}\n` +
                   `Hình phạt bổ sung (nếu có):\n` +
-                  `\t${this.selectedRom.modifyingParagraph?.additionalPenalty}\n`;
+                  `\t${this.selectedRom.modifyingParagraph?.additionalPenalty !== null ? this.selectedRom.modifyingParagraph?.additionalPenalty : '{không}'}\n`;
                 this.paragraphReferencesObservable(
                   // this.selectedRom.modifyingParagraphId
                   this.selectedRom.modifyingParagraph?.id || this.selectedRom.modifyingParagraphId
@@ -442,7 +453,7 @@ export class ManageRomsComponent implements OnInit {
                   `Nội dung:\n` +
                   `\t${this.selectedRom.modifiedParagraph?.description}\n` +
                   `Hình phạt bổ sung (nếu có):\n` +
-                  `\t${this.selectedRom.modifiedParagraph?.additionalPenalty}\n`;
+                  `\t${this.selectedRom.modifiedParagraph?.additionalPenalty? this.selectedRom.modifiedParagraph?.additionalPenalty : '{không}'}\n`;
                 this.paragraphReferencesObservable(
                   this.selectedRom.modifiedParagraph?.id || this.selectedRom.modifiedParagraphId
                 ).subscribe({
@@ -681,7 +692,37 @@ export class ManageRomsComponent implements OnInit {
             }
           );
         } else if (this.selectedRom.lawRomId && this.selectedRom.modifyingSectionId){
-          //TODO
+          this.isLoadingService.add();
+          this.wrapperService.post(
+            paths.AdminApproveSectionRom +
+              '/' +
+              this.selectedRom.modifyingSectionId,
+            {},
+            getStorageToken(),
+            {
+              successCallback: (response) => {
+                this.clearData();
+                this.displayRomDetailDialog = false;
+                this.loadRoms();
+
+                this.messageService.add({
+                  severity: 'success',
+                  summary: commonStr.success,
+                  detail: commonStr.dataUpdatedSuccessfully,
+                });
+                this.isLoadingService.remove();
+              },
+              errorCallback: (error) => {
+                console.log(error);
+                this.messageService.add({
+                  severity: 'error',
+                  summary: commonStr.fail,
+                  detail: commonStr.errorOccur,
+                });
+                this.isLoadingService.remove();
+              },
+            }
+          );
         } else if (this.selectedRom.lawRomId && this.selectedRom.modifyingParagraphId){
           this.isLoadingService.add();
           this.wrapperService.post(
@@ -827,7 +868,36 @@ export class ManageRomsComponent implements OnInit {
         }
       );
     } else if (this.selectedRom.lawRomId && this.selectedRom.modifyingSectionId){
-      //TODO
+      this.isLoadingService.add();
+      this.wrapperService.post(
+        paths.AdminDenySectionRom + '/' + this.selectedRom.modifyingSectionId,
+        this.deniedReason
+        ,
+        getStorageToken(),
+        {
+          successCallback: (response) => {
+            this.clearData();
+            this.displayRomDetailDialog = false;
+            this.loadRoms();
+
+            this.messageService.add({
+              severity: 'success',
+              summary: commonStr.success,
+              detail: commonStr.dataUpdatedSuccessfully,
+            });
+            this.isLoadingService.remove();
+          },
+          errorCallback: (error) => {
+            console.log(error);
+            this.messageService.add({
+              severity: 'error',
+              summary: commonStr.fail,
+              detail: commonStr.errorOccur,
+            });
+            this.isLoadingService.remove();
+          },
+        }
+      );
     } else if (this.selectedRom.lawRomId && this.selectedRom.modifyingParagraphId){
       this.isLoadingService.add();
       this.wrapperService.post(
@@ -940,11 +1010,11 @@ export class ManageRomsComponent implements OnInit {
 
   clearData() {
     this.selectedRom = undefined;
-    this.filterSearchStr = undefined;
-    this.filterStatusCode = undefined;
-    this.filterRangeDates = undefined;
-    this.filterRequesterId = undefined;
-    this.filterRomTypeCode = undefined;
+    // this.filterSearchStr = undefined;
+    // this.filterStatusCode = undefined;
+    // this.filterRangeDates = undefined;
+    // this.filterRequesterId = undefined;
+    // this.filterRomTypeCode = undefined;
     this.deniedReason = undefined;
     this.displayConfirmDenyDialog = false;
     this.displayRomDetailDialog = false;

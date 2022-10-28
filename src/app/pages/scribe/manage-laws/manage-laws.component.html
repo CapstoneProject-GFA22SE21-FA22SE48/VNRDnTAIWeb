@@ -1082,12 +1082,19 @@
 
     <div style="height: 75%" class="p-2 overflow-auto">
       <span
-        *ngIf="paragraphs && paragraphs.length === 1 && !searchParagraphStr"
+        *ngIf="!(tmpParagraphs &&
+        tmpParagraphs.length > 1 &&
+        tmpParagraphs[0].name !== '' &&
+        tmpParagraphs[0].description !== '') && !searchParagraphStr"
         class="text-lg text-blue-500 font-bold"
       >
         {{ selectedSection?.name }} không chứa điểm.
       </span>
       <p-table
+      *ngIf="(tmpParagraphs &&
+      tmpParagraphs.length > 1 &&
+      tmpParagraphs[0].name !== '' &&
+      tmpParagraphs[0].description !== '')"
         [value]="paragraphs"
         [paginator]="paragraphs?.length > 8 ? true : false"
         [rows]="8"
@@ -1664,8 +1671,8 @@
         ></button>
       </div>
       <div
-        class="text-lg border-1 border-400 border-round-sm overflow-auto p-1 max-h-5rem mb-3"
-        style="min-height: 2rem"
+        class="text-lg border-1 border-400 border-round-sm overflow-auto max-h-5rem mb-3"
+        style="min-height: 2rem; padding: 0.5rem 0 0.5rem 0"
       >
         <span
           *ngFor="
@@ -1706,8 +1713,8 @@
         ></button>
       </div>
       <div
-        class="text-lg border-1 border-400 border-round-sm overflow-auto max-h-5rem p-1 mb-3"
-        style="min-height: 2rem"
+        class="text-lg border-1 border-400 border-round-sm overflow-auto max-h-5rem mb-3"
+        style="min-height: 2rem; padding: 0.5rem 0 0.5rem 0"
       >
         <span
           *ngFor="

@@ -6,5 +6,6 @@ export enum Status {
     Denied = 4,
     Active = 5,
     Deactivated = 6,
-    Approved = 7
+    Approved = 7,
+    Cancelled = 8
 }
