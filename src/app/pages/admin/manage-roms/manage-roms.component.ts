@@ -29,6 +29,7 @@ export class ManageRomsComponent implements OnInit {
     { statusName: 'Đã duyệt', statusCode: 7 },
     { statusName: 'Đã từ chối', statusCode: 4 },
     { statusName: 'Đã xử lý', statusCode: 3 },
+    { statusName: 'Đã bị hủy', statusCode: 8 },
   ];
   filterStatusCode: any;
 
@@ -285,7 +286,7 @@ export class ManageRomsComponent implements OnInit {
                   })\n`
                 );
                 if(response.data?.indexOf(r) === response.data?.length -1){
-                  console.log(response.data?.indexOf(r));
+                  // console.log(response.data?.indexOf(r));
                 this.selectedParagraphRomReferenceSub.complete();
               this.isLoadingService.remove();
                 }
@@ -305,6 +306,8 @@ export class ManageRomsComponent implements OnInit {
   }
 
   viewInfo(rom: any) {
+    
+
     this.selectedRom = rom;
     this.originalModel.code = '';
     this.changedModel.code = '';
