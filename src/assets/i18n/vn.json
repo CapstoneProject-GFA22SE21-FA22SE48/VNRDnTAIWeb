@@ -31,5 +31,7 @@
     "T12"
   ],
   "emptyMessage": "Không có dữ liệu",
-  "emptyFilterMessage": "Không có dữ liệu"
+  "emptyFilterMessage": "Không có dữ liệu",
+  "accept": "Đồng ý",
+  "reject": "Hủy"
 }

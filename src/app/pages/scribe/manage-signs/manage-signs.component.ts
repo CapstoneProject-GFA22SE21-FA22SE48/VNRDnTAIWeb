@@ -254,7 +254,8 @@ export class ManageSignsComponent implements OnInit {
   }
 
   updateChosenSign() {
-    this.fileUploadService
+    if(this.tmpChosenSignNewImageFile !== undefined){
+      this.fileUploadService
       .uploadImageToFirebase(
         this.tmpChosenSignNewImageFile,
         `images/sign-collection/new/${this.tmpChosenSign.name.split(' ')[2]}`
@@ -318,6 +319,63 @@ export class ManageSignsComponent implements OnInit {
           }
         );
       });
+    } else {
+      this.isLoadingService.add();
+        this.wrapperService.post(
+          paths.ScribeCreateSignForROM,
+          this.tmpChosenSign,
+          getStorageToken(),
+          {
+            successCallback: (response) => {
+              this.wrapperService.post(
+                paths.ScribeCreateSignModificationRequest,
+                {
+                  modifiedSignId: this.chosenSign.id,
+                  modifyingSignId: response.data.id,
+                  scribeId: decodeToken(getStorageToken() || '').Id,
+                  adminId: this.selectedAdmin.id,
+                  operationType: OperationType.Update,
+                },
+                getStorageToken(),
+                {
+                  successCallback: (response) => {
+                    this.clearTmpChosenSignNewData();
+                    this.displayConfirmUpdateChosenSign = false;
+                    this.messageService.add({
+                      severity: 'success',
+                      summary: commonStr.success,
+                      detail: commonStr.romCreatedSuccessfully,
+                    });
+                    this.loadAdmins();
+                    this.isLoadingService.remove();
+                  },
+                  errorCallback: (error) => {
+                    console.log(error);
+                    this.displayConfirmUpdateChosenSign = false;
+                    this.messageService.add({
+                      severity: 'error',
+                      summary: commonStr.fail,
+                      detail: commonStr.errorOccur,
+                    });
+                    this.isLoadingService.remove();
+                  },
+                }
+              );
+            },
+            errorCallback: (error) => {
+              console.log(error);
+              this.displayConfirmUpdateChosenSign = false;
+              this.messageService.add({
+                severity: 'error',
+                summary: commonStr.fail,
+                detail: commonStr.errorOccur,
+              });
+              this.isLoadingService.remove();
+            },
+          }
+        );
+    }
+    
   }
 
   deleteChosenSign() {

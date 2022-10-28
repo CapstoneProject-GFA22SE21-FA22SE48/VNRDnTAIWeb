@@ -31,6 +31,17 @@ export const AdminGetParagraphRomDetailReference: string = base + '/LawModificat
 export const AdminGetSignRomDetail: string = base + '/SignModificationRequests/SignROMDetail';
 export const AdminGetQuestionRomDetail: string = base + '/QuestionModificationRequests/QuestionROMDetail';
 
+export const AdminApproveQuestionRom: string = base + '/QuestionModificationRequests/Approve';
+export const AdminDenyQuestionRom: string = base + '/QuestionModificationRequests/Deny';
+export const AdminApproveSignRom: string = base + '/SignModificationRequests/Approve';
+export const AdminDenySignRom: string = base + '/SignModificationRequests/Deny';
+export const AdminApproveStatueRom: string = base + '/LawModificationRequests/Statue/Approve';
+export const AdminDenyStatueRom: string = base + '/LawModificationRequests/Statue/Deny';
+export const AdminApproveSectionRom: string = base + '/LawModificationRequests/Section/Approve';
+export const AdminDenySectionRom: string = base + '/LawModificationRequests/Section/Deny';
+export const AdminApproveParagraphRom: string = base + '/LawModificationRequests/Paragraph/Approve';
+export const AdminDenyParagraphRom: string = base + '/LawModificationRequests/Paragraph/Deny';
+
 // Scribe
 export const ScribeGetAssignedQuestions: string = base + '/Questions/AssignedQuestions/Scribes';
 export const ScribeGetTestCategories: string = base + '/TestCategories';

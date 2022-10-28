@@ -1037,13 +1037,14 @@
     <div
       style="height: 10%"
       class="p-2"
-      *ngIf="
+      
+    >
+    <!-- *ngIf="
         paragraphs &&
         paragraphs.length > 1 &&
         paragraphs[0].name !== '' &&
         paragraphs[0].description !== ''
-      "
-    >
+      " -->
       <div class="flex align-items-center">
         <div class="flex justify-content-start" style="width: 37%">
           <div class="w-full">
@@ -1052,6 +1053,12 @@
               <input
                 type="text"
                 pInputText
+                [disabled]="
+                !(tmpParagraphs &&
+                tmpParagraphs.length > 1 &&
+                tmpParagraphs[0].name !== '' &&
+                tmpParagraphs[0].description !== '')
+                "
                 placeholder="Tìm kiếm điểm..."
                 [(ngModel)]="searchParagraphStr"
                 [style]="{ height: '35px', width: '100%' }"
@@ -1094,34 +1101,53 @@
             <th
               [ngStyle]="{ width: '5%', 'text-align': 'center' }"
               *ngIf="
+                tmpParagraphs &&
+                tmpParagraphs.length > 1 &&
+                tmpParagraphs[0].name !== '' &&
+                tmpParagraphs[0].description !== ''
+              "
+            >
+            <!-- *ngIf="
                 paragraphs &&
                 paragraphs.length > 1 &&
                 paragraphs[0].name !== '' &&
                 paragraphs[0].description !== ''
-              "
-            >
+              " -->
               #
             </th>
             <th
               [ngStyle]="{ width: '18%', 'text-align': 'center' }"
               *ngIf="
+              tmpParagraphs &&
+              tmpParagraphs.length > 1 &&
+              tmpParagraphs[0].name !== '' &&
+              tmpParagraphs[0].description !== ''
+            "
+            >
+            <!-- *ngIf="
                 paragraphs &&
                 paragraphs.length > 1 &&
                 paragraphs[0].name !== '' &&
                 paragraphs[0].description !== ''
-              "
-            >
+              " -->
               Điểm
             </th>
             <th
               [ngStyle]="{ width: '52%', 'text-align': 'center' }"
               *ngIf="
+              tmpParagraphs &&
+              tmpParagraphs.length > 1 &&
+              tmpParagraphs[0].name !== '' &&
+              tmpParagraphs[0].description !== ''
+            "
+              
+            >
+            <!-- *ngIf="
                 paragraphs &&
                 paragraphs.length > 1 &&
                 paragraphs[0].name !== '' &&
                 paragraphs[0].description !== ''
-              "
-            >
+              " -->
               Nội dung
             </th>
             <th [ngStyle]="{ width: '12.5%', 'text-align': 'center' }">
@@ -1138,26 +1164,41 @@
             <td
               class="text-center"
               *ngIf="
+              tmpParagraphs &&
+              tmpParagraphs.length > 1 &&
+              tmpParagraphs[0].name !== '' &&
+              tmpParagraphs[0].description !== ''
+            "
+              
+            >
+            <!-- *ngIf="
                 paragraphs &&
                 paragraphs.length > 1 &&
                 paragraphs[0].name !== '' &&
                 paragraphs[0].description !== ''
-              "
-            >
+              " -->
               {{ i + 1 }}
             </td>
             <td
               class="text-center"
               *ngIf="
+              tmpParagraphs &&
+              tmpParagraphs.length > 1 &&
+              tmpParagraphs[0].name !== '' &&
+              tmpParagraphs[0].description !== ''
+            "
+              
+            >
+            <!-- *ngIf="
                 paragraphs &&
                 paragraphs.length > 1 &&
                 paragraphs[0].name !== '' &&
                 paragraphs[0].description !== ''
-              "
-            >
+              " -->
               {{ paragraph.name }}
             </td>
-            <td class="text-center" *ngIf="paragraphs && paragraphs.length > 1">
+            <td class="text-center" *ngIf="tmpParagraphs && tmpParagraphs.length > 1">
+              <!-- *ngIf="paragraphs && paragraphs.length > 1" -->
               <div
                 class="w-20rem overflow-hidden white-space-nowrap text-overflow-ellipsis text-center"
               >
