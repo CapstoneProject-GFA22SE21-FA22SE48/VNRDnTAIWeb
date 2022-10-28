@@ -116,6 +116,18 @@
             <td [ngStyle]="{ 'text-align': 'center' }">
               <div
                 class="w-12 white-space-nowrap overflow-hidden text-overflow-ellipsis"
+                [className] = "
+                (rom.modifyingStatueName ||
+                rom.modifyingSectionName ||
+                rom.modifyingParagraphName) ?
+                'bg-green-300 pl-2 pr-2' :
+                (rom.modifyingSignName || rom.modifyingGpssignName) ?
+                'bg-orange-300 pl-2 pr-2' :
+                (rom.modifyingQuestionContent) ? 
+                'bg-blue-300 pl-2 pr-2' : 
+                (rom.modfifyingUserName) ?
+                'bg-pink-300 pl-2 pr-2' : ''
+                "
               >
                 <span
                   *ngIf="
@@ -123,25 +135,25 @@
                     rom.modifyingSectionName ||
                     rom.modifyingParagraphName
                   "
-                  class="text-green-500 font-bold"
+                  class="text-white font-bold"
                 >
                   Luật
                 </span>
                 <span
                   *ngIf="rom.modifyingSignName || rom.modifyingGpssignName"
-                  class="text-orange-500 font-bold"
+                  class="text-white font-bold"
                 >
                   Biển báo
                 </span>
                 <span
                   *ngIf="rom.modifyingQuestionContent"
-                  class="text-blue-500 font-bold"
+                  class="text-white font-bold"
                 >
                   Câu hỏi
                 </span>
                 <span
                   *ngIf="rom.modfifyingUserName"
-                  class="text-red-500 font-bold"
+                  class="text-white font-bold"
                 >
                   Đề xuất
                 </span>
@@ -185,9 +197,21 @@
                 class="w-12 white-space-nowrap overflow-hidden text-overflow-ellipsis"
               >
                 <span *ngFor="let st of status">
-                  <span *ngIf="st.statusCode === rom.status">
+                  <span *ngIf="st.statusCode === rom.status"
+                  [className] = "
+                    rom.status === 7 ? 
+                    'text-green-300 font-bold' :
+                    rom.status === 4 ? 
+                    'text-red-300 font-bold' :
+                    rom.status === 3 ? 
+                    'text-indigo-300 font-bold' : ''
+                  ">
                     {{ st.statusName }}
                   </span>
+                </span>
+                <!-- pending is 0 but dropdown of primeng need start from 1 -->
+                <span *ngIf="0 === rom.status" class="text-yellow-300 font-bold">
+                  Chờ duyệt
                 </span>
               </div>
             </td>
@@ -294,9 +318,21 @@
         </div>
         <div class="w-6 text-lg flex justify-content-end">
           <span *ngFor="let st of status">
-            <span *ngIf="st.statusCode === selectedRom.status">
+            <span *ngIf="st.statusCode === selectedRom.status"
+            [className] = "
+            selectedRom.status === 7 ? 
+                    'text-green-300 font-bold' :
+                    selectedRom.status === 4 ? 
+                    'text-red-300 font-bold' :
+                    selectedRom.status === 3 ? 
+                    'text-indigo-300 font-bold' : ''
+                  ">
               {{ st.statusName }}
             </span>
+          </span>
+          <!-- pending is 0 but dropdown of primeng need start from 1 -->
+          <span *ngIf="0 === selectedRom.status" class="text-yellow-300 font-bold">
+            Chờ duyệt
           </span>
         </div>
       </div>
@@ -332,48 +368,70 @@
             [modifiedModel]="changedModel"
           ></ngx-monaco-diff-editor>
         </div>
-
-        
       </div>
 
-      <div class="w-12 flex p-2" style="height: 10%" *ngIf="changedModelImg || originalModelImg">
-        <div class="w-6">
+      <div
+        class="w-12 flex p-2"
+        style="height: 10%"
+        *ngIf="changedModelImg || originalModelImg"
+      >
+        <div class="w-6" *ngIf="changedModelImg || originalModelImg">
           <span class="text-lg font-bold">Hình ảnh đính kèm: </span>
         </div>
       </div>
       <div
-          class="w-12 flex p-2 border-200 border-1 border-round-lg overflow-hidden"
-          *ngIf="changedModelImg || originalModelImg"
-        >
-          <div class="w-6 flex justify-content-center align-items-center">
-            <img
-              *ngIf="originalModelImg"
-              class="w-15rem h-auto"
-              [src]="originalModelImg | safe: 'resourceUrl'"
-              alt="Hình ảnh"
-            />
-          </div>
-          <div class="w-6  flex justify-content-center align-items-center">
-            <img
-              *ngIf="changedModelImg"
-              class="w-15rem h-auto"
-              [src]="changedModelImg | safe: 'resourceUrl'"
-              alt="Hình ảnh"
-            />
-          </div>
+        class="w-12 flex p-2 border-200 border-1 border-round-lg overflow-hidden"
+        *ngIf="changedModelImg || originalModelImg"
+      >
+        <div class="w-6 flex justify-content-center align-items-center">
+          <img
+            *ngIf="originalModelImg"
+            class="w-15rem h-auto"
+            [src]="originalModelImg | safe: 'resourceUrl'"
+            alt="Hình ảnh gốc"
+          />
         </div>
+        <div class="w-6 flex justify-content-center align-items-center">
+          <img
+            *ngIf="changedModelImg"
+            class="w-15rem h-auto"
+            [src]="changedModelImg | safe: 'resourceUrl'"
+            alt="Hình ảnh sửa đổi"
+          />
+        </div>
+      </div>
+
+      <div class="w-12 flex p-2" style="height: 10%" *ngIf="selectedRom?.deniedReason">
+        <div class="w-6">
+          <span class="text-lg font-bold">Lý do từ chối: </span>
+        </div>
+      </div>
+
+      <div
+        class="w-12 text-lg"
+        style="height: 90%"
+        *ngIf="selectedRom?.deniedReason"
+      >
+        <div class="w-12 p-2 border-200 border-1 border-round-lg">
+          <span>
+            {{selectedRom?.deniedReason}}
+          </span>
+        </div>
+      </div>
     </div>
   </ng-template>
 
+  <!-- *ngIf="selectedRom?.status === 0" -->
   <ng-template pTemplate="footer">
     <div class="w-12 flex" style="height: 10%">
-      <div class="w-6">
+      <div class="w-6 flex justify-content-start">
         <button
           pButton
           pRipple
           label="Từ chối"
           class="p-button-outlined p-button-danger"
           [style]="{ height: '35px', border: '3px solid' }"
+          (click)="displayConfirmDenyDialog = true"
         ></button>
       </div>
       <div class="w-6 flex justify-content-end">
@@ -385,10 +443,61 @@
           [style]="{ height: '35px', border: '3px solid' }"
           (click)="confirmApproveRom($event)"
         ></button>
-
       </div>
     </div>
   </ng-template>
 </p-dialog>
 
-<p-confirmPopup></p-confirmPopup>
+<p-confirmPopup key="confirmApprove"></p-confirmPopup>
+
+<p-dialog
+  [(visible)]="displayConfirmDenyDialog"
+  [modal]="true"
+  [style]="{ width: '35vw' }"
+>
+  <ng-template pTemplate="header">
+    <h3 class="text-red-500">Xác nhận từ chối</h3>
+  </ng-template>
+
+  <ng-template pTemplate="body">
+    <div class="text-lg">
+      <textarea
+        class="w-full h-7rem overflow-y-auto"
+        [rows]="10"
+        pInputTextarea
+        [(ngModel)]="deniedReason"
+        (keyup)="getDeniedReason()"
+        placeholder="Lý do..."
+      ></textarea>
+    </div>
+    <div *ngIf="!isValidDeniedReason">
+      <small class="p-block p-error">
+        Vui lòng nhập lý do từ chối (tối đa 2000 ký tự)
+      </small>
+    </div>
+  </ng-template>
+
+  <ng-template pTemplate="footer">
+    <button
+      type="button"
+      pButton
+      icon="pi pi-times"
+      label="Hủy"
+      class="p-button-danger"
+      style="height: 40px"
+      (click)="displayConfirmDenyDialog = false; deniedReason = undefined; isValidSubmitDenyRom = false; isValidDeniedReason = true"
+    ></button>
+    <button
+      type="button"
+      pButton
+      icon="pi pi-check"
+      label="Đồng ý"
+      class="p-button-success"
+      style="height: 40px"
+      (click)="confirmedDenyRom()"
+      [disabled]="!isValidSubmitDenyRom"
+    ></button>
+  </ng-template>
+</p-dialog>
+
+<p-toast life="1500"></p-toast>
