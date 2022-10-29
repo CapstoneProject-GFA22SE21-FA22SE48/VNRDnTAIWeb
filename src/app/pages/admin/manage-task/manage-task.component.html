@@ -1,31 +1,140 @@
-<div class="" id="container">
-  <div class="p-2 mb-1">
-    <span>icon</span>
-    <span class="text-xl">Quản lý công việc</span>
+<div class="h-full p-0">
+  <div class="w-12 p-2" style="height: 6%">
+    <fa-icon class="fa-lg mr-2" [icon]="['fas', 'clipboard']"></fa-icon>
+    <span class="text-xl">Phân chia công việc</span>
   </div>
-  Prime
 
-</div>
-<div cdkDropListGroup class="p-2 mb-1">
-  <div class="scribe-container">    
-    <div *ngFor="let scribe of scribes" class="example-container  card-task">
-      <h2>{{scribe.username}}</h2>
-      <div cdkDropList id="{{scribe.id}}" [cdkDropListData]="assignedTasks"
-        class="example-list" (cdkDropListDropped)="drop($event)">
-        <div *ngIf=" "></div>
-        <!-- <div class="example-box" *ngFor="let task of assignedTasks" cdkDrag>{{task?.taskName}}</div> -->
+  <div class="w-12 p-2 flex" style="height: 94%" *ngIf="scribes">
+    <div class="w-8 p-2 overflow-y-auto surface-200 border-round-lg">
+      <div *ngFor="let scribe of scribes">
+        <div
+          class="h-9rem bg-white p-2 mt-2 mb-2 border-round-lg"
+          *ngIf="scribe.username"
+        >
+          <div *ngIf="scribe.username" style="height: 20%" class="p-2">
+            <span class="text-lg"> Nhân viên: </span>
+            <span class="text-lg font-bold">{{ scribe.username }}</span>
+          </div>
+
+          <div
+            style="height: 80%"
+            cdkDropList
+            id="{{ scribe.id }}"
+            [cdkDropListData]="scribe.taskList"
+            [cdkDropListConnectedTo]="connectedTo"
+            (cdkDropListDropped)="drop($event)"
+            class="p-2 flex white-space-nowrap overflow-x-auto"
+          >
+            <div *ngFor="let task of scribe.taskList" cdkDrag class="flex align-items-center">
+              <div
+                [className]="
+                  task?.taskName.toString().split('>')[0].trim() === 'Biển báo'
+                    ? 'h-4rem flex justify-content-center align-items-center p-2 mr-2 ml-2 border-round-lg bg-blue-400 '
+                    : task?.taskName
+                        .toString()
+                        .split('>')[0]
+                        .trim()
+                        .includes('Câu hỏi')
+                    ? 'h-4rem flex justify-content-center align-items-center p-2 mr-2 ml-2 border-round-lg bg-pink-400 '
+                    : task?.taskName.toString().split('>')[0].trim() === 'Mục'
+                    ? 'h-4rem flex justify-content-center align-items-center p-2 mr-2 ml-2 border-round-lg bg-green-400 '
+                    : 'h-4rem flex justify-content-center align-items-center p-2 mr-2 ml-2 border-round-lg bg-yellow-400 '
+                "
+              >
+                <span class="text-white font-bold">
+                  {{ task.taskName }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-  <div class="">
-  <div class="ua-task-container">
-    <h2>Unassigned Column</h2>
-    <div cdkDropList #unassignedTaskList="cdkDropList" [cdkDropListData]="unAssignedTasks" class="example-list"
-      (cdkDropListDropped)="drop($event)">
-      <div class="example-box" *ngFor="let task of unAssignedTasks" cdkDrag>{{task?.taskName}}</div>
+
+    <div class="w-4 pl-2 pr-2 h-full">
+      <span *ngFor="let scribe of scribes">
+        <div *ngIf="!scribe.username" class="h-full">
+          <div class="h-full">
+            <div
+              class="flex justify-content-center"
+              style="height: 8%"
+            >
+              <span class="text-xl font-bold"> Công việc chưa được chỉ định </span>
+            </div>
+
+            <div
+              style="height: 84%"
+              cdkDropList
+              id="{{ scribe.id }}"
+              [cdkDropListData]="scribe.taskList"
+              [cdkDropListConnectedTo]="connectedTo"
+              (cdkDropListDropped)="drop($event)"
+              class="p-2 overflow-auto border-200 border-2 border-round-lg"
+            >
+              <div *ngFor="let task of scribe.taskList" cdkDrag class="m-2">
+                <div
+                  [className]="
+                    task?.taskName.toString().split('>')[0].trim() ===
+                    'Biển báo'
+                      ? 'h-4rem p-2 mr-2 ml-2 border-round-lg bg-blue-400 
+                       overflow-hidden white-space-nowrap text-overflow-ellipsis
+                      flex justify-content-center align-items-center'
+                      : task?.taskName
+                          .toString()
+                          .split('>')[0]
+                          .trim()
+                          .includes('Câu hỏi')
+                      ? 'h-4rem p-2 mr-2 ml-2 border-round-lg bg-pink-400
+                       overflow-hidden white-space-nowrap text-overflow-ellipsis
+                      flex justify-content-center align-items-center'
+                      : task?.taskName.toString().split('>')[0].trim() === 'Mục'
+                      ? 'h-4rem p-2 mr-2 ml-2 border-round-lg bg-green-400 
+                       overflow-hidden white-space-nowrap text-overflow-ellipsis
+                      flex justify-content-center align-items-center'
+                      : 'h-4rem p-2 mr-2 ml-2 border-round-lg bg-yellow-400 
+                       overflow-hidden white-space-nowrap text-overflow-ellipsis
+                      flex justify-content-center align-items-center'
+                  "
+                >
+                  <span class="text-white font-bold">
+                    {{ task.taskName }}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div class="w-12 flex align-items-end" style="height: 8%">
+              <div class="w-6">
+                <button
+                pButton
+                type="button"
+                label="Đặt lại"
+                [style]="{height: '35px', border: '3px solid'}"
+                class="p-button-outlined p-button-danger"
+                (click)="resetScribes()"
+              ></button>
+
+              
+              </div>
+              <div class="w-6 flex justify-content-end">
+                <button
+                pButton
+                type="button"
+                label="Lưu thay đổi"
+                [disabled]="!isChanged"
+                [style]="{height: '35px', border: '3px solid'}"
+                class="p-button-outlined p-button-success"
+                (click)="confirmApproveSaveChange($event)"
+              ></button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </span>
     </div>
   </div>
 </div>
 
-
+<p-confirmPopup key="confirmApprove"></p-confirmPopup>
+<p-toast life="1500"></p-toast>
 

@@ -37,7 +37,7 @@ export class SidebarComponent implements OnInit {
       routerLink: '/admin/manage-members',
     },
     {
-      label: 'Quản lý công việc',
+      label: 'Phân chia công việc',
       routerLink: '/admin/manage-task',
     },
   ];
