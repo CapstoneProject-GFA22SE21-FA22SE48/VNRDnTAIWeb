@@ -1,17 +1,9 @@
-#container {
-    height: 100%;
+::ng-deep .p-datepicker-header{
+    height: 2rem;
 }
 
-#left {
-    border-right: 3px solid #EFEFEF;
-}
-
-#top-left {
-    height: 50%;
-    padding: 2%;
-}
-
-#bottom-left {
-    height: 50%;
-    padding: 2%;
+#date-pick-scribe ::ng-deep .p-calendar .p-datepicker {
+    max-height: 9rem;
+    overflow-x: hidden;
+    overflow-y: auto;
 }

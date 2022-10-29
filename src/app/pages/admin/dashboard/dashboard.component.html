@@ -1,6 +1,6 @@
-<div class="flex" id="container">
-  <div id="left" class="w-6">
-    <div id="top-left" class="pt-2 pl-2">
+<div class="flex h-full">
+  <div class="w-6 border-200 border-right-3">
+    <div class="p-2 overflow-auto" style="height: 47.5%">
       <fa-icon class="fa-lg mr-2" [icon]="['far', 'circle-user']"></fa-icon>
       <span class="text-xl">Quản lý thành viên</span>
 
@@ -10,51 +10,257 @@
         </div>
         <div class="w-8">
           <span class="font-bold text-2xl" style="color: #0039ca">
-            {{ totalUser }}</span>
+            {{ totalUser }}</span
+          >
         </div>
       </div>
       <p-chart
         type="line"
         [data]="chartAllMemberData"
-        [options]="chartOptions"
-        height="15rem"
+        [options]="lineChartOptions"
+        height="14rem"
       ></p-chart>
     </div>
-    
-    <div id="bottom-left" class="pt-2 pl-2">
+
+    <div class="p-2 overflow-auto" style="height: 47.5%">
       <div class="flex h-2rem mt-4 align-items-center">
         <div class="w-4">
           <span>Thành viên mới</span>
         </div>
         <div class="w-1">
-          <span class="font-bold text-2xl" style="color: #22C55E">
-            {{ newUser }}</span>
+          <span class="font-bold text-2xl" style="color: #22c55e">
+            {{ newUser }}</span
+          >
         </div>
-        <div class="w-7 text-right mr-2">
-            <span class="mr-2">Thời gian</span>
-            <p-calendar
-            #calendar
-            [(ngModel)]="monthYearPick"
+        <div class="w-7 mr-2 flex justify-content-end align-items-center">
+          <span class="mr-2">Thời gian</span>
+          <p-calendar
+            [(ngModel)]="monthYearPickNewMember"
             [showIcon]="true"
             dateFormat="mm/yy"
             [readonlyInput]="true"
             view="month"
             selectionMode="single"
             [style]="{ height: '30px', 'font-size': '.9rem', width: '10rem' }"
-            placeholder={{currentMonthYear}}
             (onSelect)="renderNewMemberChart()"
           ></p-calendar>
         </div>
       </div>
       <p-chart
-      class="mt-3"
+        class="mt-3"
         type="line"
         [data]="chartNewMemberData"
-        [options]="chartOptions"
-        height="15rem"
+        [options]="lineChartOptions"
+        height="14rem"
       ></p-chart>
+    </div>
+
+    <div
+      class="p-2 flex justify-content-end align-items-center"
+      style="height: 5%"
+    >
+      <a
+        [routerLink]="'/admin/manage-members'"
+        class="no-underline font-bold text-lg text-blue-300 flex align-items-center"
+        >Đi tới trang quản lý
+        <i class="pi pi-arrow-right ml-2"></i>
+        </a
+      >
     </div>
   </div>
 
-  <div id="right" class="w-6"></div>
+  <div class="w-6">
+    <div
+      class="p-2 overflow-auto border-200 border-bottom-3"
+      style="height: 70%"
+    >
+      <div class="w-12" style="height: 6%">
+        <fa-icon class="fa-lg mr-2" [icon]="['fas', 'pen-to-square']"></fa-icon>
+        <span class="text-xl">Quản lý yêu cầu</span>
+      </div>
+
+      <div
+        class="w-12 flex justify-content-end align-items-center"
+        style="height: 8%"
+      >
+        <span class="mr-2">Thời gian</span>
+        <p-calendar
+          [(ngModel)]="monthYearPickRom"
+          [showIcon]="true"
+          dateFormat="mm/yy"
+          [readonlyInput]="true"
+          view="month"
+          selectionMode="single"
+          [style]="{ height: '30px', 'font-size': '.9rem', width: '10rem' }"
+          (onSelect)="renderNewRomChart()"
+        ></p-calendar>
+      </div>
+
+      <div class="w-12 flex align-items-center" style="height: 17%">
+        <div class="w-2 p-2">
+          <div class="text-center">
+            <span class="text-lg">Tổng số</span>
+          </div>
+          <div class="text-center">
+            <span class="text-2xl font-bold" style="color: #75c6ff">
+              {{ romReportDTO.totalRomCount }}
+            </span>
+          </div>
+        </div>
+        <div class="w-2 p-2">
+          <div class="text-center">
+            <span class="text-lg">Đang chờ</span>
+          </div>
+          <div class="text-center">
+            <span class="text-2xl font-bold" style="color: #dbee98">
+              {{ romReportDTO.pendingRomCount }}
+            </span>
+          </div>
+        </div>
+        <div class="w-2 p-2">
+          <div class="text-center">
+            <span class="text-lg">Đã duyệt</span>
+          </div>
+          <div class="text-center">
+            <span class="text-2xl font-bold" style="color: #4fe884">
+              {{ romReportDTO.approvedRomCount }}
+            </span>
+          </div>
+        </div>
+        <div class="w-2 p-2">
+          <div class="text-center">
+            <span class="text-lg">Đã từ chối</span>
+          </div>
+          <div class="text-center">
+            <span class="text-2xl font-bold" style="color: #ff8780">
+              {{ romReportDTO.deniedRomCount }}
+            </span>
+          </div>
+        </div>
+        <div class="w-2 p-2">
+          <div class="text-center">
+            <span class="text-lg">Đã xử lý</span>
+          </div>
+          <div class="text-center">
+            <span class="text-2xl font-bold" style="color: #bf9eee">
+              {{ romReportDTO.confirmedRomCount }}
+            </span>
+          </div>
+        </div>
+        <div class="w-2 p-2">
+          <div class="text-center">
+            <span class="text-lg">Đã bị hủy</span>
+          </div>
+          <div class="text-center">
+            <span class="text-2xl font-bold" style="color: #c09553">
+              {{ romReportDTO.cancelledRomCount }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="w-12 overflow-auto" style="height: 64%">
+        <p-chart
+          type="bar"
+          [data]="chartRomData"
+          [options]="barChartOptions"
+          height="17rem"
+        ></p-chart>
+      </div>
+
+      <div
+      class="p-2 flex justify-content-end align-items-center"
+      style="height: 5%"
+    >
+      <a
+        [routerLink]="'/admin/manage-roms'"
+        class="no-underline font-bold text-lg text-blue-300 flex align-items-center"
+        >Đi tới trang quản lý
+        <i class="pi pi-arrow-right ml-2"></i>
+        </a
+      >
+    </div>
+    </div>
+
+    <div class="p-2 overflow-auto" style="height: 30%">
+      <div class="w-12 flex" style="height: 20%">
+        <div class="w-6">
+          <fa-icon class="fa-lg mr-2" [icon]="['fas', 'user-gear']"></fa-icon>
+          <span class="text-xl">Quản lý nhân viên</span>
+        </div>
+       
+
+        <div class="w-6 flex justify-content-end align-items-center">
+          <span class="mr-2">Thời gian</span>
+        <p-calendar
+          [(ngModel)]="monthYearPickScribe"
+          [showIcon]="true"
+          dateFormat="mm/yy"
+          [readonlyInput]="true"
+          view="month"
+          selectionMode="single"
+          [style]="{ height: '30px', 'font-size': '.9rem', width: '10rem' }"
+          (onSelect)="renderNewScribeReport()"
+          id="date-pick-scribe"
+        ></p-calendar>
+        </div>
+      </div>
+
+      <div class="w-12 flex align-items-center" style="height: 60%">
+        <div class="w-3 p-2">
+          <div class="text-center">
+            <span class="text-lg">Tổng số</span>
+          </div>
+          <div class="text-center">
+            <span class="text-2xl font-bold" style="color: #75c6ff">
+              {{ scribeReportDTO.totalScribeCount }}
+            </span>
+          </div>
+        </div>
+        <div class="w-3 p-2">
+          <div class="text-center">
+            <span class="text-lg">Nhân viên mới</span>
+          </div>
+          <div class="text-center">
+            <span class="text-2xl font-bold" style="color: #dbee98">
+              {{ scribeReportDTO.newScribeByMonthYearCount }}
+            </span>
+          </div>
+        </div>
+        <div class="w-3 p-2">
+          <div class="text-center">
+            <span class="text-lg">Đang hoạt động</span>
+          </div>
+          <div class="text-center">
+            <span class="text-2xl font-bold" style="color: #4fe884">
+              {{ scribeReportDTO.activeScribeCount }}
+            </span>
+          </div>
+        </div>
+        <div class="w-3 p-2">
+          <div class="text-center">
+            <span class="text-lg">Ngưng hoạt động</span>
+          </div>
+          <div class="text-center">
+            <span class="text-2xl font-bold" style="color: #ff8780">
+              {{ scribeReportDTO.deactivatedScribeCount }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div
+      class="p-2 flex justify-content-end align-items-center"
+      style="height: 20%"
+    >
+      <a
+        [routerLink]="'/admin/manage-scribes'"
+        class="no-underline font-bold text-lg text-blue-300 flex align-items-center"
+        >Đi tới trang quản lý
+        <i class="pi pi-arrow-right ml-2"></i>
+        </a
+      >
+    </div>
+    </div>
+  </div>
 </div>

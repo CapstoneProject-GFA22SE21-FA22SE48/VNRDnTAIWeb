@@ -204,7 +204,9 @@
                     rom.status === 4 ? 
                     'text-red-300 font-bold' :
                     rom.status === 3 ? 
-                    'text-indigo-300 font-bold' : ''
+                    'text-indigo-300 font-bold' : 
+                    rom.status === 8 ? 
+                    'text-bluegray-300 font-bold' : ''
                   ">
                     {{ st.statusName }}
                   </span>
@@ -326,7 +328,9 @@
                     selectedRom.status === 4 ? 
                     'text-red-300 font-bold' :
                     selectedRom.status === 3 ? 
-                    'text-indigo-300 font-bold' : ''
+                    'text-indigo-300 font-bold' :
+                    selectedRom.status === 8 ? 
+                    'text-bluegray-300 font-bold' : ''
                   ">
               {{ st.statusName }}
             </span>
