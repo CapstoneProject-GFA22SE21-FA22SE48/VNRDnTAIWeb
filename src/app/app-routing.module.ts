@@ -15,22 +15,11 @@ import { MyRequestComponent } from './pages/scribe/my-request/my-request.compone
 import { ManageTaskComponent } from './pages/admin/manage-task/manage-task.component';
 
 const routes: Routes = [
-  // {
-  //   path: paths.general.default,
-  //   redirectTo: '/dashboard',
-  //   pathMatch: 'full',
-  // },
   {
     path: paths.general.default,
     component: LoginComponent,
     canActivate: [LoginAuthGuard],
   },
-  // {
-  //   path: paths.general.profile,
-  //   component: ProfileComponent,
-  //   // canActivate: [LoginAuthGuard],
-  // },
-
   {
     path: paths.admin.dashboard,
     component: AdminDasboardComponent,

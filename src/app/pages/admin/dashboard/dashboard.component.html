@@ -96,14 +96,14 @@
         ></p-calendar>
       </div>
 
-      <div class="w-12 flex align-items-center" style="height: 17%">
+      <div class="w-12 flex align-items-center" style="height: 17%" *ngIf="romReportDTO">
         <div class="w-2 p-2">
           <div class="text-center">
             <span class="text-lg">Tổng số</span>
           </div>
           <div class="text-center">
             <span class="text-2xl font-bold" style="color: #75c6ff">
-              {{ romReportDTO.totalRomCount }}
+              {{ romReportDTO?.totalRomCount }}
             </span>
           </div>
         </div>
@@ -113,7 +113,7 @@
           </div>
           <div class="text-center">
             <span class="text-2xl font-bold" style="color: #dbee98">
-              {{ romReportDTO.pendingRomCount }}
+              {{ romReportDTO?.pendingRomCount }}
             </span>
           </div>
         </div>
@@ -123,7 +123,7 @@
           </div>
           <div class="text-center">
             <span class="text-2xl font-bold" style="color: #4fe884">
-              {{ romReportDTO.approvedRomCount }}
+              {{ romReportDTO?.approvedRomCount }}
             </span>
           </div>
         </div>
@@ -133,7 +133,7 @@
           </div>
           <div class="text-center">
             <span class="text-2xl font-bold" style="color: #ff8780">
-              {{ romReportDTO.deniedRomCount }}
+              {{ romReportDTO?.deniedRomCount }}
             </span>
           </div>
         </div>
@@ -143,7 +143,7 @@
           </div>
           <div class="text-center">
             <span class="text-2xl font-bold" style="color: #bf9eee">
-              {{ romReportDTO.confirmedRomCount }}
+              {{ romReportDTO?.confirmedRomCount }}
             </span>
           </div>
         </div>
@@ -153,7 +153,7 @@
           </div>
           <div class="text-center">
             <span class="text-2xl font-bold" style="color: #c09553">
-              {{ romReportDTO.cancelledRomCount }}
+              {{ romReportDTO?.cancelledRomCount }}
             </span>
           </div>
         </div>
@@ -206,14 +206,14 @@
         </div>
       </div>
 
-      <div class="w-12 flex align-items-center" style="height: 60%">
+      <div class="w-12 flex align-items-center" style="height: 60%" *ngIf="scribeReportDTO">
         <div class="w-3 p-2">
           <div class="text-center">
             <span class="text-lg">Tổng số</span>
           </div>
           <div class="text-center">
             <span class="text-2xl font-bold" style="color: #75c6ff">
-              {{ scribeReportDTO.totalScribeCount }}
+              {{ scribeReportDTO?.totalScribeCount }}
             </span>
           </div>
         </div>
@@ -223,7 +223,7 @@
           </div>
           <div class="text-center">
             <span class="text-2xl font-bold" style="color: #dbee98">
-              {{ scribeReportDTO.newScribeByMonthYearCount }}
+              {{ scribeReportDTO?.newScribeByMonthYearCount }}
             </span>
           </div>
         </div>
@@ -233,7 +233,7 @@
           </div>
           <div class="text-center">
             <span class="text-2xl font-bold" style="color: #4fe884">
-              {{ scribeReportDTO.activeScribeCount }}
+              {{ scribeReportDTO?.activeScribeCount }}
             </span>
           </div>
         </div>
@@ -243,7 +243,7 @@
           </div>
           <div class="text-center">
             <span class="text-2xl font-bold" style="color: #ff8780">
-              {{ scribeReportDTO.deactivatedScribeCount }}
+              {{ scribeReportDTO?.deactivatedScribeCount }}
             </span>
           </div>
         </div>
