@@ -65,6 +65,10 @@
   color: grey !important;
 }
 
+::ng-deep .p-button-success:disabled{
+  background-color: grey;
+}
+
 ::ng-deep .p-button-primary.p-button-outlined:disabled{
   color: grey;
 }

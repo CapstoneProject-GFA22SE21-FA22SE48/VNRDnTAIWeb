@@ -8,8 +8,11 @@ export const Login: string = base + '/Users/Login';
 export const GetScribeAssignColumns: string = base + '/AssignedColumns/Scribes'
 
 //Admin
-export const AdminGetAllMemberData: string = base + '/AdminReports/MemberByYear';
-export const AdminGetNewMemberData: string = base + '/AdminReports/NewMember';
+export const AdminGetAllMemberDataReport: string = base + '/AdminReports/MemberByYear';
+export const AdminGetNewMemberDataReport: string = base + '/AdminReports/NewMember';
+export const AdminGetRomReport: string = base + '/AdminReports/ROMReport';
+export const AdminGetScribeReport: string = base + '/AdminReports/ScribeReport';
+
 export const AdminGetMembers: string = base + '/Users/Members';
 export const AdminGetMemberComments: string = base + '/Comments/Members';
 export const AdminDeactivateMember: string = base + '/Users/Members/Deactivate';

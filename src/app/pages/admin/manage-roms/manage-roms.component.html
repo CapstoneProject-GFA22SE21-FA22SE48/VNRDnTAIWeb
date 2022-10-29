@@ -204,7 +204,9 @@
                     rom.status === 4 ? 
                     'text-red-300 font-bold' :
                     rom.status === 3 ? 
-                    'text-indigo-300 font-bold' : ''
+                    'text-indigo-300 font-bold' : 
+                    rom.status === 8 ? 
+                    'text-bluegray-300 font-bold' : ''
                   ">
                     {{ st.statusName }}
                   </span>
@@ -256,6 +258,7 @@
   [(visible)]="displayRomDetailDialog"
   [modal]="true"
   [style]="{ width: '50vw' }"
+  *ngIf="selectedRom !== undefined && changedModel.code !== '' && originalModel.code !== ''"
 >
   <ng-template pTemplate="header">
     <span class="text-blue-500 font-bold text-xl">Chi tiết</span>
@@ -325,7 +328,9 @@
                     selectedRom.status === 4 ? 
                     'text-red-300 font-bold' :
                     selectedRom.status === 3 ? 
-                    'text-indigo-300 font-bold' : ''
+                    'text-indigo-300 font-bold' :
+                    selectedRom.status === 8 ? 
+                    'text-bluegray-300 font-bold' : ''
                   ">
               {{ st.statusName }}
             </span>
@@ -421,8 +426,7 @@
     </div>
   </ng-template>
 
-  <!-- *ngIf="selectedRom?.status === 0" -->
-  <ng-template pTemplate="footer">
+  <ng-template pTemplate="footer" *ngIf="selectedRom?.status === 0">
     <div class="w-12 flex" style="height: 10%">
       <div class="w-6 flex justify-content-start">
         <button

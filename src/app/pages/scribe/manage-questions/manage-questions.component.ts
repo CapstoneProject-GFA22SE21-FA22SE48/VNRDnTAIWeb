@@ -96,17 +96,23 @@ export class ManageQuestionsComponent implements OnInit {
               });
             }
 
+           
+          });
+
+          this.questions.forEach((q: any) => {
             if (
               !this.questionCategories.find(
                 (qc: any) => q.questionCategoryId === qc.id
               )
             ) {
+              console.log(q);
+              
               this.questionCategories.push({
                 id: q.questionCategoryId,
-                name: q.questionCategoryName,
+                name: q.questionCategoryName + ' (' + q.testCategoryName + ')',
               });
             }
-          });
+          })
 
           this.selectedTestCategoryId = this.testCategories[0]?.id;
           this.selectedQuestionCategoryId = this.questionCategories[0]?.id;
