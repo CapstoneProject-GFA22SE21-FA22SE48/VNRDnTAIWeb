@@ -313,7 +313,7 @@ export class ManageRomsComponent implements OnInit {
     this.originalModelImg = undefined;
 
     this.isPromotingAdminPromotionRom = false;
-this.isArbitratingAdminPromotionRom = false;
+    this.isArbitratingAdminPromotionRom = false;
 
     if (this.selectedRom.lawRomId) {
       this.isLoadingService.add();
@@ -694,17 +694,27 @@ this.isArbitratingAdminPromotionRom = false;
                     : 'Quản trị viên'
                 }\n`;
 
-                if(response.data?.promotingAdminId === decodeToken(getStorageToken() || '').Id){
-                  this.selectedRom.promotingAdmin = response.data.promotingAdmin,
-                  this.selectedRom.arbitratingAdmin = response.data.arbitratingAdmin,
-                  this.isPromotingAdminPromotionRom = true;
-                  this.isArbitratingAdminPromotionRom = false;
-                } else if(response.data?.arbitratingAdminId === decodeToken(getStorageToken() || '').Id) {
-                  this.selectedRom.promotingAdmin = response.data.promotingAdmin,
-                  this.selectedRom.arbitratingAdmin = response.data.arbitratingAdmin,
-                  this.isPromotingAdminPromotionRom = false;
-                  this.isArbitratingAdminPromotionRom = true;
-                }
+              if (
+                response.data?.promotingAdminId ===
+                decodeToken(getStorageToken() || '').Id
+              ) {
+                (this.selectedRom.promotingAdmin =
+                  response.data.promotingAdmin),
+                  (this.selectedRom.arbitratingAdmin =
+                    response.data.arbitratingAdmin),
+                  (this.isPromotingAdminPromotionRom = true);
+                this.isArbitratingAdminPromotionRom = false;
+              } else if (
+                response.data?.arbitratingAdminId ===
+                decodeToken(getStorageToken() || '').Id
+              ) {
+                (this.selectedRom.promotingAdmin =
+                  response.data.promotingAdmin),
+                  (this.selectedRom.arbitratingAdmin =
+                    response.data.arbitratingAdmin),
+                  (this.isPromotingAdminPromotionRom = false);
+                this.isArbitratingAdminPromotionRom = true;
+              }
             }
             this.isLoadingService.remove();
             this.displayRomDetailDialog = true;
