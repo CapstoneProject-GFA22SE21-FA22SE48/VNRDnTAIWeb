@@ -105,8 +105,6 @@ export class ManageQuestionsComponent implements OnInit {
                 (qc: any) => q.questionCategoryId === qc.id
               )
             ) {
-              console.log(q);
-              
               this.questionCategories.push({
                 id: q.questionCategoryId,
                 name: q.questionCategoryName + ' (' + q.testCategoryName + ')',
