@@ -1,7 +1,7 @@
 /* paths.ts was created to provide shrinked links for API calling. */
 // Base path
-// const base = 'https://localhost:5001/api';
-const base = 'https://vnrdntaiapi.azurewebsites.net/api';
+const base = 'https://localhost:5001/api';
+// const base = 'https://vnrdntaiapi.azurewebsites.net/api';
 
 //Login
 export const Login: string = base + '/Users/Login';
@@ -38,6 +38,7 @@ export const AdminGetLawRomDetail: string = base + '/LawModificationRequests/ROM
 export const AdminGetParagraphRomDetailReference: string = base + '/LawModificationRequests/ParagraphROMDetail/References';
 export const AdminGetSignRomDetail: string = base + '/SignModificationRequests/SignROMDetail';
 export const AdminGetQuestionRomDetail: string = base + '/QuestionModificationRequests/QuestionROMDetail';
+export const AdminGetUserRomDetail: string = base + '/UserModificationRequests/UserROMDetail';
 
 export const AdminApproveQuestionRom: string = base + '/QuestionModificationRequests/Approve';
 export const AdminDenyQuestionRom: string = base + '/QuestionModificationRequests/Deny';
@@ -49,6 +50,8 @@ export const AdminApproveSectionRom: string = base + '/LawModificationRequests/S
 export const AdminDenySectionRom: string = base + '/LawModificationRequests/Section/Deny';
 export const AdminApproveParagraphRom: string = base + '/LawModificationRequests/Paragraph/Approve';
 export const AdminDenyParagraphRom: string = base + '/LawModificationRequests/Paragraph/Deny';
+export const AdminApproveUserRom: string = base + '/UserModificationRequests/Approve';
+export const AdminDenyUserRom: string = base + '/UserModificationRequests/Deny';
 
 // Scribe
 export const ScribeGetAssignedQuestions: string = base + '/Questions/AssignedQuestions/Scribes';
@@ -79,3 +82,5 @@ export const ScribeGetAssignedSigns: string = base + '/Signs/AssignedSigns/Scrib
 
 export const ScribeCreateSignForROM: string = base + '/Signs';
 export const ScribeCreateSignModificationRequest: string = base + '/SignModificationRequests';
+
+export const ScribeGetRomList: string = base + '/LawModificationRequests/ScribeROMList';

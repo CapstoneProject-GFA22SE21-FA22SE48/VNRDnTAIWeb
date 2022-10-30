@@ -42,7 +42,8 @@
 
 
 ::ng-deep .p-dropdown-panel .p-dropdown-header {
-  padding: .5rem;
+  /* padding: .5rem; */
+  padding: .4rem;
 }
 
 ::ng-deep .p-dropdown-panel .p-dropdown-header .p-dropdown-filter-container .p-inputtext {
