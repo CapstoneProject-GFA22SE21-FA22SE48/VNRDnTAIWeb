@@ -1,19 +1,19 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { IsLoadingService } from '@service-work/is-loading';
 import { ConfirmationService, MessageService } from 'primeng/api';
-import { User } from 'src/app/models/General.model';
-import { getStorageToken } from 'src/app/utilities/jwt.util';
+import { User, UserRole } from 'src/app/models/General.model';
+import { decodeToken, getStorageToken } from 'src/app/utilities/jwt.util';
 import { WrapperService } from 'src/services/wrapper.service';
 import { toNonAccentVietnamese } from 'src/app/utilities/nonAccentVietnamese';
 import * as paths from '../../../common/paths';
-
+import * as commonStr from '../../../common/commonStr';
+import { Status } from 'src/app/common/status';
 @Component({
   selector: 'app-manage-scribes',
   templateUrl: './manage-scribes.component.html',
-  styleUrls: ['./manage-scribes.component.css']
+  styleUrls: ['./manage-scribes.component.css'],
 })
 export class ManageScribesComponent implements OnInit {
-
   tmpScribes: User[] = [];
   scribes: User[] = [];
   status: any = [
@@ -23,24 +23,64 @@ export class ManageScribesComponent implements OnInit {
     { name: 'Ngưng hoạt động' },
   ];
 
-  selectedScribe: any;
-  userComments: Comment[] = [];
-
   searchStr: string = '';
   filterStatus: any;
 
+  scribeDTO: any;
+
+  admins: any;
+  selectedAdmin: any;
+  displayPromoteDialog: boolean = false;
+
   @ViewChild('calendar') private calendar: any;
   filterRangeDates: any;
+
+  monthYearPickNewScribeDTO: Date = new Date();
+
+  // new scribe account
+  newScribeUsername: any;
+  isValidNewScribeUsername: boolean = true;
+  inValidNewScribeUsernameMsg: any;
+
+  newScribePassword: any;
+  isValidNewScribePassword: boolean = true;
+
+  newScribeConfirmPassword: any;
+  isValidNewScribeConfirmPassword: boolean = true;
+  
+  isValidAddNewScribe: boolean = false;
+  displayCreateScribe: boolean = false;
+  //end of new scribe account
 
   constructor(
     private wrapperService: WrapperService,
     private isLoadingService: IsLoadingService,
     private confirmationService: ConfirmationService,
     private messageService: MessageService
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.loadScribes();
+    this.loadAdmins();
+  }
+
+  loadAdmins() {
+    this.isLoadingService.add();
+    this.wrapperService.get(paths.ScribeGetAdmins, getStorageToken(), {
+      successCallback: (response) => {
+        this.admins = response.data?.filter((a: any) => 
+          !(a.id === decodeToken(getStorageToken() || '').Id)
+          
+         );
+        
+        this.selectedAdmin = this.admins[0];
+        this.isLoadingService.remove();
+      },
+      errorCallback: (error) => {
+        console.log(error);
+        this.isLoadingService.remove();
+      },
+    });
   }
 
   loadScribes() {
@@ -59,15 +99,15 @@ export class ManageScribesComponent implements OnInit {
     });
   }
 
-  confirmDeactivateMember(i: number) {
+  confirmDeactivateScribe(i: number) {
     this.confirmationService.confirm({
       key: 'cdDeactivate',
       message:
-        'Các quyền đê truy cập và tác vụ của nhân viên này đồng thời bị gỡ bỏ. Bạn có chắc chắn?',
+        'Tài khoản nhân viên này sẽ bị ngưng hoạt động. Bạn có chắc chắn?',
       accept: () => {
         this.wrapperService.put(
           paths.AdminDeactivateScribe + '/' + this.scribes[i]?.id,
-          
+
           this.scribes[i],
           getStorageToken(),
           {
@@ -92,12 +132,11 @@ export class ManageScribesComponent implements OnInit {
           }
         );
       },
-      reject: () => {
-      },
+      reject: () => {},
     });
   }
 
-  confirmReEnableMember(i: number) {
+  confirmReEnableScribe(i: number) {
     this.confirmationService.confirm({
       key: 'cdReEnable',
       message:
@@ -129,8 +168,7 @@ export class ManageScribesComponent implements OnInit {
           }
         );
       },
-      reject: () => {
-      },
+      reject: () => {},
     });
   }
 
@@ -182,155 +220,190 @@ export class ManageScribesComponent implements OnInit {
     }
   }
 
-  viewInfo(scribe: User) {
+  viewInfo(scribe: User, month: any, year: any) {
     this.isLoadingService.add();
-    this.selectedScribe = scribe;
-    // this.wrapperService.get(
-    // paths.AdminGetScribeComments + '/' + this.selectedScribe.id,
-    // getStorageToken(),
-    // {
-    //   successCallback: (response) => {
-    //     this.userComments = response?.data;
-    //     this.isLoadingService.remove();
-    //   },
-    //   errorCallback: (error) => {
-    //     console.log(error);
-    //     this.isLoadingService.remove();
-    //   },
-    // }
-    // );
+
+    if (!month) {
+      month = new Date().getMonth() + 1;
+    }
+
+    if (!year) {
+      year = new Date().getFullYear();
+    }
+
+    this.wrapperService.get(
+      paths.AdminGetScribeDetail + '/' + month + '/' + year + '/' + scribe.id,
+      getStorageToken(),
+      {
+        successCallback: (response) => {
+          this.scribeDTO = response.data;
+          this.isLoadingService.remove();
+        },
+        errorCallback: (error) => {
+          console.log(error);
+          this.isLoadingService.remove();
+        },
+      }
+    );
   }
 
-  // closeInfo() {
-  //   this.selectedScribe = undefined;
-  // }
+  reRenderScribeDTO() {
+    this.viewInfo(
+      this.scribeDTO,
+      parseInt(
+        this.monthYearPickNewScribeDTO.toLocaleDateString('sv').slice(5, 7)
+      ),
+      parseInt(
+        this.monthYearPickNewScribeDTO.toLocaleDateString('sv').slice(0, 4)
+      )
+    );
+  }
 
-  // closeDateRangePick() {
-  //   if (this.filterRangeDates[1]) {
-  //     this.calendar.overlayVisible = false;
-  //     this.filterData();
-  //   }
-  // }
+  promoteScribe(){
+    this.scribeDTO.role = UserRole.ADMIN;
 
-  // filterData() {
-  //   this.scribes = this.tmpScribes;
+    this.isLoadingService.add();
+        this.wrapperService.post(paths.AdminPromoteScribe, {
+          scribeId: this.scribeDTO.id,
+          promotingAdminId: decodeToken(getStorageToken() || '').Id,
+          arbitratingAdminId: this.selectedAdmin?.id
+        }, getStorageToken(), {
+          successCallback: (response) => {
+            this.messageService.add({
+              severity: 'success',
+              key: 'promoteSuccess',
+              summary: commonStr.success,
+              detail: commonStr.romCreatedSuccessfully,
+            });
+            this.displayPromoteDialog = false;
+            this.loadScribes();
+            this.isLoadingService.remove();
+          }, 
+          errorCallback: (error) => {
+            this.messageService.add({
+              severity: 'warn',
+              key: 'promoteFail',
+              summary: commonStr.fail,
+              detail: error.response?.data,
+            });
+            this.displayPromoteDialog = false;
+            this.loadScribes();
+            this.isLoadingService.remove();
+          }
+        })
+  }
 
-  //   //Search
-  //   if (this.searchStr != '') {
-  //     this.scribes = this.scribes.filter((m) =>
-  //       m.username?.toLowerCase().includes(this.searchStr.toLowerCase())
-  //     );
-  //   } else {
-  //     this.scribes = this.tmpScribes;
-  //   }
+  getNewScribeUserame(){
+    if(this.newScribeUsername && this.newScribeUsername?.trim().length <= 255 ){
+      if(this.tmpScribes.some((s: any) => s.username === this.newScribeUsername.trim())){
+        this.isValidNewScribeUsername = false;
+        this.inValidNewScribeUsernameMsg = 'Tên đăng nhập đã tồn tại'
+      } else {
+        this.isValidNewScribeUsername = true;
+        this.inValidNewScribeUsernameMsg = 'Vui lòng nhập tên đăng nhập (tối đa 255 ký tự)'
+      }
+    } else {
+      this.isValidNewScribeUsername = false;
+    }
+    this.checkValidNewScribeAccount();
+  }
 
-  //   //Status
-  //   if (this.filterStatus) {
-  //     if (this.filterStatus.name === 'Hoạt động') {
-  //       this.scribes = this.scribes.filter((m) => m.status === 5);
-  //     } else {
-  //       this.scribes = this.scribes.filter((m) => m.status === 6);
-  //     }
-  //   }
+  getNewScribePassword(){
+    if(this.newScribePassword && this.newScribePassword?.trim().length <= 20 && this.newScribePassword.trim() >= 6){
+      this.isValidNewScribePassword = true;
+      this.newScribeConfirmPassword = undefined;
+      this.isValidNewScribeConfirmPassword = true;
+    } else {
+      this.isValidNewScribePassword = false;
+    }
+    this.checkValidNewScribeAccount();
+  }
 
-  //   //Date Range
-  //   if (this.filterRangeDates) {
-  //     const startDate = this.filterRangeDates[0]?.toLocaleDateString('sv');
-  //     const endDate = this.filterRangeDates[1]?.toLocaleDateString('sv');
+  getNewScribeConfirmPassword(){
+    if(this.newScribeConfirmPassword && this.newScribeConfirmPassword?.trim() === this.newScribePassword ){
+      this.isValidNewScribeConfirmPassword = true;
+    } else {
+      this.isValidNewScribeConfirmPassword = false;
+    }
+    this.checkValidNewScribeAccount();
+  }
 
-  //     if (startDate && endDate) {
-  //       this.scribes = this.scribes.filter((m) => {
-  //         return (
-  //           m.createdDate.toLocaleString().slice(0, 10) >= startDate &&
-  //           m.createdDate.toLocaleString().slice(0, 10) <= endDate
-  //         );
-  //       });
-  //     }
-  //   }
-  // }
+  checkValidNewScribeAccount(){
+    if(this.isValidNewScribeUsername &&
+      this.isValidNewScribePassword &&
+      this.isValidNewScribeConfirmPassword &&
+      this.newScribeUsername && this.newScribeUsername.trim() !== ''
+      && this.newScribePassword && this.newScribePassword.trim() !== ''
+      && this.newScribeConfirmPassword && this.newScribeConfirmPassword.trim() !== ''
+      ){
+        this.isValidAddNewScribe = true;
+      } else {
+        this.isValidAddNewScribe = false;
+      }
+  }
 
-  // confirmDeactivateScribe() {
-  //   this.isLoadingService.add();
-  //   this.confirmationService.confirm({
-  //     key: 'cdDeactivate',
-  //     message:
-  //       'Các bình luận của người dùng này đồng thời bị gỡ bỏ. Bạn có chắc chắn?',
-  //     accept: () => {
-  //       this.wrapperService.put(
-  //         paths.AdminDeactivateScribe + '/' + this.selectedScribe?.id,
-  //         this.selectedScribe,
-  //         getStorageToken(),
-  //         {
-  //           successCallback: (response) => {
-  //             this.loadScribes();
-  //             this.viewInfo(response.data);
-  //             this.messageService.add({
-  //               key: 'deactivateSuccess',
-  //               severity: 'success',
-  //               summary: 'Thành công',
-  //               detail: 'Cập nhật dữ liệu thành công',
-  //             });
-  //             this.isLoadingService.remove();
-  //           },
-  //           errorCallback: (error) => {
-  //             console.log(error);
-  //             this.messageService.add({
-  //               key: 'deactivateFail',
-  //               severity: 'error',
-  //               summary: 'Thất bại',
-  //               detail: 'Có lỗi xảy ra',
-  //             });
-  //             this.isLoadingService.remove();
-  //           },
-  //         }
-  //       );
-  //     },
-  //     reject: () => {
-  //       this.isLoadingService.remove();
-  //     },
-  //   });
-  // }
+  clearNewScribeData(){
+    this.newScribeUsername = undefined;
+    this.isValidNewScribeUsername = true;
+    this.inValidNewScribeUsernameMsg = undefined;
+  
+    this.newScribePassword = undefined;
+    this.isValidNewScribePassword = true;
+  
+    this.newScribeConfirmPassword = undefined;
+    this.isValidNewScribeConfirmPassword = true;
+    
+    this.isValidAddNewScribe = false;
+    this.displayCreateScribe = false;
+  }
 
-  // confirmReEnableScribe() {
-  //   this.isLoadingService.add();
-  //   this.confirmationService.confirm({
-  //     key: 'cdReEnable',
-  //     message:
-  //       'Tài khoản thành viên này sẽ được kích hoạt trở lại. Bạn có chắc chắn?',
-  //     accept: () => {
-  //       this.wrapperService.put(
-  //         paths.AdminReEnableScribe + '/' + this.selectedScribe?.id,
-  //         this.selectedScribe,
-  //         getStorageToken(),
-  //         {
-  //           successCallback: (response) => {
-  //             this.loadScribes();
-  //             this.viewInfo(response.data);
-  //             this.messageService.add({
-  //               key: 'reEnableSuccess',
-  //               severity: 'success',
-  //               summary: 'Thành công',
-  //               detail: 'Cập nhật dữ liệu thành công',
-  //             });
-  //             this.isLoadingService.remove();
-  //           },
-  //           errorCallback: (error) => {
-  //             console.log(error);
-  //             this.messageService.add({
-  //               key: 'reEnableFail',
-  //               severity: 'error',
-  //               summary: 'Thất bại',
-  //               detail: 'Có lỗi xảy ra',
-  //             });
-  //             this.isLoadingService.remove();
-  //           },
-  //         }
-  //       );
-  //     },
-  //     reject: () => {
-  //       this.isLoadingService.remove();
-  //     },
-  //   });
-  // }
+  confirmAddNewScribeAccount(event: any){
+    this.confirmationService.confirm({
+      target: event?.target,
+      key: 'confirmCreateNewScribe',
+      message: 'Tài khoản nhân viên sẽ đi vào hoạt động. Bạn có chắc?',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+          this.isLoadingService.add();
+          this.wrapperService.post(
+            paths.AdminCreateNewScribe,
+            {
+              username: this.newScribeUsername,
+              password: this.newScribePassword,
+              role: UserRole.SCRIBE,
+              status: Status.Active,
+              createdDate: new Date(),
+            },
+            getStorageToken(),
+            {
+              successCallback: (response) => {
+                this.clearNewScribeData();
+                this.displayCreateScribe = false;
+                this.loadScribes();
+
+                this.messageService.add({
+                  severity: 'success',
+                  key: 'createScribeSuccess',
+                  summary: commonStr.success,
+                  detail: commonStr.dataUpdatedSuccessfully,
+                });
+                this.isLoadingService.remove();
+              },
+              errorCallback: (error) => {
+                console.log(error);
+                this.messageService.add({
+                  severity: 'error',
+                  key: 'createScribeFail',
+                  summary: commonStr.fail,
+                  detail: commonStr.errorOccur,
+                });
+                this.isLoadingService.remove();
+              },
+            }
+          );
+      },
+      reject: () => {},
+    });
+  }
 
 }

@@ -1,27 +1,31 @@
-<div class="flex h-full p-0" id="container">
+<div class="flex h-full p-0">
+  <!-- Left -->
   <div
-    [ngClass]="{ 'w-12 h-full': selectedScribe === undefined, 'w-8 h-full': selectedScribe }"
+    [ngClass]="{
+      'w-12 h-full': scribeDTO === undefined,
+      'w-8 h-full': scribeDTO
+    }"
   >
-    <div class="p-2 pb-3" style="height: 6%">
+    <div class="p-2" style="height: 6%">
       <fa-icon class="fa-lg mr-2" [icon]="['far', 'circle-user']"></fa-icon>
       <span class="text-xl">Quản lý nhân viên</span>
     </div>
+
     <div class="p-2" style="height: 10%">
       <div class="w-12 mb-3 flex">
-        <div class="w-6 flex align-items-center">
+        <div class="w-8 flex align-items-center">
           <span class="p-input-icon-right mr-3">
             <i class="pi pi-search"></i>
             <input
               type="text"
               pInputText
               placeholder="Tìm kiếm..."
-              [style]="{height: '40px'}"
+              [style]="{ height: '40px' }"
               [(ngModel)]="searchStr"
               (keyup)="filterData()"
-            />          
-            
+            />
           </span>
-          
+
           <p-dropdown
             [(ngModel)]="filterStatus"
             [options]="status"
@@ -30,10 +34,9 @@
             [showClear]="true"
             [style]="{ height: '40px' }"
             (onChange)="filterData()"
+            class="mr-3"
           ></p-dropdown>
-          <!-- (onChange)="filterData()" -->
-        </div>
-        <div class="w-6 flex justify-content-end">
+
           <p-calendar
             #calendar
             [(ngModel)]="filterRangeDates"
@@ -44,19 +47,32 @@
             [showButtonBar]="true"
             [style]="{ height: '40px', 'font-size': '.9rem', width: '16rem' }"
             placeholder="Từ ngày - đến ngày"
-            (onSelect)="closeDateRangePick()" (onClearClick)="filterData()"
+            (onSelect)="closeDateRangePick()"
+            (onClearClick)="filterData()"
           ></p-calendar>
-          <!-- (onSelect)="closeDateRangePick()"
-              (onClearClick)="filterData()" -->
+        </div>
+        
+        <div class="w-4 flex justify-content-end">
+          <button
+            pButton
+            pRipple
+            type="button"
+            label="Tạo mới"
+            class="p-button-raised p-button-success"
+            [style]="{ height: '40px' }"
+            (click)="displayCreateScribe = true;"
+          ></button>
         </div>
       </div>
     </div>
-      <div class="p-2 overflow-auto" style="height: 84%;">
+    <div class="p-2 overflow-auto" style="height: 84%">
       <p-table
         [value]="scribes"
-        [paginator]="(scribes !== undefined && scribes.length > 9) ? true : false"
-        [rows]="9"
-        [showCurrentPageReport]="(scribes !== undefined && scribes.length > 9) ? true : false"
+        [paginator]="scribes !== undefined && scribes.length > 10 ? true : false"
+        [rows]="10"
+        [showCurrentPageReport]="
+          scribes !== undefined && scribes.length > 10 ? true : false
+        "
         responsiveLayout="scroll"
         currentPageReportTemplate="Hiển thị {first} đến {last} trong tổng số {totalRecords} mục"
         styleClass="p-datatable-gridlines p-datatable-sm"
@@ -64,51 +80,73 @@
         <ng-template pTemplate="header">
           <tr>
             <th [ngStyle]="{ width: '5%', 'text-align': 'center' }">#</th>
-            <th [ngStyle]="{ width: '20%', 'text-align': 'center' }">
+            <th [ngStyle]="{ width: '21%', 'text-align': 'center' }">
               Tên đăng nhập
             </th>
-            <th [ngStyle]="{ width: '20%', 'text-align': 'center' }">
+            <th [ngStyle]="{ width: '21%', 'text-align': 'center' }">
               Mật khẩu
             </th>
             <th [ngStyle]="{ width: '15%', 'text-align': 'center' }">
               Ngày tạo
             </th>
-            <th [ngStyle]="{ width: '15%', 'text-align': 'center' }">
+            <th [ngStyle]="{ width: '13%', 'text-align': 'center' }">
               Trạng thái
             </th>
-            <th [ngStyle]="{ width: '15%', 'text-align': 'center' }">
-              Tác vụ
-            </th>
+            <th [ngStyle]="{ width: '20%', 'text-align': 'center' }">Tác vụ</th>
+            <th [ngStyle]="{ width: '5%', 'text-align': 'center' }"></th>
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-scribe let-i="rowIndex">
           <tr>
             <td [ngStyle]="{ 'text-align': 'center' }">{{ i + 1 }}</td>
-            <td>
-              <div class="w-full text-center txt-username">
+            <td [ngStyle]="{ 'text-align': 'center' }">
+              <div
+                [className]="
+                  scribeDTO === undefined
+                    ? 'w-15rem white-space-nowrap overflow-hidden text-overflow-ellipsis'
+                    : 'w-9rem white-space-nowrap overflow-hidden text-overflow-ellipsis'
+                "
+              >
                 {{ scribe.username }}
               </div>
             </td>
-            <td>
-              <div class="w-full text-center">
-                <p-password
-                  [(ngModel)]="scribe.password"
-                  [toggleMask]="true"
-                  [feedback]="false"
-                  [disabled]="true"
-                ></p-password>
+            <td [ngStyle]="{ 'text-align': 'center' }">
+              <div
+                [className]="
+                  scribeDTO === undefined
+                    ? 'w-15rem white-space-nowrap overflow-hidden text-overflow-ellipsis flex justify-content-center'
+                    : 'w-9rem white-space-nowrap overflow-hidden text-overflow-ellipsis'
+                "
+              >
+                <span>
+                  <p-password
+                    [(ngModel)]="scribe.password"
+                    [toggleMask]="true"
+                    [feedback]="false"
+                    [disabled]="true"
+                    class="table-p-password"
+                  ></p-password>
+                </span>
               </div>
             </td>
             <td [ngStyle]="{ 'text-align': 'center' }">
               {{ scribe.createdDate | date: "dd/MM/yyyy" }}
             </td>
             <td [ngStyle]="{ 'text-align': 'center' }">
-              <span *ngIf="scribe.status == 5" class="text-green-600"
-                >Hoạt động</span
+              <div
+                [className]="
+                  scribeDTO === undefined
+                    ? 'w-9rem white-space-nowrap overflow-hidden text-overflow-ellipsis'
+                    : 'w-7rem white-space-nowrap overflow-hidden text-overflow-ellipsis'
+                "
               >
-              <span *ngIf="scribe.status == 6" class="text-red-600"
-                >Ngưng hoạt động</span
-              >
+                <span *ngIf="scribe.status === 5" class="text-green-600"
+                  >Hoạt động</span
+                >
+                <span *ngIf="scribe.status === 6" class="text-red-600"
+                  >Ngưng hoạt động</span
+                >
+              </div>
             </td>
             <td [ngStyle]="{ 'text-align': 'center' }">
               <button
@@ -116,9 +154,13 @@
                 pButton
                 type="button"
                 label="Ngưng hoạt động"
-                [style]="{padding: '.3rem .5rem .3rem .5rem', height: '25px', border: '3px solid'}"
+                [style]="{
+                  padding: '.3rem .5rem .3rem .5rem',
+                  height: '25px',
+                  border: '3px solid'
+                }"
                 class="p-button-outlined p-button-danger"
-                (click)="confirmDeactivateMember(i)"
+                (click)="confirmDeactivateScribe(i)"
               ></button>
 
               <button
@@ -126,149 +168,233 @@
                 pButton
                 type="button"
                 label="Kích hoạt lại"
-                [style]="{padding: '.3rem .5rem .3rem .5rem', height: '25px', border: '3px solid'}"
+                [style]="{
+                  padding: '.3rem .5rem .3rem .5rem',
+                  height: '25px',
+                  border: '3px solid'
+                }"
                 class="p-button-outlined p-button-success"
-                (click)="confirmReEnableMember(i)"
+                (click)="confirmReEnableScribe(i)"
+              ></button>
+            </td>
+            <td [ngStyle]="{ 'text-align': 'center' }">
+              <button
+                pButton
+                type="button"
+                icon="pi pi-info"
+                class="p-button-rounded p-button-outlined"
+                [style]="{ width: '25px', height: '25px' }"
+                (click)="viewInfo(scribe, undefined, undefined)"
               ></button>
             </td>
           </tr>
         </ng-template>
         <ng-template pTemplate="emptymessage">
           <tr>
-              <td colspan="6">
-                <span class="font-bold">Không tìm thấy kết quả</span>
-              </td>
+            <td colspan="6">
+              <span class="font-bold">Không tìm thấy kết quả</span>
+            </td>
           </tr>
         </ng-template>
       </p-table>
-      </div>
-    
+    </div>
   </div>
 
+  <!-- Right with selected scribe-->
   <div
-    id="scribe-info"
-    class="p-2"
     [ngClass]="{
-      hide: selectedScribe === undefined,
-      show: selectedScribe
+      'hidden h-full border-left-3 border-200 overflow-auto':
+        scribeDTO === undefined,
+      'w-4 h-full border-left-3 border-200 overflow-auto': scribeDTO
     }"
   >
-    <!-- <button (click)="closeInfo()" id="btn-closeInfo">
-        <i class="pi pi-times text-red-600"></i>
-      </button>
-  
-      <div id="right-top">
-        <div class="flex align-items-center">
+    <div style="height: 30%" class="p-2 pl-3 pr-3 border-200 border-bottom-3">
+      <div class="w-12 flex align-items-center">
+        <div class="w-6 flex align-items-center">
           <i class="pi pi-info-circle text-xl"></i>
           <span class="text-xl ml-2">Thông tin</span>
         </div>
-  
-        <div class="mt-3" id="lb-username">
-          <span class="text-lg text-color-secondary">Người dùng: </span>
-          <span class="text-lg text-900 ml-3">
-            {{ selectedMember?.username }}</span
-          >
-        </div>
-  
-        <div class="mt-3">
+        <div class="w-6 flex justify-content-end">
           <button
-            *ngIf="selectedMember?.status === 5 && userComments.length > 0"
             pButton
+            pRipple
             type="button"
-            label="Ngưng hoạt động"
-            class="p-button-raised p-button-danger"
-            (click)="confirmDeactivateMember()"
+            icon="pi pi-times"
+            class="p-button-rounded p-button-danger p-button-text"
+            (click)="scribeDTO = undefined"
           ></button>
-          <button
-            *ngIf="selectedMember?.status === 5 && userComments.length === 0"
-            pButton
-            type="button"
-            label="Ngưng hoạt động"
-            class="p-button-raised p-button-danger"
-            [disabled]="true"
-          ></button>
-          <p-confirmDialog key="cdDeactivate"  #cd icon="pi pi-exclamation-triangle">
-            <ng-template pTemplate="header">
-              <h3>Cảnh báo</h3>
-            </ng-template>
-            <ng-template pTemplate="footer">
-              <button
-                type="button"
-                pButton
-                icon="pi pi-times"
-                label="Hủy"
-                class="p-button-danger"
-                (click)="cd.reject()"
-              ></button>
-              <button
-                type="button"
-                pButton
-                icon="pi pi-check"
-                label="Đồng ý"
-                class="p-button-success"
-                (click)="cd.accept()"
-              ></button>
-            </ng-template>
-          </p-confirmDialog>
-  
-          <button
-            *ngIf="selectedMember?.status === 6"
-            pButton
-            type="button"
-            label="Kích hoạt lại"
-            class="p-button-raised p-button-success"
-            (click)="confirmReEnableMember()"
-          ></button>
-  
-          <p-confirmDialog key="cdReEnable" #cr icon="pi pi-info-circle">
-            <ng-template pTemplate="header">
-              <h3>Thông báo</h3>
-            </ng-template>
-            <ng-template pTemplate="footer">
-              <button
-                type="button"
-                pButton
-                icon="pi pi-times"
-                label="Hủy"
-                class="p-button-danger"
-                (click)="cr.reject()"
-              ></button>
-              <button
-                type="button"
-                pButton
-                icon="pi pi-check"
-                label="Đồng ý"
-                class="p-button-success"
-                (click)="cr.accept()"
-              ></button>
-            </ng-template>
-          </p-confirmDialog>
         </div>
       </div>
-  
-      <div id="right-main">
-        <div *ngIf="userComments.length > 0">
-          <div
-            class="flex align-items-center justify-content-center"
-            *ngFor="let comment of userComments"
+
+      <div class="flex mb-3" *ngIf="scribeDTO?.username">
+        <div class="w-6">
+          <span class="text-lg text-color-secondary">Tên đăng nhập: </span>
+        </div>
+        <div
+          class="w-6 flex justify-content-end white-space-nowrap overflow-x-auto overflow-y-hidden"
+        >
+          <span class="text-lg font-bold">
+            {{ scribeDTO?.username }}
+          </span>
+        </div>
+      </div>
+
+      <div class="flex mb-3" *ngIf="scribeDTO?.status">
+        <div class="w-6">
+          <span class="text-lg text-color-secondary">Trạng thái: </span>
+        </div>
+        <div
+          class="w-6 flex justify-content-end white-space-nowrap overflow-x-auto overflow-y-hidden"
+        >
+          <span
+            class="text-lg font-bold text-green-400"
+            *ngIf="scribeDTO?.status === 5"
           >
-            <div class="h-7rem mt-2 mb-2 comment">
-              <div class="p-2 comment-content">
-                <span>{{ comment.content }}</span>
-              </div>
-              <div class="text-right pr-3 pb-1 comment-time">
-                <span>{{ comment.createdDate | dateAgo }}</span>
-              </div>
-            </div>
+            Hoạt động
+          </span>
+          <span
+            class="text-lg font-bold text-red-400"
+            *ngIf="scribeDTO?.status === 6"
+          >
+            Ngưng hoạt động
+          </span>
+        </div>
+      </div>
+
+      <div class="flex mb-3" *ngIf="scribeDTO?.createdDate">
+        <div class="w-6">
+          <span class="text-lg text-color-secondary">Ngày tạo: </span>
+        </div>
+        <div
+          class="w-6 flex justify-content-end white-space-nowrap overflow-x-auto overflow-y-hidden"
+        >
+          <span class="text-lg font-bold ml-3">
+            {{ scribeDTO?.createdDate | date: "dd/MM/yyyy" }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <div class="p-2 pl-3 pr-3 overflow-y-auto" style="height: 70%">
+      <div style="height: 90%">
+        <div class="w-12 mb-3 flex justify-content-start align-items-center">
+          <div class="w-6 text-lg text-color-secondary font-bold">
+            Thời gian
+          </div>
+          <div class="w-6 flex justify-content-end">
+            <p-calendar
+              [(ngModel)]="monthYearPickNewScribeDTO"
+              [showIcon]="true"
+              dateFormat="mm/yy"
+              [readonlyInput]="true"
+              view="month"
+              selectionMode="single"
+              [style]="{ height: '30px', 'font-size': '.9rem', width: '10rem' }"
+              (onSelect)="reRenderScribeDTO()"
+            ></p-calendar>
           </div>
         </div>
-  
-        <div *ngIf="userComments.length === 0" class="p-2">
-          <span class="text-red-500 text-lg">
-            Người dùng này chưa có bình luận nào hoặc bình luận đã bị xóa
-            </span>
+
+        <div class="w-12 flex mb-2">
+          <div class="w-6 text-lg text-color-secondary">Tổng số yêu cầu</div>
+          <div class="w-6 flex justify-content-end">
+            <span class="font-bold text-2xl" style="color: #75c6ff">
+              {{ scribeDTO?.totalRequestCountByMonthYear }}</span
+            >
+          </div>
         </div>
-      </div> -->
+
+        <div class="w-12 flex mb-2">
+          <div class="w-6 text-lg text-color-secondary">Đang chờ duyệt</div>
+          <div class="w-6 flex justify-content-end">
+            <span class="font-bold text-2xl" style="color: #dbee98">
+              {{ scribeDTO?.pendingRequestCountByMonthYear }}</span
+            >
+          </div>
+        </div>
+
+        <div class="w-12 flex mb-2">
+          <div class="w-6 text-lg text-color-secondary">Đã duyệt</div>
+          <div class="w-6 flex justify-content-end">
+            <span class="font-bold text-2xl" style="color: #4fe884">
+              {{ scribeDTO?.approvedRequestCountByMonthYear }}</span
+            >
+          </div>
+        </div>
+
+        <div class="w-12 flex mb-2">
+          <div class="w-6 text-lg text-color-secondary">Đã từ chối</div>
+          <div class="w-6 flex justify-content-end">
+            <span class="font-bold text-2xl" style="color: #ff8780">
+              {{ scribeDTO?.deniedRequestCountByMonthYear }}</span
+            >
+          </div>
+        </div>
+
+        <div class="w-12 flex mb-2">
+          <div class="w-6 text-lg text-color-secondary">Đã xử lý</div>
+          <div class="w-6 flex justify-content-end">
+            <span class="font-bold text-2xl" style="color: #bf9eee">
+              {{ scribeDTO?.confirmedRequestCountByMonthYear }}</span
+            >
+          </div>
+        </div>
+
+        <div class="w-12 flex mb-2">
+          <div class="w-6 text-lg text-color-secondary">Đã bị hủy</div>
+          <div class="w-6 flex justify-content-end">
+            <span class="font-bold text-2xl" style="color: #c09553">
+              {{ scribeDTO?.cancelledRequestCountByMonthYear }}</span
+            >
+          </div>
+        </div>
+
+        <div class="w-12 flex mb-2 align-items-end">
+          <div
+            class="w-6 text-lg text-color-secondary font-bold font-italic underline"
+          >
+            Tỷ lệ phê duyệt
+          </div>
+          <div class="w-6 flex justify-content-end">
+            <span
+              class="font-bold text-2xl"
+              *ngIf="scribeDTO?.totalRequestCountByMonthYear"
+            >
+              {{
+                100 *
+                  (1 -
+                    scribeDTO?.deniedRequestCountByMonthYear /
+                      scribeDTO?.totalRequestCountByMonthYear)
+                  | number: "1.0-2"
+              }}%</span
+            >
+            <span
+              class="font-bold text-2xl"
+              *ngIf="!scribeDTO?.totalRequestCountByMonthYear"
+            >
+              Chưa có dữ liệu</span
+            >
+          </div>
+        </div>
+      </div>
+      <div style="height: 10%">
+        <div class="w-12 flex justify-content-end align-items-end">
+          <button
+            [disabled]="scribeDTO?.status === 6"
+            pButton
+            type="button"
+            label="Đề xuất trở thành Quản trị viên"
+            [style]="{
+              padding: '.3rem .5rem .3rem .5rem',
+              height: '35px',
+              border: '3px solid'
+            }"
+            class="p-button-outlined p-button-primary"
+            (click)="displayPromoteDialog = true"
+          ></button>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -278,10 +404,24 @@
     <h3 class="text-red-500">Cảnh báo</h3>
   </ng-template>
   <ng-template pTemplate="footer">
-    <button type="button" pButton icon="pi pi-times" label="Hủy" class="p-button-danger" style="height: 40px"
-      (click)="cd.reject()"></button>
-    <button type="button" pButton icon="pi pi-check" label="Đồng ý" class="p-button-success" style="height: 40px"
-      (click)="cd.accept()"></button>
+    <button
+      type="button"
+      pButton
+      icon="pi pi-times"
+      label="Hủy"
+      class="p-button-danger"
+      style="height: 40px"
+      (click)="cd.reject()"
+    ></button>
+    <button
+      type="button"
+      pButton
+      icon="pi pi-check"
+      label="Đồng ý"
+      class="p-button-success"
+      style="height: 40px"
+      (click)="cd.accept()"
+    ></button>
   </ng-template>
 </p-confirmDialog>
 
@@ -291,13 +431,199 @@
     <h3 class="text-blue-500">Thông báo</h3>
   </ng-template>
   <ng-template pTemplate="footer">
-    <button type="button" pButton icon="pi pi-times" label="Hủy" class="p-button-danger" (click)="cr.reject()"></button>
-    <button type="button" pButton icon="pi pi-check" label="Đồng ý" class="p-button-success"
-      (click)="cr.accept()"></button>
+    <button
+      type="button"
+      pButton
+      icon="pi pi-times"
+      label="Hủy"
+      class="p-button-danger"
+      (click)="cr.reject()"
+    ></button>
+    <button
+      type="button"
+      pButton
+      icon="pi pi-check"
+      label="Đồng ý"
+      class="p-button-success"
+      (click)="cr.accept()"
+    ></button>
   </ng-template>
 </p-confirmDialog>
+
+<!-- Promote scribe dialog -->
+<p-dialog
+  [(visible)]="displayPromoteDialog"
+  [modal]="true"
+  [style]="{ width: '35vw', height: '50vh' }"
+>
+  <ng-template pTemplate="header">
+    <span class="text-green-500 font-bold text-xl">Đề xuất</span>
+  </ng-template>
+  <div class="w-12 flex mb-5 align-items-center">
+    <div class="w-3">
+      <span class="text-lg font-bold">Gửi yêu cầu tới </span> <br />
+    </div>
+    <div class="w-9 flex justify-content-end">
+      <p-dropdown
+        [(ngModel)]="selectedAdmin"
+        [options]="admins"
+        optionLabel="username"
+        [style]="{ height: '40px' }"
+        scrollHeight="8rem"
+        [filter]="true"
+        filterBy="username"
+        class="dropdown-admins"
+      >
+        <ng-template let-admin pTemplate="item" class="dropdown-admins-tooltip">
+          <div
+            [pTooltip]="admin.pendingRequests"
+            tooltipPosition="left"
+            class="w-full h-3rem flex justify-content-center align-items-center whitespace-no-wrap text-overflow-ellipsis"
+          >
+            <span>{{ admin.username }}</span>
+          </div>
+        </ng-template>
+      </p-dropdown>
+    </div>
+  </div>
+  <div class="w-12">
+    <span class="text-lg"
+      >Nhân viên này sẽ được đề xuất trở thành
+      <span class="font-bold">Quản trị viên</span>. Bạn có chắc chắn?</span
+    >
+  </div>
+
+  <ng-template pTemplate="footer">
+    <button
+      type="button"
+      pButton
+      icon="pi pi-times"
+      label="Hủy"
+      class="p-button-danger"
+      style="height: 40px"
+      (click)="displayPromoteDialog = false"
+    ></button>
+    <button
+      type="button"
+      pButton
+      icon="pi pi-check"
+      label="Đồng ý"
+      class="p-button-success"
+      style="height: 40px"
+      (click)="promoteScribe()"
+    ></button>
+  </ng-template>
+</p-dialog>
+
+<!-- Create scribe dialog -->
+<p-dialog
+  [(visible)]="displayCreateScribe"
+  [modal]="true"
+  [style]="{ width: '35vw', height: '60vh' }"
+  (onHide)="clearNewScribeData()"
+>
+  <ng-template pTemplate="header">
+    <span class="text-green-500 font-bold text-xl"
+      >Tạo mới tài khoản nhân viên</span
+    >
+  </ng-template>
+
+  <ng-template pTemplate="content">
+    <div class="w-12 flex text-lg align-items-center">
+      <div class="w-6">Tên đăng nhập:</div>
+      <div class="w-6">
+        <input
+          type="text"
+          pInputText
+          placeholder="Tên đăng nhập..."
+          [(ngModel)]="newScribeUsername"
+          (keyup)="getNewScribeUserame()"
+          class="w-full"
+        />
+      </div>
+    </div>
+
+    <div class="w-12 mb-3 flex justify-content-end">
+      <div class="w-6">
+        <small class="p-block p-error" *ngIf="!isValidNewScribeUsername"
+          >{{inValidNewScribeUsernameMsg}}</small
+        >
+      </div>
+    </div>
+
+    <div class="w-12 flex text-lg align-items-center">
+      <div class="w-6">Mật khẩu:</div>
+      <div class="w-6">
+        <p-password
+          [(ngModel)]="newScribePassword"
+          [toggleMask]="true"
+          [feedback]="false"
+          (keyup)="getNewScribePassword()"
+          class="w-full new-scribe-pwd"
+        ></p-password>
+      </div>
+    </div>
+    <div class="w-12 mb-3 flex justify-content-end">
+      <div class="w-6">
+        <small class="p-block p-error" *ngIf="!isValidNewScribePassword"
+          >Vui lòng nhập mật khẩu (từ 6 đến 255 ký tự)</small
+        >
+      </div>
+    </div>
+
+    <div class="w-12 flex text-lg align-items-center">
+      <div class="w-6">Xác nhận mật khẩu:</div>
+      <div class="w-6">
+        <p-password
+          [(ngModel)]="newScribeConfirmPassword"
+          [toggleMask]="true"
+          [feedback]="false"
+          (keyup)="getNewScribeConfirmPassword()"
+          [disabled]="!newScribePassword"
+          class="new-scribe-pwd"
+        ></p-password>
+      </div>
+    </div>
+    <div class="w-12 mb-3 flex justify-content-end">
+      <div class="w-6">
+        <small class="p-block p-error" *ngIf="!isValidNewScribeConfirmPassword"
+          >Mật khẩu xác nhận không khớp</small
+        >
+      </div>
+    </div>
+  </ng-template>
+
+  <ng-template pTemplate="footer">
+    <button
+      type="button"
+      pButton
+      icon="pi pi-times"
+      label="Hủy"
+      class="p-button-danger"
+      style="height: 40px"
+      (click)="clearNewScribeData()"
+    ></button>
+    <button
+      type="button"
+      pButton
+      icon="pi pi-check"
+      label="Đồng ý"
+      class="p-button-success"
+      style="height: 40px"
+      [disabled]="!isValidAddNewScribe"
+      (click)="confirmAddNewScribeAccount($event)"
+    ></button>
+  </ng-template>
+</p-dialog>
 
 <p-toast key="deactivateSuccess" life="1500"></p-toast>
 <p-toast key="deactivateFail" life="1500"></p-toast>
 <p-toast key="reEnableSuccess" life="1500"></p-toast>
 <p-toast key="reEnableFail" life="1500"></p-toast>
+<p-toast key="promoteSuccess" life="1500"></p-toast>
+<p-toast key="promoteFail" life="1500"></p-toast>
+<p-toast key="createScribeSuccess" life="1500"></p-toast>
+<p-toast key="createScribeFail" life="1500"></p-toast>
+
+<p-confirmPopup key="confirmCreateNewScribe"></p-confirmPopup>
+

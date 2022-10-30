@@ -1,105 +1,60 @@
-#container {
-    height: 100%;
-  }
-  
-  .btn-info {
-    width: 25px !important;
-    height: 25px !important;
-  }
-  
-  .hide {
-    display: none;
-    width: 0;
-  }
-  
-  .show {
-    display: block;
-    width: 33.3333%;
-  }
-  
-  ::ng-deep .p-password input {
-    border: none;
-    font-size: 1em;
-    font-family: 'Jaldi';
-    padding: 0;
-    margin: 0;
-    text-align: center;
-  }
-  
-  ::ng-deep .p-dropdown .p-placeholder {
-    font-size: .9rem;
-    padding-top:5%;
-  }
-  
-  ::ng-deep .p-dropdown .p-element {
-    font-size: .9rem;
-    padding-top:5%;
-  }
-  
-  ::ng-deep .p-datepicker-buttonbar button {
-    color: red;
-  }
-  
-  #scribe-info {
-    border-left: 3px solid #EFEFEF;
-  }
-  
-  #btn-closeInfo {
-    border: none;
-    background: none;
-    position: absolute;
-    top: 0;
-    right: 0;
-    margin: 1rem 1rem 0 0;
-  }
-  
-  #right-top {
-    height: 25%;
-  }
-  
-  #right-main {
-    height: 75%;
-    border-radius: 5px;
-    background-color: #EFEFEF;
-    overflow-y: scroll;
-  }
-  
-  /* .comment {
-    width: 95%;
-    min-height: 100%;
-    box-sizing: border-box;
-    background: #FFFFFF;
-    border: 1px solid #EEEEEE;
-    box-shadow: -4px 4px 4px rgba(0, 0, 0, 0.12);
-    border-radius: 5px;
-  }
-  
-  .comment-content {
-    height: 70%;
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  
-  .comment-time {
-    height: 30%;
-    color: #53A0F4;
-  } */
-  
-  
-  
-  .txt-username {
-    width: 10rem;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  
-  #lb-username {
-    width: 20rem;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
+.table-p-password ::ng-deep .p-password input {
+  border: none;
+  font-size: 1em;
+  font-family: 'Jaldi';
+  padding: 0;
+  margin: 0;
+  text-align: center;
+}
+
+::ng-deep .p-dropdown .p-placeholder {
+  /* font-size: .9rem; */
+  padding-top: .4rem;
+}
+
+::ng-deep .p-dropdown .p-element {
+  /* font-size: .9rem; */
+  padding-top: .4rem;
+}
+
+::ng-deep .p-datepicker-buttonbar button {
+  color: red;
+}
+
+::ng-deep .p-button-outlined.p-button-primary:disabled{
+  color: grey;
+}
+
+::ng-deep .p-button-success:disabled{
+  background-color: grey;
+}
+
+/* for filtering input of dropdown */
+::ng-deep .p-dropdown-panel .p-dropdown-header {
+  padding: .5rem;
+}
+
+::ng-deep .p-dropdown-panel .p-dropdown-header .p-dropdown-filter-container .p-inputtext {
+  height: 35px;
+}
+/* end of for filtering input of dropdown */
+
+/* start of info of pending requests of admin */
+.dropdown-admins ::ng-deep .p-dropdown-panel .p-dropdown-items .p-dropdown-item{
+  padding: 0;
+}
+
+::ng-deep .p-tooltip-left .p-tooltip-text{
+  height: 3rem;
+  width: 12rem;
+}
+/* end of info of pending requests of admin */
+
+.new-scribe-pwd ::ng-deep .p-inputtext.p-component.p-element.p-password-input
+    {
+  width: 100%;
+}
+
+.new-scribe-pwd ::ng-deep .p-password.p-component.p-inputwrapper.p-input-icon-right{
+  width: 100%;
+}
