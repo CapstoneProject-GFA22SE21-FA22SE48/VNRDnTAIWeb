@@ -84,3 +84,16 @@ export const ScribeCreateSignForROM: string = base + '/Signs';
 export const ScribeCreateSignModificationRequest: string = base + '/SignModificationRequests';
 
 export const ScribeGetRomList: string = base + '/LawModificationRequests/ScribeROMList';
+
+export const ScribeGetLawRomDetail: string = base + '/LawModificationRequests/ROMDetail';
+export const ScribeGetParagraphRomDetailReference: string = base + '/LawModificationRequests/ParagraphROMDetail/References';
+export const ScribeGetSignRomDetail: string = base + '/SignModificationRequests/SignROMDetail';
+export const ScribeGetQuestionRomDetail: string = base + '/QuestionModificationRequests/QuestionROMDetail';
+
+export const ScribeCancelLawRom: string = base + '/LawModificationRequests/Cancel';
+export const ScribeCancelSignRom: string = base + '/SignModificationRequests/Cancel';
+export const ScribeCancelQuestionRom: string = base + '/QuestionModificationRequests/Cancel';
+
+export const ScribeDeleteLawRom: string = base + '/LawModificationRequests';
+export const ScribeDeleteSignRom: string = base + '/SignModificationRequests';
+export const ScribeDeleteQuestionRom: string = base + '/QuestionModificationRequests';
