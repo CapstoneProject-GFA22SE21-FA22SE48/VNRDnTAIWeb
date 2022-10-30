@@ -47,7 +47,7 @@ export class ManageScribesComponent implements OnInit {
 
   newScribeConfirmPassword: any;
   isValidNewScribeConfirmPassword: boolean = true;
-  
+
   isValidAddNewScribe: boolean = false;
   displayCreateScribe: boolean = false;
   //end of new scribe account
@@ -68,11 +68,10 @@ export class ManageScribesComponent implements OnInit {
     this.isLoadingService.add();
     this.wrapperService.get(paths.ScribeGetAdmins, getStorageToken(), {
       successCallback: (response) => {
-        this.admins = response.data?.filter((a: any) => 
-          !(a.id === decodeToken(getStorageToken() || '').Id)
-          
-         );
-        
+        this.admins = response.data?.filter(
+          (a: any) => !(a.id === decodeToken(getStorageToken() || '').Id)
+        );
+
         this.selectedAdmin = this.admins[0];
         this.isLoadingService.remove();
       },
@@ -259,16 +258,24 @@ export class ManageScribesComponent implements OnInit {
     );
   }
 
-  promoteScribe(){
+  promoteScribe() {
     this.scribeDTO.role = UserRole.ADMIN;
 
     this.isLoadingService.add();
-        this.wrapperService.post(paths.AdminPromoteScribe, {
-          scribeId: this.scribeDTO.id,
-          promotingAdminId: decodeToken(getStorageToken() || '').Id,
-          arbitratingAdminId: this.selectedAdmin?.id
-        }, getStorageToken(), {
-          successCallback: (response) => {
+    this.wrapperService.post(
+      paths.AdminPromoteScribe,
+      {
+        scribeId: this.scribeDTO.id,
+        promotingAdminId: decodeToken(getStorageToken() || '').Id,
+        arbitratingAdminId: this.selectedAdmin?.id,
+      },
+      getStorageToken(),
+      {
+        successCallback: (response) => {
+          if (
+            response.data?.errorMessage === null ||
+            response.data.errorMessage === undefined
+          ) {
             this.messageService.add({
               severity: 'success',
               key: 'promoteSuccess',
@@ -276,31 +283,47 @@ export class ManageScribesComponent implements OnInit {
               detail: commonStr.romCreatedSuccessfully,
             });
             this.displayPromoteDialog = false;
-            this.loadScribes();
-            this.isLoadingService.remove();
-          }, 
-          errorCallback: (error) => {
+          } else {
             this.messageService.add({
               severity: 'warn',
               key: 'promoteFail',
               summary: commonStr.fail,
-              detail: error.response?.data,
+              detail: response.data?.errorMessage,
             });
             this.displayPromoteDialog = false;
-            this.loadScribes();
-            this.isLoadingService.remove();
           }
-        })
+          this.isLoadingService.remove();
+        },
+        errorCallback: (error) => {
+          this.messageService.add({
+            severity: 'error',
+            key: 'promoteFail',
+            summary: commonStr.fail,
+            detail: commonStr.errorOccur,
+          });
+          this.displayPromoteDialog = false;
+          this.isLoadingService.remove();
+        },
+      }
+    );
   }
 
-  getNewScribeUserame(){
-    if(this.newScribeUsername && this.newScribeUsername?.trim().length <= 255 ){
-      if(this.tmpScribes.some((s: any) => s.username === this.newScribeUsername.trim())){
+  getNewScribeUserame() {
+    if (
+      this.newScribeUsername &&
+      this.newScribeUsername?.trim().length <= 255
+    ) {
+      if (
+        this.tmpScribes.some(
+          (s: any) => s.username === this.newScribeUsername.trim()
+        )
+      ) {
         this.isValidNewScribeUsername = false;
-        this.inValidNewScribeUsernameMsg = 'Tên đăng nhập đã tồn tại'
+        this.inValidNewScribeUsernameMsg = 'Tên đăng nhập đã tồn tại';
       } else {
         this.isValidNewScribeUsername = true;
-        this.inValidNewScribeUsernameMsg = 'Vui lòng nhập tên đăng nhập (tối đa 255 ký tự)'
+        this.inValidNewScribeUsernameMsg =
+          'Vui lòng nhập tên đăng nhập (tối đa 255 ký tự)';
       }
     } else {
       this.isValidNewScribeUsername = false;
@@ -308,8 +331,12 @@ export class ManageScribesComponent implements OnInit {
     this.checkValidNewScribeAccount();
   }
 
-  getNewScribePassword(){
-    if(this.newScribePassword && this.newScribePassword?.trim().length <= 20 && this.newScribePassword.trim() >= 6){
+  getNewScribePassword() {
+    if (
+      this.newScribePassword &&
+      this.newScribePassword?.trim().length <= 20 &&
+      this.newScribePassword.trim() >= 6
+    ) {
       this.isValidNewScribePassword = true;
       this.newScribeConfirmPassword = undefined;
       this.isValidNewScribeConfirmPassword = true;
@@ -319,8 +346,11 @@ export class ManageScribesComponent implements OnInit {
     this.checkValidNewScribeAccount();
   }
 
-  getNewScribeConfirmPassword(){
-    if(this.newScribeConfirmPassword && this.newScribeConfirmPassword?.trim() === this.newScribePassword ){
+  getNewScribeConfirmPassword() {
+    if (
+      this.newScribeConfirmPassword &&
+      this.newScribeConfirmPassword?.trim() === this.newScribePassword
+    ) {
       this.isValidNewScribeConfirmPassword = true;
     } else {
       this.isValidNewScribeConfirmPassword = false;
@@ -328,82 +358,85 @@ export class ManageScribesComponent implements OnInit {
     this.checkValidNewScribeAccount();
   }
 
-  checkValidNewScribeAccount(){
-    if(this.isValidNewScribeUsername &&
+  checkValidNewScribeAccount() {
+    if (
+      this.isValidNewScribeUsername &&
       this.isValidNewScribePassword &&
       this.isValidNewScribeConfirmPassword &&
-      this.newScribeUsername && this.newScribeUsername.trim() !== ''
-      && this.newScribePassword && this.newScribePassword.trim() !== ''
-      && this.newScribeConfirmPassword && this.newScribeConfirmPassword.trim() !== ''
-      ){
-        this.isValidAddNewScribe = true;
-      } else {
-        this.isValidAddNewScribe = false;
-      }
+      this.newScribeUsername &&
+      this.newScribeUsername.trim() !== '' &&
+      this.newScribePassword &&
+      this.newScribePassword.trim() !== '' &&
+      this.newScribeConfirmPassword &&
+      this.newScribeConfirmPassword.trim() !== ''
+    ) {
+      this.isValidAddNewScribe = true;
+    } else {
+      this.isValidAddNewScribe = false;
+    }
   }
 
-  clearNewScribeData(){
+  clearNewScribeData() {
     this.newScribeUsername = undefined;
     this.isValidNewScribeUsername = true;
     this.inValidNewScribeUsernameMsg = undefined;
-  
+
     this.newScribePassword = undefined;
     this.isValidNewScribePassword = true;
-  
+
     this.newScribeConfirmPassword = undefined;
     this.isValidNewScribeConfirmPassword = true;
-    
+
     this.isValidAddNewScribe = false;
     this.displayCreateScribe = false;
   }
 
-  confirmAddNewScribeAccount(event: any){
+  confirmAddNewScribeAccount(event: any) {
     this.confirmationService.confirm({
       target: event?.target,
       key: 'confirmCreateNewScribe',
       message: 'Tài khoản nhân viên sẽ đi vào hoạt động. Bạn có chắc?',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
-          this.isLoadingService.add();
-          this.wrapperService.post(
-            paths.AdminCreateNewScribe,
-            {
-              username: this.newScribeUsername,
-              password: this.newScribePassword,
-              role: UserRole.SCRIBE,
-              status: Status.Active,
-              createdDate: new Date(),
-            },
-            getStorageToken(),
-            {
-              successCallback: (response) => {
-                this.clearNewScribeData();
-                this.displayCreateScribe = false;
-                this.loadScribes();
+        this.isLoadingService.add();
+        this.wrapperService.post(
+          paths.AdminCreateNewScribe,
+          {
+            username: this.newScribeUsername,
+            password: this.newScribePassword,
+            role: UserRole.SCRIBE,
+            status: Status.Active,
+            createdDate: new Date(),
+          },
+          getStorageToken(),
+          {
+            successCallback: (response) => {
+              this.clearNewScribeData();
+              this.displayCreateScribe = false;
+              this.loadScribes();
 
-                this.messageService.add({
-                  severity: 'success',
-                  key: 'createScribeSuccess',
-                  summary: commonStr.success,
-                  detail: commonStr.dataUpdatedSuccessfully,
-                });
-                this.isLoadingService.remove();
-              },
-              errorCallback: (error) => {
-                console.log(error);
-                this.messageService.add({
-                  severity: 'error',
-                  key: 'createScribeFail',
-                  summary: commonStr.fail,
-                  detail: commonStr.errorOccur,
-                });
-                this.isLoadingService.remove();
-              },
-            }
-          );
+              this.messageService.add({
+                severity: 'success',
+                key: 'createScribeSuccess',
+                summary: commonStr.success,
+                detail: commonStr.dataUpdatedSuccessfully,
+              });
+              this.isLoadingService.remove();
+            },
+            errorCallback: (error) => {
+              console.log(error);
+              this.messageService.add({
+                severity: 'error',
+                key: 'createScribeFail',
+                summary: commonStr.fail,
+                detail: commonStr.errorOccur,
+              });
+              this.isLoadingService.remove();
+            },
+          }
+        );
       },
       reject: () => {},
     });
   }
-
 }

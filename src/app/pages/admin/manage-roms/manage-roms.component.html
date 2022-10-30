@@ -186,6 +186,7 @@
               <div
                 class="w-12 white-space-nowrap overflow-hidden text-overflow-ellipsis"
               >
+                <span *ngIf="rom.operationType === undefined">Đề xuất</span>
                 <span *ngIf="rom.operationType === 0">Thêm mới</span>
                 <span *ngIf="rom.operationType === 1">Chỉnh sửa</span>
                 <span *ngIf="rom.operationType === 2">Xóa</span>
@@ -309,6 +310,7 @@
           <span class="text-lg font-bold">Loại yêu cầu: </span>
         </div>
         <div class="w-6 text-lg font-italic flex justify-content-end">
+          <span *ngIf="selectedRom.operationType === undefined">Đề xuất</span>
           <span *ngIf="selectedRom.operationType === 0">Thêm mới</span>
           <span *ngIf="selectedRom.operationType === 1">Chỉnh sửa</span>
           <span *ngIf="selectedRom.operationType === 2">Xóa</span>
@@ -349,6 +351,28 @@
         <div class="w-6 text-lg flex justify-content-end">
           <span>
             {{ selectedRom.createdDate | date: "dd/MM/yyyy" }}
+          </span>
+        </div>
+      </div>
+
+      <div class="w-12 flex p-2" *ngIf="isPromotingAdminPromotionRom">
+        <div class="w-6">
+          <span class="text-lg font-bold">Quản trị viên phê duyệt: </span>
+        </div>
+        <div class="w-6 text-lg flex justify-content-end">
+          <span>
+            {{ selectedRom?.arbitratingAdmin?.username}}
+          </span>
+        </div>
+      </div>
+
+      <div class="w-12 flex p-2" *ngIf="isArbitratingAdminPromotionRom">
+        <div class="w-6">
+          <span class="text-lg font-bold">Quản trị viên đề xuất: </span>
+        </div>
+        <div class="w-6 text-lg flex justify-content-end">
+          <span>
+            {{ selectedRom?.promotingAdmin?.username}}
           </span>
         </div>
       </div>
@@ -426,7 +450,7 @@
     </div>
   </ng-template>
 
-  <ng-template pTemplate="footer" *ngIf="selectedRom?.status === 0">
+  <ng-template pTemplate="footer" *ngIf="selectedRom?.status === 0 && !isPromotingAdminPromotionRom">
     <div class="w-12 flex" style="height: 10%">
       <div class="w-6 flex justify-content-start">
         <button

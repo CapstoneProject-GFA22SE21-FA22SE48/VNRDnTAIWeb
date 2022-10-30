@@ -81,7 +81,8 @@ export class ManageRomsComponent implements OnInit {
 
   selectedParagraphRomReferenceSub = new BehaviorSubject<string>('');
 
-  isValid: boolean = false;
+  isPromotingAdminPromotionRom: boolean = false;
+  isArbitratingAdminPromotionRom: boolean = false;
 
   constructor(
     private wrapperService: WrapperService,
@@ -169,10 +170,9 @@ export class ManageRomsComponent implements OnInit {
 
     //filter by "Trạng thái"
     if (this.filterStatusCode) {
-      if (this.filterStatusCode === 1){//pending is 0 but dropdown of primeng need start from 1
-        this.roms = this.roms?.filter(
-          (r: any) => r.status === 0
-        );
+      if (this.filterStatusCode === 1) {
+        //pending is 0 but dropdown of primeng need start from 1
+        this.roms = this.roms?.filter((r: any) => r.status === 0);
       } else {
         this.roms = this.roms?.filter(
           (r: any) => r.status === this.filterStatusCode
@@ -259,7 +259,7 @@ export class ManageRomsComponent implements OnInit {
       getStorageToken(),
       {
         successCallback: async (response) => {
-           if (response.data?.length > 0) {
+          if (response.data?.length > 0) {
             this.selectedParagraphRomReferenceSub.next(
               `Các hành vi liên quan:\n`
             );
@@ -277,23 +277,23 @@ export class ManageRomsComponent implements OnInit {
             //   }
             // });
 
-              for await (const r of response.data) {
-                this.selectedParagraphRomReferenceSub.next(
-                  `\t${r.referenceParagraphSectionStatueName} > ${
-                    r.referenceParagraphSectionName
-                  } > ${r.referenceParagraphName} (${
-                    r.referenceParagraphIsExcluded ? 'ngoại trừ' : 'bao gồm'
-                  })\n`
-                );
-                if(response.data?.indexOf(r) === response.data?.length -1){
-                  // console.log(response.data?.indexOf(r));
+            for await (const r of response.data) {
+              this.selectedParagraphRomReferenceSub.next(
+                `\t${r.referenceParagraphSectionStatueName} > ${
+                  r.referenceParagraphSectionName
+                } > ${r.referenceParagraphName} (${
+                  r.referenceParagraphIsExcluded ? 'ngoại trừ' : 'bao gồm'
+                })\n`
+              );
+              if (response.data?.indexOf(r) === response.data?.length - 1) {
+                // console.log(response.data?.indexOf(r));
                 this.selectedParagraphRomReferenceSub.complete();
-              this.isLoadingService.remove();
-                }
-              };
-          } else if(response.data?.length === 0){
-              this.selectedParagraphRomReferenceSub.complete();
-              this.isLoadingService.remove();
+                this.isLoadingService.remove();
+              }
+            }
+          } else if (response.data?.length === 0) {
+            this.selectedParagraphRomReferenceSub.complete();
+            this.isLoadingService.remove();
           }
         },
         errorCallback: (error) => {
@@ -306,14 +306,14 @@ export class ManageRomsComponent implements OnInit {
   }
 
   viewInfo(rom: any) {
-    
-
     this.selectedRom = rom;
     this.originalModel.code = '';
     this.changedModel.code = '';
     this.changedModelImg = undefined;
-    this.originalModelImg = undefined;    
+    this.originalModelImg = undefined;
 
+    this.isPromotingAdminPromotionRom = false;
+this.isArbitratingAdminPromotionRom = false;
 
     if (this.selectedRom.lawRomId) {
       this.isLoadingService.add();
@@ -325,7 +325,7 @@ export class ManageRomsComponent implements OnInit {
             if (response.data.modifyingStatue !== null) {
               this.selectedRom.modifyingStatue = response.data.modifyingStatue;
               // if (!this.selectedRom.modifyingStatue.isDeleted) {
-              if(this.selectedRom.operationType !== OperationType.Delete){
+              if (this.selectedRom.operationType !== OperationType.Delete) {
                 this.changedModel.code =
                   `Tên điều:\n` +
                   `\t${this.selectedRom.modifyingStatue?.name}\n` +
@@ -375,7 +375,7 @@ export class ManageRomsComponent implements OnInit {
                 }
               }
               // if (!this.selectedRom.modifyingSection.isDeleted) {
-              if(this.selectedRom.operationType !== OperationType.Delete){
+              if (this.selectedRom.operationType !== OperationType.Delete) {
                 this.changedModel.code =
                   `Tên khoản: \n` +
                   `\t${this.selectedRom.modifyingSection?.name}\n` +
@@ -423,17 +423,23 @@ export class ManageRomsComponent implements OnInit {
 
               var tmpChangedModelCode = '';
               // if (!this.selectedRom.modifyingParagraph.isDeleted) {
-              if(this.selectedRom.operationType !== OperationType.Delete){
+              if (this.selectedRom.operationType !== OperationType.Delete) {
                 tmpChangedModelCode =
                   `Tên điểm:\n` +
                   `\t${this.selectedRom.modifyingParagraph?.name}\n` +
                   `Nội dung:\n` +
                   `\t${this.selectedRom.modifyingParagraph?.description}\n` +
                   `Hình phạt bổ sung (nếu có):\n` +
-                  `\t${this.selectedRom.modifyingParagraph?.additionalPenalty !== null ? this.selectedRom.modifyingParagraph?.additionalPenalty : '{không}'}\n`;
+                  `\t${
+                    this.selectedRom.modifyingParagraph?.additionalPenalty !==
+                    null
+                      ? this.selectedRom.modifyingParagraph?.additionalPenalty
+                      : '{không}'
+                  }\n`;
                 this.paragraphReferencesObservable(
                   // this.selectedRom.modifyingParagraphId
-                  this.selectedRom.modifyingParagraph?.id || this.selectedRom.modifyingParagraphId
+                  this.selectedRom.modifyingParagraph?.id ||
+                    this.selectedRom.modifyingParagraphId
                 ).subscribe({
                   next: (v) => (tmpChangedModelCode += `${v}`),
                   error: (e) => console.log(e),
@@ -456,9 +462,14 @@ export class ManageRomsComponent implements OnInit {
                   `Nội dung:\n` +
                   `\t${this.selectedRom.modifiedParagraph?.description}\n` +
                   `Hình phạt bổ sung (nếu có):\n` +
-                  `\t${this.selectedRom.modifiedParagraph?.additionalPenalty? this.selectedRom.modifiedParagraph?.additionalPenalty : '{không}'}\n`;
+                  `\t${
+                    this.selectedRom.modifiedParagraph?.additionalPenalty
+                      ? this.selectedRom.modifiedParagraph?.additionalPenalty
+                      : '{không}'
+                  }\n`;
                 this.paragraphReferencesObservable(
-                  this.selectedRom.modifiedParagraph?.id || this.selectedRom.modifiedParagraphId
+                  this.selectedRom.modifiedParagraph?.id ||
+                    this.selectedRom.modifiedParagraphId
                 ).subscribe({
                   next: (v) => (tmpOriginalModelCode += `${v}`),
                   error: (e) => console.log(e),
@@ -492,7 +503,7 @@ export class ManageRomsComponent implements OnInit {
             if (response.data.modifyingSign !== null) {
               this.selectedRom.modifyingSign = response.data.modifyingSign;
               // if (!this.selectedRom.modifyingSign.isDeleted) {
-              if(this.selectedRom.operationType !== OperationType.Delete){
+              if (this.selectedRom.operationType !== OperationType.Delete) {
                 this.changedModel.code =
                   `Loại biển báo:\n` +
                   `\t${this.selectedRom.modifyingSign?.signCategory?.name}\n` +
@@ -556,7 +567,7 @@ export class ManageRomsComponent implements OnInit {
               this.selectedRom.modifyingQuestion =
                 response.data.modifyingQuestion;
               // if (!this.selectedRom.modifyingQuestion.isDeleted) {
-              if(this.selectedRom.operationType !== OperationType.Delete){
+              if (this.selectedRom.operationType !== OperationType.Delete) {
                 var tmpChangedModelCode = '';
                 tmpChangedModelCode =
                   `Hạng:\n` +
@@ -651,7 +662,59 @@ export class ManageRomsComponent implements OnInit {
         }
       );
     } else {
-      //TODO: ROM detail promoting scribe
+      //ROM detail promoting scribe
+      this.changedModelImg = undefined;
+      this.originalModelImg = undefined;
+      this.isLoadingService.add();
+      this.wrapperService.get(
+        paths.AdminGetUserRomDetail + '/' + this.selectedRom.modifyingUserId,
+        getStorageToken(),
+        {
+          successCallback: (response) => {
+            if (response.data.modifyingUser !== null) {
+              this.selectedRom.modifyingUser = response.data.modifyingUser;
+              this.changedModel.code =
+                `Tên đăng nhập:\n` +
+                `\t${this.selectedRom.modifyingUser?.username}\n` +
+                `Vai trò:\n` +
+                `\t${
+                  this.selectedRom.modifyingUser?.role === 1
+                    ? 'Nhân viên'
+                    : 'Quản trị viên'
+                }\n`;
+
+              this.selectedRom.modifiedUser = response.data.modifiedUser;
+              this.originalModel.code =
+                `Tên đăng nhập:\n` +
+                `\t${this.selectedRom.modifiedUser?.username}\n` +
+                `Vai trò:\n` +
+                `\t${
+                  this.selectedRom.modifiedUser?.role === 1
+                    ? 'Nhân viên'
+                    : 'Quản trị viên'
+                }\n`;
+
+                if(response.data?.promotingAdminId === decodeToken(getStorageToken() || '').Id){
+                  this.selectedRom.promotingAdmin = response.data.promotingAdmin,
+                  this.selectedRom.arbitratingAdmin = response.data.arbitratingAdmin,
+                  this.isPromotingAdminPromotionRom = true;
+                  this.isArbitratingAdminPromotionRom = false;
+                } else if(response.data?.arbitratingAdminId === decodeToken(getStorageToken() || '').Id) {
+                  this.selectedRom.promotingAdmin = response.data.promotingAdmin,
+                  this.selectedRom.arbitratingAdmin = response.data.arbitratingAdmin,
+                  this.isPromotingAdminPromotionRom = false;
+                  this.isArbitratingAdminPromotionRom = true;
+                }
+            }
+            this.isLoadingService.remove();
+            this.displayRomDetailDialog = true;
+          },
+          errorCallback: (error) => {
+            console.log(error);
+            this.isLoadingService.remove();
+          },
+        }
+      );
     }
   }
 
@@ -659,7 +722,8 @@ export class ManageRomsComponent implements OnInit {
     this.confirmationService.confirm({
       target: event?.target,
       key: 'confirmApprove',
-      message: 'Thao tác này sẽ cập nhật dữ liệu của hệ thống cùng các dữ liệu liên quan. Bạn có chắc?',
+      message:
+        'Thao tác này sẽ cập nhật dữ liệu của hệ thống cùng các dữ liệu liên quan. Bạn có chắc?',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
         if (this.selectedRom.lawRomId && this.selectedRom.modifyingStatueId) {
@@ -694,7 +758,10 @@ export class ManageRomsComponent implements OnInit {
               },
             }
           );
-        } else if (this.selectedRom.lawRomId && this.selectedRom.modifyingSectionId){
+        } else if (
+          this.selectedRom.lawRomId &&
+          this.selectedRom.modifyingSectionId
+        ) {
           this.isLoadingService.add();
           this.wrapperService.post(
             paths.AdminApproveSectionRom +
@@ -726,7 +793,10 @@ export class ManageRomsComponent implements OnInit {
               },
             }
           );
-        } else if (this.selectedRom.lawRomId && this.selectedRom.modifyingParagraphId){
+        } else if (
+          this.selectedRom.lawRomId &&
+          this.selectedRom.modifyingParagraphId
+        ) {
           this.isLoadingService.add();
           this.wrapperService.post(
             paths.AdminApproveParagraphRom +
@@ -757,16 +827,14 @@ export class ManageRomsComponent implements OnInit {
                 this.isLoadingService.remove();
               },
             }
-          )
+          );
         } else if (
           this.selectedRom.signRomId &&
           this.selectedRom.modifyingSignId
         ) {
           this.isLoadingService.add();
           this.wrapperService.post(
-            paths.AdminApproveSignRom +
-              '/' +
-              this.selectedRom.modifyingSignId,
+            paths.AdminApproveSignRom + '/' + this.selectedRom.modifyingSignId,
             {},
             getStorageToken(),
             {
@@ -793,7 +861,7 @@ export class ManageRomsComponent implements OnInit {
               },
             }
           );
-        } else if(
+        } else if (
           this.selectedRom.signRomId &&
           this.selectedRom.modifyingGpssignId
         ) {
@@ -831,7 +899,35 @@ export class ManageRomsComponent implements OnInit {
             }
           );
         } else {
-          //TODO
+          this.isLoadingService.add();
+          this.wrapperService.post(
+            paths.AdminApproveUserRom + '/' + this.selectedRom.modifyingUserId,
+            {},
+            getStorageToken(),
+            {
+              successCallback: (response) => {
+                this.clearData();
+                this.displayRomDetailDialog = false;
+                this.loadRoms();
+
+                this.messageService.add({
+                  severity: 'success',
+                  summary: commonStr.success,
+                  detail: commonStr.dataUpdatedSuccessfully,
+                });
+                this.isLoadingService.remove();
+              },
+              errorCallback: (error) => {
+                console.log(error);
+                this.messageService.add({
+                  severity: 'error',
+                  summary: commonStr.fail,
+                  detail: commonStr.errorOccur,
+                });
+                this.isLoadingService.remove();
+              },
+            }
+          );
         }
       },
       reject: () => {},
@@ -843,8 +939,7 @@ export class ManageRomsComponent implements OnInit {
       this.isLoadingService.add();
       this.wrapperService.post(
         paths.AdminDenyStatueRom + '/' + this.selectedRom.modifyingStatueId,
-        this.deniedReason
-        ,
+        this.deniedReason,
         getStorageToken(),
         {
           successCallback: (response) => {
@@ -870,12 +965,14 @@ export class ManageRomsComponent implements OnInit {
           },
         }
       );
-    } else if (this.selectedRom.lawRomId && this.selectedRom.modifyingSectionId){
+    } else if (
+      this.selectedRom.lawRomId &&
+      this.selectedRom.modifyingSectionId
+    ) {
       this.isLoadingService.add();
       this.wrapperService.post(
         paths.AdminDenySectionRom + '/' + this.selectedRom.modifyingSectionId,
-        this.deniedReason
-        ,
+        this.deniedReason,
         getStorageToken(),
         {
           successCallback: (response) => {
@@ -901,12 +998,16 @@ export class ManageRomsComponent implements OnInit {
           },
         }
       );
-    } else if (this.selectedRom.lawRomId && this.selectedRom.modifyingParagraphId){
+    } else if (
+      this.selectedRom.lawRomId &&
+      this.selectedRom.modifyingParagraphId
+    ) {
       this.isLoadingService.add();
       this.wrapperService.post(
-        paths.AdminDenyParagraphRom + '/' + this.selectedRom.modifyingParagraphId,
-        this.deniedReason
-        ,
+        paths.AdminDenyParagraphRom +
+          '/' +
+          this.selectedRom.modifyingParagraphId,
+        this.deniedReason,
         getStorageToken(),
         {
           successCallback: (response) => {
@@ -936,8 +1037,7 @@ export class ManageRomsComponent implements OnInit {
       this.isLoadingService.add();
       this.wrapperService.post(
         paths.AdminDenySignRom + '/' + this.selectedRom.modifyingSignId,
-        this.deniedReason
-        ,
+        this.deniedReason,
         getStorageToken(),
         {
           successCallback: (response) => {
@@ -963,14 +1063,16 @@ export class ManageRomsComponent implements OnInit {
           },
         }
       );
-    }else if (this.selectedRom.signRomId && this.selectedRom.modifyingGpssignId) {
+    } else if (
+      this.selectedRom.signRomId &&
+      this.selectedRom.modifyingGpssignId
+    ) {
       //TODO
     } else if (this.selectedRom.modifyingQuestionId) {
       this.isLoadingService.add();
       this.wrapperService.post(
         paths.AdminDenyQuestionRom + '/' + this.selectedRom.modifyingQuestionId,
-        this.deniedReason
-        ,
+        this.deniedReason,
         getStorageToken(),
         {
           successCallback: (response) => {
@@ -997,7 +1099,35 @@ export class ManageRomsComponent implements OnInit {
         }
       );
     } else {
-      //TODO
+      this.isLoadingService.add();
+      this.wrapperService.post(
+        paths.AdminDenyUserRom + '/' + this.selectedRom.modifyingUserId,
+        this.deniedReason,
+        getStorageToken(),
+        {
+          successCallback: (response) => {
+            this.clearData();
+            this.displayRomDetailDialog = false;
+            this.loadRoms();
+
+            this.messageService.add({
+              severity: 'success',
+              summary: commonStr.success,
+              detail: commonStr.dataUpdatedSuccessfully,
+            });
+            this.isLoadingService.remove();
+          },
+          errorCallback: (error) => {
+            console.log(error);
+            this.messageService.add({
+              severity: 'error',
+              summary: commonStr.fail,
+              detail: commonStr.errorOccur,
+            });
+            this.isLoadingService.remove();
+          },
+        }
+      );
     }
   }
 
@@ -1023,5 +1153,8 @@ export class ManageRomsComponent implements OnInit {
     this.displayRomDetailDialog = false;
     this.isValidDeniedReason = true;
     this.isValidSubmitDenyRom = false;
+
+    this.isPromotingAdminPromotionRom = false;
+    this.isArbitratingAdminPromotionRom = false;
   }
 }
