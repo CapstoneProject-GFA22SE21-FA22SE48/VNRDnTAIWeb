@@ -330,9 +330,9 @@ export class ManageLawsComponent implements OnInit {
     this.invalidFilterSectionMaxPenaltyMsg = '';
 
     if (
-      (this.filterSectionMinPenalty &&
+      this.filterSectionMinPenalty &&
       this.filterSectionMaxPenalty &&
-      this.filterSectionMinPenalty >= this.filterSectionMaxPenalty)
+      this.filterSectionMinPenalty >= this.filterSectionMaxPenalty
     ) {
       this.invalidFilterSectionMinPenalty = true;
       this.invalidFilterSectionMinPenaltyMsg =
@@ -644,11 +644,11 @@ export class ManageLawsComponent implements OnInit {
     if (
       this.newChosenSectionMinPenalty < 50000 ||
       this.newChosenSectionMinPenalty > 75000000 ||
-      (this.newChosenSectionMinPenalty > this.newChosenSectionMaxPenalty)
+      this.newChosenSectionMinPenalty > this.newChosenSectionMaxPenalty
     ) {
       this.invalidChosenSectionNewPenaltyMsg =
         'Vui lòng nhập mức phạt tối thiểu nhỏ hơn mức phạt tối đa (50.000đ - 75.000.000đ)';
-        this.tmpChosenSection.minPenalty = undefined;
+      this.tmpChosenSection.minPenalty = undefined;
     } else {
       this.invalidChosenSectionNewPenaltyMsg = '';
       this.tmpChosenSection.minPenalty = this.newChosenSectionMinPenalty;
@@ -663,11 +663,11 @@ export class ManageLawsComponent implements OnInit {
     if (
       this.newChosenSectionMinPenalty < 50000 ||
       this.newChosenSectionMinPenalty > 75000000 ||
-      (this.newChosenSectionMaxPenalty < this.newChosenSectionMinPenalty)
+      this.newChosenSectionMaxPenalty < this.newChosenSectionMinPenalty
     ) {
       this.invalidChosenSectionNewPenaltyMsg =
         'Vui lòng nhập mức phạt tối đa lớn hơn mức phạt tối thiểu (50.000đ - 75.000.000đ)';
-        this.tmpChosenSection.maxPenalty = undefined;
+      this.tmpChosenSection.maxPenalty = undefined;
     } else {
       this.invalidChosenSectionNewPenaltyMsg = '';
       this.tmpChosenSection.maxPenalty = this.newChosenSectionMaxPenalty;
@@ -688,13 +688,11 @@ export class ManageLawsComponent implements OnInit {
   }
 
   detectChangeSection() {
-
     // console.log(this.tmpChosenSection);
-    
 
     if (
-      (JSON.stringify(this.chosenSection) !==
-        JSON.stringify(this.tmpChosenSection)) &&
+      JSON.stringify(this.chosenSection) !==
+        JSON.stringify(this.tmpChosenSection) &&
       !this.invalidChosenSectionNewDesc &&
       !this.invalidChosenSectionNewPenaltyMsg &&
       this.tmpChosenSection?.minPenalty !== undefined &&
@@ -1192,8 +1190,32 @@ export class ManageLawsComponent implements OnInit {
   // start of adding chosen paragraph reference
   loadAddingChosenParagraphStatueList() {
     this.displayAddChosenParagraphReference = true;
-    this.addingChosenParagraphStatueList = JSON.parse(
-      JSON.stringify(this.tmpStatues)
+    // Modify to get all statue instead of get only the statues that this scribe manages
+
+    // this.addingChosenParagraphStatueList = JSON.parse(
+    //   JSON.stringify(this.tmpStatues)
+    // );
+
+    this.isLoadingService.add();
+    this.wrapperService.get(
+      paths.ScribeGetAllStatueForAddingReferences,
+      getStorageToken(),
+      {
+        successCallback: (response) => {
+          this.addingChosenParagraphStatueList = response.data.sort(
+            (s1: any, s2: any) => s1.name?.split(" ")[1] - s2.name?.split(" ")[1]
+          );
+          this.isLoadingService.remove();
+        },
+        errorCallback: (error) => {
+          console.log(error);
+          this.isLoadingService.remove();
+          //backup if error
+          this.addingChosenParagraphStatueList = JSON.parse(
+            JSON.stringify(this.tmpStatues)
+          );
+        },
+      }
     );
   }
 
@@ -1568,8 +1590,31 @@ export class ManageLawsComponent implements OnInit {
   }
 
   loadStatuesForAddingReferenceOfNewSectionWithNoParagraph() {
-    this.newSectionWithNoParagraphReferenceStatueList = JSON.parse(
-      JSON.stringify(this.statues)
+    // Modify to get all statue instead of get only the statues that this scribe manages
+    // this.newSectionWithNoParagraphReferenceStatueList = JSON.parse(
+    //   JSON.stringify(this.statues)
+    // );
+
+    this.isLoadingService.add();
+    this.wrapperService.get(
+      paths.ScribeGetAllStatueForAddingReferences,
+      getStorageToken(),
+      {
+        successCallback: (response) => {
+          this.newSectionWithNoParagraphReferenceStatueList = response.data.sort(
+            (s1: any, s2: any) => s1.name?.split(" ")[1] - s2.name?.split(" ")[1]
+          );
+          this.isLoadingService.remove();
+        },
+        errorCallback: (error) => {
+          console.log(error);
+          this.isLoadingService.remove();
+          //backup if error
+          this.newSectionWithNoParagraphReferenceStatueList = JSON.parse(
+            JSON.stringify(this.tmpStatues)
+          );
+        },
+      }
     );
   }
 
@@ -1714,22 +1759,20 @@ export class ManageLawsComponent implements OnInit {
     } else {
       this.newParagraphDescriptionInvalidMsg = '';
     }
-    
+
     this.checkValidSaveNewParagraph();
   }
 
-  checkValidSaveNewParagraph(){
-    if(
-      (this.newParagraphOfSelectedSection.description !== undefined && 
-        this.newParagraphDescriptionInvalidMsg === '' && 
-          (this.newParagraphAdditionalPenaltyInvalidMsg === undefined ||
-      this.newParagraphAdditionalPenaltyInvalidMsg === '')
-        )
-    ){
+  checkValidSaveNewParagraph() {
+    if (
+      this.newParagraphOfSelectedSection.description !== undefined &&
+      this.newParagraphDescriptionInvalidMsg === '' &&
+      (this.newParagraphAdditionalPenaltyInvalidMsg === undefined ||
+        this.newParagraphAdditionalPenaltyInvalidMsg === '')
+    ) {
       this.isValidSaveNewParagraph = true;
     } else {
       this.isValidSaveNewParagraph = false;
-
     }
   }
 
