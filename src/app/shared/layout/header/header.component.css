@@ -1,16 +1,6 @@
-#logo {
-    width: 60px;
-    height: 60px;
-}
-
 .layout-header {
     height: 5rem;
     left: 0px;
     top: 0px;
     box-shadow: rgba(0, 0, 0, 0.15) 3px 3px 4px;
-}
-
-.header-btn i {
-    font-size: 1.3rem;
-    color: #3366FF;
 }

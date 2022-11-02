@@ -9,6 +9,8 @@ import { FileUploadService } from 'src/services/file-upload.service';
 import { OperationType } from 'src/app/common/operationType';
 import { MessageService } from 'primeng/api';
 import * as commonStr from '../../../common/commonStr';
+import { NotificationService } from 'src/services/notification.service';
+import { SubjectType } from 'src/app/common/subjectType';
 
 @Component({
   selector: 'app-manage-signs',
@@ -69,7 +71,8 @@ export class ManageSignsComponent implements OnInit {
     private wrapperService: WrapperService,
     private isLoadingService: IsLoadingService,
     private fileUploadService: FileUploadService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private notiService: NotificationService
   ) {}
 
   ngOnInit() {
@@ -203,7 +206,11 @@ export class ManageSignsComponent implements OnInit {
   }
 
   getTmpChosenSignNewName() {
-    if (!this.tmpChosenSignNewName || this.tmpChosenSignNewName.trim() === '' || !this.tmpChosenSignNewName.match('^Biển số [0-9]{3}[a-z]? ".*"$')) {
+    if (
+      !this.tmpChosenSignNewName ||
+      this.tmpChosenSignNewName.trim() === '' ||
+      !this.tmpChosenSignNewName.match('^Biển số [0-9]{3}[a-z]? ".*"$')
+    ) {
       this.isValidUpdateChosenSign = false;
       this.isValidChosenSignNewName = false;
     } else {
@@ -254,128 +261,153 @@ export class ManageSignsComponent implements OnInit {
   }
 
   updateChosenSign() {
-    if(this.tmpChosenSignNewImageFile !== undefined){
+    if (this.tmpChosenSignNewImageFile !== undefined) {
       this.fileUploadService
-      .uploadImageToFirebase(
-        this.tmpChosenSignNewImageFile,
-        `images/sign-collection/new/${this.tmpChosenSign.name.split(' ')[2]}`
-      )
-      .then((imgUrl: any) => {
-        this.tmpChosenSign.imageUrl = imgUrl;
-      })
-      .then(() => {
-        this.isLoadingService.add();
-        this.wrapperService.post(
-          paths.ScribeCreateSignForROM,
-          this.tmpChosenSign,
-          getStorageToken(),
-          {
-            successCallback: (response) => {
-              this.wrapperService.post(
-                paths.ScribeCreateSignModificationRequest,
-                {
-                  modifiedSignId: this.chosenSign.id,
-                  modifyingSignId: response.data.id,
-                  scribeId: decodeToken(getStorageToken() || '').Id,
-                  adminId: this.selectedAdmin.id,
-                  operationType: OperationType.Update,
-                },
-                getStorageToken(),
-                {
-                  successCallback: (response) => {
-                    this.clearTmpChosenSignNewData();
-                    this.displayConfirmUpdateChosenSign = false;
-                    this.messageService.add({
-                      severity: 'success',
-                      summary: commonStr.success,
-                      detail: commonStr.romCreatedSuccessfully,
-                    });
-                    this.loadAdmins();
-                    this.isLoadingService.remove();
+        .uploadImageToFirebase(
+          this.tmpChosenSignNewImageFile,
+          `images/sign-collection/new/${this.tmpChosenSign.name.split(' ')[2]}`
+        )
+        .then((imgUrl: any) => {
+          this.tmpChosenSign.imageUrl = imgUrl;
+        })
+        .then(() => {
+          this.isLoadingService.add();
+          this.wrapperService.post(
+            paths.ScribeCreateSignForROM,
+            this.tmpChosenSign,
+            getStorageToken(),
+            {
+              successCallback: (response1) => {
+                this.wrapperService.post(
+                  paths.ScribeCreateSignModificationRequest,
+                  {
+                    modifiedSignId: this.chosenSign.id,
+                    modifyingSignId: response1.data.id,
+                    scribeId: decodeToken(getStorageToken() || '').Id,
+                    adminId: this.selectedAdmin.id,
+                    operationType: OperationType.Update,
                   },
-                  errorCallback: (error) => {
-                    console.log(error);
-                    this.displayConfirmUpdateChosenSign = false;
-                    this.messageService.add({
-                      severity: 'error',
-                      summary: commonStr.fail,
-                      detail: commonStr.errorOccur,
-                    });
-                    this.isLoadingService.remove();
-                  },
-                }
-              );
-            },
-            errorCallback: (error) => {
-              console.log(error);
-              this.displayConfirmUpdateChosenSign = false;
-              this.messageService.add({
-                severity: 'error',
-                summary: commonStr.fail,
-                detail: commonStr.errorOccur,
-              });
-              this.isLoadingService.remove();
-            },
-          }
-        );
-      });
+                  getStorageToken(),
+                  {
+                    successCallback: (response2) => {
+                      //add notification
+                      this.notiService.create({
+                        subjectId: response2.data?.modifyingSignId,
+                        subjectType: SubjectType.Sign,
+                        senderId: decodeToken(getStorageToken() || '').Id,
+                        senderUsername: response2.data?.scribe?.username || '',
+                        receiverId: this.selectedAdmin.id,
+                        receiverUsername: this.selectedAdmin?.username || '',
+                        action: commonStr.requestUpdate,
+                        relatedDescription: this.tmpChosenSign?.name,
+                        createdDate: new Date().toString(),
+                        isRead: false,
+                      });
+                      this.clearTmpChosenSignNewData();
+                      this.displayConfirmUpdateChosenSign = false;
+                      this.messageService.add({
+                        severity: 'success',
+                        summary: commonStr.success,
+                        detail: commonStr.romCreatedSuccessfully,
+                      });
+                      this.loadAdmins();
+                      this.isLoadingService.remove();
+                    },
+                    errorCallback: (error) => {
+                      console.log(error);
+                      this.displayConfirmUpdateChosenSign = false;
+                      this.messageService.add({
+                        severity: 'error',
+                        summary: commonStr.fail,
+                        detail: commonStr.errorOccur,
+                      });
+                      this.isLoadingService.remove();
+                    },
+                  }
+                );
+              },
+              errorCallback: (error) => {
+                console.log(error);
+                this.displayConfirmUpdateChosenSign = false;
+                this.messageService.add({
+                  severity: 'error',
+                  summary: commonStr.fail,
+                  detail: commonStr.errorOccur,
+                });
+                this.isLoadingService.remove();
+              },
+            }
+          );
+        });
     } else {
       this.isLoadingService.add();
-        this.wrapperService.post(
-          paths.ScribeCreateSignForROM,
-          this.tmpChosenSign,
-          getStorageToken(),
-          {
-            successCallback: (response) => {
-              this.wrapperService.post(
-                paths.ScribeCreateSignModificationRequest,
-                {
-                  modifiedSignId: this.chosenSign.id,
-                  modifyingSignId: response.data.id,
-                  scribeId: decodeToken(getStorageToken() || '').Id,
-                  adminId: this.selectedAdmin.id,
-                  operationType: OperationType.Update,
+      this.wrapperService.post(
+        paths.ScribeCreateSignForROM,
+        this.tmpChosenSign,
+        getStorageToken(),
+        {
+          successCallback: (response1) => {
+            this.wrapperService.post(
+              paths.ScribeCreateSignModificationRequest,
+              {
+                modifiedSignId: this.chosenSign.id,
+                modifyingSignId: response1.data.id,
+                scribeId: decodeToken(getStorageToken() || '').Id,
+                adminId: this.selectedAdmin.id,
+                operationType: OperationType.Update,
+              },
+              getStorageToken(),
+              {
+                successCallback: (response2) => {
+                  //add notification
+                  this.notiService.create({
+                    subjectId: response2.data?.modifyingSignId,
+                    subjectType: SubjectType.Sign,
+                    senderId: decodeToken(getStorageToken() || '').Id,
+                    senderUsername: response2.data?.scribe?.username || '',
+                    receiverId: this.selectedAdmin.id,
+                    receiverUsername: this.selectedAdmin?.username || '',
+                    action: commonStr.requestUpdate,
+                    relatedDescription: this.tmpChosenSign?.name,
+                    createdDate: new Date().toString(),
+                    isRead: false,
+                  });
+                  this.clearTmpChosenSignNewData();
+                  this.displayConfirmUpdateChosenSign = false;
+                  this.messageService.add({
+                    severity: 'success',
+                    summary: commonStr.success,
+                    detail: commonStr.romCreatedSuccessfully,
+                  });
+                  this.loadAdmins();
+                  this.isLoadingService.remove();
                 },
-                getStorageToken(),
-                {
-                  successCallback: (response) => {
-                    this.clearTmpChosenSignNewData();
-                    this.displayConfirmUpdateChosenSign = false;
-                    this.messageService.add({
-                      severity: 'success',
-                      summary: commonStr.success,
-                      detail: commonStr.romCreatedSuccessfully,
-                    });
-                    this.loadAdmins();
-                    this.isLoadingService.remove();
-                  },
-                  errorCallback: (error) => {
-                    console.log(error);
-                    this.displayConfirmUpdateChosenSign = false;
-                    this.messageService.add({
-                      severity: 'error',
-                      summary: commonStr.fail,
-                      detail: commonStr.errorOccur,
-                    });
-                    this.isLoadingService.remove();
-                  },
-                }
-              );
-            },
-            errorCallback: (error) => {
-              console.log(error);
-              this.displayConfirmUpdateChosenSign = false;
-              this.messageService.add({
-                severity: 'error',
-                summary: commonStr.fail,
-                detail: commonStr.errorOccur,
-              });
-              this.isLoadingService.remove();
-            },
-          }
-        );
+                errorCallback: (error) => {
+                  console.log(error);
+                  this.displayConfirmUpdateChosenSign = false;
+                  this.messageService.add({
+                    severity: 'error',
+                    summary: commonStr.fail,
+                    detail: commonStr.errorOccur,
+                  });
+                  this.isLoadingService.remove();
+                },
+              }
+            );
+          },
+          errorCallback: (error) => {
+            console.log(error);
+            this.displayConfirmUpdateChosenSign = false;
+            this.messageService.add({
+              severity: 'error',
+              summary: commonStr.fail,
+              detail: commonStr.errorOccur,
+            });
+            this.isLoadingService.remove();
+          },
+        }
+      );
     }
-    
   }
 
   deleteChosenSign() {
@@ -387,19 +419,32 @@ export class ManageSignsComponent implements OnInit {
       this.chosenSign,
       getStorageToken(),
       {
-        successCallback: (response) => {
+        successCallback: (response1) => {
           this.wrapperService.post(
             paths.ScribeCreateSignModificationRequest,
             {
               modifiedSignId: this.chosenSign.id,
-              modifyingSignId: response.data.id,
+              modifyingSignId: response1.data.id,
               scribeId: decodeToken(getStorageToken() || '').Id,
               adminId: this.selectedAdmin.id,
               operationType: OperationType.Delete,
             },
             getStorageToken(),
             {
-              successCallback: (response) => {
+              successCallback: (response2) => {
+                //add notification
+                this.notiService.create({
+                  subjectId: response2.data?.modifyingSignId,
+                  subjectType: SubjectType.Sign,
+                  senderId: decodeToken(getStorageToken() || '').Id,
+                  senderUsername: response2.data?.scribe?.username || '',
+                  receiverId: this.selectedAdmin.id,
+                  receiverUsername: this.selectedAdmin?.username || '',
+                  action: commonStr.requestDelete,
+                  relatedDescription: this.chosenSign?.name,
+                  createdDate: new Date().toString(),
+                  isRead: false,
+                });
                 this.clearTmpChosenSignNewData();
                 this.displayConfirmDeleteChosenSign = false;
                 this.messageService.add({
@@ -437,7 +482,7 @@ export class ManageSignsComponent implements OnInit {
     );
   }
 
-  openCreateSign(){    
+  openCreateSign() {
     this.isCreatingNewSign = true;
     this.newSignSignCategoryId = this.signCategories[0].id;
   }
@@ -455,7 +500,11 @@ export class ManageSignsComponent implements OnInit {
   }
 
   getNewSignName() {
-    if(this.newSignName?.trim() === '' || this.newSignName?.length > 150 || !this.newSignName.match('^Biển số [0-9]{3}[a-z]? ".*"$')) {
+    if (
+      this.newSignName?.trim() === '' ||
+      this.newSignName?.length > 150 ||
+      !this.newSignName.match('^Biển số [0-9]{3}[a-z]? ".*"$')
+    ) {
       this.isValidNewSignName = false;
     } else {
       this.isValidNewSignName = true;
@@ -464,7 +513,10 @@ export class ManageSignsComponent implements OnInit {
   }
 
   getNewSignDescription() {
-    if(this.newSignDescription?.trim() === '' || this.newSignDescription?.length > 2000) {
+    if (
+      this.newSignDescription?.trim() === '' ||
+      this.newSignDescription?.length > 2000
+    ) {
       this.isValidNewSignDescription = false;
     } else {
       this.isValidNewSignDescription = true;
@@ -480,10 +532,14 @@ export class ManageSignsComponent implements OnInit {
     this.checkIsValidNewSign();
   }
 
-  checkIsValidNewSign(){
-    (this.newSignName?.trim() !== '' && this.isValidNewSignName &&
-    this.newSignDescription?.trim() !== '' && this.isValidNewSignDescription &&
-    this.newSignImageFile !== undefined) ? this.isValidCreateNewSign = true: this.isValidCreateNewSign = false;
+  checkIsValidNewSign() {
+    this.newSignName?.trim() !== '' &&
+    this.isValidNewSignName &&
+    this.newSignDescription?.trim() !== '' &&
+    this.isValidNewSignDescription &&
+    this.newSignImageFile !== undefined
+      ? (this.isValidCreateNewSign = true)
+      : (this.isValidCreateNewSign = false);
   }
 
   createNewSign() {
@@ -494,68 +550,79 @@ export class ManageSignsComponent implements OnInit {
       )
       .then((imgUrl: any) => {
         this.newSignImageUrl = imgUrl;
-      }).then(
-        () => {
-          this.isLoadingService.add();
-          this.wrapperService.post(
-            paths.ScribeCreateSignForROM,
-            {
-              name: this.newSignName,
-              description: this.newSignDescription,
-              signCategoryId: this.newSignSignCategoryId,
-              imageUrl: this.newSignImageUrl
-            },
-            getStorageToken(),
-            {
-              successCallback: (response) => {
-                this.wrapperService.post(
-                  paths.ScribeCreateSignModificationRequest,
-                  {
-                    modifyingSignId: response.data.id,
-                    scribeId: decodeToken(getStorageToken() || '').Id,
-                    adminId: this.selectedAdmin.id,
-                    operationType: OperationType.Add,
+      })
+      .then(() => {
+        this.isLoadingService.add();
+        this.wrapperService.post(
+          paths.ScribeCreateSignForROM,
+          {
+            name: this.newSignName,
+            description: this.newSignDescription,
+            signCategoryId: this.newSignSignCategoryId,
+            imageUrl: this.newSignImageUrl,
+          },
+          getStorageToken(),
+          {
+            successCallback: (response1) => {
+              this.wrapperService.post(
+                paths.ScribeCreateSignModificationRequest,
+                {
+                  modifyingSignId: response1.data.id,
+                  scribeId: decodeToken(getStorageToken() || '').Id,
+                  adminId: this.selectedAdmin.id,
+                  operationType: OperationType.Add,
+                },
+                getStorageToken(),
+                {
+                  successCallback: (response2) => {
+                    //add notification
+                    this.notiService.create({
+                      subjectId: response2.data?.modifyingSignId,
+                      subjectType: SubjectType.Sign,
+                      senderId: decodeToken(getStorageToken() || '').Id,
+                      senderUsername: response2.data?.scribe?.username || '',
+                      receiverId: this.selectedAdmin.id,
+                      receiverUsername: this.selectedAdmin?.username || '',
+                      action: commonStr.requestCreate,
+                      relatedDescription: this.newSignName,
+                      createdDate: new Date().toString(),
+                      isRead: false,
+                    });
+                    this.clearNewSignData();
+                    this.displayConfirmCreateNewSign = false;
+                    this.messageService.add({
+                      severity: 'success',
+                      summary: commonStr.success,
+                      detail: commonStr.romCreatedSuccessfully,
+                    });
+                    this.loadAdmins();
+                    this.isLoadingService.remove();
                   },
-                  getStorageToken(),
-                  {
-                    successCallback: (response) => {
-                      this.clearNewSignData();
-                      this.displayConfirmCreateNewSign = false;
-                      this.messageService.add({
-                        severity: 'success',
-                        summary: commonStr.success,
-                        detail: commonStr.romCreatedSuccessfully,
-                      });
-                      this.loadAdmins();
-                      this.isLoadingService.remove();
-                    },
-                    errorCallback: (error) => {
-                      console.log(error);
-                      this.displayConfirmCreateNewSign = false;
-                      this.messageService.add({
-                        severity: 'error',
-                        summary: commonStr.fail,
-                        detail: commonStr.errorOccur,
-                      });
-                      this.isLoadingService.remove();
-                    },
-                  }
-                );
-              },
-              errorCallback: (error) => {
-                console.log(error);
-                this.displayConfirmCreateNewSign = false;
-                this.messageService.add({
-                  severity: 'error',
-                  summary: commonStr.fail,
-                  detail: commonStr.errorOccur,
-                });
-                this.isLoadingService.remove();
-              },
-            }
-          );
-        }
-      )
-    
+                  errorCallback: (error) => {
+                    console.log(error);
+                    this.displayConfirmCreateNewSign = false;
+                    this.messageService.add({
+                      severity: 'error',
+                      summary: commonStr.fail,
+                      detail: commonStr.errorOccur,
+                    });
+                    this.isLoadingService.remove();
+                  },
+                }
+              );
+            },
+            errorCallback: (error) => {
+              console.log(error);
+              this.displayConfirmCreateNewSign = false;
+              this.messageService.add({
+                severity: 'error',
+                summary: commonStr.fail,
+                detail: commonStr.errorOccur,
+              });
+              this.isLoadingService.remove();
+            },
+          }
+        );
+      });
   }
 }

@@ -1,3 +1,5 @@
+import { SubjectType } from "../common/subjectType"
+
 export interface Answer {
     id: string,
     questionId: string,
@@ -367,4 +369,20 @@ export enum UserRole {
 //AdminUserReportDTO
 export interface AdminUserByYearDTO {
     userByYear: number[],
+}
+
+//Used for notification
+export interface Notification {
+    key?: string
+    subjectId: string,
+    subjectType: string,
+    senderId: string,
+    senderUsername: string,
+    receiverId: string,
+    receiverUsername: string,
+    action: string,
+    relatedDescription: string,
+    createdDate: string,
+    isRead: boolean,
+
 }

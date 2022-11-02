@@ -8,6 +8,8 @@ import { toNonAccentVietnamese } from 'src/app/utilities/nonAccentVietnamese';
 import * as paths from '../../../common/paths';
 import * as commonStr from '../../../common/commonStr';
 import { Status } from 'src/app/common/status';
+import { NotificationService } from 'src/services/notification.service';
+import { SubjectType } from 'src/app/common/subjectType';
 @Component({
   selector: 'app-manage-scribes',
   templateUrl: './manage-scribes.component.html',
@@ -56,7 +58,8 @@ export class ManageScribesComponent implements OnInit {
     private wrapperService: WrapperService,
     private isLoadingService: IsLoadingService,
     private confirmationService: ConfirmationService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private notiService: NotificationService
   ) {}
 
   ngOnInit(): void {
@@ -102,7 +105,7 @@ export class ManageScribesComponent implements OnInit {
     this.confirmationService.confirm({
       key: 'cdDeactivate',
       message:
-        'Tài khoản nhân viên này sẽ bị ngưng hoạt động. Bạn có chắc chắn?',
+        'Tài khoản nhân viên này sẽ bị ngưng hoạt động, nhân viên sẽ không còn quản lý các công việc đã được giao hiện tại. Bạn có chắc chắn?',
       accept: () => {
         this.wrapperService.put(
           paths.AdminDeactivateScribe + '/' + this.scribes[i]?.id,
@@ -276,6 +279,21 @@ export class ManageScribesComponent implements OnInit {
             response.data?.errorMessage === null ||
             response.data.errorMessage === undefined
           ) {
+            //add notification
+            this.notiService.create({
+              subjectId: response.data?.scribe.id, //modifyingUserId
+              subjectType: SubjectType.Promotion,
+              senderId: decodeToken(getStorageToken() || '').Id,
+              senderUsername:
+                response.data?.promotingAdmin?.username || '',
+              receiverId: response.data?.arbitratingAdmin?.id,
+              receiverUsername: response.data?.arbitratingAdmin?.username,
+              action: commonStr.requestPromote + ' ',
+              relatedDescription:  response.data?.scribe?.username + ' thành quản trị viên',
+              createdDate: new Date().toString(),
+              isRead: false,
+            });
+
             this.messageService.add({
               severity: 'success',
               key: 'promoteSuccess',

@@ -9,6 +9,9 @@ import { toNonAccentVietnamese } from 'src/app/utilities/nonAccentVietnamese';
 import { WrapperService } from 'src/services/wrapper.service';
 import * as paths from '../../../common/paths';
 import * as commonStr from '../../../common/commonStr';
+import { EventEmitterService } from 'src/services/event-emitter.service';
+import { NotificationService } from 'src/services/notification.service';
+import { SubjectType } from 'src/app/common/subjectType';
 @Component({
   selector: 'app-manage-roms',
   templateUrl: './manage-roms.component.html',
@@ -79,7 +82,8 @@ export class ManageRomsComponent implements OnInit {
 
   displayConfirmDenyDialog: boolean = false;
 
-  selectedParagraphRomReferenceSub = new BehaviorSubject<string>('');
+  selectedChangedParagraphRomReferenceSub = new BehaviorSubject<string>('');
+  selectedOriginalParagraphRomReferenceSub = new BehaviorSubject<string>('');
 
   isPromotingAdminPromotionRom: boolean = false;
   isArbitratingAdminPromotionRom: boolean = false;
@@ -88,11 +92,55 @@ export class ManageRomsComponent implements OnInit {
     private wrapperService: WrapperService,
     private isLoadingService: IsLoadingService,
     private confirmationService: ConfirmationService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private eventEmitterService: EventEmitterService,
+    private notiService: NotificationService
   ) {}
 
   ngOnInit(): void {
     this.loadRoms();
+
+    //used for displaying rom detail when navigating from notification clicked
+    this.eventEmitterService.invokeAdminNoti.subscribe((emittedRom: any) => {
+      if (emittedRom !== null && emittedRom !== undefined) {
+        var tmpRom = this.tmpRoms.filter((r: any) => {
+          if (
+            r.lawRomId !== undefined &&
+            emittedRom.lawRomId !== undefined &&
+            r.lawRomId === emittedRom.lawRomId
+          ) {
+            return r;
+          } else if (
+            r.modifyingSignId !== undefined &&
+            emittedRom.modifyingSignId !== undefined &&
+            r.modifyingSignId === emittedRom.modifyingSignId
+          ) {
+            return r;
+          } else if (
+            r.modifyingGpssignId !== undefined &&
+            emittedRom.modifyingGpssignId !== undefined &&
+            r.modifyingGpssignId === emittedRom.modifyingGpssignId
+          ) {
+            return r;
+          } else if (
+            r.modifyingQuestionId !== undefined &&
+            emittedRom.modifyingQuestionId !== undefined &&
+            r.modifyingQuestionId === emittedRom.modifyingQuestionId
+          ) {
+            return r;
+          } else if (
+            r.modifyingUserId !== undefined &&
+            emittedRom.modifyingUserId !== undefined &&
+            r.modifyingUserId === emittedRom.modifyingUserId
+          ) {
+            return r;
+          } else {
+            return;
+          }
+        })[0];
+        this.viewInfo(tmpRom);
+      }
+    });
   }
 
   loadRoms() {
@@ -249,10 +297,10 @@ export class ManageRomsComponent implements OnInit {
   }
   //end of filtering data
 
-  private paragraphReferencesObservable(
+  private paragraphChangedReferencesObservable(
     paragraphId: string
   ): Observable<string> {
-    this.selectedParagraphRomReferenceSub.next('');
+    this.selectedChangedParagraphRomReferenceSub.next('');
     this.isLoadingService.add();
     this.wrapperService.get(
       paths.AdminGetParagraphRomDetailReference + '/' + paragraphId,
@@ -260,7 +308,7 @@ export class ManageRomsComponent implements OnInit {
       {
         successCallback: async (response) => {
           if (response.data?.length > 0) {
-            this.selectedParagraphRomReferenceSub.next(
+            this.selectedChangedParagraphRomReferenceSub.next(
               `Các hành vi liên quan:\n`
             );
             // response.data.forEach((r: any, i: number) => {
@@ -278,7 +326,7 @@ export class ManageRomsComponent implements OnInit {
             // });
 
             for await (const r of response.data) {
-              this.selectedParagraphRomReferenceSub.next(
+              this.selectedChangedParagraphRomReferenceSub.next(
                 `\t${r.referenceParagraphSectionStatueName} > ${
                   r.referenceParagraphSectionName
                 } > ${r.referenceParagraphName} (${
@@ -287,12 +335,12 @@ export class ManageRomsComponent implements OnInit {
               );
               if (response.data?.indexOf(r) === response.data?.length - 1) {
                 // console.log(response.data?.indexOf(r));
-                this.selectedParagraphRomReferenceSub.complete();
+                this.selectedChangedParagraphRomReferenceSub.complete();
                 this.isLoadingService.remove();
               }
             }
           } else if (response.data?.length === 0) {
-            this.selectedParagraphRomReferenceSub.complete();
+            this.selectedChangedParagraphRomReferenceSub.complete();
             this.isLoadingService.remove();
           }
         },
@@ -302,7 +350,63 @@ export class ManageRomsComponent implements OnInit {
         },
       }
     );
-    return this.selectedParagraphRomReferenceSub.asObservable();
+    return this.selectedChangedParagraphRomReferenceSub.asObservable();
+  }
+
+  private paragraphOriginalReferencesObservable(
+    paragraphId: string
+  ): Observable<string> {
+    this.selectedOriginalParagraphRomReferenceSub.next('');
+    this.isLoadingService.add();
+    this.wrapperService.get(
+      paths.AdminGetParagraphRomDetailReference + '/' + paragraphId,
+      getStorageToken(),
+      {
+        successCallback: async (response) => {
+          if (response.data?.length > 0) {
+            this.selectedOriginalParagraphRomReferenceSub.next(
+              `Các hành vi liên quan:\n`
+            );
+            // response.data.forEach((r: any, i: number) => {
+            //   this.selectedParagraphRomReferenceSub.next(
+            //     `\t${r.referenceParagraphSectionStatueName} > ${
+            //       r.referenceParagraphSectionName
+            //     } > ${r.referenceParagraphName} (${
+            //       r.referenceParagraphIsExcluded ? 'ngoại trừ' : 'bao gồm'
+            //     })\n`
+            //   );
+            //   if(i === response.data?.length -1){
+            //     this.selectedParagraphRomReferenceSub.complete();
+            //     this.isLoadingService.remove();
+            //   }
+            // });
+
+            for await (const r of response.data) {
+              this.selectedOriginalParagraphRomReferenceSub.next(
+                `\t${r.referenceParagraphSectionStatueName} > ${
+                  r.referenceParagraphSectionName
+                } > ${r.referenceParagraphName} (${
+                  r.referenceParagraphIsExcluded ? 'ngoại trừ' : 'bao gồm'
+                })\n`
+              );
+              if (response.data?.indexOf(r) === response.data?.length - 1) {
+                // console.log(response.data?.indexOf(r));
+                this.selectedOriginalParagraphRomReferenceSub.complete();
+                this.isLoadingService.remove();
+              }
+            }
+          } else if (response.data?.length === 0) {
+            this.selectedOriginalParagraphRomReferenceSub.complete();
+            this.isLoadingService.remove();
+          }
+        },
+        errorCallback: (error) => {
+          console.log(error);
+          this.isLoadingService.remove();
+        },
+      }
+    );
+    return this.selectedOriginalParagraphRomReferenceSub.asObservable();
   }
 
   viewInfo(rom: any) {
@@ -314,6 +418,13 @@ export class ManageRomsComponent implements OnInit {
 
     this.isPromotingAdminPromotionRom = false;
     this.isArbitratingAdminPromotionRom = false;
+
+    this.selectedChangedParagraphRomReferenceSub = new BehaviorSubject<string>(
+      ''
+    );
+    this.selectedOriginalParagraphRomReferenceSub = new BehaviorSubject<string>(
+      ''
+    );
 
     if (this.selectedRom.lawRomId) {
       this.isLoadingService.add();
@@ -436,7 +547,7 @@ export class ManageRomsComponent implements OnInit {
                       ? this.selectedRom.modifyingParagraph?.additionalPenalty
                       : '{không}'
                   }\n`;
-                this.paragraphReferencesObservable(
+                this.paragraphChangedReferencesObservable(
                   // this.selectedRom.modifyingParagraphId
                   this.selectedRom.modifyingParagraph?.id ||
                     this.selectedRom.modifyingParagraphId
@@ -467,7 +578,7 @@ export class ManageRomsComponent implements OnInit {
                       ? this.selectedRom.modifiedParagraph?.additionalPenalty
                       : '{không}'
                   }\n`;
-                this.paragraphReferencesObservable(
+                this.paragraphOriginalReferencesObservable(
                   this.selectedRom.modifiedParagraph?.id ||
                     this.selectedRom.modifiedParagraphId
                 ).subscribe({
@@ -491,7 +602,7 @@ export class ManageRomsComponent implements OnInit {
           },
         }
       );
-    } else if (this.selectedRom.signRomId && this.selectedRom.modifyingSignId) {
+    } else if (this.selectedRom.modifyingSignId) {
       this.changedModelImg = undefined;
       this.originalModelImg = undefined;
       this.isLoadingService.add();
@@ -547,10 +658,7 @@ export class ManageRomsComponent implements OnInit {
           },
         }
       );
-    } else if (
-      this.selectedRom.signRomId &&
-      this.selectedRom.modifyingGpssignId
-    ) {
+    } else if (this.selectedRom.modifyingGpssignId) {
       //TODO: ROM detail of modifying GPSSign
     } else if (this.selectedRom.modifyingQuestionId) {
       this.changedModelImg = undefined;
@@ -736,7 +844,7 @@ export class ManageRomsComponent implements OnInit {
         'Thao tác này sẽ cập nhật dữ liệu của hệ thống cùng các dữ liệu liên quan. Bạn có chắc?',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
-        if (this.selectedRom.lawRomId && this.selectedRom.modifyingStatueId) {
+        if (this.selectedRom.modifyingStatueId) {
           this.isLoadingService.add();
           this.wrapperService.post(
             paths.AdminApproveStatueRom +
@@ -746,6 +854,26 @@ export class ManageRomsComponent implements OnInit {
             getStorageToken(),
             {
               successCallback: (response) => {
+                // add notification
+                this.notiService.create({
+                  subjectId: response.data?.modifyingStatueId,
+                  subjectType: SubjectType.Statue,
+                  senderId: decodeToken(getStorageToken() || '').Id,
+                  senderUsername: response.data?.admin?.username || '',
+                  receiverId: response.data?.scribe?.id,
+                  receiverUsername: response.data?.scribe?.username,
+                  action:
+                    commonStr.approveRom +
+                    (response.data?.operationType === 0
+                      ? ' thêm'
+                      : response.data?.operationType === 1
+                      ? ' sửa'
+                      : ' xóa'),
+                  relatedDescription: response.data?.modifyingStatue?.name,
+                  createdDate: new Date().toString(),
+                  isRead: false,
+                });
+
                 this.clearData();
                 this.displayRomDetailDialog = false;
                 this.loadRoms();
@@ -768,10 +896,7 @@ export class ManageRomsComponent implements OnInit {
               },
             }
           );
-        } else if (
-          this.selectedRom.lawRomId &&
-          this.selectedRom.modifyingSectionId
-        ) {
+        } else if (this.selectedRom.modifyingSectionId) {
           this.isLoadingService.add();
           this.wrapperService.post(
             paths.AdminApproveSectionRom +
@@ -781,6 +906,27 @@ export class ManageRomsComponent implements OnInit {
             getStorageToken(),
             {
               successCallback: (response) => {
+                
+                //add notification
+                this.notiService.create({
+                  subjectId: response.data?.modifyingSectionId,
+                  subjectType: SubjectType.Section,
+                  senderId: decodeToken(getStorageToken() || '').Id,
+                  senderUsername: response.data?.admin?.username || '',
+                  receiverId: response.data?.scribe?.id,
+                  receiverUsername: response.data?.scribe?.username,
+                  action:
+                    commonStr.approveRom +
+                    (response.data?.operationType === 0
+                      ? ' thêm'
+                      : response.data?.operationType === 1
+                      ? ' sửa'
+                      : ' xóa'),
+                  relatedDescription: response.data?.modifyingSection?.name,
+                  createdDate: new Date().toString(),
+                  isRead: false,
+                });
+
                 this.clearData();
                 this.displayRomDetailDialog = false;
                 this.loadRoms();
@@ -803,10 +949,7 @@ export class ManageRomsComponent implements OnInit {
               },
             }
           );
-        } else if (
-          this.selectedRom.lawRomId &&
-          this.selectedRom.modifyingParagraphId
-        ) {
+        } else if (this.selectedRom.modifyingParagraphId) {
           this.isLoadingService.add();
           this.wrapperService.post(
             paths.AdminApproveParagraphRom +
@@ -816,6 +959,26 @@ export class ManageRomsComponent implements OnInit {
             getStorageToken(),
             {
               successCallback: (response) => {
+                //add notification
+                this.notiService.create({
+                  subjectId: response.data?.modifyingParagraphId,
+                  subjectType: SubjectType.Paragraph,
+                  senderId: decodeToken(getStorageToken() || '').Id,
+                  senderUsername: response.data?.admin?.username || '',
+                  receiverId: response.data?.scribe?.id,
+                  receiverUsername: response.data?.scribe?.username,
+                  action:
+                    commonStr.approveRom +
+                    (response.data?.operationType === 0
+                      ? ' thêm'
+                      : response.data?.operationType === 1
+                      ? ' sửa'
+                      : ' xóa'),
+                  relatedDescription: response.data?.modifyingParagraph?.name,
+                  createdDate: new Date().toString(),
+                  isRead: false,
+                });
+
                 this.clearData();
                 this.displayRomDetailDialog = false;
                 this.loadRoms();
@@ -838,10 +1001,7 @@ export class ManageRomsComponent implements OnInit {
               },
             }
           );
-        } else if (
-          this.selectedRom.signRomId &&
-          this.selectedRom.modifyingSignId
-        ) {
+        } else if (this.selectedRom.modifyingSignId) {
           this.isLoadingService.add();
           this.wrapperService.post(
             paths.AdminApproveSignRom + '/' + this.selectedRom.modifyingSignId,
@@ -849,6 +1009,26 @@ export class ManageRomsComponent implements OnInit {
             getStorageToken(),
             {
               successCallback: (response) => {
+                //add notification
+                this.notiService.create({
+                  subjectId: response.data?.modifyingSignId,
+                  subjectType: SubjectType.Sign,
+                  senderId: decodeToken(getStorageToken() || '').Id,
+                  senderUsername: response.data?.admin?.username || '',
+                  receiverId: response.data?.scribe?.id,
+                  receiverUsername: response.data?.scribe?.username,
+                  action:
+                    commonStr.approveRom +
+                    (response.data?.operationType === 0
+                      ? ' thêm'
+                      : response.data?.operationType === 1
+                      ? ' sửa'
+                      : ' xóa'),
+                  relatedDescription: response.data?.modifyingSign?.name,
+                  createdDate: new Date().toString(),
+                  isRead: false,
+                });
+
                 this.clearData();
                 this.displayRomDetailDialog = false;
                 this.loadRoms();
@@ -871,10 +1051,7 @@ export class ManageRomsComponent implements OnInit {
               },
             }
           );
-        } else if (
-          this.selectedRom.signRomId &&
-          this.selectedRom.modifyingGpssignId
-        ) {
+        } else if (this.selectedRom.modifyingGpssignId) {
           //TODO
         } else if (this.selectedRom.modifyingQuestionId) {
           this.isLoadingService.add();
@@ -886,6 +1063,26 @@ export class ManageRomsComponent implements OnInit {
             getStorageToken(),
             {
               successCallback: (response) => {
+                //add notification
+                this.notiService.create({
+                  subjectId: response.data?.modifyingQuestionId,
+                  subjectType: SubjectType.Question,
+                  senderId: decodeToken(getStorageToken() || '').Id,
+                  senderUsername: response.data?.admin?.username || '',
+                  receiverId: response.data?.scribe?.id,
+                  receiverUsername: response.data?.scribe?.username,
+                  action:
+                    commonStr.approveRom +
+                    (response.data?.operationType === 0
+                      ? ' thêm'
+                      : response.data?.operationType === 1
+                      ? ' sửa'
+                      : ' xóa'),
+                  relatedDescription: response.data?.modifyingQuestion?.content,
+                  createdDate: new Date().toString(),
+                  isRead: false,
+                });
+
                 this.clearData();
                 this.displayRomDetailDialog = false;
                 this.loadRoms();
@@ -916,6 +1113,21 @@ export class ManageRomsComponent implements OnInit {
             getStorageToken(),
             {
               successCallback: (response) => {
+                //add notification
+                this.notiService.create({
+                  subjectId: response.data?.modifyingUserId,
+                  subjectType: SubjectType.Promotion,
+                  senderId: decodeToken(getStorageToken() || '').Id,
+                  senderUsername:
+                    response.data?.arbitratingAdmin?.username || '',
+                  receiverId: response.data?.promotingAdmin?.id,
+                  receiverUsername: response.data?.promotingAdmin?.username,
+                  action: commonStr.approveRom,
+                  relatedDescription: response.data?.modifyingUser?.username + ' trở thành quản trị viên',
+                  createdDate: new Date().toString(),
+                  isRead: false,
+                });
+
                 this.clearData();
                 this.displayRomDetailDialog = false;
                 this.loadRoms();
@@ -945,7 +1157,7 @@ export class ManageRomsComponent implements OnInit {
   }
 
   confirmedDenyRom() {
-    if (this.selectedRom.lawRomId && this.selectedRom.modifyingStatueId) {
+    if (this.selectedRom.modifyingStatueId) {
       this.isLoadingService.add();
       this.wrapperService.post(
         paths.AdminDenyStatueRom + '/' + this.selectedRom.modifyingStatueId,
@@ -953,6 +1165,26 @@ export class ManageRomsComponent implements OnInit {
         getStorageToken(),
         {
           successCallback: (response) => {
+            //add notification
+            this.notiService.create({
+              subjectId: response.data?.modifyingStatueId,
+              subjectType: SubjectType.Statue,
+              senderId: decodeToken(getStorageToken() || '').Id,
+              senderUsername: response.data?.admin?.username || '',
+              receiverId: response.data?.scribe?.id,
+              receiverUsername: response.data?.scribe?.username,
+              action:
+                commonStr.denyRom +
+                (response.data?.operationType === 0
+                  ? ' thêm'
+                  : response.data?.operationType === 1
+                  ? ' sửa'
+                  : ' xóa'),
+              relatedDescription: response.data?.modifyingStatue?.name,
+              createdDate: new Date().toString(),
+              isRead: false,
+            });
+
             this.clearData();
             this.displayRomDetailDialog = false;
             this.loadRoms();
@@ -975,10 +1207,7 @@ export class ManageRomsComponent implements OnInit {
           },
         }
       );
-    } else if (
-      this.selectedRom.lawRomId &&
-      this.selectedRom.modifyingSectionId
-    ) {
+    } else if (this.selectedRom.modifyingSectionId) {
       this.isLoadingService.add();
       this.wrapperService.post(
         paths.AdminDenySectionRom + '/' + this.selectedRom.modifyingSectionId,
@@ -986,6 +1215,26 @@ export class ManageRomsComponent implements OnInit {
         getStorageToken(),
         {
           successCallback: (response) => {
+            //add notification
+            this.notiService.create({
+              subjectId: response.data?.modifyingSectionId,
+              subjectType: SubjectType.Section,
+              senderId: decodeToken(getStorageToken() || '').Id,
+              senderUsername: response.data?.admin?.username || '',
+              receiverId: response.data?.scribe?.id,
+              receiverUsername: response.data?.scribe?.username,
+              action:
+                commonStr.denyRom +
+                (response.data?.operationType === 0
+                  ? ' thêm'
+                  : response.data?.operationType === 1
+                  ? ' sửa'
+                  : ' xóa'),
+              relatedDescription: response.data?.modifyingSection?.name,
+              createdDate: new Date().toString(),
+              isRead: false,
+            });
+
             this.clearData();
             this.displayRomDetailDialog = false;
             this.loadRoms();
@@ -1008,10 +1257,7 @@ export class ManageRomsComponent implements OnInit {
           },
         }
       );
-    } else if (
-      this.selectedRom.lawRomId &&
-      this.selectedRom.modifyingParagraphId
-    ) {
+    } else if (this.selectedRom.modifyingParagraphId) {
       this.isLoadingService.add();
       this.wrapperService.post(
         paths.AdminDenyParagraphRom +
@@ -1021,6 +1267,26 @@ export class ManageRomsComponent implements OnInit {
         getStorageToken(),
         {
           successCallback: (response) => {
+            //add notification
+            this.notiService.create({
+              subjectId: response.data?.modifyingParagraphId,
+              subjectType: SubjectType.Section,
+              senderId: decodeToken(getStorageToken() || '').Id,
+              senderUsername: response.data?.admin?.username || '',
+              receiverId: response.data?.scribe?.id,
+              receiverUsername: response.data?.scribe?.username,
+              action:
+                commonStr.denyRom +
+                (response.data?.operationType === 0
+                  ? ' thêm'
+                  : response.data?.operationType === 1
+                  ? ' sửa'
+                  : ' xóa'),
+              relatedDescription: response.data?.modifyingParagraph?.name,
+              createdDate: new Date().toString(),
+              isRead: false,
+            });
+
             this.clearData();
             this.displayRomDetailDialog = false;
             this.loadRoms();
@@ -1043,7 +1309,7 @@ export class ManageRomsComponent implements OnInit {
           },
         }
       );
-    } else if (this.selectedRom.signRomId && this.selectedRom.modifyingSignId) {
+    } else if (this.selectedRom.modifyingSignId) {
       this.isLoadingService.add();
       this.wrapperService.post(
         paths.AdminDenySignRom + '/' + this.selectedRom.modifyingSignId,
@@ -1051,6 +1317,25 @@ export class ManageRomsComponent implements OnInit {
         getStorageToken(),
         {
           successCallback: (response) => {
+            //add notification
+            this.notiService.create({
+              subjectId: response.data?.modifyingSignId,
+              subjectType: SubjectType.Sign,
+              senderId: decodeToken(getStorageToken() || '').Id,
+              senderUsername: response.data?.admin?.username || '',
+              receiverId: response.data?.scribe?.id,
+              receiverUsername: response.data?.scribe?.username,
+              action:
+                commonStr.denyRom +
+                (response.data?.operationType === 0
+                  ? ' thêm'
+                  : response.data?.operationType === 1
+                  ? ' sửa'
+                  : ' xóa'),
+              relatedDescription: response.data?.modifyingSign?.name,
+              createdDate: new Date().toString(),
+              isRead: false,
+            });
             this.clearData();
             this.displayRomDetailDialog = false;
             this.loadRoms();
@@ -1073,10 +1358,7 @@ export class ManageRomsComponent implements OnInit {
           },
         }
       );
-    } else if (
-      this.selectedRom.signRomId &&
-      this.selectedRom.modifyingGpssignId
-    ) {
+    } else if (this.selectedRom.modifyingGpssignId) {
       //TODO
     } else if (this.selectedRom.modifyingQuestionId) {
       this.isLoadingService.add();
@@ -1086,6 +1368,26 @@ export class ManageRomsComponent implements OnInit {
         getStorageToken(),
         {
           successCallback: (response) => {
+            //add notification
+            this.notiService.create({
+              subjectId: response.data?.modifyingQuestionId,
+              subjectType: SubjectType.Section,
+              senderId: decodeToken(getStorageToken() || '').Id,
+              senderUsername: response.data?.admin?.username || '',
+              receiverId: response.data?.scribe?.id,
+              receiverUsername: response.data?.scribe?.username,
+              action:
+                commonStr.denyRom +
+                (response.data?.operationType === 0
+                  ? ' thêm'
+                  : response.data?.operationType === 1
+                  ? ' sửa'
+                  : ' xóa'),
+              relatedDescription: response.data?.modifyingQuestion?.content,
+              createdDate: new Date().toString(),
+              isRead: false,
+            });
+
             this.clearData();
             this.displayRomDetailDialog = false;
             this.loadRoms();
@@ -1116,6 +1418,20 @@ export class ManageRomsComponent implements OnInit {
         getStorageToken(),
         {
           successCallback: (response) => {
+            //add notification
+            this.notiService.create({
+              subjectId: response.data?.modifyingUserId,
+              subjectType: SubjectType.Promotion,
+              senderId: decodeToken(getStorageToken() || '').Id,
+              senderUsername: response.data?.arbitratingAdmin?.username || '',
+              receiverId: response.data?.promotingAdmin?.id,
+              receiverUsername: response.data?.promotingAdmin?.username,
+              action: commonStr.denyRom,
+              relatedDescription: response.data?.modifyingUser?.username + ' trở thành quản trị viên',
+              createdDate: new Date().toString(),
+              isRead: false,
+            });
+
             this.clearData();
             this.displayRomDetailDialog = false;
             this.loadRoms();
@@ -1153,11 +1469,6 @@ export class ManageRomsComponent implements OnInit {
 
   clearData() {
     this.selectedRom = undefined;
-    // this.filterSearchStr = undefined;
-    // this.filterStatusCode = undefined;
-    // this.filterRangeDates = undefined;
-    // this.filterRequesterId = undefined;
-    // this.filterRomTypeCode = undefined;
     this.deniedReason = undefined;
     this.displayConfirmDenyDialog = false;
     this.displayRomDetailDialog = false;
