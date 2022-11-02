@@ -9,6 +9,7 @@ import { toNonAccentVietnamese } from 'src/app/utilities/nonAccentVietnamese';
 import { WrapperService } from 'src/services/wrapper.service';
 import * as paths from '../../../common/paths';
 import * as commonStr from '../../../common/commonStr';
+import { EventEmitterService } from 'src/services/event-emitter.service';
 @Component({
   selector: 'app-my-request',
   templateUrl: './my-request.component.html',
@@ -77,11 +78,62 @@ export class MyRequestComponent implements OnInit {
     private isLoadingService: IsLoadingService,
     private wrapperService: WrapperService,
     private confirmationService: ConfirmationService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private eventEmitterService: EventEmitterService
   ) {}
 
   ngOnInit(): void {
     this.loadRoms();
+
+    //used for displaying rom detail when navigating from notification clicked
+    this.eventEmitterService.invokeScribeNoti.subscribe((emittedRom: any) => {
+      if (emittedRom !== null && emittedRom !== undefined) {
+        var tmpRom = this.tmpRoms.filter((r: any) => {
+          if (
+            r.modifyingStatueId !== undefined &&
+            emittedRom.modifyingStatueId !== undefined &&
+            r.modifyingStatueId === emittedRom.modifyingStatueId
+          ) {
+            return r;
+          } else if (
+            r.modifyingSectionId !== undefined &&
+            emittedRom.modifyingSectionId !== undefined &&
+            r.modifyingSectionId === emittedRom.modifyingSectionId
+          ) {
+            return r;
+          }else if (
+            r.modifyingParagraphId !== undefined &&
+            emittedRom.modifyingParagraphId !== undefined &&
+            r.modifyingParagraphId === emittedRom.modifyingParagraphId
+          ) {
+            return r;
+          }
+          
+          else if (
+            r.modifyingSignId !== undefined &&
+            emittedRom.modifyingSignId !== undefined &&
+            r.modifyingSignId === emittedRom.modifyingSignId
+          ) {
+            return r;
+          } else if (
+            r.modifyingGpssignId !== undefined &&
+            emittedRom.modifyingGpssignId !== undefined &&
+            r.modifyingGpssignId === emittedRom.modifyingGpssignId
+          ) {
+            return r;
+          } else if (
+            r.modifyingQuestionId !== undefined &&
+            emittedRom.modifyingQuestionId !== undefined &&
+            r.modifyingQuestionId === emittedRom.modifyingQuestionId
+          ) {
+            return r;
+          } else {
+            return;
+          }
+        })[0];
+        this.viewInfo(tmpRom);
+      }
+    });
   }
 
   private paragraphReferencesObservable(

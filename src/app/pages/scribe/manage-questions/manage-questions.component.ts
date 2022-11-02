@@ -9,6 +9,8 @@ import { WrapperService } from 'src/services/wrapper.service';
 import * as paths from '../../../common/paths';
 import * as commonStr from '../../../common/commonStr';
 import { toNonAccentVietnamese } from 'src/app/utilities/nonAccentVietnamese';
+import { NotificationService } from 'src/services/notification.service';
+import { SubjectType } from 'src/app/common/subjectType';
 
 @Component({
   selector: 'app-manage-questions',
@@ -63,7 +65,8 @@ export class ManageQuestionsComponent implements OnInit {
     private wrapperService: WrapperService,
     private isLoadingService: IsLoadingService,
     private fileUploadService: FileUploadService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private notiService: NotificationService
   ) {}
 
   ngOnInit(): void {
@@ -95,8 +98,6 @@ export class ManageQuestionsComponent implements OnInit {
                 name: q.testCategoryName,
               });
             }
-
-           
           });
 
           this.questions.forEach((q: any) => {
@@ -110,7 +111,7 @@ export class ManageQuestionsComponent implements OnInit {
                 name: q.questionCategoryName + ' (' + q.testCategoryName + ')',
               });
             }
-          })
+          });
 
           this.selectedTestCategoryId = this.testCategories[0]?.id;
           this.selectedQuestionCategoryId = this.questionCategories[0]?.id;
@@ -200,7 +201,7 @@ export class ManageQuestionsComponent implements OnInit {
     this.selectedQuestion = undefined;
   }
 
-  openUpdateQuestion(){
+  openUpdateQuestion() {
     this.resetDataUpdateQuestion();
     this.displayUpdateDialog = true;
   }
@@ -209,7 +210,7 @@ export class ManageQuestionsComponent implements OnInit {
     this.tmpSelectedQuestion = JSON.parse(
       JSON.stringify(this.selectedQuestion)
     );
-    
+
     this.newQuestionContent = this.tmpSelectedQuestion?.content;
     this.selectedAdmin = this.admins[0];
     this.displayUpdateDialog = false;
@@ -233,7 +234,10 @@ export class ManageQuestionsComponent implements OnInit {
   }
 
   changeTxtQuestionContent(newQuestionContent: string) {
-    if (newQuestionContent?.trim() !== '' && newQuestionContent?.length <= 2000) {
+    if (
+      newQuestionContent?.trim() !== '' &&
+      newQuestionContent?.length <= 2000
+    ) {
       this.tmpSelectedQuestion.content = newQuestionContent;
       this.invalidUpdatedQuestionContent = false;
     } else {
@@ -256,7 +260,11 @@ export class ManageQuestionsComponent implements OnInit {
   changeTxtAnswer(answer: Answer, newAnswer: string) {
     this.tmpSelectedQuestion.answers.forEach((a: Answer) => {
       if (a.id === answer.id) {
-        if (newAnswer?.trim() !== '' && newAnswer?.length <=2000 && a.description !== newAnswer?.trim()) {
+        if (
+          newAnswer?.trim() !== '' &&
+          newAnswer?.length <= 2000 &&
+          a.description !== newAnswer?.trim()
+        ) {
           a.description = newAnswer;
           this.isChanging = true;
           this.invalidUpdatedQuestionAnswer = false;
@@ -278,138 +286,168 @@ export class ManageQuestionsComponent implements OnInit {
   }
 
   updateQuestion() {
-    if(this.updateQuestionImgFile !== undefined && this.tmpSelectedQuestion.imgUrl !== ''){
+    if (
+      this.updateQuestionImgFile !== undefined &&
+      this.tmpSelectedQuestion.imgUrl !== ''
+    ) {
       this.fileUploadService
-      .uploadImageToFirebase(
-        this.updateQuestionImgFile,
-        `images/mock-test/new/`
-      )
-      .then((imgUrl: any) => {
-        this.tmpSelectedQuestion.imageUrl = imgUrl;
-      })
-      .then(() => {
-        this.isLoadingService.add();
-        this.wrapperService.post(
-          paths.ScribeCreateQuestionForROM,
-          this.tmpSelectedQuestion,
-          getStorageToken(),
-          {
-            successCallback: (response) => {
-              this.wrapperService.post(
-                paths.ScribeCreateQuestionModificationRequest,
-                {
-                  modifiedQuestionId: this.selectedQuestion.id,
-                  modifyingQuestionId: response.data.id,
-                  scribeId: decodeToken(getStorageToken() || '').Id,
-                  adminId: this.selectedAdmin.id,
-                  operationType: OperationType.Update,
-                },
-                getStorageToken(),
-                {
-                  successCallback: (response) => {
-                    this.resetDataUpdateQuestion();
-                    this.displayUpdateDialog = false;
-                    this.messageService.add({
-                      key: 'createUpdateROMSuccess',
-                      severity: 'success',
-                      summary: commonStr.success,
-                      detail: commonStr.romCreatedSuccessfully,
-                    });
-                    this.loadAdmins();
-                    this.isLoadingService.remove();
+        .uploadImageToFirebase(
+          this.updateQuestionImgFile,
+          `images/mock-test/new/`
+        )
+        .then((imgUrl: any) => {
+          this.tmpSelectedQuestion.imageUrl = imgUrl;
+        })
+        .then(() => {
+          this.isLoadingService.add();
+          this.wrapperService.post(
+            paths.ScribeCreateQuestionForROM,
+            this.tmpSelectedQuestion,
+            getStorageToken(),
+            {
+              successCallback: (response1) => {
+                this.wrapperService.post(
+                  paths.ScribeCreateQuestionModificationRequest,
+                  {
+                    modifiedQuestionId: this.selectedQuestion.id,
+                    modifyingQuestionId: response1.data.id,
+                    scribeId: decodeToken(getStorageToken() || '').Id,
+                    adminId: this.selectedAdmin.id,
+                    operationType: OperationType.Update,
                   },
-                  errorCallback: (error) => {
-                    console.log(error);
-                    this.displayUpdateDialog = false;
-                    this.messageService.add({
-                      key: 'createUpdateROMError',
-                      severity: 'error',
-                      summary: commonStr.fail,
-                      detail: commonStr.errorOccur,
-                    });
-                    this.isLoadingService.remove();
-                  },
-                }
-              );
-            },
-            errorCallback: (error) => {
-              console.log(error);
-              this.displayUpdateDialog = false;
-              this.messageService.add({
-                key: 'createUpdateROMError',
-                severity: 'error',
-                summary: commonStr.fail,
-                detail: commonStr.errorOccur,
-              });
-              this.isLoadingService.remove();
-            },
-          }
-        );
-      });
+                  getStorageToken(),
+                  {
+                    successCallback: (response2) => {
+                      //add notification
+                      this.notiService.create({
+                        subjectId: response2.data?.modifyingQuestionId,
+                        subjectType: SubjectType.Question,
+                        senderId: decodeToken(getStorageToken() || '').Id,
+                        senderUsername: response2.data?.scribe?.username || '',
+                        receiverId: this.selectedAdmin.id,
+                        receiverUsername: this.selectedAdmin?.username || '',
+                        action: commonStr.requestUpdate,
+                        relatedDescription: this.tmpSelectedQuestion?.content,
+                        createdDate: new Date().toString(),
+                        isRead: false,
+                      });
+
+                      this.resetDataUpdateQuestion();
+                      this.displayUpdateDialog = false;
+                      this.messageService.add({
+                        key: 'createUpdateROMSuccess',
+                        severity: 'success',
+                        summary: commonStr.success,
+                        detail: commonStr.romCreatedSuccessfully,
+                      });
+                      this.loadAdmins();
+                      this.isLoadingService.remove();
+                    },
+                    errorCallback: (error) => {
+                      console.log(error);
+                      this.displayUpdateDialog = false;
+                      this.messageService.add({
+                        key: 'createUpdateROMError',
+                        severity: 'error',
+                        summary: commonStr.fail,
+                        detail: commonStr.errorOccur,
+                      });
+                      this.isLoadingService.remove();
+                    },
+                  }
+                );
+              },
+              errorCallback: (error) => {
+                console.log(error);
+                this.displayUpdateDialog = false;
+                this.messageService.add({
+                  key: 'createUpdateROMError',
+                  severity: 'error',
+                  summary: commonStr.fail,
+                  detail: commonStr.errorOccur,
+                });
+                this.isLoadingService.remove();
+              },
+            }
+          );
+        });
     } else {
       this.isLoadingService.add();
-        this.wrapperService.post(
-          paths.ScribeCreateQuestionForROM,
-          this.tmpSelectedQuestion,
-          getStorageToken(),
-          {
-            successCallback: (response) => {
-              this.wrapperService.post(
-                paths.ScribeCreateQuestionModificationRequest,
-                {
-                  modifiedQuestionId: this.selectedQuestion.id,
-                  modifyingQuestionId: response.data.id,
-                  scribeId: decodeToken(getStorageToken() || '').Id,
-                  adminId: this.selectedAdmin.id,
-                  operationType: OperationType.Update,
+      this.wrapperService.post(
+        paths.ScribeCreateQuestionForROM,
+        this.tmpSelectedQuestion,
+        getStorageToken(),
+        {
+          successCallback: (response1) => {
+            this.wrapperService.post(
+              paths.ScribeCreateQuestionModificationRequest,
+              {
+                modifiedQuestionId: this.selectedQuestion.id,
+                modifyingQuestionId: response1.data.id,
+                scribeId: decodeToken(getStorageToken() || '').Id,
+                adminId: this.selectedAdmin.id,
+                operationType: OperationType.Update,
+              },
+              getStorageToken(),
+              {
+                successCallback: (response2) => {
+                  //add notification
+                  this.notiService.create({
+                    subjectId: response2.data?.modifyingQuestionId,
+                    subjectType: SubjectType.Question,
+                    senderId: decodeToken(getStorageToken() || '').Id,
+                    senderUsername: response2.data?.scribe?.username || '',
+                    receiverId: this.selectedAdmin.id,
+                    receiverUsername: this.selectedAdmin?.username || '',
+                    action: commonStr.requestUpdate,
+                    relatedDescription: this.tmpSelectedQuestion?.content,
+                    createdDate: new Date().toString(),
+                    isRead: false,
+                  });
+
+                  this.resetDataUpdateQuestion();
+                  this.displayUpdateDialog = false;
+                  this.messageService.add({
+                    key: 'createUpdateROMSuccess',
+                    severity: 'success',
+                    summary: commonStr.success,
+                    detail: commonStr.romCreatedSuccessfully,
+                  });
+                  this.loadAdmins();
+                  this.isLoadingService.remove();
                 },
-                getStorageToken(),
-                {
-                  successCallback: (response) => {
-                    this.resetDataUpdateQuestion();
-                    this.displayUpdateDialog = false;
-                    this.messageService.add({
-                      key: 'createUpdateROMSuccess',
-                      severity: 'success',
-                      summary: commonStr.success,
-                      detail: commonStr.romCreatedSuccessfully,
-                    });
-                    this.loadAdmins();
-                    this.isLoadingService.remove();
-                  },
-                  errorCallback: (error) => {
-                    console.log(error);
-                    this.displayUpdateDialog = false;
-                    this.messageService.add({
-                      key: 'createUpdateROMError',
-                      severity: 'error',
-                      summary: commonStr.fail,
-                      detail: commonStr.errorOccur,
-                    });
-                    this.isLoadingService.remove();
-                  },
-                }
-              );
-            },
-            errorCallback: (error) => {
-              console.log(error);
-              this.displayUpdateDialog = false;
-              this.messageService.add({
-                key: 'createUpdateROMError',
-                severity: 'error',
-                summary: commonStr.fail,
-                detail: commonStr.errorOccur,
-              });
-              this.isLoadingService.remove();
-            },
-          }
-        );
+                errorCallback: (error) => {
+                  console.log(error);
+                  this.displayUpdateDialog = false;
+                  this.messageService.add({
+                    key: 'createUpdateROMError',
+                    severity: 'error',
+                    summary: commonStr.fail,
+                    detail: commonStr.errorOccur,
+                  });
+                  this.isLoadingService.remove();
+                },
+              }
+            );
+          },
+          errorCallback: (error) => {
+            console.log(error);
+            this.displayUpdateDialog = false;
+            this.messageService.add({
+              key: 'createUpdateROMError',
+              severity: 'error',
+              summary: commonStr.fail,
+              detail: commonStr.errorOccur,
+            });
+            this.isLoadingService.remove();
+          },
+        }
+      );
     }
-    
   }
 
   deleteQuestion() {
-    let deleteQuestion = JSON.parse(JSON.stringify(this.selectedQuestion));
+    var deleteQuestion = JSON.parse(JSON.stringify(this.selectedQuestion));
 
     deleteQuestion.isDeleted = true;
     deleteQuestion.answers.forEach((a: Answer) => {
@@ -422,19 +460,33 @@ export class ManageQuestionsComponent implements OnInit {
       deleteQuestion,
       getStorageToken(),
       {
-        successCallback: (response) => {
+        successCallback: (response1) => {
           this.wrapperService.post(
             paths.ScribeCreateQuestionModificationRequest,
             {
               modifiedQuestionId: this.selectedQuestion.id,
-              modifyingQuestionId: response.data.id,
+              modifyingQuestionId: response1.data.id,
               scribeId: decodeToken(getStorageToken() || '').Id,
               adminId: this.selectedAdmin.id,
               operationType: OperationType.Delete,
             },
             getStorageToken(),
             {
-              successCallback: (response) => {
+              successCallback: (response2) => {
+                //add notification
+                this.notiService.create({
+                  subjectId: response2.data?.modifyingQuestionId,
+                  subjectType: SubjectType.Question,
+                  senderId: decodeToken(getStorageToken() || '').Id,
+                  senderUsername: response2.data?.scribe?.username || '',
+                  receiverId: this.selectedAdmin.id,
+                  receiverUsername: this.selectedAdmin?.username || '',
+                  action: commonStr.requestDelete,
+                  relatedDescription: deleteQuestion?.content,
+                  createdDate: new Date().toString(),
+                  isRead: false,
+                });
+
                 this.displayDeleteDialog = false;
                 this.messageService.add({
                   key: 'createDeleteROMSuccess',
@@ -481,7 +533,10 @@ export class ManageQuestionsComponent implements OnInit {
 
   getNewQuestionContent(event: any) {
     this.newQuestionContent = event.target.value;
-    if (this.newQuestionContent?.trim() === '' || this.newQuestionContent?.length > 2000) {
+    if (
+      this.newQuestionContent?.trim() === '' ||
+      this.newQuestionContent?.length > 2000
+    ) {
       this.inValidNewQuestionContent = true;
     } else {
       this.inValidNewQuestionContent = false;
@@ -490,7 +545,10 @@ export class ManageQuestionsComponent implements OnInit {
   }
 
   getNewQuestionAnswer() {
-    if (this.newQuestionAnswer?.trim() === '' || this.newQuestionAnswer?.length > 2000) {
+    if (
+      this.newQuestionAnswer?.trim() === '' ||
+      this.newQuestionAnswer?.length > 2000
+    ) {
       this.inValidNewQuestionAnswer = true;
     } else {
       this.inValidNewQuestionAnswer = false;
@@ -576,102 +634,119 @@ export class ManageQuestionsComponent implements OnInit {
   }
 
   createQuestion() {
-    if(this.newQuestionImgFile !== undefined && this.newQuestionImgUrl !== ''){
+    if (
+      this.newQuestionImgFile !== undefined &&
+      this.newQuestionImgUrl !== ''
+    ) {
       this.fileUploadService
-      .uploadImageToFirebase(this.newQuestionImgFile, `images/mock-test/new/`)
-      .then((imgUrl: any) => {
-        this.newQuestionImgUrl = imgUrl;
-      })
-      .then(() => {
-        var newAnswers: any[] = [];
-        this.newQuestionAnswers.forEach((a: any) => {
-          newAnswers.push({
-            description: a.description,
-            isCorrect: a.isCorrect,
+        .uploadImageToFirebase(this.newQuestionImgFile, `images/mock-test/new/`)
+        .then((imgUrl: any) => {
+          this.newQuestionImgUrl = imgUrl;
+        })
+        .then(() => {
+          var newAnswers: any[] = [];
+          this.newQuestionAnswers.forEach((a: any) => {
+            newAnswers.push({
+              description: a.description,
+              isCorrect: a.isCorrect,
+            });
           });
+
+          this.newQuestion = {
+            testCategoryId: this.selectedTestCategoryId,
+            questionCategoryId: this.selectedQuestionCategoryId,
+            content: this.newQuestionContent,
+            imageUrl: this.newQuestionImgUrl,
+            answers: newAnswers,
+          };
+
+          this.isLoadingService.add();
+          this.wrapperService.post(
+            paths.ScribeCreateQuestionForROM,
+            this.newQuestion,
+            getStorageToken(),
+            {
+              successCallback: (response1) => {
+                this.wrapperService.post(
+                  paths.ScribeCreateQuestionModificationRequest,
+                  {
+                    // create new question -> no modifiedQuestionId
+                    modifyingQuestionId: response1.data.id,
+                    scribeId: decodeToken(getStorageToken() || '').Id,
+                    adminId: this.selectedAdmin.id,
+                    operationType: OperationType.Add,
+                  },
+                  getStorageToken(),
+                  {
+                    successCallback: (response2) => {
+                      //add notification
+                      this.notiService.create({
+                        subjectId: response2.data?.modifyingQuestionId,
+                        subjectType: SubjectType.Question,
+                        senderId: decodeToken(getStorageToken() || '').Id,
+                        senderUsername: response2.data?.scribe?.username || '',
+                        receiverId: this.selectedAdmin.id,
+                        receiverUsername: this.selectedAdmin?.username || '',
+                        action: commonStr.requestCreate,
+                        relatedDescription: this.newQuestion?.content,
+                        createdDate: new Date().toString(),
+                        isRead: false,
+                      });
+
+                      this.resetDataCreateQuestion();
+                      this.displayCreateDialog = false;
+                      this.messageService.add({
+                        key: 'createAddROMSuccess',
+                        severity: 'success',
+                        summary: commonStr.success,
+                        detail: commonStr.romCreatedSuccessfully,
+                      });
+                      this.loadAdmins();
+                      this.isLoadingService.remove();
+                    },
+                    errorCallback: (error) => {
+                      console.log(error);
+                      this.displayCreateDialog = false;
+                      this.messageService.add({
+                        key: 'createAddROMError',
+                        severity: 'error',
+                        summary: commonStr.fail,
+                        detail: commonStr.errorOccur,
+                      });
+                      this.isLoadingService.remove();
+                    },
+                  }
+                );
+              },
+              errorCallback: (error) => {
+                console.log(error);
+                this.displayCreateDialog = false;
+                this.messageService.add({
+                  key: 'createAddROMError',
+                  severity: 'error',
+                  summary: commonStr.fail,
+                  detail: commonStr.errorOccur,
+                });
+                this.isLoadingService.remove();
+              },
+            }
+          );
         });
-
-        this.newQuestion = {
-          testCategoryId: this.selectedTestCategoryId,
-          questionCategoryId: this.selectedQuestionCategoryId,
-          content: this.newQuestionContent,
-          imageUrl: this.newQuestionImgUrl,
-          answers: newAnswers,
-        };
-
-        this.isLoadingService.add();
-        this.wrapperService.post(
-          paths.ScribeCreateQuestionForROM,
-          this.newQuestion,
-          getStorageToken(),
-          {
-            successCallback: (response) => {
-              this.wrapperService.post(
-                paths.ScribeCreateQuestionModificationRequest,
-                {
-                  // create new question -> no modifiedQuestionId
-                  modifyingQuestionId: response.data.id,
-                  scribeId: decodeToken(getStorageToken() || '').Id,
-                  adminId: this.selectedAdmin.id,
-                  operationType: OperationType.Add,
-                },
-                getStorageToken(),
-                {
-                  successCallback: (response) => {
-                    this.resetDataCreateQuestion();
-                    this.displayCreateDialog = false;
-                    this.messageService.add({
-                      key: 'createAddROMSuccess',
-                      severity: 'success',
-                      summary: commonStr.success,
-                      detail: commonStr.romCreatedSuccessfully,
-                    });
-                    this.loadAdmins();
-                    this.isLoadingService.remove();
-                  },
-                  errorCallback: (error) => {
-                    console.log(error);
-                    this.displayCreateDialog = false;
-                    this.messageService.add({
-                      key: 'createAddROMError',
-                      severity: 'error',
-                      summary: commonStr.fail,
-                      detail: commonStr.errorOccur,
-                    });
-                    this.isLoadingService.remove();
-                  },
-                }
-              );
-            },
-            errorCallback: (error) => {
-              console.log(error);
-              this.displayCreateDialog = false;
-              this.messageService.add({
-                key: 'createAddROMError',
-                severity: 'error',
-                summary: commonStr.fail,
-                detail: commonStr.errorOccur,
-              });
-              this.isLoadingService.remove();
-            },
-          }
-        );
-      });
     } else {
       var newAnswers: any[] = [];
-        this.newQuestionAnswers.forEach((a: any) => {
-          newAnswers.push({
-            description: a.description,
-            isCorrect: a.isCorrect,
-          });
+      this.newQuestionAnswers.forEach((a: any) => {
+        newAnswers.push({
+          description: a.description,
+          isCorrect: a.isCorrect,
         });
+      });
 
-        this.newQuestion = {
-          testCategoryId: this.selectedTestCategoryId,
-          questionCategoryId: this.selectedQuestionCategoryId,
-          content: this.newQuestionContent,
-          answers: newAnswers,
-        };
+      this.newQuestion = {
+        testCategoryId: this.selectedTestCategoryId,
+        questionCategoryId: this.selectedQuestionCategoryId,
+        content: this.newQuestionContent,
+        answers: newAnswers,
+      };
 
       this.isLoadingService.add();
       this.wrapperService.post(
@@ -679,19 +754,32 @@ export class ManageQuestionsComponent implements OnInit {
         this.newQuestion,
         getStorageToken(),
         {
-          successCallback: (response) => {
+          successCallback: (response1) => {
             this.wrapperService.post(
               paths.ScribeCreateQuestionModificationRequest,
               {
                 // create new question -> no modifiedQuestionId
-                modifyingQuestionId: response.data.id,
+                modifyingQuestionId: response1.data.id,
                 scribeId: decodeToken(getStorageToken() || '').Id,
                 adminId: this.selectedAdmin.id,
                 operationType: OperationType.Add,
               },
               getStorageToken(),
               {
-                successCallback: (response) => {
+                successCallback: (response2) => {
+                  //add notification
+                  this.notiService.create({
+                    subjectId: response2.data?.modifyingQuestionId,
+                    subjectType: SubjectType.Question,
+                    senderId: decodeToken(getStorageToken() || '').Id,
+                    senderUsername: response2.data?.scribe?.username || '',
+                    receiverId: this.selectedAdmin.id,
+                    receiverUsername: this.selectedAdmin?.username || '',
+                    action: commonStr.requestCreate,
+                    relatedDescription: this.newQuestion?.content,
+                    createdDate: new Date().toString(),
+                    isRead: false,
+                  });
                   this.resetDataCreateQuestion();
                   this.displayCreateDialog = false;
                   this.messageService.add({

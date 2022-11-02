@@ -10,6 +10,8 @@ import { ActivatedRoute } from '@angular/router';
 import * as vietnameseAlphabet from '../../../../assets/i18n/vietnameseAlphabet.json';
 import { NewSectionDTO, NewParagraphDTO } from 'src/app/models/General.model';
 import { toNonAccentVietnamese } from 'src/app/utilities/nonAccentVietnamese';
+import { NotificationService } from 'src/services/notification.service';
+import { SubjectType } from 'src/app/common/subjectType';
 @Component({
   selector: 'app-manage-laws',
   templateUrl: './manage-laws.component.html',
@@ -199,7 +201,8 @@ export class ManageLawsComponent implements OnInit {
     private wrapperService: WrapperService,
     private isLoadingService: IsLoadingService,
     private messageService: MessageService,
-    public activatedRoute: ActivatedRoute
+    public activatedRoute: ActivatedRoute,
+    private notiService: NotificationService
   ) {}
 
   ngOnInit(): void {
@@ -789,11 +792,11 @@ export class ManageLawsComponent implements OnInit {
       },
       getStorageToken(),
       {
-        successCallback: (response) => {
+        successCallback: (response1) => {
           this.wrapperService.post(
             paths.ScribeCreateLawModificationRequest,
             {
-              modifyingStatueId: response.data?.id,
+              modifyingStatueId: response1.data?.id,
               modifiedStatueId: this.chosenStatue.id,
               scribeId: decodeToken(getStorageToken() || '').Id,
               adminId: this.selectedAdmin.id,
@@ -801,7 +804,21 @@ export class ManageLawsComponent implements OnInit {
             },
             getStorageToken(),
             {
-              successCallback: (response) => {
+              successCallback: (response2) => {
+                //add notification
+                this.notiService.create({
+                  subjectId: response2.data?.id,
+                  subjectType: SubjectType.Statue,
+                  senderId: decodeToken(getStorageToken() || '').Id,
+                  senderUsername: response2.data?.scribe?.username || '',
+                  receiverId: this.selectedAdmin.id,
+                  receiverUsername: this.selectedAdmin?.username || '',
+                  action: commonStr.requestUpdate,
+                  relatedDescription: this.chosenStatue?.name,
+                  createdDate: new Date().toString(),
+                  isRead: false,
+                });
+
                 this.displayConfirmUpdateStatueDialog = false;
                 this.isUpdatingChosenStatue = false;
                 this.clearChosenStatueData();
@@ -857,11 +874,11 @@ export class ManageLawsComponent implements OnInit {
       },
       getStorageToken(),
       {
-        successCallback: (response) => {
+        successCallback: (response1) => {
           this.wrapperService.post(
             paths.ScribeCreateLawModificationRequest,
             {
-              modifyingSectionId: response.data?.id,
+              modifyingSectionId: response1.data?.id,
               modifiedSectionId: this.chosenSection.id,
               scribeId: decodeToken(getStorageToken() || '').Id,
               adminId: this.selectedAdmin.id,
@@ -869,7 +886,21 @@ export class ManageLawsComponent implements OnInit {
             },
             getStorageToken(),
             {
-              successCallback: (response) => {
+              successCallback: (response2) => {
+                //add notification
+                this.notiService.create({
+                  subjectId: response2.data?.id,
+                  subjectType: SubjectType.Section,
+                  senderId: decodeToken(getStorageToken() || '').Id,
+                  senderUsername: response2.data?.scribe?.username || '',
+                  receiverId: this.selectedAdmin.id,
+                  receiverUsername: this.selectedAdmin?.username || '',
+                  action: commonStr.requestUpdate,
+                  relatedDescription: this.chosenSection?.name,
+                  createdDate: new Date().toString(),
+                  isRead: false,
+                });
+
                 this.displayConfirmUpdateSectionDialog = false;
                 this.isUpdatingChosenSection = false;
                 this.clearChosenSectionData();
@@ -918,11 +949,11 @@ export class ManageLawsComponent implements OnInit {
       this.tmpChosenParagraph,
       getStorageToken(),
       {
-        successCallback: (response) => {
+        successCallback: (response1) => {
           this.wrapperService.post(
             paths.ScribeCreateLawModificationRequest,
             {
-              modifyingParagraphId: response.data?.id,
+              modifyingParagraphId: response1.data?.id,
               modifiedParagraphId: this.chosenParagraph.id,
               scribeId: decodeToken(getStorageToken() || '').Id,
               adminId: this.selectedAdmin.id,
@@ -930,7 +961,21 @@ export class ManageLawsComponent implements OnInit {
             },
             getStorageToken(),
             {
-              successCallback: (response) => {
+              successCallback: (response2) => {
+                //add notification
+                this.notiService.create({
+                  subjectId: response2.data?.id,
+                  subjectType: SubjectType.Paragraph,
+                  senderId: decodeToken(getStorageToken() || '').Id,
+                  senderUsername: response2.data?.scribe?.username || '',
+                  receiverId: this.selectedAdmin.id,
+                  receiverUsername: this.selectedAdmin?.username || '',
+                  action: commonStr.requestUpdate,
+                  relatedDescription: this.chosenParagraph?.name,
+                  createdDate: new Date().toString(),
+                  isRead: false,
+                });
+
                 this.displayConfirmUpdateParagraphDialog = false;
                 this.isUpdatingChosenParagraph = false;
                 this.clearChosenParagraphData();
@@ -984,11 +1029,11 @@ export class ManageLawsComponent implements OnInit {
       },
       getStorageToken(),
       {
-        successCallback: (response) => {
+        successCallback: (response1) => {
           this.wrapperService.post(
             paths.ScribeCreateLawModificationRequest,
             {
-              modifyingStatueId: response.data?.id,
+              modifyingStatueId: response1.data?.id,
               modifiedStatueId: this.chosenStatue.id,
               scribeId: decodeToken(getStorageToken() || '').Id,
               adminId: this.selectedAdmin.id,
@@ -996,7 +1041,23 @@ export class ManageLawsComponent implements OnInit {
             },
             getStorageToken(),
             {
-              successCallback: (response) => {
+              successCallback: (response2) => {
+                console.log(response2);
+
+                //add notification
+                this.notiService.create({
+                  subjectId: response2.data?.id,
+                  subjectType: SubjectType.Statue,
+                  senderId: decodeToken(getStorageToken() || '').Id,
+                  senderUsername: response2.data?.scribe?.username || '',
+                  receiverId: this.selectedAdmin.id,
+                  receiverUsername: this.selectedAdmin?.username || '',
+                  action: commonStr.requestDelete,
+                  relatedDescription: this.chosenStatue?.name,
+                  createdDate: new Date().toString(),
+                  isRead: false,
+                });
+
                 this.displayConfirmDeleteStatueDialog = false;
                 this.isUpdatingChosenStatue = false;
                 this.clearChosenStatueData();
@@ -1053,11 +1114,11 @@ export class ManageLawsComponent implements OnInit {
       },
       getStorageToken(),
       {
-        successCallback: (response) => {
+        successCallback: (response1) => {
           this.wrapperService.post(
             paths.ScribeCreateLawModificationRequest,
             {
-              modifyingSectionId: response.data?.id,
+              modifyingSectionId: response1.data?.id,
               modifiedSectionId: this.chosenSection.id,
               scribeId: decodeToken(getStorageToken() || '').Id,
               adminId: this.selectedAdmin.id,
@@ -1065,7 +1126,21 @@ export class ManageLawsComponent implements OnInit {
             },
             getStorageToken(),
             {
-              successCallback: (response) => {
+              successCallback: (response2) => {
+                //add notification
+                this.notiService.create({
+                  subjectId: response2.data?.id,
+                  subjectType: SubjectType.Section,
+                  senderId: decodeToken(getStorageToken() || '').Id,
+                  senderUsername: response2.data?.scribe?.username || '',
+                  receiverId: this.selectedAdmin.id,
+                  receiverUsername: this.selectedAdmin?.username || '',
+                  action: commonStr.requestDelete,
+                  relatedDescription: this.chosenSection?.name,
+                  createdDate: new Date().toString(),
+                  isRead: false,
+                });
+
                 this.displayConfirmDeleteSectionDialog = false;
                 this.isUpdatingChosenSection = false;
                 this.clearChosenSectionData();
@@ -1120,11 +1195,11 @@ export class ManageLawsComponent implements OnInit {
       },
       getStorageToken(),
       {
-        successCallback: (response) => {
+        successCallback: (response1) => {
           this.wrapperService.post(
             paths.ScribeCreateLawModificationRequest,
             {
-              modifyingParagraphId: response.data?.id,
+              modifyingParagraphId: response1.data?.id,
               modifiedParagraphId: this.chosenParagraph.id,
               scribeId: decodeToken(getStorageToken() || '').Id,
               adminId: this.selectedAdmin.id,
@@ -1132,7 +1207,21 @@ export class ManageLawsComponent implements OnInit {
             },
             getStorageToken(),
             {
-              successCallback: (response) => {
+              successCallback: (response2) => {
+                //add notification
+                this.notiService.create({
+                  subjectId: response2.data?.id,
+                  subjectType: SubjectType.Paragraph,
+                  senderId: decodeToken(getStorageToken() || '').Id,
+                  senderUsername: response2.data?.scribe?.username || '',
+                  receiverId: this.selectedAdmin.id,
+                  receiverUsername: this.selectedAdmin?.username || '',
+                  action: commonStr.requestDelete,
+                  relatedDescription: this.chosenParagraph?.name,
+                  createdDate: new Date().toString(),
+                  isRead: false,
+                });
+
                 this.displayConfirmDeleteParagraphDialog = false;
                 this.isUpdatingChosenParagraph = false;
                 this.clearChosenParagraphData();
@@ -1203,7 +1292,8 @@ export class ManageLawsComponent implements OnInit {
       {
         successCallback: (response) => {
           this.addingChosenParagraphStatueList = response.data.sort(
-            (s1: any, s2: any) => s1.name?.split(" ")[1] - s2.name?.split(" ")[1]
+            (s1: any, s2: any) =>
+              s1.name?.split(' ')[1] - s2.name?.split(' ')[1]
           );
           this.isLoadingService.remove();
         },
@@ -1601,9 +1691,11 @@ export class ManageLawsComponent implements OnInit {
       getStorageToken(),
       {
         successCallback: (response) => {
-          this.newSectionWithNoParagraphReferenceStatueList = response.data.sort(
-            (s1: any, s2: any) => s1.name?.split(" ")[1] - s2.name?.split(" ")[1]
-          );
+          this.newSectionWithNoParagraphReferenceStatueList =
+            response.data.sort(
+              (s1: any, s2: any) =>
+                s1.name?.split(' ')[1] - s2.name?.split(' ')[1]
+            );
           this.isLoadingService.remove();
         },
         errorCallback: (error) => {
@@ -1980,6 +2072,7 @@ export class ManageLawsComponent implements OnInit {
     this.newParagraphSelectedKeyword = undefined;
   }
 
+  //TODO: add notification
   //"Hoàn thành" button on paragraph dialog clicked
   confirmedAddNewLaw() {
     // if new section created & that section is a section with no paragraph
@@ -2007,11 +2100,11 @@ export class ManageLawsComponent implements OnInit {
         payload1,
         getStorageToken(),
         {
-          successCallback: (response) => {
+          successCallback: (response1) => {
             this.wrapperService.post(
               paths.ScribeCreateLawModificationRequest,
               {
-                modifyingSectionId: response.data?.id,
+                modifyingSectionId: response1.data?.id,
                 modifiedSectionId: null,
                 scribeId: decodeToken(getStorageToken() || '').Id,
                 adminId: this.selectedAdmin.id,
@@ -2019,7 +2112,21 @@ export class ManageLawsComponent implements OnInit {
               },
               getStorageToken(),
               {
-                successCallback: (response) => {
+                successCallback: (response2) => {
+                  //add notification
+                  this.notiService.create({
+                    subjectId: response2.data?.id,
+                    subjectType: SubjectType.Section,
+                    senderId: decodeToken(getStorageToken() || '').Id,
+                    senderUsername: response2.data?.scribe?.username || '',
+                    receiverId: this.selectedAdmin.id,
+                    receiverUsername: this.selectedAdmin?.username || '',
+                    action: commonStr.requestCreate,
+                    relatedDescription: payload1?.name,
+                    createdDate: new Date().toString(),
+                    isRead: false,
+                  });
+
                   this.loadAdmins();
                   this.messageService.add({
                     key: 'createSuccess',
@@ -2077,11 +2184,11 @@ export class ManageLawsComponent implements OnInit {
         payload2,
         getStorageToken(),
         {
-          successCallback: (response) => {
+          successCallback: (response1) => {
             this.wrapperService.post(
               paths.ScribeCreateLawModificationRequest,
               {
-                modifyingSectionId: response.data?.id,
+                modifyingSectionId: response1.data?.id,
                 modifiedSectionId: null,
                 scribeId: decodeToken(getStorageToken() || '').Id,
                 adminId: this.selectedAdmin.id,
@@ -2089,7 +2196,21 @@ export class ManageLawsComponent implements OnInit {
               },
               getStorageToken(),
               {
-                successCallback: (response) => {
+                successCallback: (response2) => {
+                  //add notification
+                  this.notiService.create({
+                    subjectId: response2.data?.id,
+                    subjectType: SubjectType.Section,
+                    senderId: decodeToken(getStorageToken() || '').Id,
+                    senderUsername: response2.data?.scribe?.username || '',
+                    receiverId: this.selectedAdmin.id,
+                    receiverUsername: this.selectedAdmin?.username || '',
+                    action: commonStr.requestCreate,
+                    relatedDescription: payload2?.name,
+                    createdDate: new Date().toString(),
+                    isRead: false,
+                  });
+
                   this.loadAdmins();
                   this.messageService.add({
                     key: 'createSuccess',
@@ -2134,11 +2255,11 @@ export class ManageLawsComponent implements OnInit {
           p,
           getStorageToken(),
           {
-            successCallback: (response) => {
+            successCallback: (response1) => {
               this.wrapperService.post(
                 paths.ScribeCreateLawModificationRequest,
                 {
-                  modifyingParagraphId: response.data?.id,
+                  modifyingParagraphId: response1.data?.id,
                   modifiedParagraphId: null,
                   scribeId: decodeToken(getStorageToken() || '').Id,
                   adminId: this.selectedAdmin.id,
@@ -2146,7 +2267,21 @@ export class ManageLawsComponent implements OnInit {
                 },
                 getStorageToken(),
                 {
-                  successCallback: (response) => {
+                  successCallback: (response2) => {
+                    //add notification
+                    this.notiService.create({
+                      subjectId: response2.data?.id,
+                      subjectType: SubjectType.Paragraph,
+                      senderId: decodeToken(getStorageToken() || '').Id,
+                      senderUsername: response2.data?.scribe?.username || '',
+                      receiverId: this.selectedAdmin.id,
+                      receiverUsername: this.selectedAdmin?.username || '',
+                      action: commonStr.requestCreate,
+                      relatedDescription: p?.name,
+                      createdDate: new Date().toString(),
+                      isRead: false,
+                    });
+
                     this.loadAdmins();
                     this.messageService.add({
                       key: 'createSuccess',
