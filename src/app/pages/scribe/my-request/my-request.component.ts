@@ -492,7 +492,7 @@ export class MyRequestComponent implements OnInit {
           },
         }
       );
-    } else if (this.selectedRom.signRomId && this.selectedRom.modifyingSignId) {
+    } else if (this.selectedRom.modifyingSignId) {
       this.changedModelImg = undefined;
       this.originalModelImg = undefined;
       this.isLoadingService.add();
@@ -548,10 +548,7 @@ export class MyRequestComponent implements OnInit {
           },
         }
       );
-    } else if (
-      this.selectedRom.signRomId &&
-      this.selectedRom.modifyingGpssignId
-    ) {
+    } else if (this.selectedRom.modifyingGpssignId) {
       //TODO: ROM detail of modifying GPSSign
     } else if (this.selectedRom.modifyingQuestionId) {
       this.changedModelImg = undefined;
@@ -579,7 +576,13 @@ export class MyRequestComponent implements OnInit {
                   `\t${this.selectedRom.modifyingQuestion?.content}\n` +
                   `Đáp án:\n`;
 
-                this.selectedRom.modifyingQuestion?.answers.forEach(
+                this.selectedRom.modifyingQuestion?.answers.sort((a1: any, a2: any) =>
+                a1?.description < a2?.description
+                  ? 1
+                  : a2?.description < a1?.description
+                  ? -1
+                  : 0
+              ).forEach(
                   (a: any, i: number) => {
                     tmpChangedModelCode += `\t${
                       i === 0
@@ -623,7 +626,13 @@ export class MyRequestComponent implements OnInit {
                   `\t${this.selectedRom.modifiedQuestion?.content}\n` +
                   `Đáp án:\n`;
 
-                this.selectedRom.modifiedQuestion?.answers.forEach(
+                this.selectedRom.modifiedQuestion?.answers.sort((a1: any, a2: any) =>
+                a1?.description < a2?.description
+                  ? 1
+                  : a2?.description < a1?.description
+                  ? -1
+                  : 0
+              ).forEach(
                   (a: any, i: number) => {
                     tmpChangedModelCode += `\t${
                       i === 0

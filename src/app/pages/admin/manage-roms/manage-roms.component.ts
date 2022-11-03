@@ -686,8 +686,15 @@ export class ManageRomsComponent implements OnInit {
                   `\t${this.selectedRom.modifyingQuestion?.content}\n` +
                   `Đáp án:\n`;
 
-                this.selectedRom.modifyingQuestion?.answers.forEach(
-                  (a: any, i: number) => {
+                this.selectedRom.modifyingQuestion?.answers
+                  .sort((a1: any, a2: any) =>
+                    a1?.description < a2?.description
+                      ? 1
+                      : a2?.description < a1?.description
+                      ? -1
+                      : 0
+                  )
+                  .forEach((a: any, i: number) => {
                     tmpChangedModelCode += `\t${
                       i === 0
                         ? 'A) '
@@ -705,8 +712,7 @@ export class ManageRomsComponent implements OnInit {
                     ) {
                       this.changedModel.code = tmpChangedModelCode;
                     }
-                  }
-                );
+                  });
 
                 if (this.selectedRom.modifyingQuestion?.imageUrl) {
                   this.changedModelImg =
@@ -730,8 +736,15 @@ export class ManageRomsComponent implements OnInit {
                   `\t${this.selectedRom.modifiedQuestion?.content}\n` +
                   `Đáp án:\n`;
 
-                this.selectedRom.modifiedQuestion?.answers.forEach(
-                  (a: any, i: number) => {
+                this.selectedRom.modifiedQuestion?.answers
+                  .sort((a1: any, a2: any) =>
+                    a1?.description < a2?.description
+                      ? 1
+                      : a2?.description < a1?.description
+                      ? -1
+                      : 0
+                  )
+                  .forEach((a: any, i: number) => {
                     tmpChangedModelCode += `\t${
                       i === 0
                         ? 'A) '
@@ -749,8 +762,7 @@ export class ManageRomsComponent implements OnInit {
                     ) {
                       this.originalModel.code = tmpChangedModelCode;
                     }
-                  }
-                );
+                  });
 
                 if (this.selectedRom.modifiedQuestion?.imageUrl) {
                   this.originalModelImg =
@@ -906,7 +918,6 @@ export class ManageRomsComponent implements OnInit {
             getStorageToken(),
             {
               successCallback: (response) => {
-                
                 //add notification
                 this.notiService.create({
                   subjectId: response.data?.modifyingSectionId,
@@ -1123,7 +1134,9 @@ export class ManageRomsComponent implements OnInit {
                   receiverId: response.data?.promotingAdmin?.id,
                   receiverUsername: response.data?.promotingAdmin?.username,
                   action: commonStr.approveRom,
-                  relatedDescription: response.data?.modifyingUser?.username + ' trở thành quản trị viên',
+                  relatedDescription:
+                    response.data?.modifyingUser?.username +
+                    ' trở thành quản trị viên',
                   createdDate: new Date().toString(),
                   isRead: false,
                 });
@@ -1270,7 +1283,7 @@ export class ManageRomsComponent implements OnInit {
             //add notification
             this.notiService.create({
               subjectId: response.data?.modifyingParagraphId,
-              subjectType: SubjectType.Section,
+              subjectType: SubjectType.Paragraph,
               senderId: decodeToken(getStorageToken() || '').Id,
               senderUsername: response.data?.admin?.username || '',
               receiverId: response.data?.scribe?.id,
@@ -1371,7 +1384,7 @@ export class ManageRomsComponent implements OnInit {
             //add notification
             this.notiService.create({
               subjectId: response.data?.modifyingQuestionId,
-              subjectType: SubjectType.Section,
+              subjectType: SubjectType.Question,
               senderId: decodeToken(getStorageToken() || '').Id,
               senderUsername: response.data?.admin?.username || '',
               receiverId: response.data?.scribe?.id,
@@ -1427,7 +1440,9 @@ export class ManageRomsComponent implements OnInit {
               receiverId: response.data?.promotingAdmin?.id,
               receiverUsername: response.data?.promotingAdmin?.username,
               action: commonStr.denyRom,
-              relatedDescription: response.data?.modifyingUser?.username + ' trở thành quản trị viên',
+              relatedDescription:
+                response.data?.modifyingUser?.username +
+                ' trở thành quản trị viên',
               createdDate: new Date().toString(),
               isRead: false,
             });
