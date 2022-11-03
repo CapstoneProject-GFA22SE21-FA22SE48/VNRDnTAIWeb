@@ -34,3 +34,22 @@
   width: 12rem;
 }
 /* end of info of pending requests of admin */
+
+
+
+::ng-deep .p-chip-text{
+  font-size: 85%;
+}
+
+::ng-deep .p-tooltip-text{
+  width: 15rem;
+  height: 5.4rem;
+   white-space: nowrap;
+
+  overflow: hidden;
+   text-overflow: ellipsis;
+   display: -webkit-box;
+   -webkit-line-clamp: 3; 
+           line-clamp: 3; 
+   -webkit-box-orient: vertical;
+}
