@@ -50,6 +50,7 @@ export class ManageQuestionsComponent implements OnInit {
   newQuestionAnswer: any;
   editingNewQuestionAnswerIndex: any;
   txtEditNewQuestionAnswer: any;
+  inValidNewQuestionEdittedAnswer: boolean = false;
   newQuestionAnswers: any[] = [];
   isEditingNewQuestionAnswer: boolean = false;
   newQuestionImgUrl: string = '';
@@ -257,23 +258,33 @@ export class ManageQuestionsComponent implements OnInit {
     this.detectChange();
   }
 
-  changeTxtAnswer(answer: Answer, newAnswer: string) {
-    this.tmpSelectedQuestion.answers.forEach((a: Answer) => {
-      if (a.id === answer.id) {
-        if (
-          newAnswer?.trim() !== '' &&
-          newAnswer?.length <= 2000 &&
-          a.description !== newAnswer?.trim()
-        ) {
-          a.description = newAnswer;
-          this.isChanging = true;
-          this.invalidUpdatedQuestionAnswer = false;
-        } else {
-          this.isChanging = false;
-          this.invalidUpdatedQuestionAnswer = true;
-        }
+  changeTxtAnswer(answer: Answer, newAnswer: string, i: number) {
+    if (this.tmpSelectedQuestion.answers) {
+      var isExistedAnsweer = this.tmpSelectedQuestion.answers.some(
+        (a: any, index: number) =>
+          a.description?.trim() === newAnswer.trim() && i !== index
+      );
+      if (isExistedAnsweer) {
+        this.invalidUpdatedQuestionAnswer = true;
+      } else {
+        this.tmpSelectedQuestion.answers.forEach((a: Answer) => {
+          if (a.id === answer.id) {
+            if (
+              newAnswer?.trim() !== '' &&
+              newAnswer?.length <= 2000 &&
+              a.description !== newAnswer?.trim()
+            ) {
+              a.description = newAnswer;
+              this.isChanging = true;
+              this.invalidUpdatedQuestionAnswer = false;
+            } else {
+              this.isChanging = false;
+              this.invalidUpdatedQuestionAnswer = true;
+            }
+          }
+        });
       }
-    });
+    }
     this.detectChange();
   }
 
@@ -551,7 +562,16 @@ export class ManageQuestionsComponent implements OnInit {
     ) {
       this.inValidNewQuestionAnswer = true;
     } else {
-      this.inValidNewQuestionAnswer = false;
+      if (this.newQuestionAnswers) {
+        var isExistedAnsweer = this.newQuestionAnswers.some(
+          (a: any) => a.description?.trim() === this.newQuestionAnswer?.trim()
+        );
+        if (isExistedAnsweer) {
+          this.inValidNewQuestionAnswer = true;
+        } else {
+          this.inValidNewQuestionAnswer = false;
+        }
+      }
     }
     this.validateNewQuestion();
   }
@@ -582,6 +602,22 @@ export class ManageQuestionsComponent implements OnInit {
     this.editingNewQuestionAnswerIndex = i;
   }
 
+  getEditNewQuestionAnswer(i: number) {
+    this.inValidNewQuestionEdittedAnswer = false;
+    if (this.newQuestionAnswers) {
+      var isExistedAnsweer = this.newQuestionAnswers.some(
+        (a: any, index: number) =>
+          a.description?.trim() === this.txtEditNewQuestionAnswer.trim() &&
+          i !== index
+      );
+      if (isExistedAnsweer) {
+        this.inValidNewQuestionEdittedAnswer = true;
+      } else {
+        this.inValidNewQuestionEdittedAnswer = false;
+      }
+    }
+  }
+
   saveEditNewQuestionAnswer(i: number) {
     this.newQuestionAnswers[i].description = this.txtEditNewQuestionAnswer;
     this.isEditingNewQuestionAnswer = false;
@@ -589,6 +625,7 @@ export class ManageQuestionsComponent implements OnInit {
 
   disableEditNewQuestionAnswer() {
     this.isEditingNewQuestionAnswer = false;
+    this.inValidNewQuestionEdittedAnswer = false;
   }
 
   deleteNewQuestionAnswer(i: number) {
@@ -612,6 +649,8 @@ export class ManageQuestionsComponent implements OnInit {
       if (a.isCorrect) hasCorrectAnswer = true;
     });
 
+    !this.inValidNewQuestionAnswer &&
+    !this.inValidNewQuestionEdittedAnswer &&
     this.newQuestionContent?.trim() !== '' &&
     this.newQuestionAnswers?.length >= 2 &&
     hasCorrectAnswer
@@ -630,6 +669,7 @@ export class ManageQuestionsComponent implements OnInit {
     this.displayCreateDialog = false;
     this.inValidNewQuestionContent = false;
     this.inValidNewQuestionAnswer = false;
+    this.inValidNewQuestionEdittedAnswer = false;
     this.newQuestionImgFile = undefined;
   }
 

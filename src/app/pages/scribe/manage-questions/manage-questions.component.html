@@ -367,28 +367,22 @@
             class="p-button-success"
             icon="pi pi-plus"
             [disabled]="
-              newQuestionAnswer === undefined || newQuestionAnswer === ''
+              newQuestionAnswer === undefined || newQuestionAnswer === '' || inValidNewQuestionAnswer
             "
             (click)="addNewQuestionAnswer()"
           ></button>
         </div>
         <div class="mb-2">
           <small *ngIf="inValidNewQuestionAnswer" class="p-block p-error"
-            >Vui lòng nhập nội dung đáp án (tối đa 2000 ký tự) để thêm mới</small
+            >Vui lòng nhập nội dung đáp án (tối đa 2000 ký tự) và không trùng với các đáp án đã có</small
           >
         </div>
         <div
           *ngFor="let answer of newQuestionAnswers; let i = index"
-          class="w-12 flex justify-content-center align-items-center"
+          
         >
+        <div class="w-12 flex justify-content-center align-items-center">
           <div class="w-10 flex align-items-center">
-            <!-- <div class="flex align-items-center" style="width: 5%">
-                <input
-                  name="answerCheck"
-                  type="radio"
-                  (change)="pickNewAnswersCorrectAnswer(i)"
-                />
-              </div> -->
             <div style="width: 85%">
               <div
                 class="flex align-items-center"
@@ -430,6 +424,7 @@
                   [(ngModel)]="txtEditNewQuestionAnswer"
                   [value]="answer.description"
                   [style]="{ height: '40px' }"
+                  (keyup)="getEditNewQuestionAnswer(i)"
                 />
               </div>
             </div>
@@ -482,7 +477,7 @@
                   icon="pi pi-save"
                   class="p-button-rounded p-button-success p-button-text mr-2"
                   (click)="saveEditNewQuestionAnswer(i)"
-                  [disabled]="txtEditNewQuestionAnswer === ''"
+                  [disabled]="txtEditNewQuestionAnswer === '' || inValidNewQuestionEdittedAnswer"
                 ></button>
               </div>
               <div class="w-6">
@@ -496,6 +491,14 @@
               </div>
             </div>
           </div>
+        </div>
+          
+          <div class="w-12" *ngIf="isEditingNewQuestionAnswer &&
+          i === editingNewQuestionAnswerIndex && inValidNewQuestionEdittedAnswer">
+          <small class="p-block p-error">
+            Đáp án sửa đổi trùng với một trong các đáp án đã có
+          </small>
+        </div>
         </div>
       </div>
 
@@ -624,7 +627,7 @@
     <div>
       <span class="font-bold text-lg">Đáp án</span>
     </div>
-    <div *ngFor="let answer of tmpSelectedQuestion?.answers">
+    <div *ngFor="let answer of tmpSelectedQuestion?.answers; let i = index">
       <div class="form-check mb-1" *ngIf="answer.isCorrect">
         <input
           name="answerCheck"
@@ -639,7 +642,7 @@
           pInputText
           [value]="answer.description"
           style="width: 83%; height: 40px"
-          (change)="changeTxtAnswer(answer, newAnswer.value)"
+          (change)="changeTxtAnswer(answer, newAnswer.value, i)"
         />
         <span class="text-lg text-green-300 ml-1">(câu đúng) </span>
       </div>
@@ -656,13 +659,13 @@
           pInputText
           [value]="answer.description"
           style="width: 83%; height: 40px"
-          (change)="changeTxtAnswer(answer, newAnswer.value)"
+          (change)="changeTxtAnswer(answer, newAnswer.value, i)"
         />
       </div>
     </div>
     <div class="mb-2">
       <small *ngIf="invalidUpdatedQuestionAnswer" class="p-block p-error"
-        >Vui lòng nhập nội đáp án (tối đa 2000 ký tự)</small
+        >Vui lòng nhập nội đáp án (tối đa 2000 ký tự) và không trùng với các đáp án đã có </small
       >
     </div>
   </div>
