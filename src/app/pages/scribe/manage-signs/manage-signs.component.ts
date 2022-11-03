@@ -44,6 +44,23 @@ export class ManageSignsComponent implements OnInit {
   isValidUpdateChosenSign: boolean = false;
 
   isValidClickOnCreate: boolean = true;
+
+  tmpChosenSignNewSignParagraphList: any;
+  displayAddChosenSignParagraph: boolean = false;
+
+  addingChosenSignStatueList: any;
+  addingChosenSignStatue: any;
+  addingChosenSignSectionList: any;
+  addingChosenSignSection: any;
+  addingChosenSignParagraphList:any;
+  addingChosenSignParagraph: any;
+
+  emptyParagraphSectionMsg: any;
+  addingErrorChosenSignAddingSignParagraphMsg: any;
+
+  //used for holding temporary signParagraph list for adding signParagraph to chosen sign
+  newChosenSignSignParagraphList: any;
+  tmpChosenSignAddingSignParagraphList: any[] =[];
   //end of update
 
   //start of create
@@ -181,6 +198,10 @@ export class ManageSignsComponent implements OnInit {
     this.tmpChosenSignNewDescription = this.tmpChosenSign?.description;
     this.tmpChosenSignNewImageUrl = this.tmpChosenSign?.imageUrl;
 
+    this.tmpChosenSignNewSignParagraphList = this.tmpChosenSign?.signParagraphs;
+
+    this.newChosenSignSignParagraphList = JSON.parse(JSON.stringify(this.tmpChosenSignNewSignParagraphList));
+
     this.isValidClickOnCreate = false;
   }
 
@@ -200,6 +221,18 @@ export class ManageSignsComponent implements OnInit {
     this.isUpdatingChosenSign = false;
 
     this.tmpChosenSignNewImageFile = undefined;
+
+    this.tmpChosenSignNewSignParagraphList = undefined;
+    this.displayAddChosenSignParagraph = false;
+
+    this.addingChosenSignStatueList = undefined;
+    this.addingChosenSignStatue = undefined;
+    this.addingChosenSignSectionList = undefined;
+    this.addingChosenSignSection = undefined;
+    this.addingChosenSignParagraphList = undefined;
+    this.addingChosenSignParagraph = undefined;
+
+    this.tmpChosenSignAddingSignParagraphList = [];
 
     this.isValidUpdateChosenSign = false;
     this.displayConfirmUpdateChosenSign = false;
@@ -244,6 +277,140 @@ export class ManageSignsComponent implements OnInit {
     this.tmpChosenSign.imageUrl = this.tmpChosenSignNewImageUrl;
     imageUploaded.clear();
     this.detectChange();
+  }
+
+  removeChosenSignSignParagraph(signParagraph: any) {
+    this.newChosenSignSignParagraphList =
+      this.newChosenSignSignParagraphList.filter(
+        (sp: any) => sp.signParagraphParagraphId !== signParagraph.signParagraphParagraphId
+      );
+
+    this.tmpChosenSignNewSignParagraphList =
+      this.newChosenSignSignParagraphList;
+
+    this.detectChange();
+  }
+
+  // start of adding chosen sign signParagraph
+  loadAddingChosenParagraphStatueList() {
+    this.displayAddChosenSignParagraph = true;
+    this.isLoadingService.add();
+    this.wrapperService.get(
+      paths.ScribeGetAllStatueForAddingReferences,
+      getStorageToken(),
+      {
+        successCallback: (response) => {
+          this.addingChosenSignStatueList = response.data.sort(
+            (s1: any, s2: any) =>
+              s1.name?.split(' ')[1] - s2.name?.split(' ')[1]
+          );
+          this.isLoadingService.remove();
+        },
+        errorCallback: (error) => {
+          console.log(error);
+          this.isLoadingService.remove();
+        },
+      }
+    );
+  }
+
+  selectAddingChosenSignStatue(event: any) {
+    this.addingChosenSignSection = undefined;
+    this.addingChosenSignParagraph = undefined;
+
+    this.addingChosenSignStatue = event.value;
+
+    if (this.addingChosenSignStatue) {
+      this.isLoadingService.add();
+      this.wrapperService.get(
+        paths.ScribeGetSectionsByStatueId +
+          '/' +
+          this.addingChosenSignStatue?.id,
+        getStorageToken(),
+        {
+          successCallback: (response) => {
+            this.addingChosenSignSectionList = response.data;
+            this.isLoadingService.remove();
+          },
+          errorCallback: (error) => {
+            console.log(error);
+            this.isLoadingService.remove();
+          },
+        }
+      );
+    }
+  }
+
+  selectAddingChosenSignSection(event: any) {
+    this.addingChosenSignParagraph = undefined;
+
+    this.addingChosenSignSection = event.value;
+
+    if (this.addingChosenSignSection) {
+      this.isLoadingService.add();
+      this.wrapperService.get(
+        paths.ScribeGetParagraphsBySectionId +
+          '/' +
+          this.addingChosenSignSection?.id,
+        getStorageToken(),
+        {
+          successCallback: (response) => {
+            //This section has an empty paragraph
+            if (response.data.length === 1 && response.data[0].name === '') {
+              this.emptyParagraphSectionMsg = 'Khoản này không chứa điểm';
+            } else {
+              this.addingChosenSignParagraphList = response.data;
+
+              //Remove current chosen paragraph from the list of reference paragraph that will be added
+              this.addingChosenSignParagraphList.forEach(
+                (r: any, i: number) => {
+                  this.addingChosenSignParagraphList =
+                    this.addingChosenSignParagraphList.filter(
+                      (r: any) => r.id !== this.chosenSign.id
+                    );
+                }
+              );
+
+              //Remove added reference paragraphs from the list of reference paragraph that will be added
+              this.newChosenSignSignParagraphList.forEach((addedSignParagraph: any) => {
+                this.addingChosenSignParagraphList =
+                  this.addingChosenSignParagraphList.filter(
+                    (r: any) => r.id !== addedSignParagraph.signParagraphParagraphId
+                  );
+              });
+
+              this.emptyParagraphSectionMsg = '';
+            }
+            this.isLoadingService.remove();
+          },
+          errorCallback: (error) => {
+            console.log(error);
+            this.isLoadingService.remove();
+          },
+        }
+      );
+    }
+  }
+
+  selectAddingChosenSignParagraph(event: any) {
+    this.addingChosenSignParagraph = event.value;
+  }
+
+  //dialog add chosen sign signParagraph onHide
+  clearAddChosenSignSignParagraph() {
+    this.displayAddChosenSignParagraph = false;
+
+    this.addingChosenSignStatueList = undefined;
+    this.addingChosenSignStatue = null;
+    this.addingChosenSignSectionList = undefined;
+    this.addingChosenSignSection = undefined;
+    this.addingChosenSignParagraphList = undefined;
+    this.addingChosenSignParagraph = undefined;
+    
+    this.emptyParagraphSectionMsg = undefined;
+    this.addingErrorChosenSignAddingSignParagraphMsg = undefined;
+
+    this.newChosenSignSignParagraphList = undefined;
   }
 
   detectChange() {

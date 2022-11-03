@@ -168,8 +168,8 @@
       </div>
 
       <!-- Main -->
-      <div style="height: 85%">
-        <div class="w-12 flex text-lg mb-3 align-items-center">
+      <div class="overflow-auto" style="height: 85%">
+        <div class="w-12 flex text-lg mb-2 align-items-center">
           <div class="w-2">Tên:</div>
           <div
             class="w-10 white-space-nowrap overflow-x-auto overflow-y-hidden"
@@ -178,7 +178,7 @@
           </div>
         </div>
 
-        <div class="w-12 flex text-lg mb-3 align-items-center">
+        <div class="w-12 flex text-lg mb-2 align-items-center">
           <div class="w-2">Loại:</div>
           <div
             class="w-10 white-space-nowrap overflow-x-auto overflow-y-hidden"
@@ -191,26 +191,62 @@
           <div>Mô tả:</div>
         </div>
         <div
-          class="w-12 flex text-lg mb-3 surface-200 border-left-2 border-400 overflow-x-hidden overflow-y-auto max-h-4rem p-2 align-items-center"
+          class="w-12 p-2 flex text-lg mb-2 surface-200 border-left-2 border-400 overflow-x-hidden overflow-y-auto max-h-4rem"
         >
-          <span>{{ chosenSign?.name }}</span>
+          <span>{{ chosenSign?.description }}</span>
         </div>
 
         <div class="w-12 flex text-lg mb-1 align-items-center">
           <div class="w-6">Hình ảnh:</div>
         </div>
-        <div class="w-12 flex text-lg mb-3">
+        <div class="w-12 flex text-lg mb-2">
           <div class="text-center w-12 h-auto p-2 border-200 border-2">
             <img
-              class="w-15rem h-auto max-h-15rem"
+              class="w-10rem h-auto max-h-10rem"
               *ngIf="chosenSign?.imageUrl"
-              [src]="chosenSign?.imageUrl  | safe: 'resourceUrl'"
+              [src]="chosenSign?.imageUrl | safe: 'resourceUrl'"
               alt="Hình ảnh"
             />
           </div>
         </div>
-      </div>
 
+        <div class="w-12 flex text-lg mb-1 align-items-center">
+          <div>Các điểm liên quan (nếu có):</div>
+        </div>
+        <div
+          class="text-lg overflow-auto surface-200 w-12 border-left-2 border-400 max-h-6rem"
+        >
+          <div class="p-2 h-full">
+            <span
+              *ngIf="
+                !chosenSign?.signParagraphs ||
+                chosenSign?.signParagraphs.length === 0
+              "
+              class="text-400"
+            >
+              &#123;không&#125;
+            </span>
+            <span
+              *ngFor="
+                let signParagraph of chosenSign?.signParagraphs;
+                let last = last
+              "
+            >
+              <span
+                [pTooltip]="signParagraph.signParagraphParagraphDesc"
+                [escape]="false"
+                tooltipPosition="top"
+                class="cursor-pointer"
+              >
+                <span>{{ signParagraph.signParagraphStatueName }}*</span>
+                <span>{{ signParagraph.signParagraphSectionName }}*</span>
+                <span>{{ signParagraph.signParagraphParagraphName }}</span>
+                <span *ngIf="!last">; <br /></span>
+              </span>
+            </span>
+          </div>
+        </div>
+      </div>
       <!-- Buttons -->
       <div style="height: 7.5%">
         <div class="w-12 flex">
@@ -251,7 +287,7 @@
       </div>
 
       <!-- Main -->
-      <div style="height: 85%">
+      <div style="height: 85%" class="overflow-auto">
         <div class="w-12 flex text-lg align-items-center">
           <div class="w-2">Tên:</div>
           <div class="w-10">
@@ -266,15 +302,16 @@
             />
           </div>
         </div>
-        <div class="w-12 mb-3 flex justify-content-end">
+        <div class="w-12 mb-2 flex justify-content-end">
           <div class="w-12">
             <small class="p-block p-error" *ngIf="!isValidChosenSignNewName"
-              >Vui lòng nhập tên biển (tối đa 150 ký tự) theo mẫu: Biển số 201a "Tên biển"</small
+              >Vui lòng nhập tên biển (tối đa 150 ký tự) theo mẫu: Biển số 201a
+              "Tên biển"</small
             >
           </div>
         </div>
 
-        <div class="w-12 flex text-lg mb-3 align-items-center">
+        <div class="w-12 flex text-lg mb-2 align-items-center">
           <div class="w-2">Loại:</div>
           <div class="w-10 flex justify-content-end">
             <p-dropdown
@@ -297,15 +334,20 @@
           <textarea
             ngDefaultControl
             class="w-full"
-            [rows]="3"
+            [rows]="2"
             pInputTextarea
             [(ngModel)]="tmpChosenSignNewDescription"
             (keyup)="getTmpChosenSignNewDescription()"
           ></textarea>
         </div>
-        <div class="w-12 mb-3">
+        <div class="w-12 mb-2">
           <div class="w-12">
-            <small class="p-block p-error" *ngIf="!tmpChosenSignNewDescription || tmpChosenSignNewDescription.length > 2000"
+            <small
+              class="p-block p-error"
+              *ngIf="
+                !tmpChosenSignNewDescription ||
+                tmpChosenSignNewDescription.length > 2000
+              "
               >Vui lòng nhập nội dung biển (tối đa 2000 ký tự)</small
             >
           </div>
@@ -331,17 +373,59 @@
             </p-fileUpload>
           </div>
         </div>
-        <div class="w-12 flex text-lg mb-3">
+        <div class="w-12 flex text-lg mb-2">
           <div class="text-center w-12 h-auto p-2 border-200 border-2">
             <img
               ngDefaultControl
               [(ngModel)]="tmpChosenSignNewImageUrl"
-              class="w-12rem h-auto max-h-12rem"
+              class="w-10rem h-auto max-h-10rem"
               [src]="tmpChosenSignNewImageUrl | safe: 'resourceUrl'"
               alt="Hình ảnh"
             />
           </div>
         </div>
+
+        <div class="w-12 text-lg flex align-items-center justify-content-between mb-1">
+          <span>Các điểm liên quan (nếu có):</span>
+  
+          <button
+            pButton
+            pRipple
+            type="button"
+            label="Thêm"
+            class="p-button-primary"
+            [style]="{ height: '30px' }"
+            (click)="
+              loadAddingChosenParagraphStatueList();
+            "
+          ></button>
+          
+        </div>
+        <div
+        class="text-lg border-200 border-2 overflow-auto max-h-4rem"
+        style="min-height: 2rem; padding: 0.5rem 0 0.5rem 0"
+      >
+        <span
+          *ngFor="
+            let signParagraph of tmpChosenSignNewSignParagraphList;
+            let i = index
+          "
+        >
+          <p-chip
+            class="inline-block w-6"
+            [style]="{ 'margin-left': '0.5rem', 'margin-bottom': '0.5rem' }"
+            label="{{ signParagraph.signParagraphStatueName }}*{{
+              signParagraph.signParagraphSectionName
+            }}*{{ signParagraph.signParagraphParagraphName }}"
+            [removable]="true"
+            class="cursor-pointer"
+            [pTooltip]="signParagraph.signParagraphParagraphDesc"
+            tooltipPosition="top"
+            (onRemove)="removeChosenSignSignParagraph(signParagraph)"
+          ></p-chip>
+        </span>
+      </div>
+        
       </div>
 
       <!-- Buttons -->
@@ -472,9 +556,7 @@
               mode="basic"
               [customUpload]="true"
               [auto]="true"
-              (uploadHandler)="
-              getNewSignImageUrl($event, imageUploaded)
-              "
+              (uploadHandler)="getNewSignImageUrl($event, imageUploaded)"
               accept="image/*"
               [maxFileSize]="1000000"
               chooseLabel="Tải lên"
@@ -485,11 +567,14 @@
           </div>
         </div>
         <div class="w-12 flex text-lg mb-3">
-          <div class="text-center w-12 h-auto p-2 border-200 border-2" *ngIf="newSignImageUrl">
+          <div
+            class="text-center w-12 h-auto p-2 border-200 border-2"
+            *ngIf="newSignImageUrl"
+          >
             <img
               ngDefaultControl
               [(ngModel)]="newSignImageUrl"
-              class="w-12rem h-auto max-h-12rem"
+              class="w-10rem h-auto max-h-10rem"
               [src]="newSignImageUrl | safe: 'resourceUrl'"
               alt="Hình ảnh"
             />
@@ -553,15 +638,17 @@
         [filter]="true"
         filterBy="username"
         class="dropdown-admins"
-        >
-          <ng-template let-admin pTemplate="item" class="dropdown-admins-tooltip">
-            <div [pTooltip]="admin.pendingRequests"
-            tooltipPosition="left" class="w-full h-3rem flex justify-content-center 
-            align-items-center whitespace-no-wrap text-overflow-ellipsis ">
-                <span>{{admin.username}}</span>
-            </div>
-          </ng-template>
-        </p-dropdown>
+      >
+        <ng-template let-admin pTemplate="item" class="dropdown-admins-tooltip">
+          <div
+            [pTooltip]="admin.pendingRequests"
+            tooltipPosition="left"
+            class="w-full h-3rem flex justify-content-center align-items-center whitespace-no-wrap text-overflow-ellipsis"
+          >
+            <span>{{ admin.username }}</span>
+          </div>
+        </ng-template>
+      </p-dropdown>
     </div>
   </div>
   <div class="w-12">
@@ -617,15 +704,17 @@
         [filter]="true"
         filterBy="username"
         class="dropdown-admins"
-        >
-          <ng-template let-admin pTemplate="item" class="dropdown-admins-tooltip">
-            <div [pTooltip]="admin.pendingRequests"
-            tooltipPosition="left" class="w-full h-3rem flex justify-content-center 
-            align-items-center whitespace-no-wrap text-overflow-ellipsis ">
-                <span>{{admin.username}}</span>
-            </div>
-          </ng-template>
-        </p-dropdown>
+      >
+        <ng-template let-admin pTemplate="item" class="dropdown-admins-tooltip">
+          <div
+            [pTooltip]="admin.pendingRequests"
+            tooltipPosition="left"
+            class="w-full h-3rem flex justify-content-center align-items-center whitespace-no-wrap text-overflow-ellipsis"
+          >
+            <span>{{ admin.username }}</span>
+          </div>
+        </ng-template>
+      </p-dropdown>
     </div>
   </div>
   <div class="w-12">
@@ -681,15 +770,17 @@
         [filter]="true"
         filterBy="username"
         class="dropdown-admins"
-        >
-          <ng-template let-admin pTemplate="item" class="dropdown-admins-tooltip">
-            <div [pTooltip]="admin.pendingRequests"
-            tooltipPosition="left" class="w-full h-3rem flex justify-content-center 
-            align-items-center whitespace-no-wrap text-overflow-ellipsis ">
-                <span>{{admin.username}}</span>
-            </div>
-          </ng-template>
-        </p-dropdown>
+      >
+        <ng-template let-admin pTemplate="item" class="dropdown-admins-tooltip">
+          <div
+            [pTooltip]="admin.pendingRequests"
+            tooltipPosition="left"
+            class="w-full h-3rem flex justify-content-center align-items-center whitespace-no-wrap text-overflow-ellipsis"
+          >
+            <span>{{ admin.username }}</span>
+          </div>
+        </ng-template>
+      </p-dropdown>
     </div>
   </div>
   <div class="w-12">
@@ -718,6 +809,185 @@
       style="height: 40px"
       (click)="createNewSign()"
     ></button>
+  </ng-template>
+</p-dialog>
+
+<!-- Add signParagraph for chosen updating sign -->
+<p-dialog
+  [(visible)]="displayAddChosenSignParagraph"
+  [style]="{ width: '500px', height: 'auto' }"
+  (onHide)="clearAddChosenSignSignParagraph()"
+  [modal]="true"
+>
+  <ng-template pTemplate="header">
+    <span class="text-primary-500 font-bold text-xl">Thêm điểm liên quan</span>
+  </ng-template>
+
+  <div
+    class="h-auto"
+    [ngStyle]="{
+      'padding-bottom':
+      tmpChosenSignAddingSignParagraphList.length > 0 ? '4rem' : '7rem'
+    }"
+  >
+    <div class="flex justify-content-center align-items-center mb-2">
+      <div class="w-6">
+        <span class="text-lg font-bold">Mời chọn điều </span> <br />
+      </div>
+      <div class="w-6 flex justify-content-end">
+        <p-dropdown
+          [options]="addingChosenSignStatueList"
+          optionLabel="name"
+          [style]="{ height: '35px', width: '9rem' }"
+          placeholder="Điều..."
+          scrollHeight="6rem"
+          [filter]="true"
+          filterBy="name"
+          (onChange)="selectAddingChosenSignStatue($event)"
+        ></p-dropdown>
+      </div>
+    </div>
+
+    <div
+      *ngIf="addingChosenSignStatue?.description"
+      class="surface-200 w-12 border-left-2 border-400 p-2 mb-3 max-h-4rem overflow-auto"
+    >
+      {{ addingChosenSignStatue?.description }}
+    </div>
+
+    <div class="flex justify-content-center align-items-center mb-2">
+      <div class="w-6">
+        <span class="text-lg font-bold">Mời chọn khoản </span> <br />
+      </div>
+      <div class="w-6 flex justify-content-end">
+        <p-dropdown
+          [options]="addingChosenSignSectionList"
+          optionLabel="name"
+          [style]="{ height: '35px', width: '9rem' }"
+          placeholder="Khoản..."
+          scrollHeight="6rem"
+          [filter]="true"
+          filterBy="name"
+          (onChange)="selectAddingChosenSignSection($event)"
+        ></p-dropdown>
+      </div>
+    </div>
+
+    <div
+      *ngIf="addingChosenSignSection?.description"
+      class="surface-200 w-12 border-left-2 border-400 p-2 mb-3 max-h-4rem overflow-auto"
+    >
+      {{ addingChosenSignSection?.description }}
+    </div>
+
+    <div
+      class="flex justify-content-center align-items-center mb-2"
+      *ngIf="!emptyParagraphSectionMsg"
+    >
+      <div class="w-6">
+        <span class="text-lg font-bold">Mời chọn điểm </span> <br />
+      </div>
+      <div class="w-6 flex justify-content-end">
+        <p-dropdown
+          [options]="addingChosenSignParagraphList"
+          optionLabel="name"
+          [style]="{ height: '35px', width: '9rem' }"
+          placeholder="Điểm..."
+          scrollHeight="6rem"
+          [filter]="true"
+          filterBy="name"
+          (onChange)="selectAddingChosenSignParagraph($event)"
+        ></p-dropdown>
+      </div>
+    </div>
+
+    <div
+      *ngIf="addingChosenSignParagraph?.description"
+      class="surface-200 w-12 border-left-2 border-400 p-2 max-h-4rem overflow-auto mb-2"
+    >
+      {{ addingChosenSignParagraph?.description }}
+    </div>
+
+    <div *ngIf="emptyParagraphSectionMsg" class="font-bold mb-2">
+      {{ emptyParagraphSectionMsg }}
+    </div>
+
+    <hr *ngIf="tmpChosenSignAddingSignParagraphList.length > 0" />
+    <div
+      *ngIf="tmpChosenSignAddingSignParagraphList"
+      class="max-h-6rem overflow-auto"
+    >
+      <div
+        *ngFor="
+          let signParagraph of tmpChosenSignAddingSignParagraphList;
+          let i = index
+        "
+      >
+        <div class="flex justify-content-center align-items-center">
+          {{ signParagraph.signParagraphStatueName }} -
+          {{ signParagraph.signParagraphSectionName }} -
+          {{ signParagraph.signParagraphParagraphName }}
+
+          <button
+            pButton
+            type="button"
+            icon="pi pi-times"
+            class="p-button-rounded p-button-danger p-button-text"
+          ></button>
+          <!-- (click)="removeChosenParagraphIncludedReference(i)" -->
+
+        </div>
+      </div>
+    </div>
+
+    <div
+      *ngIf="addingErrorChosenSignAddingSignParagraphMsg"
+      class="font-bold text-red-500 flex justify-content-center"
+    >
+      {{ addingErrorChosenSignAddingSignParagraphMsg }}
+    </div>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <div class="flex justify-content-end mb-2">
+      <button
+        pButton
+        pRipple
+        type="button"
+        label="Lưu lại"
+        class="p-button-outlined p-button-warning"
+        [style]="{
+          border: '3px solid #F59E0B',
+          height: '35px',
+          width: '120px'
+        }"
+      ></button>
+      <!-- (click)="addChosenParagraphIncludedReference()" -->
+
+      <!-- [disabled]="addingChosenParagraphParagraph === undefined ? true : false" -->
+    </div>
+    <button
+      type="button"
+      pButton
+      label="Hủy"
+      class="p-button-danger"
+      style="height: 35px; width: 120px"
+    ></button>
+    <!-- (click)="clearAddChosenParagraphReference()" -->
+
+    <button
+      type="button"
+      pButton
+      label="Hoàn thành"
+      class="p-button-success"
+      style="height: 35px; width: 120px"
+     
+    ></button>
+
+    <!-- [disabled]="
+    tmpChosenParagraphAddingReferenceList.length === 0 ? true : false
+  "
+  (click)="completeAddChosenParagraphIncludedReference()" -->
   </ng-template>
 </p-dialog>
 
