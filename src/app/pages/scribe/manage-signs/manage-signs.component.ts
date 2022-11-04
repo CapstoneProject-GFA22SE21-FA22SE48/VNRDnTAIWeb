@@ -78,6 +78,23 @@ export class ManageSignsComponent implements OnInit {
   newSignImageFile: any;
 
   isValidCreateNewSign: boolean = false;
+
+  //new sign -> adding signParagraphs
+  tmpNewSignNewSignParagraphList: any;
+  displayAddNewSignSignParagraph: boolean = false;
+
+  addingNewSignStatueList: any;
+  addingNewSignStatue: any;
+  addingNewSignSectionList: any;
+  addingNewSignSection: any;
+  addingNewSignParagraphList:any;
+  addingNewSignParagraph: any;
+
+  emptyParagraphSectionOfNewSignMsg: any;
+  addingErrorNewSignAddingSignParagraphMsg: any;
+
+  newSignSignParagraphList: any; //used for holding temporary signParagraph list for adding signParagraph to new sign
+  tmpNewSignAddingSignParagraphList: any[] =[];
   //end of create
 
   displayConfirmUpdateChosenSign: boolean = false;
@@ -236,6 +253,8 @@ export class ManageSignsComponent implements OnInit {
 
     this.isValidUpdateChosenSign = false;
     this.displayConfirmUpdateChosenSign = false;
+
+    this.newChosenSignSignParagraphList = undefined;
   }
 
   getTmpChosenSignNewName() {
@@ -292,7 +311,7 @@ export class ManageSignsComponent implements OnInit {
   }
 
   // start of adding chosen sign signParagraph
-  loadAddingChosenParagraphStatueList() {
+  loadAddingChosenSignStatueList() {
     this.displayAddChosenSignParagraph = true;
     this.isLoadingService.add();
     this.wrapperService.get(
@@ -493,7 +512,7 @@ export class ManageSignsComponent implements OnInit {
 
     this.detectChange();
   }
-
+  
   detectChange() {
     if (
       JSON.stringify(this.tmpChosenSign) !== JSON.stringify(this.chosenSign) &&
@@ -507,6 +526,209 @@ export class ManageSignsComponent implements OnInit {
       this.isValidUpdateChosenSign = false;
     }
   }
+  //end of adding chosen sign signParagraphs
+
+  // start of adding new sign signParagraph
+  loadAddingNewSignStatueList() {
+    this.displayAddNewSignSignParagraph = true;
+    this.isLoadingService.add();
+    this.wrapperService.get(
+      paths.ScribeGetAllStatueForAddingReferences,
+      getStorageToken(),
+      {
+        successCallback: (response) => {
+          this.addingNewSignStatueList = response.data.sort(
+            (s1: any, s2: any) =>
+              s1.name?.split(' ')[1] - s2.name?.split(' ')[1]
+          );
+          this.isLoadingService.remove();
+        },
+        errorCallback: (error) => {
+          console.log(error);
+          this.isLoadingService.remove();
+        },
+      }
+    );
+  }
+
+  selectAddingNewSignStatue(event: any) {
+    this.addingNewSignSection = undefined;
+    this.addingNewSignParagraph = undefined;
+
+    this.addingNewSignStatue = event.value;
+
+    if (this.addingNewSignStatue) {
+      this.isLoadingService.add();
+      this.wrapperService.get(
+        paths.ScribeGetSectionsByStatueId +
+          '/' +
+          this.addingNewSignStatue?.id,
+        getStorageToken(),
+        {
+          successCallback: (response) => {
+            this.addingNewSignSectionList = response.data;
+            this.isLoadingService.remove();
+          },
+          errorCallback: (error) => {
+            console.log(error);
+            this.isLoadingService.remove();
+          },
+        }
+      );
+    }
+  }
+
+  selectAddingNewSignSection(event: any) {
+    this.addingNewSignParagraph = undefined;
+
+    this.addingNewSignSection = event.value;
+
+    if (this.addingNewSignSection) {
+      this.isLoadingService.add();
+      this.wrapperService.get(
+        paths.ScribeGetParagraphsBySectionId +
+          '/' +
+          this.addingNewSignSection?.id,
+        getStorageToken(),
+        {
+          successCallback: (response) => {
+            //This section has an empty paragraph
+            if (response.data.length === 1 && response.data[0].name === '') {
+              this.emptyParagraphSectionOfNewSignMsg = 'Khoản này không chứa điểm';
+            } else {
+              this.addingNewSignParagraphList = response.data;
+
+              
+              //Remove added reference paragraphs from the list of reference paragraph that will be added
+              if(this.newSignSignParagraphList !== undefined){
+                this.newSignSignParagraphList.forEach((addedSignParagraph: any) => {
+                  this.addingNewSignParagraphList =
+                    this.addingNewSignParagraphList.filter(
+                      (r: any) => r.id !== addedSignParagraph?.signParagraphParagraphId
+                    );
+                });
+              }
+
+              this.emptyParagraphSectionOfNewSignMsg = '';
+            }
+            this.isLoadingService.remove();
+          },
+          errorCallback: (error) => {
+            console.log(error);
+            this.isLoadingService.remove();
+          },
+        }
+      );
+    }
+  }
+
+  selectAddingNewSignParagraph(event: any) {
+    this.addingNewSignParagraph = event.value;
+  }
+
+  //"Hủy" button clicked / dialog add new sign signParagraph onHide
+  clearAddNewSignSignParagraph() {
+    this.displayAddNewSignSignParagraph = false;
+
+    this.addingNewSignStatueList = undefined;
+    this.addingNewSignStatue = null;
+    this.addingNewSignSectionList = undefined;
+    this.addingNewSignSection = undefined;
+    this.addingNewSignParagraphList = undefined;
+    this.addingNewSignParagraph = undefined;
+    
+    this.emptyParagraphSectionOfNewSignMsg = undefined;
+    this.addingErrorNewSignAddingSignParagraphMsg = undefined;
+
+    this.tmpNewSignAddingSignParagraphList = [];
+  }
+
+  //"Lưu lại" button clicked
+  addNewSignSignParagraph() {
+    if (
+      !this.addingNewSignParagraph ||
+      !this.addingNewSignSection ||
+      !this.addingNewSignStatue
+    ) {
+      this.addingErrorNewSignAddingSignParagraphMsg =
+        'Vui lòng chọn điều, khoản, điểm trước khi lưu lại';
+      return;
+    } else {
+      this.addingErrorNewSignAddingSignParagraphMsg = '';
+    }
+
+    let signParagraph = {
+      signParagraphParagraphId: this.addingNewSignParagraph.id,
+      signParagraphParagraphName: this.addingNewSignParagraph.name,
+      signParagraphParagraphDesc: this.addingNewSignParagraph.description,
+
+      signParagraphSectionId: this.addingNewSignSection.id,
+      signParagraphSectionName: this.addingNewSignSection.name,
+
+      signParagraphStatueId: this.addingNewSignStatue.id,
+      signParagraphStatueName: this.addingNewSignStatue.name,
+    };
+
+    var existed = false;
+
+    //check with original reference list before adding
+    // this.tmpChosenSign.signParagraphs.forEach((r: any) => {
+    //   if (
+    //     r.signParagraphParagraphId == signParagraph.signParagraphParagraphId &&
+    //     r.signParagraphSectionId ==
+    //     signParagraph.signParagraphSectionId &&
+    //     r.signParagraphStatueId ==
+    //     signParagraph.signParagraphStatueId
+    //   ) {
+    //     this.addingErrorChosenSignAddingSignParagraphMsg =
+    //       'Điểm đã tồn tại trong danh sách';
+    //   } else {
+        //check with temporary reference list before adding
+        existed = this.tmpNewSignAddingSignParagraphList.some((r: any) => {
+          if (
+            r.signParagraphParagraphId == signParagraph.signParagraphParagraphId &&
+            r.signParagraphSectionId ==
+            signParagraph.signParagraphSectionId &&
+            r.signParagraphStatueId ==
+            signParagraph.signParagraphStatueId
+          ) {
+            return true;
+          } else {
+            return false;
+          }
+        });
+      // }
+    // });
+
+    if (this.tmpNewSignAddingSignParagraphList.length === 0 || !existed) {
+      this.tmpNewSignAddingSignParagraphList.push(signParagraph);
+      this.addingErrorNewSignAddingSignParagraphMsg = '';
+    } else {
+      this.addingErrorNewSignAddingSignParagraphMsg =
+        'Điểm đã tồn tại trong danh sách';
+    }
+  }
+
+  // 'x' button clicked inside adding signParagraphs for new sign
+  removeNewSignTmpSignParagraph(i: any) {
+    this.tmpNewSignAddingSignParagraphList.splice(i, 1);
+    this.addingErrorNewSignAddingSignParagraphMsg = '';
+  }
+
+  //"Hoàn thành" button clicked
+  completeAddNewSignSignParagraph() {
+    if(!this.newSignSignParagraphList){
+      this.newSignSignParagraphList = [];
+    }
+
+    this.tmpNewSignAddingSignParagraphList.forEach((r: any) => {
+      this.newSignSignParagraphList.push(r);
+    });
+    // this.tmpChosenSign.signParagraphs =
+    //   this.newChosenSignSignParagraphList;
+    this.displayAddNewSignSignParagraph = false;
+  }
+  //end of adding new sign signParagraphs
 
   updateChosenSign() {
     if (this.tmpChosenSignNewImageFile !== undefined) {
@@ -745,6 +967,8 @@ export class ManageSignsComponent implements OnInit {
     this.newSignImageUrl = undefined;
     this.newSignImageFile = undefined;
     this.isValidCreateNewSign = false;
+
+    this.newSignSignParagraphList = undefined;
   }
 
   getNewSignName() {
@@ -808,6 +1032,8 @@ export class ManageSignsComponent implements OnInit {
             description: this.newSignDescription,
             signCategoryId: this.newSignSignCategoryId,
             imageUrl: this.newSignImageUrl,
+
+            signParagraphs: this.newSignSignParagraphList
           },
           getStorageToken(),
           {

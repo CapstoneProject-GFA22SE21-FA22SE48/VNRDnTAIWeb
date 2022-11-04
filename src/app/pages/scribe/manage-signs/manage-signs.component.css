@@ -15,7 +15,7 @@
 
 /* for filtering input of dropdown */
 ::ng-deep .p-dropdown-panel .p-dropdown-header {
-  padding: .5rem;
+  padding: .4rem;
 }
 
 ::ng-deep .p-dropdown-panel .p-dropdown-header .p-dropdown-filter-container .p-inputtext {
@@ -52,4 +52,8 @@
    -webkit-line-clamp: 3; 
            line-clamp: 3; 
    -webkit-box-orient: vertical;
+}
+
+::ng-deep .p-button-success:disabled{
+  background-color: grey;
 }

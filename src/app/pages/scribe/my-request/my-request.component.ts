@@ -101,15 +101,13 @@ export class MyRequestComponent implements OnInit {
             r.modifyingSectionId === emittedRom.modifyingSectionId
           ) {
             return r;
-          }else if (
+          } else if (
             r.modifyingParagraphId !== undefined &&
             emittedRom.modifyingParagraphId !== undefined &&
             r.modifyingParagraphId === emittedRom.modifyingParagraphId
           ) {
             return r;
-          }
-          
-          else if (
+          } else if (
             r.modifyingSignId !== undefined &&
             emittedRom.modifyingSignId !== undefined &&
             r.modifyingSignId === emittedRom.modifyingSignId
@@ -513,6 +511,20 @@ export class MyRequestComponent implements OnInit {
                   `Nội dung:\n` +
                   `\t${this.selectedRom.modifyingSign?.description}\n`;
 
+                if (
+                  this.selectedRom.modifyingSign?.signParagraphs !== null &&
+                  this.selectedRom.modifyingSign?.signParagraphs !==
+                    undefined &&
+                  this.selectedRom.modifyingSign?.signParagraphs?.length > 0
+                ) {
+                  this.changedModel.code += `Các điểm liên quan (nếu có):\n`;
+                  this.selectedRom.modifyingSign?.signParagraphs?.forEach(
+                    (sp: any) => {
+                      this.changedModel.code += `\t${sp.signParagraphStatueName} > ${sp.signParagraphSectionName} > ${sp.signParagraphParagraphName}\n`;
+                    }
+                  );
+                }
+
                 if (this.selectedRom.modifyingSign?.imageUrl) {
                   this.changedModelImg =
                     this.selectedRom.modifyingSign?.imageUrl;
@@ -530,6 +542,19 @@ export class MyRequestComponent implements OnInit {
                   `\t${this.selectedRom.modifiedSign?.name}\n` +
                   `Nội dung:\n` +
                   `\t${this.selectedRom.modifiedSign?.description}\n`;
+
+                if (
+                  this.selectedRom.modifiedSign?.signParagraphs !== null &&
+                  this.selectedRom.modifiedSign?.signParagraphs !== undefined &&
+                  this.selectedRom.modifiedSign?.signParagraphs?.length > 0
+                ) {
+                  this.originalModel.code += `Các điểm liên quan (nếu có):\n`;
+                  this.selectedRom.modifiedSign?.signParagraphs?.forEach(
+                    (sp: any) => {
+                      this.originalModel.code += `\t${sp.signParagraphStatueName} > ${sp.signParagraphSectionName} > ${sp.signParagraphParagraphName}\n`;
+                    }
+                  );
+                }
 
                 if (this.selectedRom.modifiedSign?.imageUrl) {
                   this.originalModelImg =
@@ -576,14 +601,15 @@ export class MyRequestComponent implements OnInit {
                   `\t${this.selectedRom.modifyingQuestion?.content}\n` +
                   `Đáp án:\n`;
 
-                this.selectedRom.modifyingQuestion?.answers.sort((a1: any, a2: any) =>
-                a1?.description < a2?.description
-                  ? 1
-                  : a2?.description < a1?.description
-                  ? -1
-                  : 0
-              ).forEach(
-                  (a: any, i: number) => {
+                this.selectedRom.modifyingQuestion?.answers
+                  .sort((a1: any, a2: any) =>
+                    a1?.description < a2?.description
+                      ? 1
+                      : a2?.description < a1?.description
+                      ? -1
+                      : 0
+                  )
+                  .forEach((a: any, i: number) => {
                     tmpChangedModelCode += `\t${
                       i === 0
                         ? 'A) '
@@ -601,8 +627,7 @@ export class MyRequestComponent implements OnInit {
                     ) {
                       this.changedModel.code = tmpChangedModelCode;
                     }
-                  }
-                );
+                  });
 
                 if (this.selectedRom.modifyingQuestion?.imageUrl) {
                   this.changedModelImg =
@@ -626,14 +651,15 @@ export class MyRequestComponent implements OnInit {
                   `\t${this.selectedRom.modifiedQuestion?.content}\n` +
                   `Đáp án:\n`;
 
-                this.selectedRom.modifiedQuestion?.answers.sort((a1: any, a2: any) =>
-                a1?.description < a2?.description
-                  ? 1
-                  : a2?.description < a1?.description
-                  ? -1
-                  : 0
-              ).forEach(
-                  (a: any, i: number) => {
+                this.selectedRom.modifiedQuestion?.answers
+                  .sort((a1: any, a2: any) =>
+                    a1?.description < a2?.description
+                      ? 1
+                      : a2?.description < a1?.description
+                      ? -1
+                      : 0
+                  )
+                  .forEach((a: any, i: number) => {
                     tmpChangedModelCode += `\t${
                       i === 0
                         ? 'A) '
@@ -651,8 +677,7 @@ export class MyRequestComponent implements OnInit {
                     ) {
                       this.originalModel.code = tmpChangedModelCode;
                     }
-                  }
-                );
+                  });
 
                 if (this.selectedRom.modifiedQuestion?.imageUrl) {
                   this.originalModelImg =
@@ -782,7 +807,8 @@ export class MyRequestComponent implements OnInit {
     this.confirmationService.confirm({
       target: event?.target,
       key: 'confirmCancel',
-      message: 'Thao tác này sẽ xóa yêu cầu cùng các thông tin liên quan. Bạn có chắc?',
+      message:
+        'Thao tác này sẽ xóa yêu cầu cùng các thông tin liên quan. Bạn có chắc?',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
         if (this.selectedRom?.lawRomId) {
@@ -818,7 +844,7 @@ export class MyRequestComponent implements OnInit {
           this.isLoadingService.add();
           this.wrapperService.delete(
             paths.ScribeDeleteSignRom + '/' + this.selectedRom?.signRomId,
-            
+
             getStorageToken(),
             {
               successCallback: (response) => {
@@ -847,7 +873,9 @@ export class MyRequestComponent implements OnInit {
         } else if (this.selectedRom?.modifyingQuestionId) {
           this.isLoadingService.add();
           this.wrapperService.delete(
-            paths.ScribeDeleteQuestionRom + '/' + this.selectedRom?.modifyingQuestionId,
+            paths.ScribeDeleteQuestionRom +
+              '/' +
+              this.selectedRom?.modifyingQuestionId,
             getStorageToken(),
             {
               successCallback: (response) => {
@@ -878,7 +906,6 @@ export class MyRequestComponent implements OnInit {
       reject: () => {},
     });
   }
-
 
   clearData() {
     this.selectedRom = undefined;

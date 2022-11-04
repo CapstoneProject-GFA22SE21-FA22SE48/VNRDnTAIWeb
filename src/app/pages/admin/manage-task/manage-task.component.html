@@ -25,7 +25,7 @@
             (cdkDropListDropped)="drop($event)"
             class="p-2 flex white-space-nowrap overflow-x-auto"
           >
-            <div *ngFor="let task of scribe.taskList" cdkDrag class="flex align-items-center">
+            <div *ngFor="let task of scribe.taskList" cdkDrag class="flex align-items-center cursor-move">
               <div
                 [className]="
                   task?.taskName.toString().split('>')[0].trim() === 'Biển báo'
@@ -71,7 +71,7 @@
               (cdkDropListDropped)="drop($event)"
               class="p-2 overflow-auto border-200 border-2 border-round-lg"
             >
-              <div *ngFor="let task of scribe.taskList" cdkDrag class="m-2">
+              <div *ngFor="let task of scribe.taskList" cdkDrag class="m-2 cursor-move">
                 <div
                   [className]="
                     task?.taskName.toString().split('>')[0].trim() ===

@@ -105,7 +105,7 @@ export class ManageScribesComponent implements OnInit {
     this.confirmationService.confirm({
       key: 'cdDeactivate',
       message:
-        'Tài khoản nhân viên này sẽ bị ngưng hoạt động, nhân viên sẽ không còn quản lý các công việc đã được giao hiện tại. Bạn có chắc chắn?',
+        'Tài khoản nhân viên này sẽ bị ngưng hoạt động, nhân viên sẽ không còn quản lý các công việc đã được giao hiện tại, các yêu cầu sẽ được xóa vĩnh viễn. Bạn có chắc chắn?',
       accept: () => {
         this.wrapperService.put(
           paths.AdminDeactivateScribe + '/' + this.scribes[i]?.id,
@@ -115,6 +115,7 @@ export class ManageScribesComponent implements OnInit {
           {
             successCallback: (response) => {
               this.loadScribes();
+              this.scribeDTO = undefined;
               this.messageService.add({
                 key: 'deactivateSuccess',
                 severity: 'success',
@@ -151,6 +152,7 @@ export class ManageScribesComponent implements OnInit {
           {
             successCallback: (response) => {
               this.loadScribes();
+              this.scribeDTO = undefined;
               this.messageService.add({
                 key: 'reEnableSuccess',
                 severity: 'success',

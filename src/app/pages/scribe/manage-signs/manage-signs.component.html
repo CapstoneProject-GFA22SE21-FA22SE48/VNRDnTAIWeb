@@ -385,9 +385,11 @@
           </div>
         </div>
 
-        <div class="w-12 text-lg flex align-items-center justify-content-between mb-1">
+        <div
+          class="w-12 text-lg flex align-items-center justify-content-between mb-1"
+        >
           <span>Các điểm liên quan (nếu có):</span>
-  
+
           <button
             pButton
             pRipple
@@ -395,37 +397,33 @@
             label="Thêm"
             class="p-button-primary"
             [style]="{ height: '30px' }"
-            (click)="
-              loadAddingChosenParagraphStatueList();
-            "
+            (click)="loadAddingChosenSignStatueList()"
           ></button>
-          
         </div>
         <div
-        class="text-lg border-200 border-2 overflow-auto max-h-4rem"
-        style="min-height: 2rem; padding: 0.5rem 0 0.5rem 0"
-      >
-        <span
-          *ngFor="
-            let signParagraph of tmpChosenSignNewSignParagraphList;
-            let i = index
-          "
+          class="text-lg border-200 border-2 overflow-auto max-h-4rem"
+          style="min-height: 2rem; padding: 0.5rem 0 0.5rem 0"
         >
-          <p-chip
-            class="inline-block w-6"
-            [style]="{ 'margin-left': '0.5rem', 'margin-bottom': '0.5rem' }"
-            label="{{ signParagraph.signParagraphStatueName }}*{{
-              signParagraph.signParagraphSectionName
-            }}*{{ signParagraph.signParagraphParagraphName }}"
-            [removable]="true"
-            class="cursor-pointer"
-            [pTooltip]="signParagraph.signParagraphParagraphDesc"
-            tooltipPosition="top"
-            (onRemove)="removeChosenSignSignParagraph(signParagraph)"
-          ></p-chip>
-        </span>
-      </div>
-        
+          <span
+            *ngFor="
+              let signParagraph of tmpChosenSignNewSignParagraphList;
+              let i = index
+            "
+          >
+            <p-chip
+              class="inline-block w-6"
+              [style]="{ 'margin-left': '0.5rem', 'margin-bottom': '0.5rem' }"
+              label="{{ signParagraph.signParagraphStatueName }}*{{
+                signParagraph.signParagraphSectionName
+              }}*{{ signParagraph.signParagraphParagraphName }}"
+              [removable]="true"
+              class="cursor-pointer"
+              [pTooltip]="signParagraph.signParagraphParagraphDesc"
+              tooltipPosition="top"
+              (onRemove)="removeChosenSignSignParagraph(signParagraph)"
+            ></p-chip>
+          </span>
+        </div>
       </div>
 
       <!-- Buttons -->
@@ -504,7 +502,7 @@
             />
           </div>
         </div>
-        <div class="w-12 mb-3 flex justify-content-end">
+        <div class="w-12 mb-2 flex justify-content-end">
           <div class="w-10">
             <small class="p-block p-error" *ngIf="!isValidNewSignName"
               >Vui lòng nhập tên biển theo ví dụ mô tả (tối đa 150 ký tự)</small
@@ -512,7 +510,7 @@
           </div>
         </div>
 
-        <div class="w-12 flex text-lg mb-3 align-items-center">
+        <div class="w-12 flex text-lg mb-2 align-items-center">
           <div class="w-2">Loại:</div>
           <div class="w-10 flex justify-content-end">
             <p-dropdown
@@ -534,13 +532,13 @@
           <textarea
             ngDefaultControl
             class="w-full"
-            [rows]="3"
+            [rows]="2"
             pInputTextarea
             [(ngModel)]="newSignDescription"
             (keyup)="getNewSignDescription()"
           ></textarea>
         </div>
-        <div class="w-12 mb-3">
+        <div class="w-12 mb-2">
           <div class="w-12">
             <small class="p-block p-error" *ngIf="!isValidNewSignDescription"
               >Vui lòng nhập nội dung biển (tối đa 2000 ký tự)</small
@@ -566,12 +564,10 @@
             </p-fileUpload>
           </div>
         </div>
-        <div class="w-12 flex text-lg mb-3">
-          <div
-            class="text-center w-12 h-auto p-2 border-200 border-2"
-            *ngIf="newSignImageUrl"
-          >
+        <div class="w-12 flex text-lg mb-2">
+          <div class="text-center w-12 h-auto p-2 border-200 border-2">
             <img
+              *ngIf="newSignImageUrl"
               ngDefaultControl
               [(ngModel)]="newSignImageUrl"
               class="w-10rem h-auto max-h-10rem"
@@ -579,6 +575,46 @@
               alt="Hình ảnh"
             />
           </div>
+        </div>
+
+        <div
+          class="w-12 text-lg flex align-items-center justify-content-between mb-1"
+        >
+          <span>Các điểm liên quan (nếu có):</span>
+
+          <button
+            pButton
+            pRipple
+            type="button"
+            label="Thêm"
+            class="p-button-primary"
+            [style]="{ height: '30px' }"
+            (click)="loadAddingNewSignStatueList()"
+          ></button>
+        </div>
+        <div
+          class="text-lg border-200 border-2 overflow-auto max-h-6rem"
+          style="min-height: 2rem; padding: 0.5rem 0 0.5rem 0"
+        >
+          <span
+            *ngFor="
+              let signParagraph of newSignSignParagraphList;
+              let i = index
+            "
+          >
+            <p-chip
+              class="inline-block w-6"
+              [style]="{ 'margin-left': '0.5rem', 'margin-bottom': '0.5rem' }"
+              label="{{ signParagraph.signParagraphStatueName }}*{{
+                signParagraph.signParagraphSectionName
+              }}*{{ signParagraph.signParagraphParagraphName }}"
+              [removable]="true"
+              class="cursor-pointer"
+              [pTooltip]="signParagraph.signParagraphParagraphDesc"
+              tooltipPosition="top"
+              (onRemove)="removeNewSignTmpSignParagraph(i)"
+            ></p-chip>
+          </span>
         </div>
       </div>
 
@@ -827,7 +863,7 @@
     class="h-auto"
     [ngStyle]="{
       'padding-bottom':
-      tmpChosenSignAddingSignParagraphList.length > 0 ? '4rem' : '7rem'
+        tmpChosenSignAddingSignParagraphList.length > 0 ? '4rem' : '7rem'
     }"
   >
     <div class="flex justify-content-center align-items-center mb-2">
@@ -935,7 +971,6 @@
             class="p-button-rounded p-button-danger p-button-text"
             (click)="removeChosenSignTmpSignParagraph(i)"
           ></button>
-
         </div>
       </div>
     </div>
@@ -964,7 +999,6 @@
         (click)="addChosenSignSignParagraph()"
         [disabled]="addingChosenSignParagraph === undefined ? true : false"
       ></button>
-
     </div>
     <button
       type="button"
@@ -982,12 +1016,185 @@
       class="p-button-success"
       style="height: 35px; width: 120px"
       [disabled]="
-      tmpChosenSignAddingSignParagraphList.length === 0 ? true : false
-    "
-    (click)="completeAddChosenSignSignParagraph()"
+        tmpChosenSignAddingSignParagraphList.length === 0 ? true : false
+      "
+      (click)="completeAddChosenSignSignParagraph()"
+    ></button>
+  </ng-template>
+</p-dialog>
+
+<!-- Add signParagraph for new sign -->
+<p-dialog
+  [(visible)]="displayAddNewSignSignParagraph"
+  [style]="{ width: '500px', height: 'auto' }"
+  (onHide)="clearAddNewSignSignParagraph()"
+  [modal]="true"
+>
+  <ng-template pTemplate="header">
+    <span class="text-primary-500 font-bold text-xl">Thêm điểm liên quan</span>
+  </ng-template>
+
+  <div
+    class="h-auto"
+    [ngStyle]="{
+      'padding-bottom':
+      tmpNewSignAddingSignParagraphList.length > 0 ? '4rem' : '7rem'
+    }"
+  >
+    <div class="flex justify-content-center align-items-center mb-2">
+      <div class="w-6">
+        <span class="text-lg font-bold">Mời chọn điều </span> <br />
+      </div>
+      <div class="w-6 flex justify-content-end">
+        <p-dropdown
+          [options]="addingNewSignStatueList"
+          optionLabel="name"
+          [style]="{ height: '35px', width: '9rem' }"
+          placeholder="Điều..."
+          scrollHeight="6rem"
+          [filter]="true"
+          filterBy="name"
+          (onChange)="selectAddingNewSignStatue($event)"
+        ></p-dropdown>
+      </div>
+    </div>
+
+    <div
+      *ngIf="addingNewSignStatue?.description"
+      class="surface-200 w-12 border-left-2 border-400 p-2 mb-3 max-h-4rem overflow-auto"
+    >
+      {{ addingNewSignStatue?.description }}
+    </div>
+
+    <div class="flex justify-content-center align-items-center mb-2">
+      <div class="w-6">
+        <span class="text-lg font-bold">Mời chọn khoản </span> <br />
+      </div>
+      <div class="w-6 flex justify-content-end">
+        <p-dropdown
+          [options]="addingNewSignSectionList"
+          optionLabel="name"
+          [style]="{ height: '35px', width: '9rem' }"
+          placeholder="Khoản..."
+          scrollHeight="6rem"
+          [filter]="true"
+          filterBy="name"
+          (onChange)="selectAddingNewSignSection($event)"
+        ></p-dropdown>
+      </div>
+    </div>
+
+    <div
+      *ngIf="addingNewSignSection?.description"
+      class="surface-200 w-12 border-left-2 border-400 p-2 mb-3 max-h-4rem overflow-auto"
+    >
+      {{ addingNewSignSection?.description }}
+    </div>
+
+    <div
+      class="flex justify-content-center align-items-center mb-2"
+      *ngIf="!emptyParagraphSectionMsg"
+    >
+      <div class="w-6">
+        <span class="text-lg font-bold">Mời chọn điểm </span> <br />
+      </div>
+      <div class="w-6 flex justify-content-end">
+        <p-dropdown
+          [options]="addingNewSignParagraphList"
+          optionLabel="name"
+          [style]="{ height: '35px', width: '9rem' }"
+          placeholder="Điểm..."
+          scrollHeight="6rem"
+          [filter]="true"
+          filterBy="name"
+          (onChange)="selectAddingNewSignParagraph($event)"
+        ></p-dropdown>
+      </div>
+    </div>
+
+    <div
+      *ngIf="addingNewSignParagraph?.description"
+      class="surface-200 w-12 border-left-2 border-400 p-2 max-h-4rem overflow-auto mb-2"
+    >
+      {{ addingNewSignParagraph?.description }}
+    </div>
+
+    <div *ngIf="emptyParagraphSectionOfNewSignMsg" class="font-bold mb-2">
+      {{ emptyParagraphSectionOfNewSignMsg }}
+    </div>
+
+    <hr *ngIf="tmpNewSignAddingSignParagraphList.length > 0" />
+    <div
+      *ngIf="tmpNewSignAddingSignParagraphList"
+      class="max-h-6rem overflow-auto"
+    >
+      <div
+        *ngFor="
+          let signParagraph of tmpNewSignAddingSignParagraphList;
+          let i = index
+        "
+      >
+        <div class="flex justify-content-center align-items-center">
+          {{ signParagraph.signParagraphStatueName }} -
+          {{ signParagraph.signParagraphSectionName }} -
+          {{ signParagraph.signParagraphParagraphName }}
+
+          <button
+            pButton
+            type="button"
+            icon="pi pi-times"
+            class="p-button-rounded p-button-danger p-button-text"
+            (click)="removeNewSignTmpSignParagraph(i)"
+          ></button>
+        </div>
+      </div>
+    </div>
+
+    <div
+      *ngIf="addingErrorNewSignAddingSignParagraphMsg"
+      class="font-bold text-red-500 flex justify-content-center"
+    >
+      {{ addingErrorNewSignAddingSignParagraphMsg }}
+    </div>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <div class="flex justify-content-end mb-2">
+      <button
+        pButton
+        pRipple
+        type="button"
+        label="Lưu lại"
+        class="p-button-outlined p-button-warning"
+        [style]="{
+          border: '3px solid #F59E0B',
+          height: '35px',
+          width: '120px'
+        }"
+        (click)="addNewSignSignParagraph()"
+        [disabled]="addingNewSignParagraph === undefined ? true : false"
+      ></button>
+    </div>
+    <button
+      type="button"
+      pButton
+      label="Hủy"
+      class="p-button-danger"
+      style="height: 35px; width: 120px"
+      (click)="clearAddNewSignSignParagraph()"
     ></button>
 
-    
+    <button
+      type="button"
+      pButton
+      label="Hoàn thành"
+      class="p-button-success"
+      style="height: 35px; width: 120px"
+      [disabled]="
+      tmpNewSignAddingSignParagraphList.length === 0 ? true : false
+      "
+      (click)="completeAddNewSignSignParagraph()"
+    ></button>
   </ng-template>
 </p-dialog>
 
