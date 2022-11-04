@@ -611,6 +611,7 @@ export class ManageRomsComponent implements OnInit {
         getStorageToken(),
         {
           successCallback: (response) => {
+            console.log(response.data);
             if (response.data.modifyingSign !== null) {
               this.selectedRom.modifyingSign = response.data.modifyingSign;
               // if (!this.selectedRom.modifyingSign.isDeleted) {
@@ -622,6 +623,20 @@ export class ManageRomsComponent implements OnInit {
                   `\t${this.selectedRom.modifyingSign?.name}\n` +
                   `Nội dung:\n` +
                   `\t${this.selectedRom.modifyingSign?.description}\n`;
+
+                if (
+                  this.selectedRom.modifyingSign?.signParagraphs !== null &&
+                  this.selectedRom.modifyingSign?.signParagraphs !==
+                    undefined &&
+                  this.selectedRom.modifyingSign?.signParagraphs?.length > 0
+                ) {
+                  this.changedModel.code += `Các điểm liên quan (nếu có):\n`;
+                  this.selectedRom.modifyingSign?.signParagraphs?.forEach(
+                    (sp: any) => {
+                      this.changedModel.code += `\t${sp.signParagraphStatueName} > ${sp.signParagraphSectionName} > ${sp.signParagraphParagraphName}\n`;
+                    }
+                  );
+                }
 
                 if (this.selectedRom.modifyingSign?.imageUrl) {
                   this.changedModelImg =
@@ -640,6 +655,19 @@ export class ManageRomsComponent implements OnInit {
                   `\t${this.selectedRom.modifiedSign?.name}\n` +
                   `Nội dung:\n` +
                   `\t${this.selectedRom.modifiedSign?.description}\n`;
+
+                if (
+                  this.selectedRom.modifiedSign?.signParagraphs !== null &&
+                  this.selectedRom.modifiedSign?.signParagraphs !== undefined &&
+                  this.selectedRom.modifiedSign?.signParagraphs?.length > 0
+                ) {
+                  this.originalModel.code += `Các điểm liên quan (nếu có):\n`;
+                  this.selectedRom.modifiedSign?.signParagraphs?.forEach(
+                    (sp: any) => {
+                      this.originalModel.code += `\t${sp.signParagraphStatueName} > ${sp.signParagraphSectionName} > ${sp.signParagraphParagraphName}\n`;
+                    }
+                  );
+                }
 
                 if (this.selectedRom.modifiedSign?.imageUrl) {
                   this.originalModelImg =
