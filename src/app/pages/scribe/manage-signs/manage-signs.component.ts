@@ -361,23 +361,16 @@ export class ManageSignsComponent implements OnInit {
             } else {
               this.addingChosenSignParagraphList = response.data;
 
-              //Remove current chosen paragraph from the list of reference paragraph that will be added
-              this.addingChosenSignParagraphList.forEach(
-                (r: any, i: number) => {
+              
+              //Remove added reference paragraphs from the list of reference paragraph that will be added
+              if(this.newChosenSignSignParagraphList !== undefined){
+                this.newChosenSignSignParagraphList.forEach((addedSignParagraph: any) => {
                   this.addingChosenSignParagraphList =
                     this.addingChosenSignParagraphList.filter(
-                      (r: any) => r.id !== this.chosenSign.id
+                      (r: any) => r.id !== addedSignParagraph?.signParagraphParagraphId
                     );
-                }
-              );
-
-              //Remove added reference paragraphs from the list of reference paragraph that will be added
-              this.newChosenSignSignParagraphList.forEach((addedSignParagraph: any) => {
-                this.addingChosenSignParagraphList =
-                  this.addingChosenSignParagraphList.filter(
-                    (r: any) => r.id !== addedSignParagraph.signParagraphParagraphId
-                  );
-              });
+                });
+              }
 
               this.emptyParagraphSectionMsg = '';
             }
@@ -396,7 +389,7 @@ export class ManageSignsComponent implements OnInit {
     this.addingChosenSignParagraph = event.value;
   }
 
-  //dialog add chosen sign signParagraph onHide
+  //"Hủy" button clicked / dialog add chosen sign signParagraph onHide
   clearAddChosenSignSignParagraph() {
     this.displayAddChosenSignParagraph = false;
 
@@ -410,7 +403,95 @@ export class ManageSignsComponent implements OnInit {
     this.emptyParagraphSectionMsg = undefined;
     this.addingErrorChosenSignAddingSignParagraphMsg = undefined;
 
-    this.newChosenSignSignParagraphList = undefined;
+    this.tmpChosenSignAddingSignParagraphList = [];
+  }
+
+  //"Lưu lại" button clicked
+  addChosenSignSignParagraph() {
+    if (
+      !this.addingChosenSignParagraph ||
+      !this.addingChosenSignSection ||
+      !this.addingChosenSignStatue
+    ) {
+      this.addingErrorChosenSignAddingSignParagraphMsg =
+        'Vui lòng chọn điều, khoản, điểm trước khi lưu lại';
+      return;
+    } else {
+      this.addingErrorChosenSignAddingSignParagraphMsg = '';
+    }
+
+    let signParagraph = {
+      signParagraphParagraphId: this.addingChosenSignParagraph.id,
+      signParagraphParagraphName: this.addingChosenSignParagraph.name,
+      signParagraphParagraphDesc: this.addingChosenSignParagraph.description,
+
+      signParagraphSectionId: this.addingChosenSignSection.id,
+      signParagraphSectionName: this.addingChosenSignSection.name,
+
+      signParagraphStatueId: this.addingChosenSignStatue.id,
+      signParagraphStatueName: this.addingChosenSignStatue.name,
+    };
+
+    var existed = false;
+
+    //check with original reference list before adding
+    this.tmpChosenSign.signParagraphs.forEach((r: any) => {
+      if (
+        r.signParagraphParagraphId == signParagraph.signParagraphParagraphId &&
+        r.signParagraphSectionId ==
+        signParagraph.signParagraphSectionId &&
+        r.signParagraphStatueId ==
+        signParagraph.signParagraphStatueId
+      ) {
+        this.addingErrorChosenSignAddingSignParagraphMsg =
+          'Điểm đã tồn tại trong danh sách';
+      } else {
+        //check with temporary reference list before adding
+        existed = this.tmpChosenSignAddingSignParagraphList.some((r: any) => {
+          if (
+            r.signParagraphParagraphId == signParagraph.signParagraphParagraphId &&
+            r.signParagraphSectionId ==
+            signParagraph.signParagraphSectionId &&
+            r.signParagraphStatueId ==
+            signParagraph.signParagraphStatueId
+          ) {
+            return true;
+          } else {
+            return false;
+          }
+        });
+      }
+    });
+
+    if (this.tmpChosenSignAddingSignParagraphList.length === 0 || !existed) {
+      this.tmpChosenSignAddingSignParagraphList.push(signParagraph);
+      this.addingErrorChosenSignAddingSignParagraphMsg = '';
+    } else {
+      this.addingErrorChosenSignAddingSignParagraphMsg =
+        'Điểm đã tồn tại trong danh sách';
+    }
+  }
+
+  // 'x' button clicked inside adding signParagraphs for chosen sign
+  removeChosenSignTmpSignParagraph(i: any) {
+    this.tmpChosenSignAddingSignParagraphList.splice(i, 1);
+    this.addingErrorChosenSignAddingSignParagraphMsg = '';
+  }
+
+  //"Hoàn thành" button clicked
+  completeAddChosenSignSignParagraph() {
+    if(!this.newChosenSignSignParagraphList){
+      this.newChosenSignSignParagraphList = [];
+    }
+
+    this.tmpChosenSignAddingSignParagraphList.forEach((r: any) => {
+      this.newChosenSignSignParagraphList.push(r);
+    });
+    this.tmpChosenSign.signParagraphs =
+      this.newChosenSignSignParagraphList;
+    this.displayAddChosenSignParagraph = false;
+
+    this.detectChange();
   }
 
   detectChange() {

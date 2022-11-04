@@ -933,8 +933,8 @@
             type="button"
             icon="pi pi-times"
             class="p-button-rounded p-button-danger p-button-text"
+            (click)="removeChosenSignTmpSignParagraph(i)"
           ></button>
-          <!-- (click)="removeChosenParagraphIncludedReference(i)" -->
 
         </div>
       </div>
@@ -961,10 +961,10 @@
           height: '35px',
           width: '120px'
         }"
+        (click)="addChosenSignSignParagraph()"
+        [disabled]="addingChosenSignParagraph === undefined ? true : false"
       ></button>
-      <!-- (click)="addChosenParagraphIncludedReference()" -->
 
-      <!-- [disabled]="addingChosenParagraphParagraph === undefined ? true : false" -->
     </div>
     <button
       type="button"
@@ -972,8 +972,8 @@
       label="Hủy"
       class="p-button-danger"
       style="height: 35px; width: 120px"
+      (click)="clearAddChosenSignSignParagraph()"
     ></button>
-    <!-- (click)="clearAddChosenParagraphReference()" -->
 
     <button
       type="button"
@@ -981,13 +981,13 @@
       label="Hoàn thành"
       class="p-button-success"
       style="height: 35px; width: 120px"
-     
+      [disabled]="
+      tmpChosenSignAddingSignParagraphList.length === 0 ? true : false
+    "
+    (click)="completeAddChosenSignSignParagraph()"
     ></button>
 
-    <!-- [disabled]="
-    tmpChosenParagraphAddingReferenceList.length === 0 ? true : false
-  "
-  (click)="completeAddChosenParagraphIncludedReference()" -->
+    
   </ng-template>
 </p-dialog>
 

@@ -1367,12 +1367,14 @@ export class ManageLawsComponent implements OnInit {
               );
 
               //Remove added reference paragraphs from the list of reference paragraph that will be added
-              this.newChosenParagraphReferenceList.forEach((addedRef: any) => {
-                this.addingChosenParagraphParagraphList =
-                  this.addingChosenParagraphParagraphList.filter(
-                    (r: any) => r.id !== addedRef.referenceParagraphId
-                  );
-              });
+              if(this.newChosenParagraphReferenceList){
+                this.newChosenParagraphReferenceList.forEach((addedRef: any) => {
+                  this.addingChosenParagraphParagraphList =
+                    this.addingChosenParagraphParagraphList.filter(
+                      (r: any) => r.id !== addedRef.referenceParagraphId
+                    );
+                });
+              }
 
               this.emptyParagraphSectionMsg = '';
             }
@@ -1487,6 +1489,9 @@ export class ManageLawsComponent implements OnInit {
 
   //"Hoàn thành" button clicked
   completeAddChosenParagraphIncludedReference() {
+    if(!this.newChosenParagraphReferenceList){
+      this.newChosenParagraphReferenceList = [];
+    }
     this.tmpChosenParagraphAddingReferenceList.forEach((r: any) => {
       this.newChosenParagraphReferenceList.push(r);
     });
