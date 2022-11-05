@@ -1,7 +1,14 @@
-import jwtDecode, { JwtPayload } from 'jwt-decode';
+import jwtDecode from 'jwt-decode';
+import jwt_decode, { JwtPayload } from 'jwt-decode';
 
-export const decodeToken = (token: string) =>
-  jwtDecode<any>(token ? token : '');
+export const decodeToken = (token: string)  => {
+  // jwtDecode<any>(token ? token : '')
+  try{
+    return jwt_decode<any>(token ? token : '');
+  } catch(error: any) {
+    return null;
+  }
+}
 
 export const verifyLocalStorageToken = (): boolean => {
   const token = localStorage.getItem('token');
@@ -9,7 +16,8 @@ export const verifyLocalStorageToken = (): boolean => {
     return false;
   }
   var isValid = false;
-  var decodedToken = jwtDecode<JwtPayload>(token ? token : '');
+  // var decodedToken = jwtDecode<JwtPayload>(token ? token : '');
+  var decodedToken = jwt_decode<JwtPayload>(token ? token : '');
   var dateNow = new Date();
 
   if (
