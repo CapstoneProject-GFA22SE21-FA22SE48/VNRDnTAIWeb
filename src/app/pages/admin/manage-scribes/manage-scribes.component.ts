@@ -72,7 +72,7 @@ export class ManageScribesComponent implements OnInit {
     this.wrapperService.get(paths.ScribeGetAdmins, getStorageToken(), {
       successCallback: (response) => {
         this.admins = response.data?.filter(
-          (a: any) => !(a.id === decodeToken(getStorageToken() || '').Id)
+          (a: any) => !(a.id === decodeToken(getStorageToken() || '')?.Id)
         );
 
         this.selectedAdmin = this.admins[0];
@@ -271,7 +271,7 @@ export class ManageScribesComponent implements OnInit {
       paths.AdminPromoteScribe,
       {
         scribeId: this.scribeDTO.id,
-        promotingAdminId: decodeToken(getStorageToken() || '').Id,
+        promotingAdminId: decodeToken(getStorageToken() || '')?.Id,
         arbitratingAdminId: this.selectedAdmin?.id,
       },
       getStorageToken(),
@@ -285,7 +285,7 @@ export class ManageScribesComponent implements OnInit {
             this.notiService.create({
               subjectId: response.data?.scribe.id, //modifyingUserId
               subjectType: SubjectType.Promotion,
-              senderId: decodeToken(getStorageToken() || '').Id,
+              senderId: decodeToken(getStorageToken() || '')?.Id,
               senderUsername:
                 response.data?.promotingAdmin?.username || '',
               receiverId: response.data?.arbitratingAdmin?.id,

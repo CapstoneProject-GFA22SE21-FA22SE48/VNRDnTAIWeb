@@ -146,7 +146,7 @@ export class ManageRomsComponent implements OnInit {
   loadRoms() {
     this.isLoadingService.add();
     this.wrapperService.get(
-      paths.AdminGetRomList + '/' + decodeToken(getStorageToken() || '').Id,
+      paths.AdminGetRomList + '/' + decodeToken(getStorageToken() || '')?.Id,
       getStorageToken(),
       {
         successCallback: (response) => {
@@ -844,7 +844,7 @@ export class ManageRomsComponent implements OnInit {
 
               if (
                 response.data?.promotingAdminId ===
-                decodeToken(getStorageToken() || '').Id
+                decodeToken(getStorageToken() || '')?.Id
               ) {
                 (this.selectedRom.promotingAdmin =
                   response.data.promotingAdmin),
@@ -854,7 +854,7 @@ export class ManageRomsComponent implements OnInit {
                 this.isArbitratingAdminPromotionRom = false;
               } else if (
                 response.data?.arbitratingAdminId ===
-                decodeToken(getStorageToken() || '').Id
+                decodeToken(getStorageToken() || '')?.Id
               ) {
                 (this.selectedRom.promotingAdmin =
                   response.data.promotingAdmin),
@@ -898,7 +898,7 @@ export class ManageRomsComponent implements OnInit {
                 this.notiService.create({
                   subjectId: response.data?.modifyingStatueId,
                   subjectType: SubjectType.Statue,
-                  senderId: decodeToken(getStorageToken() || '').Id,
+                  senderId: decodeToken(getStorageToken() || '')?.Id,
                   senderUsername: response.data?.admin?.username || '',
                   receiverId: response.data?.scribe?.id,
                   receiverUsername: response.data?.scribe?.username,
@@ -950,7 +950,7 @@ export class ManageRomsComponent implements OnInit {
                 this.notiService.create({
                   subjectId: response.data?.modifyingSectionId,
                   subjectType: SubjectType.Section,
-                  senderId: decodeToken(getStorageToken() || '').Id,
+                  senderId: decodeToken(getStorageToken() || '')?.Id,
                   senderUsername: response.data?.admin?.username || '',
                   receiverId: response.data?.scribe?.id,
                   receiverUsername: response.data?.scribe?.username,
@@ -1002,7 +1002,7 @@ export class ManageRomsComponent implements OnInit {
                 this.notiService.create({
                   subjectId: response.data?.modifyingParagraphId,
                   subjectType: SubjectType.Paragraph,
-                  senderId: decodeToken(getStorageToken() || '').Id,
+                  senderId: decodeToken(getStorageToken() || '')?.Id,
                   senderUsername: response.data?.admin?.username || '',
                   receiverId: response.data?.scribe?.id,
                   receiverUsername: response.data?.scribe?.username,
@@ -1052,7 +1052,7 @@ export class ManageRomsComponent implements OnInit {
                 this.notiService.create({
                   subjectId: response.data?.modifyingSignId,
                   subjectType: SubjectType.Sign,
-                  senderId: decodeToken(getStorageToken() || '').Id,
+                  senderId: decodeToken(getStorageToken() || '')?.Id,
                   senderUsername: response.data?.admin?.username || '',
                   receiverId: response.data?.scribe?.id,
                   receiverUsername: response.data?.scribe?.username,
@@ -1106,7 +1106,7 @@ export class ManageRomsComponent implements OnInit {
                 this.notiService.create({
                   subjectId: response.data?.modifyingQuestionId,
                   subjectType: SubjectType.Question,
-                  senderId: decodeToken(getStorageToken() || '').Id,
+                  senderId: decodeToken(getStorageToken() || '')?.Id,
                   senderUsername: response.data?.admin?.username || '',
                   receiverId: response.data?.scribe?.id,
                   receiverUsername: response.data?.scribe?.username,
@@ -1156,7 +1156,7 @@ export class ManageRomsComponent implements OnInit {
                 this.notiService.create({
                   subjectId: response.data?.modifyingUserId,
                   subjectType: SubjectType.Promotion,
-                  senderId: decodeToken(getStorageToken() || '').Id,
+                  senderId: decodeToken(getStorageToken() || '')?.Id,
                   senderUsername:
                     response.data?.arbitratingAdmin?.username || '',
                   receiverId: response.data?.promotingAdmin?.id,
@@ -1210,7 +1210,7 @@ export class ManageRomsComponent implements OnInit {
             this.notiService.create({
               subjectId: response.data?.modifyingStatueId,
               subjectType: SubjectType.Statue,
-              senderId: decodeToken(getStorageToken() || '').Id,
+              senderId: decodeToken(getStorageToken() || '')?.Id,
               senderUsername: response.data?.admin?.username || '',
               receiverId: response.data?.scribe?.id,
               receiverUsername: response.data?.scribe?.username,
@@ -1260,7 +1260,7 @@ export class ManageRomsComponent implements OnInit {
             this.notiService.create({
               subjectId: response.data?.modifyingSectionId,
               subjectType: SubjectType.Section,
-              senderId: decodeToken(getStorageToken() || '').Id,
+              senderId: decodeToken(getStorageToken() || '')?.Id,
               senderUsername: response.data?.admin?.username || '',
               receiverId: response.data?.scribe?.id,
               receiverUsername: response.data?.scribe?.username,
@@ -1312,7 +1312,7 @@ export class ManageRomsComponent implements OnInit {
             this.notiService.create({
               subjectId: response.data?.modifyingParagraphId,
               subjectType: SubjectType.Paragraph,
-              senderId: decodeToken(getStorageToken() || '').Id,
+              senderId: decodeToken(getStorageToken() || '')?.Id,
               senderUsername: response.data?.admin?.username || '',
               receiverId: response.data?.scribe?.id,
               receiverUsername: response.data?.scribe?.username,
@@ -1362,7 +1362,7 @@ export class ManageRomsComponent implements OnInit {
             this.notiService.create({
               subjectId: response.data?.modifyingSignId,
               subjectType: SubjectType.Sign,
-              senderId: decodeToken(getStorageToken() || '').Id,
+              senderId: decodeToken(getStorageToken() || '')?.Id,
               senderUsername: response.data?.admin?.username || '',
               receiverId: response.data?.scribe?.id,
               receiverUsername: response.data?.scribe?.username,
@@ -1413,7 +1413,7 @@ export class ManageRomsComponent implements OnInit {
             this.notiService.create({
               subjectId: response.data?.modifyingQuestionId,
               subjectType: SubjectType.Question,
-              senderId: decodeToken(getStorageToken() || '').Id,
+              senderId: decodeToken(getStorageToken() || '')?.Id,
               senderUsername: response.data?.admin?.username || '',
               receiverId: response.data?.scribe?.id,
               receiverUsername: response.data?.scribe?.username,
@@ -1463,7 +1463,7 @@ export class ManageRomsComponent implements OnInit {
             this.notiService.create({
               subjectId: response.data?.modifyingUserId,
               subjectType: SubjectType.Promotion,
-              senderId: decodeToken(getStorageToken() || '').Id,
+              senderId: decodeToken(getStorageToken() || '')?.Id,
               senderUsername: response.data?.arbitratingAdmin?.username || '',
               receiverId: response.data?.promotingAdmin?.id,
               receiverUsername: response.data?.promotingAdmin?.username,

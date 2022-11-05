@@ -250,7 +250,7 @@ export class ManageLawsComponent implements OnInit {
     this.wrapperService.get(
       paths.ScribeGetPersonalInfo +
         '/' +
-        decodeToken(getStorageToken() || '').Id,
+        decodeToken(getStorageToken() || '')?.Id,
       getStorageToken(),
       {
         successCallback: (response) => {
@@ -798,7 +798,7 @@ export class ManageLawsComponent implements OnInit {
             {
               modifyingStatueId: response1.data?.id,
               modifiedStatueId: this.chosenStatue.id,
-              scribeId: decodeToken(getStorageToken() || '').Id,
+              scribeId: decodeToken(getStorageToken() || '')?.Id,
               adminId: this.selectedAdmin.id,
               operationType: OperationType.Update,
             },
@@ -809,7 +809,7 @@ export class ManageLawsComponent implements OnInit {
                 this.notiService.create({
                   subjectId: response2.data?.id,
                   subjectType: SubjectType.Statue,
-                  senderId: decodeToken(getStorageToken() || '').Id,
+                  senderId: decodeToken(getStorageToken() || '')?.Id,
                   senderUsername: response2.data?.scribe?.username || '',
                   receiverId: this.selectedAdmin.id,
                   receiverUsername: this.selectedAdmin?.username || '',
@@ -880,7 +880,7 @@ export class ManageLawsComponent implements OnInit {
             {
               modifyingSectionId: response1.data?.id,
               modifiedSectionId: this.chosenSection.id,
-              scribeId: decodeToken(getStorageToken() || '').Id,
+              scribeId: decodeToken(getStorageToken() || '')?.Id,
               adminId: this.selectedAdmin.id,
               operationType: OperationType.Update,
             },
@@ -891,7 +891,7 @@ export class ManageLawsComponent implements OnInit {
                 this.notiService.create({
                   subjectId: response2.data?.id,
                   subjectType: SubjectType.Section,
-                  senderId: decodeToken(getStorageToken() || '').Id,
+                  senderId: decodeToken(getStorageToken() || '')?.Id,
                   senderUsername: response2.data?.scribe?.username || '',
                   receiverId: this.selectedAdmin.id,
                   receiverUsername: this.selectedAdmin?.username || '',
@@ -955,7 +955,7 @@ export class ManageLawsComponent implements OnInit {
             {
               modifyingParagraphId: response1.data?.id,
               modifiedParagraphId: this.chosenParagraph.id,
-              scribeId: decodeToken(getStorageToken() || '').Id,
+              scribeId: decodeToken(getStorageToken() || '')?.Id,
               adminId: this.selectedAdmin.id,
               operationType: OperationType.Update,
             },
@@ -966,7 +966,7 @@ export class ManageLawsComponent implements OnInit {
                 this.notiService.create({
                   subjectId: response2.data?.id,
                   subjectType: SubjectType.Paragraph,
-                  senderId: decodeToken(getStorageToken() || '').Id,
+                  senderId: decodeToken(getStorageToken() || '')?.Id,
                   senderUsername: response2.data?.scribe?.username || '',
                   receiverId: this.selectedAdmin.id,
                   receiverUsername: this.selectedAdmin?.username || '',
@@ -1035,7 +1035,7 @@ export class ManageLawsComponent implements OnInit {
             {
               modifyingStatueId: response1.data?.id,
               modifiedStatueId: this.chosenStatue.id,
-              scribeId: decodeToken(getStorageToken() || '').Id,
+              scribeId: decodeToken(getStorageToken() || '')?.Id,
               adminId: this.selectedAdmin.id,
               operationType: OperationType.Delete,
             },
@@ -1048,7 +1048,7 @@ export class ManageLawsComponent implements OnInit {
                 this.notiService.create({
                   subjectId: response2.data?.id,
                   subjectType: SubjectType.Statue,
-                  senderId: decodeToken(getStorageToken() || '').Id,
+                  senderId: decodeToken(getStorageToken() || '')?.Id,
                   senderUsername: response2.data?.scribe?.username || '',
                   receiverId: this.selectedAdmin.id,
                   receiverUsername: this.selectedAdmin?.username || '',
@@ -1120,7 +1120,7 @@ export class ManageLawsComponent implements OnInit {
             {
               modifyingSectionId: response1.data?.id,
               modifiedSectionId: this.chosenSection.id,
-              scribeId: decodeToken(getStorageToken() || '').Id,
+              scribeId: decodeToken(getStorageToken() || '')?.Id,
               adminId: this.selectedAdmin.id,
               operationType: OperationType.Delete,
             },
@@ -1131,7 +1131,7 @@ export class ManageLawsComponent implements OnInit {
                 this.notiService.create({
                   subjectId: response2.data?.id,
                   subjectType: SubjectType.Section,
-                  senderId: decodeToken(getStorageToken() || '').Id,
+                  senderId: decodeToken(getStorageToken() || '')?.Id,
                   senderUsername: response2.data?.scribe?.username || '',
                   receiverId: this.selectedAdmin.id,
                   receiverUsername: this.selectedAdmin?.username || '',
@@ -1201,7 +1201,7 @@ export class ManageLawsComponent implements OnInit {
             {
               modifyingParagraphId: response1.data?.id,
               modifiedParagraphId: this.chosenParagraph.id,
-              scribeId: decodeToken(getStorageToken() || '').Id,
+              scribeId: decodeToken(getStorageToken() || '')?.Id,
               adminId: this.selectedAdmin.id,
               operationType: OperationType.Delete,
             },
@@ -1212,7 +1212,7 @@ export class ManageLawsComponent implements OnInit {
                 this.notiService.create({
                   subjectId: response2.data?.id,
                   subjectType: SubjectType.Paragraph,
-                  senderId: decodeToken(getStorageToken() || '').Id,
+                  senderId: decodeToken(getStorageToken() || '')?.Id,
                   senderUsername: response2.data?.scribe?.username || '',
                   receiverId: this.selectedAdmin.id,
                   receiverUsername: this.selectedAdmin?.username || '',
@@ -2111,7 +2111,7 @@ export class ManageLawsComponent implements OnInit {
               {
                 modifyingSectionId: response1.data?.id,
                 modifiedSectionId: null,
-                scribeId: decodeToken(getStorageToken() || '').Id,
+                scribeId: decodeToken(getStorageToken() || '')?.Id,
                 adminId: this.selectedAdmin.id,
                 operationType: OperationType.Add,
               },
@@ -2122,7 +2122,7 @@ export class ManageLawsComponent implements OnInit {
                   this.notiService.create({
                     subjectId: response2.data?.id,
                     subjectType: SubjectType.Section,
-                    senderId: decodeToken(getStorageToken() || '').Id,
+                    senderId: decodeToken(getStorageToken() || '')?.Id,
                     senderUsername: response2.data?.scribe?.username || '',
                     receiverId: this.selectedAdmin.id,
                     receiverUsername: this.selectedAdmin?.username || '',
@@ -2195,7 +2195,7 @@ export class ManageLawsComponent implements OnInit {
               {
                 modifyingSectionId: response1.data?.id,
                 modifiedSectionId: null,
-                scribeId: decodeToken(getStorageToken() || '').Id,
+                scribeId: decodeToken(getStorageToken() || '')?.Id,
                 adminId: this.selectedAdmin.id,
                 operationType: OperationType.Add,
               },
@@ -2206,7 +2206,7 @@ export class ManageLawsComponent implements OnInit {
                   this.notiService.create({
                     subjectId: response2.data?.id,
                     subjectType: SubjectType.Section,
-                    senderId: decodeToken(getStorageToken() || '').Id,
+                    senderId: decodeToken(getStorageToken() || '')?.Id,
                     senderUsername: response2.data?.scribe?.username || '',
                     receiverId: this.selectedAdmin.id,
                     receiverUsername: this.selectedAdmin?.username || '',
@@ -2266,7 +2266,7 @@ export class ManageLawsComponent implements OnInit {
                 {
                   modifyingParagraphId: response1.data?.id,
                   modifiedParagraphId: null,
-                  scribeId: decodeToken(getStorageToken() || '').Id,
+                  scribeId: decodeToken(getStorageToken() || '')?.Id,
                   adminId: this.selectedAdmin.id,
                   operationType: OperationType.Add,
                 },
@@ -2277,7 +2277,7 @@ export class ManageLawsComponent implements OnInit {
                     this.notiService.create({
                       subjectId: response2.data?.id,
                       subjectType: SubjectType.Paragraph,
-                      senderId: decodeToken(getStorageToken() || '').Id,
+                      senderId: decodeToken(getStorageToken() || '')?.Id,
                       senderUsername: response2.data?.scribe?.username || '',
                       receiverId: this.selectedAdmin.id,
                       receiverUsername: this.selectedAdmin?.username || '',

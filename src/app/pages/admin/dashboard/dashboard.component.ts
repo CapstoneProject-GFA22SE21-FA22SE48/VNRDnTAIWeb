@@ -160,7 +160,7 @@ export class DashboardComponent implements OnInit {
 
     this.isLoadingService.add();
     this.wrapperService.get(
-      paths.AdminGetRomReport + '/' + month + '/' + year + '/' + decodeToken(getStorageToken() || '').Id,
+      paths.AdminGetRomReport + '/' + month + '/' + year + '/' + decodeToken(getStorageToken() || '')?.Id,
       getStorageToken(),
       {
         successCallback: (response) => {
