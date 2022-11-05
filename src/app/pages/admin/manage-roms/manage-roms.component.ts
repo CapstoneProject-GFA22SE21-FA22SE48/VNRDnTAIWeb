@@ -144,9 +144,10 @@ export class ManageRomsComponent implements OnInit {
   }
 
   loadRoms() {
+    var token = getStorageToken();
     this.isLoadingService.add();
     this.wrapperService.get(
-      paths.AdminGetRomList + '/' + decodeToken(getStorageToken() || '')?.Id,
+      paths.AdminGetRomList + '/' + decodeToken(token !== null ? token : '')?.Id,
       getStorageToken(),
       {
         successCallback: (response) => {
