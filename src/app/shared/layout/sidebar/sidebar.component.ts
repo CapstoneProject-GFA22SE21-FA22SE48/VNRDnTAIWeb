@@ -72,15 +72,15 @@ export class SidebarComponent implements OnInit {
           ? sessionStorage.getItem('token')
           : '';
 
-      if (parseInt(decodeToken(token ? token : '').Role) === 0) {
+      if (parseInt(decodeToken(token ? token : '')?.Role) === 0) {
         this.items = this.adminSidebarItems;
-      } else if (parseInt(decodeToken(token ? token : '').Role) === 1) {
+      } else if (parseInt(decodeToken(token ? token : '')?.Role) === 1) {
 
         this.isLoadingService.add();
         this.wrapperService.get(
           paths.GetScribeAssignColumns +
             '/' +
-            decodeToken(token ? token : '').Id,
+            decodeToken(token ? token : '')?.Id,
           getStorageToken(),
           {
             successCallback: (response) => {
@@ -114,15 +114,15 @@ export class SidebarComponent implements OnInit {
         localStorage.getItem('token') != ''
           ? localStorage.getItem('token')
           : '';
-      if (parseInt(decodeToken(token ? token : '').Role) === 0) {
+      if (parseInt(decodeToken(token ? token : '')?.Role) === 0) {
         this.items = this.adminSidebarItems;
-      } else if (parseInt(decodeToken(token ? token : '').Role) === 1) {
+      } else if (parseInt(decodeToken(token ? token : '')?.Role) === 1) {
 
         this.isLoadingService.add();
         this.wrapperService.get(
           paths.GetScribeAssignColumns +
             '/' +
-            decodeToken(token ? token : '').Id,
+            decodeToken(token ? token : '')?.Id,
           getStorageToken(),
           {
             successCallback: (response) => {
