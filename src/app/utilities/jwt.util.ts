@@ -66,9 +66,15 @@ export const verifySessionStorageToken = (): boolean => {
 };
 
 export const getStorageToken = () => {
-  return localStorage.getItem('token') !== ''
-    ? localStorage.getItem('token')
-    : sessionStorage.getItem('token') !== ''
-    ? sessionStorage.getItem('token')
-    : '';
+  // return (localStorage.getItem('token') !== ''
+  //   ? localStorage.getItem('token')
+  //   : sessionStorage.getItem('token') !== ''
+  //   ? sessionStorage.getItem('token')
+  //   : '');
+  if(localStorage.getItem('token')){
+    return localStorage.getItem('token');
+  } else if(sessionStorage.getItem('token')){
+    return sessionStorage.getItem('token');
+  }
+  return '';
 };
