@@ -80,7 +80,7 @@ export class ManageQuestionsComponent implements OnInit {
     this.wrapperService.get(
       paths.ScribeGetAssignedQuestions +
         '/' +
-        decodeToken(getStorageToken() || '').Id,
+        decodeToken(getStorageToken() || '')?.Id,
       getStorageToken(),
       {
         successCallback: (response) => {
@@ -322,7 +322,7 @@ export class ManageQuestionsComponent implements OnInit {
                   {
                     modifiedQuestionId: this.selectedQuestion.id,
                     modifyingQuestionId: response1.data.id,
-                    scribeId: decodeToken(getStorageToken() || '').Id,
+                    scribeId: decodeToken(getStorageToken() || '')?.Id,
                     adminId: this.selectedAdmin.id,
                     operationType: OperationType.Update,
                   },
@@ -333,7 +333,7 @@ export class ManageQuestionsComponent implements OnInit {
                       this.notiService.create({
                         subjectId: response2.data?.modifyingQuestionId,
                         subjectType: SubjectType.Question,
-                        senderId: decodeToken(getStorageToken() || '').Id,
+                        senderId: decodeToken(getStorageToken() || '')?.Id,
                         senderUsername: response2.data?.scribe?.username || '',
                         receiverId: this.selectedAdmin.id,
                         receiverUsername: this.selectedAdmin?.username || '',
@@ -395,7 +395,7 @@ export class ManageQuestionsComponent implements OnInit {
               {
                 modifiedQuestionId: this.selectedQuestion.id,
                 modifyingQuestionId: response1.data.id,
-                scribeId: decodeToken(getStorageToken() || '').Id,
+                scribeId: decodeToken(getStorageToken() || '')?.Id,
                 adminId: this.selectedAdmin.id,
                 operationType: OperationType.Update,
               },
@@ -406,7 +406,7 @@ export class ManageQuestionsComponent implements OnInit {
                   this.notiService.create({
                     subjectId: response2.data?.modifyingQuestionId,
                     subjectType: SubjectType.Question,
-                    senderId: decodeToken(getStorageToken() || '').Id,
+                    senderId: decodeToken(getStorageToken() || '')?.Id,
                     senderUsername: response2.data?.scribe?.username || '',
                     receiverId: this.selectedAdmin.id,
                     receiverUsername: this.selectedAdmin?.username || '',
@@ -477,7 +477,7 @@ export class ManageQuestionsComponent implements OnInit {
             {
               modifiedQuestionId: this.selectedQuestion.id,
               modifyingQuestionId: response1.data.id,
-              scribeId: decodeToken(getStorageToken() || '').Id,
+              scribeId: decodeToken(getStorageToken() || '')?.Id,
               adminId: this.selectedAdmin.id,
               operationType: OperationType.Delete,
             },
@@ -488,7 +488,7 @@ export class ManageQuestionsComponent implements OnInit {
                 this.notiService.create({
                   subjectId: response2.data?.modifyingQuestionId,
                   subjectType: SubjectType.Question,
-                  senderId: decodeToken(getStorageToken() || '').Id,
+                  senderId: decodeToken(getStorageToken() || '')?.Id,
                   senderUsername: response2.data?.scribe?.username || '',
                   receiverId: this.selectedAdmin.id,
                   receiverUsername: this.selectedAdmin?.username || '',
@@ -712,7 +712,7 @@ export class ManageQuestionsComponent implements OnInit {
                   {
                     // create new question -> no modifiedQuestionId
                     modifyingQuestionId: response1.data.id,
-                    scribeId: decodeToken(getStorageToken() || '').Id,
+                    scribeId: decodeToken(getStorageToken() || '')?.Id,
                     adminId: this.selectedAdmin.id,
                     operationType: OperationType.Add,
                   },
@@ -723,7 +723,7 @@ export class ManageQuestionsComponent implements OnInit {
                       this.notiService.create({
                         subjectId: response2.data?.modifyingQuestionId,
                         subjectType: SubjectType.Question,
-                        senderId: decodeToken(getStorageToken() || '').Id,
+                        senderId: decodeToken(getStorageToken() || '')?.Id,
                         senderUsername: response2.data?.scribe?.username || '',
                         receiverId: this.selectedAdmin.id,
                         receiverUsername: this.selectedAdmin?.username || '',
@@ -800,7 +800,7 @@ export class ManageQuestionsComponent implements OnInit {
               {
                 // create new question -> no modifiedQuestionId
                 modifyingQuestionId: response1.data.id,
-                scribeId: decodeToken(getStorageToken() || '').Id,
+                scribeId: decodeToken(getStorageToken() || '')?.Id,
                 adminId: this.selectedAdmin.id,
                 operationType: OperationType.Add,
               },
@@ -811,7 +811,7 @@ export class ManageQuestionsComponent implements OnInit {
                   this.notiService.create({
                     subjectId: response2.data?.modifyingQuestionId,
                     subjectType: SubjectType.Question,
-                    senderId: decodeToken(getStorageToken() || '').Id,
+                    senderId: decodeToken(getStorageToken() || '')?.Id,
                     senderUsername: response2.data?.scribe?.username || '',
                     receiverId: this.selectedAdmin.id,
                     receiverUsername: this.selectedAdmin?.username || '',

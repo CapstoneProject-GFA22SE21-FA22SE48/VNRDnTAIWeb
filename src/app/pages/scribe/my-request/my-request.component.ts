@@ -193,7 +193,7 @@ export class MyRequestComponent implements OnInit {
   loadRoms() {
     this.isLoadingService.add();
     this.wrapperService.get(
-      paths.ScribeGetRomList + '/' + decodeToken(getStorageToken() || '').Id,
+      paths.ScribeGetRomList + '/' + decodeToken(getStorageToken() || '')?.Id,
       getStorageToken(),
       {
         successCallback: (response) => {

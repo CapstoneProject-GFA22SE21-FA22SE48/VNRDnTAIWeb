@@ -135,7 +135,7 @@ export class ManageSignsComponent implements OnInit {
     this.wrapperService.get(
       paths.ScribeGetAssignedSignCategories +
         '/' +
-        decodeToken(getStorageToken() || '').Id,
+        decodeToken(getStorageToken() || '')?.Id,
       getStorageToken(),
       {
         successCallback: (response) => {
@@ -162,7 +162,7 @@ export class ManageSignsComponent implements OnInit {
     this.wrapperService.get(
       paths.ScribeGetAssignedSigns +
         '/' +
-        decodeToken(getStorageToken() || '').Id,
+        decodeToken(getStorageToken() || '')?.Id,
       getStorageToken(),
       {
         successCallback: (response) => {
@@ -753,7 +753,7 @@ export class ManageSignsComponent implements OnInit {
                   {
                     modifiedSignId: this.chosenSign.id,
                     modifyingSignId: response1.data.id,
-                    scribeId: decodeToken(getStorageToken() || '').Id,
+                    scribeId: decodeToken(getStorageToken() || '')?.Id,
                     adminId: this.selectedAdmin.id,
                     operationType: OperationType.Update,
                   },
@@ -764,7 +764,7 @@ export class ManageSignsComponent implements OnInit {
                       this.notiService.create({
                         subjectId: response2.data?.modifyingSignId,
                         subjectType: SubjectType.Sign,
-                        senderId: decodeToken(getStorageToken() || '').Id,
+                        senderId: decodeToken(getStorageToken() || '')?.Id,
                         senderUsername: response2.data?.scribe?.username || '',
                         receiverId: this.selectedAdmin.id,
                         receiverUsername: this.selectedAdmin?.username || '',
@@ -822,7 +822,7 @@ export class ManageSignsComponent implements OnInit {
               {
                 modifiedSignId: this.chosenSign.id,
                 modifyingSignId: response1.data.id,
-                scribeId: decodeToken(getStorageToken() || '').Id,
+                scribeId: decodeToken(getStorageToken() || '')?.Id,
                 adminId: this.selectedAdmin.id,
                 operationType: OperationType.Update,
               },
@@ -833,7 +833,7 @@ export class ManageSignsComponent implements OnInit {
                   this.notiService.create({
                     subjectId: response2.data?.modifyingSignId,
                     subjectType: SubjectType.Sign,
-                    senderId: decodeToken(getStorageToken() || '').Id,
+                    senderId: decodeToken(getStorageToken() || '')?.Id,
                     senderUsername: response2.data?.scribe?.username || '',
                     receiverId: this.selectedAdmin.id,
                     receiverUsername: this.selectedAdmin?.username || '',
@@ -895,7 +895,7 @@ export class ManageSignsComponent implements OnInit {
             {
               modifiedSignId: this.chosenSign.id,
               modifyingSignId: response1.data.id,
-              scribeId: decodeToken(getStorageToken() || '').Id,
+              scribeId: decodeToken(getStorageToken() || '')?.Id,
               adminId: this.selectedAdmin.id,
               operationType: OperationType.Delete,
             },
@@ -906,7 +906,7 @@ export class ManageSignsComponent implements OnInit {
                 this.notiService.create({
                   subjectId: response2.data?.modifyingSignId,
                   subjectType: SubjectType.Sign,
-                  senderId: decodeToken(getStorageToken() || '').Id,
+                  senderId: decodeToken(getStorageToken() || '')?.Id,
                   senderUsername: response2.data?.scribe?.username || '',
                   receiverId: this.selectedAdmin.id,
                   receiverUsername: this.selectedAdmin?.username || '',
@@ -1042,7 +1042,7 @@ export class ManageSignsComponent implements OnInit {
                 paths.ScribeCreateSignModificationRequest,
                 {
                   modifyingSignId: response1.data.id,
-                  scribeId: decodeToken(getStorageToken() || '').Id,
+                  scribeId: decodeToken(getStorageToken() || '')?.Id,
                   adminId: this.selectedAdmin.id,
                   operationType: OperationType.Add,
                 },
@@ -1053,7 +1053,7 @@ export class ManageSignsComponent implements OnInit {
                     this.notiService.create({
                       subjectId: response2.data?.modifyingSignId,
                       subjectType: SubjectType.Sign,
-                      senderId: decodeToken(getStorageToken() || '').Id,
+                      senderId: decodeToken(getStorageToken() || '')?.Id,
                       senderUsername: response2.data?.scribe?.username || '',
                       receiverId: this.selectedAdmin.id,
                       receiverUsername: this.selectedAdmin?.username || '',

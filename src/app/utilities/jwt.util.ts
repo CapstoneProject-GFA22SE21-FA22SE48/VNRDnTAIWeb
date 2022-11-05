@@ -1,11 +1,10 @@
-import jwtDecode, { JwtPayload } from 'jwt-decode';
+import jwt_decode, { JwtPayload } from 'jwt-decode';
 
 export const decodeToken = (token: string)  => {
-  if(token !== undefined && token !== null){
-    return jwtDecode<any>(token);
-  } else {
+  if(token === undefined || token === null){
     return null;
-  }
+  } 
+  return jwt_decode<any>(token);
 }
 
 export const verifyLocalStorageToken = (): boolean => {
@@ -16,9 +15,10 @@ export const verifyLocalStorageToken = (): boolean => {
   var isValid = false;
   // var decodedToken = jwtDecode<JwtPayload>(token ? token : '');
   var decodedToken = null;
-  if(token !== undefined && token !== null){
-    decodedToken = jwtDecode<any>(token);
+  if(token === undefined || token === null){
+    return isValid;
   } 
+  decodedToken = jwt_decode<any>(token);
   var dateNow = new Date();
 
   if (
@@ -40,7 +40,11 @@ export const verifySessionStorageToken = (): boolean => {
     return false;
   }
   var isValid = false;
-  var decodedToken = jwtDecode<JwtPayload>(token ? token : '');
+  var decodedToken = null;
+  if(token === undefined || token === null){
+    return isValid;
+  } 
+  decodedToken = jwt_decode<any>(token);
   var dateNow = new Date();
 
   if (

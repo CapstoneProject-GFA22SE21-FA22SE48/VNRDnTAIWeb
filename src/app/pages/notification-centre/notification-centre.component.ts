@@ -36,7 +36,7 @@ export class NotificationCentreComponent implements OnInit {
   ngOnInit(): void {
     // this.notifications = [];
     // this.unReadNotifications = [];
-    this.receiverId = decodeToken(getStorageToken() || '').Id;
+    this.receiverId = decodeToken(getStorageToken() || '')?.Id;
 
     this.loadNotifications();
   }
@@ -95,7 +95,7 @@ export class NotificationCentreComponent implements OnInit {
     this.isShowingNotifications = false;
 
     //admin role -> view Rom from scribe
-    if (parseInt(decodeToken(getStorageToken() || '').Role) === 0) {
+    if (parseInt(decodeToken(getStorageToken() || '')?.Role) === 0) {
       if (
         noti.subjectType === SubjectType.Statue ||
         noti.subjectType === SubjectType.Section ||
@@ -131,7 +131,7 @@ export class NotificationCentreComponent implements OnInit {
           });
         });
       }
-    } else if (parseInt(decodeToken(getStorageToken() || '').Role) === 1) {
+    } else if (parseInt(decodeToken(getStorageToken() || '')?.Role) === 1) {
       //scribe role -> view admin approvement/denial
       if (noti.subjectType === SubjectType.Statue) {
         this.router.navigate(['/scribe/my-request']).then(() => {
