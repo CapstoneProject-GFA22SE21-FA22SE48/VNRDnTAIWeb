@@ -403,10 +403,15 @@
         <div
           class="text-lg border-200 border-2 overflow-auto max-h-4rem"
           style="min-height: 2rem; padding: 0.5rem 0 0.5rem 0"
+          *ngIf="tmpChosenSign.signParagraphs !== undefined"
         >
+        <!-- *ngFor="
+              let signParagraph of tmpChosenSignNewSignParagraphList;
+              let i = index
+            " -->
           <span
             *ngFor="
-              let signParagraph of tmpChosenSignNewSignParagraphList;
+              let signParagraph of tmpChosenSign.signParagraphs;
               let i = index
             "
           >
