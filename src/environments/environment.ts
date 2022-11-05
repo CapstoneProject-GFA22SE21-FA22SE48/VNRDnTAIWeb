@@ -4,6 +4,7 @@
 
 export const environment = {
   production: false,
+  baseUrl: 'https://vnrdntaiapi.azurewebsites.net/api',
   firebase: {
     apiKey: "AIzaSyCarue41zMMMeRgQS5TipT6ePT2H9kpsmc",
     authDomain: "vnrdntai.firebaseapp.com",
