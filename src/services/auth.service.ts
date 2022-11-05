@@ -53,18 +53,18 @@ export class LoginAuthGuard implements CanActivate {
     if (isValidLocalStorageToken) {
       const token =
         localStorage.getItem('token') != '' ? localStorage.getItem('token') : '';
-      if (parseInt(decodeToken(token ? token : '').Role) === 0) {
+      if (parseInt(decodeToken(token ? token : '')?.Role) === 0) {
         this.router.navigate(['/admin/dashboard']);
-      } else if (parseInt(decodeToken(token ? token : '').Role) === 0) {
+      } else if (parseInt(decodeToken(token ? token : '')?.Role) === 0) {
         this.router.navigate(['/scribe/my-request']);
       }
       return false;
     } else if (isValidSessionStorageToken) {
       const token =
         sessionStorage.getItem('token') != '' ? sessionStorage.getItem('token') : '';
-      if (parseInt(decodeToken(token ? token : '').Role) === 0) {
+      if (parseInt(decodeToken(token ? token : '')?.Role) === 0) {
         this.router.navigate(['/admin/dashboard']);
-      } else if (parseInt(decodeToken(token ? token : '').Role) === 0) {
+      } else if (parseInt(decodeToken(token ? token : '')?.Role) === 0) {
         this.router.navigate(['/scribe/my-request']);
       }
       return false;

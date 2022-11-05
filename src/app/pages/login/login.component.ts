@@ -31,10 +31,12 @@ export class LoginComponent implements OnInit {
   ngOnInit(): void {
     if (verifyLocalStorageToken()) {
       const token = localStorage.getItem('token');
-      if (parseInt(decodeToken(token ? token : '').Role) === 0) {
-        this.router.navigate(['/admin/dashboard']);
-      } else if (parseInt(decodeToken(token ? token : '').Role) === 1) {
-        this.router.navigate(['/scribe/manage-laws']);
+      if(decodeToken(token ? token : '') !== null) {
+        if (parseInt(decodeToken(token ? token : '')?.Role) === 0) {
+          this.router.navigate(['/admin/dashboard']);
+        } else if (parseInt(decodeToken(token ? token : '')?.Role) === 1) {
+          this.router.navigate(['/scribe/manage-laws']);
+        }
       }
     } 
   }
@@ -53,9 +55,9 @@ export class LoginComponent implements OnInit {
           }
           this.loginFailed = false;
           const token = sessionStorage.getItem('token')
-          if(parseInt(decodeToken( token ? token : '').Role) === 0){
+          if(parseInt(decodeToken( token ? token : '')?.Role) === 0){
             this.router.navigate(['/admin/dashboard']);
-          }  else if(parseInt(decodeToken(token ? token : '').Role) === 1){
+          }  else if(parseInt(decodeToken(token ? token : '')?.Role) === 1){
             this.router.navigate(['/scribe/my-request']);
           }                                                          
           this.isLoadingService.remove();

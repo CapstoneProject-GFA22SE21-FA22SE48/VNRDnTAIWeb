@@ -1,10 +1,15 @@
 import jwt_decode, { JwtPayload } from 'jwt-decode';
 
 export const decodeToken = (token: string)  => {
-  if(token === undefined || token === null){
+  try{
+    if(token === undefined || token === null){
+      return null;
+    } 
+    return jwt_decode<any>(token);
+  } catch {
     return null;
-  } 
-  return jwt_decode<any>(token);
+  }
+  
 }
 
 export const verifyLocalStorageToken = (): boolean => {
