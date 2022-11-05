@@ -47,6 +47,8 @@ export class LoginComponent implements OnInit {
       null,
       {
         successCallback: (response) => {
+          console.log(response?.data?.token);
+          
           sessionStorage.setItem('token', response?.data?.token);
           if(this.isRememeber){
             localStorage.setItem('token', response?.data?.token);
