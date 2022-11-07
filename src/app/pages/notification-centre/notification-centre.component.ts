@@ -53,15 +53,20 @@ export class NotificationCentreComponent implements OnInit {
       .subscribe((data: any) => {
         this.notifications = [];
         this.unReadNotifications = [];
-        data.forEach((d: any) => {
-          if (d.receiverId === this.receiverId) {
-            this.notifications.push(d);
-            this.tmpNotifications.push(d);
-            if (!d.isRead) {
-              this.unReadNotifications.push(d);
+        data
+          .sort(
+            (val1: any, val2: any) =>
+              <any>new Date(val2.createdDate) - <any>new Date(val1.createdDate)
+          )
+          .forEach((d: any) => {
+            if (d.receiverId === this.receiverId) {
+              this.notifications.push(d);
+              this.tmpNotifications.push(d);
+              if (!d.isRead) {
+                this.unReadNotifications.push(d);
+              }
             }
-          }
-        });
+          });
       });
   }
 
