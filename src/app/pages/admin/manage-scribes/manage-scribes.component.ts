@@ -355,7 +355,7 @@ export class ManageScribesComponent implements OnInit {
     if (
       this.newScribePassword &&
       this.newScribePassword?.trim().length <= 20 &&
-      this.newScribePassword.trim() >= 6
+      this.newScribePassword.trim().length >= 6
     ) {
       this.isValidNewScribePassword = true;
       this.newScribeConfirmPassword = undefined;
