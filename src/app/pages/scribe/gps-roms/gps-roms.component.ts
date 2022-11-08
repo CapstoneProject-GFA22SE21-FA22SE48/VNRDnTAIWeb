@@ -1,12 +1,13 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { IsLoadingService } from '@service-work/is-loading';
 import { DiffEditorModel } from 'ngx-monaco-editor-v2';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { OperationType } from 'src/app/common/operationType';
 import { decodeToken, getStorageToken } from 'src/app/utilities/jwt.util';
 import { toNonAccentVietnamese } from 'src/app/utilities/nonAccentVietnamese';
 import { WrapperService } from 'src/services/wrapper.service';
 import * as paths from '../../../common/paths';
-
+import * as commonStr from '../../../common/commonStr';
 @Component({
   selector: 'app-gps-roms',
   templateUrl: './gps-roms.component.html',
@@ -61,7 +62,9 @@ export class GpsRomsComponent implements OnInit {
 
   constructor(
     private isLoadingService: IsLoadingService,
-    private wrapperService: WrapperService
+    private wrapperService: WrapperService,
+    private confirmationService: ConfirmationService,
+    private messageService: MessageService
   ) {}
 
   ngOnInit(): void {
@@ -144,35 +147,84 @@ export class GpsRomsComponent implements OnInit {
     }
   }
 
-  viewInfo(rom: any){
+  viewInfo(rom: any) {
     this.selectedRom = rom;
     this.originalModel.code = '';
     this.changedModel.code = '';
 
-    if(this.selectedRom?.modifiedGpssign !== null){
-      this.originalModel.code = `Biển:\n` + 
-      `\t${this.selectedRom?.modifiedGpssign?.sign?.name}\n` +
-      `Kinh độ:\n` +
-      `\t${this.selectedRom?.modifiedGpssign?.longtitude}\n` +
-      `Vĩ độ:\n` +
-      `\t${this.selectedRom?.modifiedGpssign?.longtitude}\n`;
+    if (this.selectedRom?.modifiedGpssign !== null) {
+      this.originalModel.code =
+        `Biển:\n` +
+        `\t${this.selectedRom?.modifiedGpssign?.sign?.name}\n` +
+        `Kinh độ:\n` +
+        `\t${this.selectedRom?.modifiedGpssign?.longtitude}\n` +
+        `Vĩ độ:\n` +
+        `\t${this.selectedRom?.modifiedGpssign?.longtitude}\n`;
     } else {
       this.originalModel.code = ' ';
     }
-    
-    if(this.selectedRom.operationType !== OperationType.Delete){
-      this.changedModel.code = `Biển:\n` + 
-      `\t${this.selectedRom?.modifyingGpssign?.sign?.name}\n` +
-      `Kinh độ:\n` +
-      `\t${this.selectedRom?.modifyingGpssign?.longtitude}\n` +
-      `Vĩ độ:\n` +
-      `\t${this.selectedRom?.modifyingGpssign?.longtitude}\n`;
+
+    if (this.selectedRom.operationType !== OperationType.Delete) {
+      this.changedModel.code =
+        `Biển:\n` +
+        `\t${this.selectedRom?.modifyingGpssign?.sign?.name}\n` +
+        `Kinh độ:\n` +
+        `\t${this.selectedRom?.modifyingGpssign?.longtitude}\n` +
+        `Vĩ độ:\n` +
+        `\t${this.selectedRom?.modifyingGpssign?.longtitude}\n`;
     } else {
       this.changedModel.code = ' ';
     }
-    
-    
+
     this.displayRomDetailDialog = true;
-    
+  }
+
+  confirmClaimRom(event: any) {
+    this.confirmationService.confirm({
+      target: event?.target,
+      key: 'confirmClaim',
+      message: 'Sau khi tiếp nhận, bạn sẽ phải xử lý yêu cầu này. Bạn có chắc?',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        this.selectedRom.scribeId = decodeToken(
+          getStorageToken() || ''
+        )?.Id;
+
+        this.isLoadingService.add();
+        this.wrapperService.put(
+          paths.ScribeClaimGpssignRom +
+            '/' +
+            this.selectedRom.modifyingGpssign?.id,
+          this.selectedRom,
+          getStorageToken(),
+          {
+            successCallback: (response) => {
+              this.clearData();
+              this.loadRoms();
+              this.messageService.add({
+                severity: 'success',
+                summary: commonStr.success,
+                detail: commonStr.dataUpdatedSuccessfully,
+              });
+              this.isLoadingService.remove();
+            },
+            errorCallback: (error) => {
+              this.messageService.add({
+                severity: 'error',
+                summary: commonStr.fail,
+                detail: commonStr.errorOccur,
+              });
+              this.isLoadingService.remove();
+            },
+          }
+        );
+      },
+      reject: () => {},
+    });
+  }
+
+  clearData() {
+    this.selectedRom = undefined;
+    this.displayRomDetailDialog = false;
   }
 }

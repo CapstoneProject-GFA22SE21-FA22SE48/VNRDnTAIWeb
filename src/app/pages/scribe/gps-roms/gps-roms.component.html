@@ -200,7 +200,7 @@
     </ng-template>
   
     <ng-template pTemplate="content">
-      <div class="w-12" style="height: 35%" *ngIf="selectedRom">
+      <div class="w-12" *ngIf="selectedRom">
         <div class="w-12 flex p-2">
           <div class="w-6">
             <span class="text-lg font-bold">Yêu cầu về: </span>
@@ -261,8 +261,8 @@
   
       </div>
   
-      <div class="w-12 overflow-y-auto" style="height: 55%">
-        <div class="w-12 flex p-2" style="height: 10%">
+      <div class="w-12 overflow-y-auto">
+        <div class="w-12 flex p-2">
           <div class="w-6">
             <span class="text-lg font-bold">Các thay đổi: </span>
           </div>
@@ -270,7 +270,6 @@
   
         <div
           class="w-12 text-lg"
-          style="height: 90%"
           *ngIf="changedModel.code !== '' && originalModel.code !== ''"
         >
           <div class="w-12 p-2 border-200 border-1 border-round-lg">
@@ -281,13 +280,30 @@
             ></ngx-monaco-diff-editor>
           </div>
         </div>
+
+        <div class="w-12 flex p-2">
+            <div class="w-6">
+              <span class="text-lg font-bold">Bằng chứng (từ người yêu cầu): </span>
+            </div>
+          </div>
+    
+          <div
+            class="w-12 text-lg"
+          >
+            <div class="w-12 flex justify-content-center p-2 border-200 border-1 border-round-lg">
+                <img
+                    *ngIf="selectedRom.imageUrl"
+                    class="w-13rem h-auto"
+                    [src]="selectedRom.imageUrl | safe: 'resourceUrl'"
+                    alt="Hình ảnh bằng chứng"
+                    />
+            </div>
+          </div>
   
-        <div
+        <!-- <div
           class="w-12 flex p-2"
-          style="height: 10%"
-          *ngIf="changedModelImg || originalModelImg"
         >
-          <div class="w-6" *ngIf="changedModelImg || originalModelImg">
+          <div class="w-6">
             <span class="text-lg font-bold">Vị trí: </span>
           </div>
         </div>
@@ -300,9 +316,9 @@
           <div class="w-6 flex justify-content-center align-items-center">
            
           </div>
-        </div>
+        </div> -->
   
-        <div class="w-12 flex p-2" style="height: 10%" *ngIf="selectedRom?.deniedReason">
+        <div class="w-12 flex p-2" *ngIf="selectedRom?.deniedReason">
           <div class="w-6">
             <span class="text-lg font-bold">Lý do từ chối: </span>
           </div>
@@ -310,7 +326,6 @@
   
         <div
           class="w-12 text-lg"
-          style="height: 90%"
           *ngIf="selectedRom?.deniedReason"
         >
           <div class="w-12 p-2 border-200 border-1 border-round-lg">
@@ -319,32 +334,26 @@
             </span>
           </div>
         </div>
+
+        
       </div>
     </ng-template>
-<!--   
+  
     <ng-template pTemplate="footer" *ngIf="selectedRom?.status === 0">
       <div class="w-12 flex justify-content-end">
           <button
             pButton
             pRipple
-            label="Hủy yêu cầu"
-            class="p-button-outlined p-button-danger"
+            label="Tiếp nhận"
+            class="p-button-outlined p-button-green"
             [style]="{ height: '35px', border: '3px solid' }"
-            (click)="confirmCancelRom($event)"
+            (click)="confirmClaimRom($event)"
           ></button>
       </div>
     </ng-template>
 
-    <ng-template pTemplate="footer" *ngIf="selectedRom?.status === 4">
-        <div class="w-12 flex justify-content-end">
-            <button
-              pButton
-              pRipple
-              label="Xóa yêu cầu"
-              class="p-button-outlined p-button-danger"
-              [style]="{ height: '35px', border: '3px solid' }"
-              (click)="confirmDeleteRom($event)"
-            ></button>
-        </div>
-      </ng-template> -->
   </p-dialog>
+
+  <p-confirmPopup key="confirmClaim"></p-confirmPopup>
+  <p-toast lifetime="1500"></p-toast>
+
