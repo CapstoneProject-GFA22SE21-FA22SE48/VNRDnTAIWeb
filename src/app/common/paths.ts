@@ -86,6 +86,7 @@ export const ScribeCreateSignForROM: string = base + '/Signs';
 export const ScribeCreateSignModificationRequest: string = base + '/SignModificationRequests';
 
 export const ScribeGetRomList: string = base + '/LawModificationRequests/ScribeROMList';
+export const ScribeGetGpssignRomList: string = base + '/SignModificationRequests/GpssignROMs';
 
 export const ScribeGetLawRomDetail: string = base + '/LawModificationRequests/ROMDetail';
 export const ScribeGetParagraphRomDetailReference: string = base + '/LawModificationRequests/ParagraphROMDetail/References';

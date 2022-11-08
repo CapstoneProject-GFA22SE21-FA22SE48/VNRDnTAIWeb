@@ -18,6 +18,7 @@ export const paths = {
     myRequests: 'scribe/my-request',
     manageLaws: 'scribe/manage-laws/:id',
     manageSigns: 'scribe/manage-signs',
-    manageQuestions: 'scribe/manage-questions'
+    manageQuestions: 'scribe/manage-questions',
+    gpsRoms: 'scribe/gps-roms',
   }
 };
