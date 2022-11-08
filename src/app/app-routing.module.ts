@@ -13,6 +13,7 @@ import { ManageSignsComponent } from './pages/scribe/manage-signs/manage-signs.c
 import { ManageQuestionsComponent } from './pages/scribe/manage-questions/manage-questions.component';
 import { MyRequestComponent } from './pages/scribe/my-request/my-request.component';
 import { ManageTaskComponent } from './pages/admin/manage-task/manage-task.component';
+import { GpsRomsComponent } from './pages/scribe/gps-roms/gps-roms.component';
 
 const routes: Routes = [
   {
@@ -63,6 +64,11 @@ const routes: Routes = [
   {
     path: paths.scribe.manageQuestions,
     component: ManageQuestionsComponent,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: paths.scribe.gpsRoms,
+    component: GpsRomsComponent,
     canActivate: [AuthGuard]
   },
   {

@@ -574,7 +574,7 @@ export class MyRequestComponent implements OnInit {
         }
       );
     } else if (this.selectedRom.modifyingGpssignId) {
-      //TODO: ROM detail of modifying GPSSign
+      //Implemented in gps-roms
     } else if (this.selectedRom.modifyingQuestionId) {
       this.changedModelImg = undefined;
       this.originalModelImg = undefined;

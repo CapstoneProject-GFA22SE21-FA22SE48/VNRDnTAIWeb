@@ -68,6 +68,7 @@ import { ManageTaskComponent } from './pages/admin/manage-task/manage-task.compo
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { MonacoEditorModule } from 'ngx-monaco-editor-v2';
 import {ConfirmPopupModule} from 'primeng/confirmpopup';
+import { GpsRomsComponent } from './pages/scribe/gps-roms/gps-roms.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -89,7 +90,8 @@ import {ConfirmPopupModule} from 'primeng/confirmpopup';
     DatePipe,
     MyRequestComponent,
     SafePipe,
-    ManageTaskComponent
+    ManageTaskComponent,
+    GpsRomsComponent
   ],
   imports: [
     BrowserModule,

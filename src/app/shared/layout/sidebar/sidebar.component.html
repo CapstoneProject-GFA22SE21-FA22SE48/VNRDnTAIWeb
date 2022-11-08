@@ -51,6 +51,11 @@
           *ngIf="item.label == 'Yêu cầu của tôi'"
           [icon]="['fas', 'code-pull-request']"
         ></fa-icon>
+        <fa-icon
+          class="mr-3"
+          *ngIf="item.label == 'Yêu cầu về GPS'"
+          [icon]="['fas', 'location-dot']"
+        ></fa-icon>
         <span>{{ item.label }}</span>
         <span
           *ngIf="item.label === 'Quản lý luật' && isShowingSubItems"

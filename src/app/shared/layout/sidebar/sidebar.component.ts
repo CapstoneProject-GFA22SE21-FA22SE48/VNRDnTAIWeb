@@ -47,9 +47,10 @@ export class SidebarComponent implements OnInit {
       label: 'Yêu cầu của tôi',
       routerLink: '/scribe/my-request',
     },
-    // {
-    //   label: 'Quản lý luật',
-    // },
+    {
+      label: 'Yêu cầu về GPS',
+      routerLink: '/scribe/gps-roms',
+    },
     {
       label: 'Quản lý biển báo',
       routerLink: '/scribe/manage-signs',

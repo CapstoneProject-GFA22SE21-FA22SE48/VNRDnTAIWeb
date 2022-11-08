@@ -1,7 +1,7 @@
 /* paths.ts was created to provide shrinked links for API calling. */
 // Base path
-// const base = 'https://localhost:5001/api';
-const base = 'https://vnrdntaiapi.azurewebsites.net/api';
+const base = 'https://localhost:5001/api';
+// const base = 'https://vnrdntaiapi.azurewebsites.net/api';
 
 //Login
 export const Login: string = base + '/Users/Login';
@@ -86,6 +86,7 @@ export const ScribeCreateSignForROM: string = base + '/Signs';
 export const ScribeCreateSignModificationRequest: string = base + '/SignModificationRequests';
 
 export const ScribeGetRomList: string = base + '/LawModificationRequests/ScribeROMList';
+export const ScribeGetGpssignRomList: string = base + '/SignModificationRequests/GpssignROMs';
 
 export const ScribeGetLawRomDetail: string = base + '/LawModificationRequests/ROMDetail';
 export const ScribeGetParagraphRomDetailReference: string = base + '/LawModificationRequests/ParagraphROMDetail/References';
@@ -99,3 +100,5 @@ export const ScribeCancelQuestionRom: string = base + '/QuestionModificationRequ
 export const ScribeDeleteLawRom: string = base + '/LawModificationRequests';
 export const ScribeDeleteSignRom: string = base + '/SignModificationRequests';
 export const ScribeDeleteQuestionRom: string = base + '/QuestionModificationRequests';
+
+export const ScribeClaimGpssignRom: string = base + '/SignModificationRequests/GPSSign/Claim';
