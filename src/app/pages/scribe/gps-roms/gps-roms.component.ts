@@ -80,8 +80,6 @@ export class GpsRomsComponent implements OnInit {
       getStorageToken(),
       {
         successCallback: (response) => {
-          console.log(response.data);
-
           this.roms = response.data;
           this.tmpRoms = this.roms;
           this.filterData();
