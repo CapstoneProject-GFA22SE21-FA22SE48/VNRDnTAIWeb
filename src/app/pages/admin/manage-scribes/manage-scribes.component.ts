@@ -331,7 +331,8 @@ export class ManageScribesComponent implements OnInit {
   getNewScribeUserame() {
     if (
       this.newScribeUsername &&
-      this.newScribeUsername?.trim().length <= 255
+      this.newScribeUsername?.trim().length <= 20 &&
+      this.newScribeUsername.trim().length >= 6
     ) {
       if (
         this.tmpScribes.some(
@@ -342,11 +343,12 @@ export class ManageScribesComponent implements OnInit {
         this.inValidNewScribeUsernameMsg = 'Tên đăng nhập đã tồn tại';
       } else {
         this.isValidNewScribeUsername = true;
-        this.inValidNewScribeUsernameMsg =
-          'Vui lòng nhập tên đăng nhập (tối đa 255 ký tự)';
+        this.inValidNewScribeUsernameMsg = '';
       }
     } else {
       this.isValidNewScribeUsername = false;
+      this.inValidNewScribeUsernameMsg =
+      'Vui lòng nhập tên đăng nhập (từ 6 đến 20 ký tự)';
     }
     this.checkValidNewScribeAccount();
   }
