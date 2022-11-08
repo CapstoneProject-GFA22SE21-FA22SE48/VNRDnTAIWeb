@@ -209,10 +209,12 @@ export class GpsRomsComponent implements OnInit {
               this.isLoadingService.remove();
             },
             errorCallback: (error) => {
+              this.clearData();
+              this.loadRoms();
               this.messageService.add({
                 severity: 'error',
                 summary: commonStr.fail,
-                detail: commonStr.errorOccur,
+                detail: error.response.data,
               });
               this.isLoadingService.remove();
             },
