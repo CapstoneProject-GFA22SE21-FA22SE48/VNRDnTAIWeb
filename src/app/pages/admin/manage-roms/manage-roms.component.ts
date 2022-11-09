@@ -102,6 +102,7 @@ export class ManageRomsComponent implements OnInit {
 
     //used for displaying rom detail when navigating from notification clicked
     this.eventEmitterService.invokeAdminNoti.subscribe((emittedRom: any) => {
+      // this.loadRoms();
       if (emittedRom !== null && emittedRom !== undefined) {
         var tmpRom = this.tmpRoms.filter((r: any) => {
           if (
@@ -927,11 +928,15 @@ export class ManageRomsComponent implements OnInit {
                 this.isLoadingService.remove();
               },
               errorCallback: (error) => {
-                console.log(error);
+                // console.log(error);
+                this.clearData();
+                this.displayRomDetailDialog = false;
+                this.loadRoms();
+
                 this.messageService.add({
                   severity: 'error',
                   summary: commonStr.fail,
-                  detail: commonStr.errorOccur,
+                  detail: error.response.data || commonStr.errorOccur,
                 });
                 this.isLoadingService.remove();
               },
@@ -979,11 +984,15 @@ export class ManageRomsComponent implements OnInit {
                 this.isLoadingService.remove();
               },
               errorCallback: (error) => {
-                console.log(error);
+                // console.log(error);
+                this.clearData();
+                this.displayRomDetailDialog = false;
+                this.loadRoms();
+
                 this.messageService.add({
                   severity: 'error',
                   summary: commonStr.fail,
-                  detail: commonStr.errorOccur,
+                  detail: error.response.data || commonStr.errorOccur,
                 });
                 this.isLoadingService.remove();
               },
@@ -1031,11 +1040,15 @@ export class ManageRomsComponent implements OnInit {
                 this.isLoadingService.remove();
               },
               errorCallback: (error) => {
-                console.log(error);
+                // console.log(error);
+                this.clearData();
+                this.displayRomDetailDialog = false;
+                this.loadRoms();
+
                 this.messageService.add({
                   severity: 'error',
                   summary: commonStr.fail,
-                  detail: commonStr.errorOccur,
+                  detail: error.response.data || commonStr.errorOccur,
                 });
                 this.isLoadingService.remove();
               },
@@ -1081,18 +1094,22 @@ export class ManageRomsComponent implements OnInit {
                 this.isLoadingService.remove();
               },
               errorCallback: (error) => {
-                console.log(error);
+                // console.log(error);
+                this.clearData();
+                this.displayRomDetailDialog = false;
+                this.loadRoms();
+
                 this.messageService.add({
                   severity: 'error',
                   summary: commonStr.fail,
-                  detail: commonStr.errorOccur,
+                  detail: error.response.data || commonStr.errorOccur,
                 });
                 this.isLoadingService.remove();
               },
             }
           );
         } else if (this.selectedRom.modifyingGpssignId) {
-          //TODO
+          //Implemented in gps-roms
         } else if (this.selectedRom.modifyingQuestionId) {
           this.isLoadingService.add();
           this.wrapperService.post(
@@ -1135,11 +1152,15 @@ export class ManageRomsComponent implements OnInit {
                 this.isLoadingService.remove();
               },
               errorCallback: (error) => {
-                console.log(error);
+                // console.log(error);
+                this.clearData();
+                this.displayRomDetailDialog = false;
+                this.loadRoms();
+
                 this.messageService.add({
                   severity: 'error',
                   summary: commonStr.fail,
-                  detail: commonStr.errorOccur,
+                  detail: error.response.data || commonStr.errorOccur,
                 });
                 this.isLoadingService.remove();
               },
@@ -1182,11 +1203,15 @@ export class ManageRomsComponent implements OnInit {
                 this.isLoadingService.remove();
               },
               errorCallback: (error) => {
-                console.log(error);
+                // console.log(error);
+                this.clearData();
+                this.displayRomDetailDialog = false;
+                this.loadRoms();
+
                 this.messageService.add({
                   severity: 'error',
                   summary: commonStr.fail,
-                  detail: commonStr.errorOccur,
+                  detail: error.response.data || commonStr.errorOccur,
                 });
                 this.isLoadingService.remove();
               },
@@ -1239,11 +1264,15 @@ export class ManageRomsComponent implements OnInit {
             this.isLoadingService.remove();
           },
           errorCallback: (error) => {
-            console.log(error);
+            // console.log(error);
+            this.clearData();
+            this.displayRomDetailDialog = false;
+            this.loadRoms();
+
             this.messageService.add({
               severity: 'error',
               summary: commonStr.fail,
-              detail: commonStr.errorOccur,
+              detail: error.response.data || commonStr.errorOccur,
             });
             this.isLoadingService.remove();
           },
@@ -1289,11 +1318,15 @@ export class ManageRomsComponent implements OnInit {
             this.isLoadingService.remove();
           },
           errorCallback: (error) => {
-            console.log(error);
+            // console.log(error);
+            this.clearData();
+            this.displayRomDetailDialog = false;
+            this.loadRoms();
+
             this.messageService.add({
               severity: 'error',
               summary: commonStr.fail,
-              detail: commonStr.errorOccur,
+              detail: error.response.data || commonStr.errorOccur,
             });
             this.isLoadingService.remove();
           },
@@ -1341,11 +1374,15 @@ export class ManageRomsComponent implements OnInit {
             this.isLoadingService.remove();
           },
           errorCallback: (error) => {
-            console.log(error);
+            // console.log(error);
+            this.clearData();
+            this.displayRomDetailDialog = false;
+            this.loadRoms();
+
             this.messageService.add({
               severity: 'error',
               summary: commonStr.fail,
-              detail: commonStr.errorOccur,
+              detail: error.response.data || commonStr.errorOccur,
             });
             this.isLoadingService.remove();
           },
@@ -1390,7 +1427,11 @@ export class ManageRomsComponent implements OnInit {
             this.isLoadingService.remove();
           },
           errorCallback: (error) => {
-            console.log(error);
+            // console.log(error);
+            this.clearData();
+            this.displayRomDetailDialog = false;
+            this.loadRoms();
+
             this.messageService.add({
               severity: 'error',
               summary: commonStr.fail,
@@ -1401,7 +1442,7 @@ export class ManageRomsComponent implements OnInit {
         }
       );
     } else if (this.selectedRom.modifyingGpssignId) {
-      //TODO
+      //Implemented in gps-roms
     } else if (this.selectedRom.modifyingQuestionId) {
       this.isLoadingService.add();
       this.wrapperService.post(
@@ -1442,11 +1483,15 @@ export class ManageRomsComponent implements OnInit {
             this.isLoadingService.remove();
           },
           errorCallback: (error) => {
-            console.log(error);
+            // console.log(error);
+            this.clearData();
+            this.displayRomDetailDialog = false;
+            this.loadRoms();
+
             this.messageService.add({
               severity: 'error',
               summary: commonStr.fail,
-              detail: commonStr.errorOccur,
+              detail: error.response.data || commonStr.errorOccur,
             });
             this.isLoadingService.remove();
           },
@@ -1488,11 +1533,15 @@ export class ManageRomsComponent implements OnInit {
             this.isLoadingService.remove();
           },
           errorCallback: (error) => {
-            console.log(error);
+            // console.log(error);
+            this.clearData();
+            this.displayRomDetailDialog = false;
+            this.loadRoms();
+
             this.messageService.add({
               severity: 'error',
               summary: commonStr.fail,
-              detail: commonStr.errorOccur,
+              detail: error.response.data || commonStr.errorOccur,
             });
             this.isLoadingService.remove();
           },
