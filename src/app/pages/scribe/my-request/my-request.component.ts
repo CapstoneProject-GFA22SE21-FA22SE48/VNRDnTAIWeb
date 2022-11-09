@@ -727,11 +727,15 @@ export class MyRequestComponent implements OnInit {
                 this.isLoadingService.remove();
               },
               errorCallback: (error) => {
-                console.log(error);
+                // console.log(error);
+                this.clearData();
+                this.displayRomDetailDialog = false;
+                this.loadRoms();
+
                 this.messageService.add({
                   severity: 'error',
                   summary: commonStr.fail,
-                  detail: commonStr.errorOccur,
+                  detail: error.response.data || commonStr.errorOccur,
                 });
                 this.isLoadingService.remove();
               },
@@ -757,11 +761,15 @@ export class MyRequestComponent implements OnInit {
                 this.isLoadingService.remove();
               },
               errorCallback: (error) => {
-                console.log(error);
+                // console.log(error);
+                this.clearData();
+                this.displayRomDetailDialog = false;
+                this.loadRoms();
+
                 this.messageService.add({
                   severity: 'error',
                   summary: commonStr.fail,
-                  detail: commonStr.errorOccur,
+                  detail: error.response.data || commonStr.errorOccur,
                 });
                 this.isLoadingService.remove();
               },
@@ -787,11 +795,15 @@ export class MyRequestComponent implements OnInit {
                 this.isLoadingService.remove();
               },
               errorCallback: (error) => {
-                console.log(error);
+                // console.log(error);
+                this.clearData();
+                this.displayRomDetailDialog = false;
+                this.loadRoms();
+
                 this.messageService.add({
                   severity: 'error',
                   summary: commonStr.fail,
-                  detail: commonStr.errorOccur,
+                  detail: error.response.data || commonStr.errorOccur,
                 });
                 this.isLoadingService.remove();
               },
