@@ -1,12 +1,21 @@
 <div class="layout-header w-full h-5rem flex justify-content-between">
   <div class="w-6 flex justify-content-start align-items-center pl-3">
-    <img src="../../../../assets/images/logo-noname.png" alt="logo" [style]="{width: '4rem', height: '4rem'}" />
-    <span class="text-blue-400 text-xl font-bold ml-3">Từ điển luật giao thông Việt Nam</span>
+    <img
+      src="../../../../assets/images/logo-noname.png"
+      alt="logo"
+      [style]="{ width: '4rem', height: '4rem' }"
+    />
+    <span class="text-blue-400 text-xl font-bold ml-3"
+      >Từ điển luật giao thông Việt Nam</span
+    >
   </div>
 
   <div
     class="layout-topbar-menu w-6 flex justify-content-end align-items-center pr-5"
   >
+    <span class="text-lg mr-3 p-2 border-300 border-2 border-round-lg"
+      >Tài khoản: <span class="font-bold">{{ account?.username }}</span></span
+    >
     <app-notification-centre></app-notification-centre>
     <button
       pButton

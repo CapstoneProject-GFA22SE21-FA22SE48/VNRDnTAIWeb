@@ -5,7 +5,10 @@
 
 //Login
 export const Login: string = base + '/Users/Login';
-export const GetScribeAssignColumns: string = base + '/AssignedColumns/Scribes'
+export const GetScribeAssignColumns: string = base + '/AssignedColumns/Scribes';
+
+//Common 
+export const GetAccountInformation: string = base + '/Users';
 
 //Admin
 export const AdminGetAllMemberDataReport: string = base + '/AdminReports/MemberByYear';
