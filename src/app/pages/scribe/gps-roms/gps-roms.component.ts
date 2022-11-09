@@ -155,9 +155,9 @@ export class GpsRomsComponent implements OnInit {
         `Biển:\n` +
         `\t${this.selectedRom?.modifiedGpssign?.sign?.name}\n` +
         `Kinh độ:\n` +
-        `\t${this.selectedRom?.modifiedGpssign?.longtitude}\n` +
+        `\t${this.selectedRom?.modifiedGpssign?.longitude}\n` +
         `Vĩ độ:\n` +
-        `\t${this.selectedRom?.modifiedGpssign?.longtitude}\n`;
+        `\t${this.selectedRom?.modifiedGpssign?.longitude}\n`;
     } else {
       this.originalModel.code = ' ';
     }
@@ -167,9 +167,9 @@ export class GpsRomsComponent implements OnInit {
         `Biển:\n` +
         `\t${this.selectedRom?.modifyingGpssign?.sign?.name}\n` +
         `Kinh độ:\n` +
-        `\t${this.selectedRom?.modifyingGpssign?.longtitude}\n` +
+        `\t${this.selectedRom?.modifyingGpssign?.longitude}\n` +
         `Vĩ độ:\n` +
-        `\t${this.selectedRom?.modifyingGpssign?.longtitude}\n`;
+        `\t${this.selectedRom?.modifyingGpssign?.longitude}\n`;
     } else {
       this.changedModel.code = ' ';
     }
