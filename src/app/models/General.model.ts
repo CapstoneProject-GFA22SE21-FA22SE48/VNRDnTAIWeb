@@ -61,7 +61,7 @@ export interface Gpssign {
     id: string,
     signId: string,
     latitude: number,
-    longtitude: number,
+    longitude: number,
     status: number,
     isDeleted: boolean,
 
