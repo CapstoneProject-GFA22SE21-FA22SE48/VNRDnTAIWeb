@@ -33,6 +33,7 @@ export class ManageRomsComponent implements OnInit {
     { statusName: 'Đã từ chối', statusCode: 4 },
     { statusName: 'Đã xử lý', statusCode: 3 },
     { statusName: 'Đã bị hủy', statusCode: 8 },
+    { statusName: 'Đã tiếp nhận', statusCode: 2 },
   ];
   filterStatusCode: any;
 
@@ -47,6 +48,7 @@ export class ManageRomsComponent implements OnInit {
     { romTypeName: 'Biển báo', romTypeCode: 2 },
     { romTypeName: 'Câu hỏi', romTypeCode: 3 },
     { romTypeName: 'Đề xuất', romTypeCode: 4 },
+    { romTypeName: 'GPS', romTypeCode: 5 },
   ];
   filterRomTypeCode: any;
   //end of filtering data
@@ -155,9 +157,10 @@ export class ManageRomsComponent implements OnInit {
           this.roms = response.data.lawRoms
             .concat(response.data.signRoms)
             .concat(response.data.questionRoms)
-            .concat(response.data.userRoms);
+            .concat(response.data.userRoms)
+            .concat(response.data.gpsSignRoms)
 
-          this.tmpRoms = this.roms;
+            this.tmpRoms = this.roms;
           this.requesters = [];
 
           this.roms.forEach((rom: any) => {
@@ -199,10 +202,13 @@ export class ManageRomsComponent implements OnInit {
         this.roms = this.roms.filter((r: any) => r.lawRomId);
       } else if (this.filterRomTypeCode === 2) {
         //sign
-        this.roms = this.roms.filter((r: any) => r.signRomId);
+        this.roms = this.roms.filter((r: any) => r.modifyingSignId);
       } else if (this.filterRomTypeCode === 3) {
         //question
         this.roms = this.roms.filter((r: any) => r.modifyingQuestionId);
+      }else if (this.filterRomTypeCode === 5) {
+        //GPS
+        this.roms = this.roms.filter((r: any) => r.modifyingGpssignId);
       } else {
         this.roms = this.roms.filter((r: any) => r.modifyingUserId);
       }
@@ -689,7 +695,32 @@ export class ManageRomsComponent implements OnInit {
         }
       );
     } else if (this.selectedRom.modifyingGpssignId) {
-      //TODO: ROM detail of modifying GPSSign
+      if (this.selectedRom?.modifiedGpssign !== null) {
+        this.originalModel.code =
+          `Biển:\n` +
+          `\t${this.selectedRom?.modifiedGpssign?.sign?.name}\n` +
+          `Kinh độ:\n` +
+          `\t${this.selectedRom?.modifiedGpssign?.longitude}\n` +
+          `Vĩ độ:\n` +
+          `\t${this.selectedRom?.modifiedGpssign?.longitude}\n`;
+      } else {
+        this.originalModel.code = ' ';
+      }
+  
+      if (this.selectedRom.operationType !== OperationType.Delete) {
+        this.changedModel.code =
+          `Biển:\n` +
+          `\t${this.selectedRom?.modifyingGpssign?.sign?.name}\n` +
+          `Kinh độ:\n` +
+          `\t${this.selectedRom?.modifyingGpssign?.longitude}\n` +
+          `Vĩ độ:\n` +
+          `\t${this.selectedRom?.modifyingGpssign?.longitude}\n`;
+      } else {
+        this.changedModel.code = ' ';
+      }
+
+      this.displayRomDetailDialog = true;
+      
     } else if (this.selectedRom.modifyingQuestionId) {
       this.changedModelImg = undefined;
       this.originalModelImg = undefined;
@@ -936,7 +967,7 @@ export class ManageRomsComponent implements OnInit {
                 this.messageService.add({
                   severity: 'error',
                   summary: commonStr.fail,
-                  detail: error.response.data || commonStr.errorOccur,
+                  detail: error?.response?.data || commonStr.errorOccur,
                 });
                 this.isLoadingService.remove();
               },
@@ -992,7 +1023,7 @@ export class ManageRomsComponent implements OnInit {
                 this.messageService.add({
                   severity: 'error',
                   summary: commonStr.fail,
-                  detail: error.response.data || commonStr.errorOccur,
+                  detail: error?.response?.data || commonStr.errorOccur,
                 });
                 this.isLoadingService.remove();
               },
@@ -1048,7 +1079,7 @@ export class ManageRomsComponent implements OnInit {
                 this.messageService.add({
                   severity: 'error',
                   summary: commonStr.fail,
-                  detail: error.response.data || commonStr.errorOccur,
+                  detail: error?.response?.data || commonStr.errorOccur,
                 });
                 this.isLoadingService.remove();
               },
@@ -1102,14 +1133,66 @@ export class ManageRomsComponent implements OnInit {
                 this.messageService.add({
                   severity: 'error',
                   summary: commonStr.fail,
-                  detail: error.response.data || commonStr.errorOccur,
+                  detail: error?.response?.data || commonStr.errorOccur,
                 });
                 this.isLoadingService.remove();
               },
             }
           );
         } else if (this.selectedRom.modifyingGpssignId) {
-          //Implemented in gps-roms
+          this.isLoadingService.add();
+          this.wrapperService.post(
+            paths.AdminApproveGpssignRom + '/' + this.selectedRom.modifyingGpssignId,
+            {},
+            getStorageToken(),
+            {
+              successCallback: (response) => {
+                //add notification
+                this.notiService.create({
+                  subjectId: response.data?.modifyingGpssignId,
+                  subjectType: SubjectType.GPSSign,
+                  senderId: decodeToken(getStorageToken() || '')?.Id,
+                  senderUsername: response.data?.admin?.username || '',
+                  receiverId: response.data?.scribe?.id,
+                  receiverUsername: response.data?.scribe?.username,
+                  action:
+                    commonStr.approveRom +
+                    (response.data?.operationType === 0
+                      ? ' thêm'
+                      : response.data?.operationType === 1
+                      ? ' sửa'
+                      : ' xóa'),
+                  relatedDescription: " GPS",
+                  createdDate: new Date().toString(),
+                  isRead: false,
+                });
+
+                this.clearData();
+                this.displayRomDetailDialog = false;
+                this.loadRoms();
+
+                this.messageService.add({
+                  severity: 'success',
+                  summary: commonStr.success,
+                  detail: commonStr.dataUpdatedSuccessfully,
+                });
+                this.isLoadingService.remove();
+              },
+              errorCallback: (error) => {
+                // console.log(error);
+                this.clearData();
+                this.displayRomDetailDialog = false;
+                this.loadRoms();
+
+                this.messageService.add({
+                  severity: 'error',
+                  summary: commonStr.fail,
+                  detail: error?.response?.data || commonStr.errorOccur,
+                });
+                this.isLoadingService.remove();
+              },
+            }
+          );
         } else if (this.selectedRom.modifyingQuestionId) {
           this.isLoadingService.add();
           this.wrapperService.post(
@@ -1160,7 +1243,7 @@ export class ManageRomsComponent implements OnInit {
                 this.messageService.add({
                   severity: 'error',
                   summary: commonStr.fail,
-                  detail: error.response.data || commonStr.errorOccur,
+                  detail: error?.response?.data || commonStr.errorOccur,
                 });
                 this.isLoadingService.remove();
               },
@@ -1211,7 +1294,7 @@ export class ManageRomsComponent implements OnInit {
                 this.messageService.add({
                   severity: 'error',
                   summary: commonStr.fail,
-                  detail: error.response.data || commonStr.errorOccur,
+                  detail: error?.response?.data || commonStr.errorOccur,
                 });
                 this.isLoadingService.remove();
               },
@@ -1272,7 +1355,7 @@ export class ManageRomsComponent implements OnInit {
             this.messageService.add({
               severity: 'error',
               summary: commonStr.fail,
-              detail: error.response.data || commonStr.errorOccur,
+              detail: error?.response?.data || commonStr.errorOccur,
             });
             this.isLoadingService.remove();
           },
@@ -1326,7 +1409,7 @@ export class ManageRomsComponent implements OnInit {
             this.messageService.add({
               severity: 'error',
               summary: commonStr.fail,
-              detail: error.response.data || commonStr.errorOccur,
+              detail: error?.response?.data || commonStr.errorOccur,
             });
             this.isLoadingService.remove();
           },
@@ -1382,7 +1465,7 @@ export class ManageRomsComponent implements OnInit {
             this.messageService.add({
               severity: 'error',
               summary: commonStr.fail,
-              detail: error.response.data || commonStr.errorOccur,
+              detail: error?.response?.data || commonStr.errorOccur,
             });
             this.isLoadingService.remove();
           },
@@ -1435,14 +1518,65 @@ export class ManageRomsComponent implements OnInit {
             this.messageService.add({
               severity: 'error',
               summary: commonStr.fail,
-              detail: error.response.data || commonStr.errorOccur,
+              detail: error?.response?.data || commonStr.errorOccur,
             });
             this.isLoadingService.remove();
           },
         }
       );
     } else if (this.selectedRom.modifyingGpssignId) {
-      //Implemented in gps-roms
+      this.isLoadingService.add();
+      this.wrapperService.post(
+        paths.AdminDenyGpssignRom + '/' + this.selectedRom.modifyingGpssignId,
+        this.deniedReason,
+        getStorageToken(),
+        {
+          successCallback: (response) => {
+            //add notification
+            this.notiService.create({
+              subjectId: response.data?.modifyingGpssignId,
+              subjectType: SubjectType.GPSSign,
+              senderId: decodeToken(getStorageToken() || '')?.Id,
+              senderUsername: response.data?.admin?.username || '',
+              receiverId: response.data?.scribe?.id,
+              receiverUsername: response.data?.scribe?.username,
+              action:
+                commonStr.denyRom +
+                (response.data?.operationType === 0
+                  ? ' thêm'
+                  : response.data?.operationType === 1
+                  ? ' sửa'
+                  : ' xóa'),
+              relatedDescription: " GPS",
+              createdDate: new Date().toString(),
+              isRead: false,
+            });
+            this.clearData();
+            this.displayRomDetailDialog = false;
+            this.loadRoms();
+
+            this.messageService.add({
+              severity: 'success',
+              summary: commonStr.success,
+              detail: commonStr.dataUpdatedSuccessfully,
+            });
+            this.isLoadingService.remove();
+          },
+          errorCallback: (error) => {
+            console.log(error);
+            this.clearData();
+            this.displayRomDetailDialog = false;
+            this.loadRoms();
+
+            this.messageService.add({
+              severity: 'error',
+              summary: commonStr.fail,
+              detail: error?.response?.data || commonStr.errorOccur,
+            });
+            this.isLoadingService.remove();
+          },
+        }
+      );
     } else if (this.selectedRom.modifyingQuestionId) {
       this.isLoadingService.add();
       this.wrapperService.post(
@@ -1491,7 +1625,7 @@ export class ManageRomsComponent implements OnInit {
             this.messageService.add({
               severity: 'error',
               summary: commonStr.fail,
-              detail: error.response.data || commonStr.errorOccur,
+              detail: error?.response?.data || commonStr.errorOccur,
             });
             this.isLoadingService.remove();
           },
@@ -1541,7 +1675,7 @@ export class ManageRomsComponent implements OnInit {
             this.messageService.add({
               severity: 'error',
               summary: commonStr.fail,
-              detail: error.response.data || commonStr.errorOccur,
+              detail: error?.response?.data || commonStr.errorOccur,
             });
             this.isLoadingService.remove();
           },

@@ -116,17 +116,20 @@
             <td [ngStyle]="{ 'text-align': 'center' }">
               <div
                 class="w-12 white-space-nowrap overflow-hidden text-overflow-ellipsis"
-                [className] = "
-                (rom.modifyingStatueName ||
-                rom.modifyingSectionName ||
-                rom.modifyingParagraphName) ?
-                'bg-green-300 pl-2 pr-2' :
-                (rom.modifyingSignName || rom.modifyingGpssignName) ?
-                'bg-orange-300 pl-2 pr-2' :
-                (rom.modifyingQuestionContent) ? 
-                'bg-blue-300 pl-2 pr-2' : 
-                (rom.modfifyingUserName) ?
-                'bg-pink-300 pl-2 pr-2' : ''
+                [className]="
+                  rom.modifyingStatueName ||
+                  rom.modifyingSectionName ||
+                  rom.modifyingParagraphName
+                    ? 'bg-green-300 pl-2 pr-2'
+                    : rom.modifyingSignName || rom.modifyingGpssignName
+                    ? 'bg-orange-300 pl-2 pr-2'
+                    : rom.modifyingQuestionContent
+                    ? 'bg-blue-300 pl-2 pr-2'
+                    : rom.modfifyingUserName
+                    ? 'bg-pink-300 pl-2 pr-2'
+                    : rom.modifyingGpssignId
+                    ? 'bg-purple-300 pl-2 pr-2'
+                    : ''
                 "
               >
                 <span
@@ -157,6 +160,12 @@
                 >
                   Đề xuất
                 </span>
+                <span
+                  *ngIf="rom.modifyingGpssignId"
+                  class="text-white font-bold"
+                >
+                  GPS
+                </span>
               </div>
             </td>
             <td [ngStyle]="{ 'text-align': 'center' }">
@@ -168,9 +177,9 @@
                     rom.modifyingSectionName ||
                     rom.modifyingParagraphName ||
                     rom.modifyingSignName ||
-                    rom.modifyingGpssignName ||
                     rom.modifyingQuestionContent ||
-                    rom.modfifyingUserName
+                    rom.modfifyingUserName ||
+                    rom.modifyingGpssign?.sign?.name
                 }}</span>
               </div>
             </td>
@@ -178,7 +187,11 @@
               <div
                 class="w-10rem white-space-nowrap overflow-hidden text-overflow-ellipsis"
               >
-                <span>{{ rom.username || rom.promotingAdminUsername }}</span>
+                <span>{{
+                  rom.scribe?.username ||
+                    rom.username ||
+                    rom.promotingAdminUsername
+                }}</span>
               </div>
             </td>
 
@@ -198,22 +211,30 @@
                 class="w-12 white-space-nowrap overflow-hidden text-overflow-ellipsis"
               >
                 <span *ngFor="let st of status">
-                  <span *ngIf="st.statusCode === rom.status"
-                  [className] = "
-                    rom.status === 7 ? 
-                    'text-green-300 font-bold' :
-                    rom.status === 4 ? 
-                    'text-red-300 font-bold' :
-                    rom.status === 3 ? 
-                    'text-indigo-300 font-bold' : 
-                    rom.status === 8 ? 
-                    'text-bluegray-300 font-bold' : ''
-                  ">
+                  <span
+                    *ngIf="st.statusCode === rom.status"
+                    [className]="
+                      rom.status === 7
+                        ? 'text-green-300 font-bold'
+                        : rom.status === 4
+                        ? 'text-red-300 font-bold'
+                        : rom.status === 3
+                        ? 'text-indigo-300 font-bold'
+                        : rom.status === 8
+                        ? 'text-bluegray-300 font-bold'
+                        : rom.status === 2
+                        ? 'text-purple-300 font-bold'
+                        : ''
+                    "
+                  >
                     {{ st.statusName }}
                   </span>
                 </span>
                 <!-- pending is 0 but dropdown of primeng need start from 1 -->
-                <span *ngIf="0 === rom.status" class="text-yellow-300 font-bold">
+                <span
+                  *ngIf="0 === rom.status"
+                  class="text-yellow-300 font-bold"
+                >
                   Chờ duyệt
                 </span>
               </div>
@@ -259,7 +280,11 @@
   [(visible)]="displayRomDetailDialog"
   [modal]="true"
   [style]="{ width: '50vw' }"
-  *ngIf="selectedRom !== undefined && changedModel.code !== '' && originalModel.code !== ''"
+  *ngIf="
+    selectedRom !== undefined &&
+    changedModel.code !== '' &&
+    originalModel.code !== ''
+  "
 >
   <ng-template pTemplate="header">
     <span class="text-blue-500 font-bold text-xl">Chi tiết</span>
@@ -302,6 +327,12 @@
           >
             Đề xuất
           </span>
+          <span
+            *ngIf="selectedRom.modifyingGpssignId"
+            class="text-purple-500 font-bold"
+          >
+            GPS
+          </span>
         </div>
       </div>
 
@@ -323,22 +354,30 @@
         </div>
         <div class="w-6 text-lg flex justify-content-end">
           <span *ngFor="let st of status">
-            <span *ngIf="st.statusCode === selectedRom.status"
-            [className] = "
-            selectedRom.status === 7 ? 
-                    'text-green-300 font-bold' :
-                    selectedRom.status === 4 ? 
-                    'text-red-300 font-bold' :
-                    selectedRom.status === 3 ? 
-                    'text-indigo-300 font-bold' :
-                    selectedRom.status === 8 ? 
-                    'text-bluegray-300 font-bold' : ''
-                  ">
+            <span
+              *ngIf="st.statusCode === selectedRom.status"
+              [className]="
+                selectedRom.status === 7
+                  ? 'text-green-300 font-bold'
+                  : selectedRom.status === 4
+                  ? 'text-red-300 font-bold'
+                  : selectedRom.status === 3
+                  ? 'text-indigo-300 font-bold'
+                  : selectedRom.status === 8
+                  ? 'text-bluegray-300 font-bold'
+                  : selectedRom.status === 2
+                  ? 'text-purple-300 font-bold'
+                  : ''
+              "
+            >
               {{ st.statusName }}
             </span>
           </span>
           <!-- pending is 0 but dropdown of primeng need start from 1 -->
-          <span *ngIf="0 === selectedRom.status" class="text-yellow-300 font-bold">
+          <span
+            *ngIf="0 === selectedRom.status"
+            class="text-yellow-300 font-bold"
+          >
             Chờ duyệt
           </span>
         </div>
@@ -355,13 +394,26 @@
         </div>
       </div>
 
+      <div class="w-12 flex p-2">
+        <div class="w-6">
+          <span class="text-lg font-bold">Người yêu cầu: </span>
+        </div>
+        <div class="w-6 text-lg flex justify-content-end">
+          <span>{{
+            selectedRom.scribe?.username ||
+            selectedRom.username ||
+            selectedRom.promotingAdminUsername
+          }}</span>
+        </div>
+      </div>
+
       <div class="w-12 flex p-2" *ngIf="isPromotingAdminPromotionRom">
         <div class="w-6">
           <span class="text-lg font-bold">Quản trị viên phê duyệt: </span>
         </div>
         <div class="w-6 text-lg flex justify-content-end">
           <span>
-            {{ selectedRom?.arbitratingAdmin?.username}}
+            {{ selectedRom?.arbitratingAdmin?.username }}
           </span>
         </div>
       </div>
@@ -372,7 +424,7 @@
         </div>
         <div class="w-6 text-lg flex justify-content-end">
           <span>
-            {{ selectedRom?.promotingAdmin?.username}}
+            {{ selectedRom?.promotingAdmin?.username }}
           </span>
         </div>
       </div>
@@ -402,7 +454,10 @@
       <div
         class="w-12 flex p-2"
         style="height: 10%"
-        *ngIf="changedModelImg || originalModelImg"
+        *ngIf="
+          (changedModelImg || originalModelImg) &&
+          !selectedRom?.modifyingGpssignId
+        "
       >
         <div class="w-6" *ngIf="changedModelImg || originalModelImg">
           <span class="text-lg font-bold">Hình ảnh đính kèm: </span>
@@ -410,7 +465,10 @@
       </div>
       <div
         class="w-12 flex p-2 border-200 border-1 border-round-lg overflow-hidden"
-        *ngIf="changedModelImg || originalModelImg"
+        *ngIf="
+          (changedModelImg || originalModelImg) &&
+          !selectedRom?.modifyingGpssignId
+        "
       >
         <div class="w-6 flex justify-content-center align-items-center">
           <img
@@ -430,7 +488,33 @@
         </div>
       </div>
 
-      <div class="w-12 flex p-2" style="height: 10%" *ngIf="selectedRom?.deniedReason">
+      <div
+        class="w-12 flex p-2"
+        style="height: 10%"
+        *ngIf="selectedRom?.modifyingGpssignId"
+      >
+        <div class="w-6">
+          <span class="text-lg font-bold">Bằng chứng (từ người yêu cầu): </span>
+        </div>
+      </div>
+
+      <div
+        *ngIf="selectedRom?.modifyingGpssignId"
+        class="w-12 flex justify-content-center p-2 border-200 border-1 border-round-lg overflow-hidden"
+      >
+        <img
+          *ngIf="selectedRom.imageUrl"
+          class="w-13rem h-auto"
+          [src]="selectedRom.imageUrl | safe: 'resourceUrl'"
+          alt="Hình ảnh bằng chứng"
+        />
+      </div>
+
+      <div
+        class="w-12 flex p-2"
+        style="height: 10%"
+        *ngIf="selectedRom?.deniedReason"
+      >
         <div class="w-6">
           <span class="text-lg font-bold">Lý do từ chối: </span>
         </div>
@@ -443,14 +527,17 @@
       >
         <div class="w-12 p-2 border-200 border-1 border-round-lg">
           <span>
-            {{selectedRom?.deniedReason}}
+            {{ selectedRom?.deniedReason }}
           </span>
         </div>
       </div>
     </div>
   </ng-template>
 
-  <ng-template pTemplate="footer" *ngIf="selectedRom?.status === 0 && !isPromotingAdminPromotionRom">
+  <ng-template
+    pTemplate="footer"
+    *ngIf="(selectedRom?.status === 0 || selectedRom?.status === 2) && !isPromotingAdminPromotionRom"
+  >
     <div class="w-12 flex" style="height: 10%">
       <div class="w-6 flex justify-content-start">
         <button
@@ -515,7 +602,12 @@
       label="Hủy"
       class="p-button-danger"
       style="height: 40px"
-      (click)="displayConfirmDenyDialog = false; deniedReason = undefined; isValidSubmitDenyRom = false; isValidDeniedReason = true"
+      (click)="
+        displayConfirmDenyDialog = false;
+        deniedReason = undefined;
+        isValidSubmitDenyRom = false;
+        isValidDeniedReason = true
+      "
     ></button>
     <button
       type="button"

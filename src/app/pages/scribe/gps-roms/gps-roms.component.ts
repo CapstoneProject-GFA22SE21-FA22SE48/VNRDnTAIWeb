@@ -8,6 +8,7 @@ import { toNonAccentVietnamese } from 'src/app/utilities/nonAccentVietnamese';
 import { WrapperService } from 'src/services/wrapper.service';
 import * as paths from '../../../common/paths';
 import * as commonStr from '../../../common/commonStr';
+import { EventEmitterService } from 'src/services/event-emitter.service';
 @Component({
   selector: 'app-gps-roms',
   templateUrl: './gps-roms.component.html',
@@ -25,6 +26,9 @@ export class GpsRomsComponent implements OnInit {
   status: any[] = [
     { statusName: 'Chờ duyệt', statusCode: 1 }, //pending is 0 but dropdown of primeng need start from 1
     { statusName: 'Đã tiếp nhận', statusCode: 2 },
+    { statusName: 'Đã duyệt', statusCode: 7 },
+    { statusName: 'Đã từ chối', statusCode: 4 },
+    { statusName: 'Đã xử lý', statusCode: 3 },
   ];
   filterStatusCode: any;
 
@@ -64,11 +68,28 @@ export class GpsRomsComponent implements OnInit {
     private isLoadingService: IsLoadingService,
     private wrapperService: WrapperService,
     private confirmationService: ConfirmationService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private eventEmitterService: EventEmitterService
   ) {}
 
   ngOnInit(): void {
     this.loadRoms();
+
+     //used for displaying rom detail when navigating from notification clicked
+     this.eventEmitterService.invokeScribeNoti.subscribe((emittedRom: any) => {
+      if (emittedRom !== null && emittedRom !== undefined) {
+        var tmpRom = this.tmpRoms.filter((r: any) => {
+          if(
+            r.modifyingGpssignId !== undefined &&
+            emittedRom.modifyingGpssignId !== undefined &&
+            r.modifyingGpssignId === emittedRom.modifyingGpssignId
+          ) {
+            return r;
+          } 
+        })[0];
+        this.viewInfo(tmpRom);
+      }
+    });
   }
 
   loadRoms() {
@@ -212,7 +233,7 @@ export class GpsRomsComponent implements OnInit {
               this.messageService.add({
                 severity: 'error',
                 summary: commonStr.fail,
-                detail: error.response.data,
+                detail: error?.response?.data,
               });
               this.isLoadingService.remove();
             },
