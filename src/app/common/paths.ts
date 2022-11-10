@@ -31,9 +31,6 @@ export const AdminReEnableScribe: string = base + '/Users/Scribes/ReEnable';
 export const AdminPromoteScribe: string = base + '/Users/Scribes/Promote';
 export const AdminCreateNewScribe: string = base + '/Users';
 
-export const AdminGetColumns: string = base + '/Columns'
-export const AdminGetAssignedColumns: string = base + '/AssignedColumns';
-
 export const AdminGetTasks: string = base + "/AssignedColumns/Tasks";
 export const AdminUpdateAssignedTasks: string = base + "/AssignedColumns/TasksUpdate";
 
@@ -72,7 +69,6 @@ export const ScribeGetVehicleCats: string = base + '/VehicleCategories';
 export const ScribeGetAssignedColumnData: string = base + '/Columns/AssignedColumn';
 export const ScribeGetSectionsByStatueId: string = base + '/Sections/ByStatue';
 export const ScribeGetParagraphsBySectionId: string = base + '/Paragraphs/BySection';
-export const ScribeGetReferenceParagraphsByParagraphId: string = base + '/Paragraphs/BySection';
 export const ScribeGetKeywords: string = base + '/Keywords';
 
 export const ScribeCreateStatueForROM: string = base + '/Statues';
@@ -82,7 +78,7 @@ export const ScribeCreateLawModificationRequest: string = base + '/LawModificati
 
 export const ScribeCreateNewSection: string = base + '/Sections/NewSection';    
 
-export const ScribeGetAssignedSignCategories: string = base + '/SignCategories/AssigedSignCategories/Scribes';    
+export const ScribeGetAssignedSignCategories: string = base + '/SignCategories/AssignedSignCategories/Scribes';    
 export const ScribeGetAssignedSigns: string = base + '/Signs/AssignedSigns/Scribes';    
 
 export const ScribeCreateSignForROM: string = base + '/Signs';
