@@ -136,8 +136,8 @@ export class GpsRomsComponent implements OnInit {
         return r.modifyingGpssign?.sign?.name
           ? toNonAccentVietnamese(
               r.modifyingGpssign?.sign?.name?.toLowerCase()
-            ).includes(
-              toNonAccentVietnamese(this.filterSearchStr.toLowerCase())
+            ).trim().includes(
+              toNonAccentVietnamese(this.filterSearchStr.toLowerCase()).trim()
             )
           : null;
       });

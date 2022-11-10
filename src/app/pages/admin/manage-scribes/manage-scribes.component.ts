@@ -183,11 +183,11 @@ export class ManageScribesComponent implements OnInit {
     if (this.searchStr && this.searchStr.trim() != '') {
       this.scribes = this.scribes.filter((m) => {
         if (m.username) {
-          return toNonAccentVietnamese(m.username?.toLowerCase()).includes(
-            toNonAccentVietnamese(this.searchStr.toLowerCase())
+          return toNonAccentVietnamese(m.username?.toLowerCase()).trim().includes(
+            toNonAccentVietnamese(this.searchStr.toLowerCase().trim())
           );
         } else {
-          return m.gmail?.toLowerCase().includes(this.searchStr.toLowerCase());
+          return m.gmail?.toLowerCase().trim().includes(this.searchStr.toLowerCase().trim());
         }
       });
     }

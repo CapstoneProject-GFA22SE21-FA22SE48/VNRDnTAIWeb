@@ -5,12 +5,10 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { LoginComponent } from './pages/login/login.component';
 import { DashboardComponent } from './pages/admin/dashboard/dashboard.component';
-import { HomepageComponent } from './pages/homepage/homepage.component';
 import { ManageScribesComponent } from './pages/admin/manage-scribes/manage-scribes.component';
 import { ManageRomsComponent } from './pages/admin/manage-roms/manage-roms.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NotificationCentreComponent } from './pages/notification-centre/notification-centre.component';
-import { ProfileComponent } from './pages/profile/profile.component';
 import { SidebarComponent } from './shared/layout/sidebar/sidebar.component';
 import { ManageLawsComponent } from './pages/scribe/manage-laws/manage-laws.component';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
@@ -74,11 +72,9 @@ import { GpsRomsComponent } from './pages/scribe/gps-roms/gps-roms.component';
     AppComponent,
     LoginComponent,
     DashboardComponent,
-    HomepageComponent,
     ManageScribesComponent,
     ManageRomsComponent,
     NotificationCentreComponent,
-    ProfileComponent,
     SidebarComponent,
     ManageLawsComponent,
     SpinnerComponent,
