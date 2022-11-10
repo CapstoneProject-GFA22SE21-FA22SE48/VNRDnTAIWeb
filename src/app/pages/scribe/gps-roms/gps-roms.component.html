@@ -142,17 +142,13 @@
                         : rom.status === 3
                         ? 'text-indigo-300 font-bold'
                         : rom.status === 7 
-                        ? 'text-green-300 font-bold' : ''
+                        ? 'text-green-300 font-bold'
+                        : rom.status === 1
+                        ? 'text-yellow-300 font-bold' : ''
                     "
                   >
                     {{ st.statusName }}
                   </span>
-                </span>
-                <span
-                  *ngIf="0 === rom.status"
-                  class="text-yellow-300 font-bold"
-                >
-                  Chờ duyệt
                 </span>
               </div>
             </td>
@@ -245,17 +241,13 @@
                   : selectedRom.status === 3
                   ? 'text-indigo-300 font-bold'
                   : selectedRom.status === 7 
-                  ? 'text-green-300 font-bold' : ''
+                  ? 'text-green-300 font-bold' 
+                  : selectedRom.status === 1
+                  ? 'text-yellow-300 font-bold' : ''
               "
             >
               {{ st.statusName }}
             </span>
-          </span>
-          <span
-            *ngIf="0 === selectedRom.status"
-            class="text-yellow-300 font-bold"
-          >
-            Chờ duyệt
           </span>
         </div>
       </div>
@@ -345,7 +337,7 @@
     </div>
   </ng-template>
 
-  <ng-template pTemplate="footer" *ngIf="selectedRom?.status === 0">
+  <ng-template pTemplate="footer" *ngIf="selectedRom?.status === 1">
     <div class="w-12 flex justify-content-end">
       <button
         pButton

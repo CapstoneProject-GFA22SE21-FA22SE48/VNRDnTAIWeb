@@ -24,7 +24,8 @@ export class GpsRomsComponent implements OnInit {
   filterSearchStr: any;
 
   status: any[] = [
-    { statusName: 'Chờ duyệt', statusCode: 1 }, //pending is 0 but dropdown of primeng need start from 1
+    // { statusName: 'Chờ duyệt', statusCode: 1 }, //pending is 0 but dropdown of primeng need start from 1
+    { statusName: 'Chưa tiếp nhận', statusCode: 1 },
     { statusName: 'Đã tiếp nhận', statusCode: 2 },
     { statusName: 'Đã duyệt', statusCode: 7 },
     { statusName: 'Đã từ chối', statusCode: 4 },
@@ -120,14 +121,9 @@ export class GpsRomsComponent implements OnInit {
 
     //filter by "Trạng thái"
     if (this.filterStatusCode) {
-      if (this.filterStatusCode === 1) {
-        //pending is 0 but dropdown of primeng need start from 1
-        this.roms = this.roms?.filter((r: any) => r.status === 0);
-      } else {
-        this.roms = this.roms?.filter(
-          (r: any) => r.status === this.filterStatusCode
-        );
-      }
+      this.roms = this.roms?.filter(
+        (r: any) => r.status === this.filterStatusCode
+      )
     }
 
     //filter by filterSearchStr
