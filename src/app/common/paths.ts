@@ -1,7 +1,7 @@
 /* paths.ts was created to provide shrinked links for API calling. */
 // Base path
-// const base = 'https://localhost:5001/api';
- const base = 'https://vnrdntaiapi.azurewebsites.net/api';
+const base = 'https://localhost:5001/api';
+//  const base = 'https://vnrdntaiapi.azurewebsites.net/api';
 
 //Login
 export const Login: string = base + '/Users/Login';
@@ -52,7 +52,8 @@ export const AdminApproveParagraphRom: string = base + '/LawModificationRequests
 export const AdminDenyParagraphRom: string = base + '/LawModificationRequests/Paragraph/Deny';
 export const AdminApproveUserRom: string = base + '/UserModificationRequests/Approve';
 export const AdminDenyUserRom: string = base + '/UserModificationRequests/Deny';
-
+export const AdminApproveGpssignRom: string = base + '/SignModificationRequests/GPS/Approve';
+export const AdminDenyGpssignRom: string = base + '/SignModificationRequests/GPS/Deny';
 // Scribe
 export const ScribeGetAllStatueForAddingReferences: string = base + '/Statues';
 

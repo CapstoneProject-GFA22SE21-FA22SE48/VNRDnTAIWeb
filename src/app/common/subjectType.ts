@@ -3,7 +3,7 @@ export enum SubjectType{
     Section = "Section",
     Paragraph = "Paragraph",
     Sign = "Sign",
-    Gpssign = "Gpssign",
     Question = "Question",
-    Promotion = "Promotion"
+    Promotion = "Promotion",
+    GPSSign = "GPSSign",
 }

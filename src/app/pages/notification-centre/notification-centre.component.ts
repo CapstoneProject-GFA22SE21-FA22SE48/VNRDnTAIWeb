@@ -117,13 +117,15 @@ export class NotificationCentreComponent implements OnInit {
             modifyingSignId: noti.subjectId,
           });
         });
-      } else if (noti.subjectType === SubjectType.Gpssign) {
-        this.router.navigate(['/admin/manage-roms']).then(() => {
-          this.eventEmitterService.onAdminNotiClick({
-            modifyingGpssignId: noti.subjectId,
-          });
-        });
-      } else if (noti.subjectType === SubjectType.Question) {
+      } 
+      // else if (noti.subjectType === SubjectType.GPSSign) {
+      //   this.router.navigate(['/admin/manage-roms']).then(() => {
+      //     this.eventEmitterService.onAdminNotiClick({
+      //       modifyingGpssignId: noti.subjectId,
+      //     });
+      //   });
+      // }
+       else if (noti.subjectType === SubjectType.Question) {
         this.router.navigate(['/admin/manage-roms']).then(() => {
           this.eventEmitterService.onAdminNotiClick({
             modifyingQuestionId: noti.subjectId,
@@ -162,19 +164,19 @@ export class NotificationCentreComponent implements OnInit {
             modifyingSignId: noti.subjectId,
           });
         });
-      } else if (noti.subjectType === SubjectType.Gpssign) {
-        this.router.navigate(['/scribe/my-request']).then(() => {
-          this.eventEmitterService.onScribeNotiClick({
-            modifyingGpssignId: noti.subjectId,
-          });
-        });
       } else if (noti.subjectType === SubjectType.Question) {
         this.router.navigate(['/scribe/my-request']).then(() => {
           this.eventEmitterService.onScribeNotiClick({
             modifyingQuestionId: noti.subjectId,
           });
         });
-      }
+      } else if (noti.subjectType === SubjectType.GPSSign) {
+        this.router.navigate(['/scribe/gps-roms']).then(() => {
+          this.eventEmitterService.onScribeNotiClick({
+            modifyingGpssignId: noti.subjectId,
+          });
+        });
+      } 
     }
   }
 }

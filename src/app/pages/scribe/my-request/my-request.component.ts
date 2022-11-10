@@ -735,7 +735,7 @@ export class MyRequestComponent implements OnInit {
                 this.messageService.add({
                   severity: 'error',
                   summary: commonStr.fail,
-                  detail: error.response.data || commonStr.errorOccur,
+                  detail: error?.response?.data || commonStr.errorOccur,
                 });
                 this.isLoadingService.remove();
               },
@@ -769,7 +769,7 @@ export class MyRequestComponent implements OnInit {
                 this.messageService.add({
                   severity: 'error',
                   summary: commonStr.fail,
-                  detail: error.response.data || commonStr.errorOccur,
+                  detail: error?.response?.data || commonStr.errorOccur,
                 });
                 this.isLoadingService.remove();
               },
@@ -803,7 +803,7 @@ export class MyRequestComponent implements OnInit {
                 this.messageService.add({
                   severity: 'error',
                   summary: commonStr.fail,
-                  detail: error.response.data || commonStr.errorOccur,
+                  detail: error?.response?.data || commonStr.errorOccur,
                 });
                 this.isLoadingService.remove();
               },
