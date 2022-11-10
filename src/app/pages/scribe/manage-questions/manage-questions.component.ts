@@ -149,9 +149,9 @@ export class ManageQuestionsComponent implements OnInit {
     if (this.searchStr && this.searchStr.trim() != '') {
       this.questions = this.questions.filter(
         (q: any) =>
-          toNonAccentVietnamese(q.content?.toLowerCase()).includes(
-            toNonAccentVietnamese(this.searchStr.toLowerCase())
-          ) || q.name?.toLowerCase().includes(this.searchStr.toLowerCase())
+          toNonAccentVietnamese(q.content?.toLowerCase()).trim().includes(
+            toNonAccentVietnamese(this.searchStr.toLowerCase()).trim()
+          ) || q.name?.toLowerCase().trim().includes(this.searchStr.toLowerCase().trim())
       );
     } else {
       this.questions = this.tmpQuestions;

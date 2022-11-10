@@ -316,11 +316,11 @@ export class ManageLawsComponent implements OnInit {
     if (this.searchStatueStr && this.searchStatueStr.trim() != '') {
       this.statues = this.statues.filter(
         (s: any) =>
-          toNonAccentVietnamese(s.name?.toLowerCase()).includes(
-            toNonAccentVietnamese(this.searchStatueStr.toLowerCase())
+          toNonAccentVietnamese(s.name?.toLowerCase()).trim().includes(
+            toNonAccentVietnamese(this.searchStatueStr.toLowerCase()).trim()
           ) ||
-          toNonAccentVietnamese(s.description?.toLowerCase()).includes(
-            toNonAccentVietnamese(this.searchStatueStr.toLowerCase())
+          toNonAccentVietnamese(s.description?.toLowerCase()).trim().includes(
+            toNonAccentVietnamese(this.searchStatueStr.toLowerCase()).trim()
           )
       );
     }
@@ -369,11 +369,11 @@ export class ManageLawsComponent implements OnInit {
     if (this.searchSectionStr && this.searchSectionStr.trim() != '') {
       this.sections = this.sections.filter(
         (s: any) =>
-          toNonAccentVietnamese(s.name?.toLowerCase()).includes(
-            toNonAccentVietnamese(this.searchSectionStr.toLowerCase())
+          toNonAccentVietnamese(s.name?.toLowerCase()).trim().includes(
+            toNonAccentVietnamese(this.searchSectionStr.toLowerCase()).trim()
           ) ||
-          toNonAccentVietnamese(s.description?.toLowerCase()).includes(
-            toNonAccentVietnamese(this.searchSectionStr.toLowerCase())
+          toNonAccentVietnamese(s.description?.toLowerCase()).trim().includes(
+            toNonAccentVietnamese(this.searchSectionStr.toLowerCase()).trim()
           )
       );
     }
@@ -411,11 +411,11 @@ export class ManageLawsComponent implements OnInit {
     if (this.searchParagraphStr && this.searchParagraphStr.trim() != '') {
       this.paragraphs = this.paragraphs.filter(
         (p: any) =>
-          toNonAccentVietnamese(p.name?.toLowerCase()).includes(
-            toNonAccentVietnamese(this.searchParagraphStr.toLowerCase())
+          toNonAccentVietnamese(p.name?.toLowerCase()).trim().includes(
+            toNonAccentVietnamese(this.searchParagraphStr.toLowerCase()).trim()
           ) ||
-          toNonAccentVietnamese(p.description?.toLowerCase()).includes(
-            toNonAccentVietnamese(this.searchParagraphStr.toLowerCase())
+          toNonAccentVietnamese(p.description?.toLowerCase()).trim().includes(
+            toNonAccentVietnamese(this.searchParagraphStr.toLowerCase()).trim()
           )
       );
     }

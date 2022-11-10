@@ -196,11 +196,11 @@ export class ManageSignsComponent implements OnInit {
       this.isLoadingService.add();
       this.signs = this.signs.filter(
         (sign: Sign) =>
-          toNonAccentVietnamese(sign.name.toLowerCase()).includes(
-            toNonAccentVietnamese(this.filterSearchStr.toLowerCase())
+          toNonAccentVietnamese(sign.name.toLowerCase()).trim().includes(
+            toNonAccentVietnamese(this.filterSearchStr.toLowerCase()).trim()
           ) ||
-          toNonAccentVietnamese(sign.description.toLowerCase()).includes(
-            toNonAccentVietnamese(this.filterSearchStr.toLowerCase())
+          toNonAccentVietnamese(sign.description.toLowerCase()).trim().includes(
+            toNonAccentVietnamese(this.filterSearchStr.toLowerCase()).trim()
           )
       );
       this.isLoadingService.remove();

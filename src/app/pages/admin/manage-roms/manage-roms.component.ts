@@ -150,7 +150,9 @@ export class ManageRomsComponent implements OnInit {
     var token = getStorageToken();
     this.isLoadingService.add();
     this.wrapperService.get(
-      paths.AdminGetRomList + '/' + decodeToken(token !== null ? token : '')?.Id,
+      paths.AdminGetRomList +
+        '/' +
+        decodeToken(token !== null ? token : '')?.Id,
       getStorageToken(),
       {
         successCallback: (response) => {
@@ -158,23 +160,24 @@ export class ManageRomsComponent implements OnInit {
             .concat(response.data.signRoms)
             .concat(response.data.questionRoms)
             .concat(response.data.userRoms)
-            .concat(response.data.gpsSignRoms)
+            .concat(response.data.gpsSignRoms);
 
-            this.tmpRoms = this.roms;
+          this.tmpRoms = this.roms;
           this.requesters = [];
 
           this.roms.forEach((rom: any) => {
             if (
               !this.requesters.some(
                 (r: any) =>
-                  r.requesterId === rom.scribeId ||
-                  r.requesterId === rom.userId ||
-                  r.requesterId === rom.promotingAdminId
+                  r.requesterId === rom?.scribeId ||
+                  r.requesterId === rom?.userId ||
+                  r.requesterId === rom?.promotingAdminId
               )
             ) {
               this.requesters.push({
-                requesterId: rom.scribeId || rom.userId || rom.promotingAdminId,
-                requesterName: rom.username || rom.promotingAdminUsername,
+                requesterId:
+                  rom?.scribeId || rom?.userId || rom?.promotingAdminId,
+                requesterName: rom?.username || rom?.promotingAdminUsername,
               });
             }
           });
@@ -206,7 +209,7 @@ export class ManageRomsComponent implements OnInit {
       } else if (this.filterRomTypeCode === 3) {
         //question
         this.roms = this.roms.filter((r: any) => r.modifyingQuestionId);
-      }else if (this.filterRomTypeCode === 5) {
+      } else if (this.filterRomTypeCode === 5) {
         //GPS
         this.roms = this.roms.filter((r: any) => r.modifyingGpssignId);
       } else {
@@ -239,43 +242,47 @@ export class ManageRomsComponent implements OnInit {
     //filter by filterSearchStr
     if (this.filterSearchStr) {
       this.roms = this.roms?.filter((r: any) => {
-        return r.modifyingStatueName
+        return r?.modifyingStatueName
           ? toNonAccentVietnamese(
-              r.modifyingStatueName?.toLowerCase()
+              r?.modifyingStatueName?.toLowerCase().trim()
             ).includes(
-              toNonAccentVietnamese(this.filterSearchStr.toLowerCase())
+              toNonAccentVietnamese(this.filterSearchStr.toLowerCase().trim())
             )
-          : r.modifyingSectionName
+          : r?.modifyingSectionName
           ? toNonAccentVietnamese(
-              r.modifyingSectionName?.toLowerCase()
+              r?.modifyingSectionName?.toLowerCase().trim()
             ).includes(
-              toNonAccentVietnamese(this.filterSearchStr.toLowerCase())
+              toNonAccentVietnamese(this.filterSearchStr.toLowerCase().trim())
             )
-          : r.modifyingParagraphName
+          : r?.modifyingParagraphName
           ? toNonAccentVietnamese(
-              r.modifyingParagraphName?.toLowerCase()
+              r?.modifyingParagraphName?.toLowerCase().trim()
             ).includes(
-              toNonAccentVietnamese(this.filterSearchStr.toLowerCase())
+              toNonAccentVietnamese(this.filterSearchStr.toLowerCase().trim())
             )
-          : r.modifyingSignName
-          ? toNonAccentVietnamese(r.modifyingSignName?.toLowerCase()).includes(
-              toNonAccentVietnamese(this.filterSearchStr.toLowerCase())
-            )
-          : r.modifyingGpssignName
+          : r?.modifyingSignName
           ? toNonAccentVietnamese(
-              r.modifyingGpssignName?.toLowerCase()
+              r.modifyingSignName?.toLowerCase().trim()
             ).includes(
-              toNonAccentVietnamese(this.filterSearchStr.toLowerCase())
+              toNonAccentVietnamese(this.filterSearchStr.toLowerCase().trim())
             )
-          : r.modifyingQuestionContent
+          : r?.modifyingGpssign?.sign?.name
           ? toNonAccentVietnamese(
-              r.modifyingQuestionContent?.toLowerCase()
+              r?.modifyingGpssign?.sign?.name?.toLowerCase()
             ).includes(
-              toNonAccentVietnamese(this.filterSearchStr.toLowerCase())
+              toNonAccentVietnamese(this.filterSearchStr.toLowerCase().trim())
             )
-          : r.modfifyingUserName
-          ? toNonAccentVietnamese(r.modfifyingUserName?.toLowerCase()).includes(
-              toNonAccentVietnamese(this.filterSearchStr.toLowerCase())
+          : r?.modifyingQuestionContent
+          ? toNonAccentVietnamese(
+              r?.modifyingQuestionContent?.toLowerCase().trim()
+            ).includes(
+              toNonAccentVietnamese(this.filterSearchStr.toLowerCase().trim())
+            )
+          : r?.modfifyingUserName
+          ? toNonAccentVietnamese(
+              r.modfifyingUserName?.toLowerCase().trim()
+            ).includes(
+              toNonAccentVietnamese(this.filterSearchStr.toLowerCase().trim())
             )
           : null;
       });
@@ -706,7 +713,7 @@ export class ManageRomsComponent implements OnInit {
       } else {
         this.originalModel.code = ' ';
       }
-  
+
       if (this.selectedRom.operationType !== OperationType.Delete) {
         this.changedModel.code =
           `Biển:\n` +
@@ -720,7 +727,6 @@ export class ManageRomsComponent implements OnInit {
       }
 
       this.displayRomDetailDialog = true;
-      
     } else if (this.selectedRom.modifyingQuestionId) {
       this.changedModelImg = undefined;
       this.originalModelImg = undefined;
@@ -1142,7 +1148,9 @@ export class ManageRomsComponent implements OnInit {
         } else if (this.selectedRom.modifyingGpssignId) {
           this.isLoadingService.add();
           this.wrapperService.post(
-            paths.AdminApproveGpssignRom + '/' + this.selectedRom.modifyingGpssignId,
+            paths.AdminApproveGpssignRom +
+              '/' +
+              this.selectedRom.modifyingGpssignId,
             {},
             getStorageToken(),
             {
@@ -1162,7 +1170,7 @@ export class ManageRomsComponent implements OnInit {
                       : response.data?.operationType === 1
                       ? ' sửa'
                       : ' xóa'),
-                  relatedDescription: " GPS",
+                  relatedDescription: ' GPS',
                   createdDate: new Date().toString(),
                   isRead: false,
                 });
@@ -1547,7 +1555,7 @@ export class ManageRomsComponent implements OnInit {
                   : response.data?.operationType === 1
                   ? ' sửa'
                   : ' xóa'),
-              relatedDescription: " GPS",
+              relatedDescription: ' GPS',
               createdDate: new Date().toString(),
               isRead: false,
             });

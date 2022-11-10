@@ -249,36 +249,36 @@ export class MyRequestComponent implements OnInit {
         return r.modifyingStatueName
           ? toNonAccentVietnamese(
               r.modifyingStatueName?.toLowerCase()
-            ).includes(
-              toNonAccentVietnamese(this.filterSearchStr.toLowerCase())
+            ).trim().includes(
+              toNonAccentVietnamese(this.filterSearchStr.toLowerCase()).trim()
             )
           : r.modifyingSectionName
           ? toNonAccentVietnamese(
               r.modifyingSectionName?.toLowerCase()
-            ).includes(
-              toNonAccentVietnamese(this.filterSearchStr.toLowerCase())
+            ).trim().includes(
+              toNonAccentVietnamese(this.filterSearchStr.toLowerCase()).trim()
             )
           : r.modifyingParagraphName
           ? toNonAccentVietnamese(
               r.modifyingParagraphName?.toLowerCase()
-            ).includes(
-              toNonAccentVietnamese(this.filterSearchStr.toLowerCase())
+            ).trim().includes(
+              toNonAccentVietnamese(this.filterSearchStr.toLowerCase()).trim()
             )
           : r.modifyingSignName
-          ? toNonAccentVietnamese(r.modifyingSignName?.toLowerCase()).includes(
-              toNonAccentVietnamese(this.filterSearchStr.toLowerCase())
+          ? toNonAccentVietnamese(r.modifyingSignName?.toLowerCase()).trim().includes(
+              toNonAccentVietnamese(this.filterSearchStr.toLowerCase()).trim()
             )
           : r.modifyingGpssignName
           ? toNonAccentVietnamese(
               r.modifyingGpssignName?.toLowerCase()
-            ).includes(
-              toNonAccentVietnamese(this.filterSearchStr.toLowerCase())
+            ).trim().includes(
+              toNonAccentVietnamese(this.filterSearchStr.toLowerCase().trim())
             )
           : r.modifyingQuestionContent
           ? toNonAccentVietnamese(
               r.modifyingQuestionContent?.toLowerCase()
-            ).includes(
-              toNonAccentVietnamese(this.filterSearchStr.toLowerCase())
+            ).trim().includes(
+              toNonAccentVietnamese(this.filterSearchStr.toLowerCase().trim())
             )
           : null;
       });

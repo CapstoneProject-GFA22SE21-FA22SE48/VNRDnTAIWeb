@@ -95,11 +95,11 @@ export class ManageMembersComponent implements OnInit {
     if (this.searchStr && this.searchStr.trim() != '') {
       this.members = this.members.filter((m) => {
         if (m.username) {
-          return toNonAccentVietnamese(m.username?.toLowerCase()).includes(
-            toNonAccentVietnamese(this.searchStr.toLowerCase())
+          return toNonAccentVietnamese(m.username?.toLowerCase().trim()).includes(
+            toNonAccentVietnamese(this.searchStr.toLowerCase().trim())
           );
         } else {
-          return m.gmail?.toLowerCase().includes(this.searchStr.toLowerCase());
+          return m.gmail?.toLowerCase().trim().includes(this.searchStr.toLowerCase().trim());
         }
       });
     } 
