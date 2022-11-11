@@ -52,7 +52,7 @@ export class ManageSignsComponent implements OnInit {
   addingChosenSignStatue: any;
   addingChosenSignSectionList: any;
   addingChosenSignSection: any;
-  addingChosenSignParagraphList:any;
+  addingChosenSignParagraphList: any;
   addingChosenSignParagraph: any;
 
   emptyParagraphSectionMsg: any;
@@ -60,7 +60,7 @@ export class ManageSignsComponent implements OnInit {
 
   //used for holding temporary signParagraph list for adding signParagraph to chosen sign
   newChosenSignSignParagraphList: any;
-  tmpChosenSignAddingSignParagraphList: any[] =[];
+  tmpChosenSignAddingSignParagraphList: any[] = [];
   //end of update
 
   //start of create
@@ -87,14 +87,14 @@ export class ManageSignsComponent implements OnInit {
   addingNewSignStatue: any;
   addingNewSignSectionList: any;
   addingNewSignSection: any;
-  addingNewSignParagraphList:any;
+  addingNewSignParagraphList: any;
   addingNewSignParagraph: any;
 
   emptyParagraphSectionOfNewSignMsg: any;
   addingErrorNewSignAddingSignParagraphMsg: any;
 
   newSignSignParagraphList: any; //used for holding temporary signParagraph list for adding signParagraph to new sign
-  tmpNewSignAddingSignParagraphList: any[] =[];
+  tmpNewSignAddingSignParagraphList: any[] = [];
   //end of create
 
   displayConfirmUpdateChosenSign: boolean = false;
@@ -196,12 +196,16 @@ export class ManageSignsComponent implements OnInit {
       this.isLoadingService.add();
       this.signs = this.signs.filter(
         (sign: Sign) =>
-          toNonAccentVietnamese(sign.name.toLowerCase()).trim().includes(
-            toNonAccentVietnamese(this.filterSearchStr.toLowerCase()).trim()
-          ) ||
-          toNonAccentVietnamese(sign.description.toLowerCase()).trim().includes(
-            toNonAccentVietnamese(this.filterSearchStr.toLowerCase()).trim()
-          )
+          toNonAccentVietnamese(sign.name.toLowerCase())
+            .trim()
+            .includes(
+              toNonAccentVietnamese(this.filterSearchStr.toLowerCase()).trim()
+            ) ||
+          toNonAccentVietnamese(sign.description.toLowerCase())
+            .trim()
+            .includes(
+              toNonAccentVietnamese(this.filterSearchStr.toLowerCase()).trim()
+            )
       );
       this.isLoadingService.remove();
     }
@@ -217,7 +221,9 @@ export class ManageSignsComponent implements OnInit {
 
     this.tmpChosenSignNewSignParagraphList = this.tmpChosenSign?.signParagraphs;
 
-    this.newChosenSignSignParagraphList = JSON.parse(JSON.stringify(this.tmpChosenSignNewSignParagraphList));
+    this.newChosenSignSignParagraphList = JSON.parse(
+      JSON.stringify(this.tmpChosenSignNewSignParagraphList)
+    );
 
     this.isValidClickOnCreate = false;
   }
@@ -261,7 +267,8 @@ export class ManageSignsComponent implements OnInit {
     if (
       !this.tmpChosenSignNewName ||
       this.tmpChosenSignNewName.trim() === '' ||
-      !this.tmpChosenSignNewName.match('^Biển số [0-9]{3}[a-z]? ".*"$')
+      this.tmpChosenSignNewName?.length > 150 ||
+      !this.tmpChosenSignNewName.match('^Biển số ([a-zA-Z0-9.]+)[ ]{1}".*"$')
     ) {
       this.isValidUpdateChosenSign = false;
       this.isValidChosenSignNewName = false;
@@ -301,7 +308,8 @@ export class ManageSignsComponent implements OnInit {
   removeChosenSignSignParagraph(signParagraph: any) {
     this.newChosenSignSignParagraphList =
       this.newChosenSignSignParagraphList.filter(
-        (sp: any) => sp.signParagraphParagraphId !== signParagraph.signParagraphParagraphId
+        (sp: any) =>
+          sp.signParagraphParagraphId !== signParagraph.signParagraphParagraphId
       );
 
     this.tmpChosenSignNewSignParagraphList =
@@ -380,15 +388,17 @@ export class ManageSignsComponent implements OnInit {
             } else {
               this.addingChosenSignParagraphList = response.data;
 
-              
               //Remove added reference paragraphs from the list of reference paragraph that will be added
-              if(this.newChosenSignSignParagraphList !== undefined){
-                this.newChosenSignSignParagraphList.forEach((addedSignParagraph: any) => {
-                  this.addingChosenSignParagraphList =
-                    this.addingChosenSignParagraphList.filter(
-                      (r: any) => r.id !== addedSignParagraph?.signParagraphParagraphId
-                    );
-                });
+              if (this.newChosenSignSignParagraphList !== undefined) {
+                this.newChosenSignSignParagraphList.forEach(
+                  (addedSignParagraph: any) => {
+                    this.addingChosenSignParagraphList =
+                      this.addingChosenSignParagraphList.filter(
+                        (r: any) =>
+                          r.id !== addedSignParagraph?.signParagraphParagraphId
+                      );
+                  }
+                );
               }
 
               this.emptyParagraphSectionMsg = '';
@@ -418,7 +428,7 @@ export class ManageSignsComponent implements OnInit {
     this.addingChosenSignSection = undefined;
     this.addingChosenSignParagraphList = undefined;
     this.addingChosenSignParagraph = undefined;
-    
+
     this.emptyParagraphSectionMsg = undefined;
     this.addingErrorChosenSignAddingSignParagraphMsg = undefined;
 
@@ -457,10 +467,8 @@ export class ManageSignsComponent implements OnInit {
     this.tmpChosenSign.signParagraphs.forEach((r: any) => {
       if (
         r.signParagraphParagraphId == signParagraph.signParagraphParagraphId &&
-        r.signParagraphSectionId ==
-        signParagraph.signParagraphSectionId &&
-        r.signParagraphStatueId ==
-        signParagraph.signParagraphStatueId
+        r.signParagraphSectionId == signParagraph.signParagraphSectionId &&
+        r.signParagraphStatueId == signParagraph.signParagraphStatueId
       ) {
         this.addingErrorChosenSignAddingSignParagraphMsg =
           'Điểm đã tồn tại trong danh sách';
@@ -468,11 +476,10 @@ export class ManageSignsComponent implements OnInit {
         //check with temporary reference list before adding
         existed = this.tmpChosenSignAddingSignParagraphList.some((r: any) => {
           if (
-            r.signParagraphParagraphId == signParagraph.signParagraphParagraphId &&
-            r.signParagraphSectionId ==
-            signParagraph.signParagraphSectionId &&
-            r.signParagraphStatueId ==
-            signParagraph.signParagraphStatueId
+            r.signParagraphParagraphId ==
+              signParagraph.signParagraphParagraphId &&
+            r.signParagraphSectionId == signParagraph.signParagraphSectionId &&
+            r.signParagraphStatueId == signParagraph.signParagraphStatueId
           ) {
             return true;
           } else {
@@ -499,20 +506,19 @@ export class ManageSignsComponent implements OnInit {
 
   //"Hoàn thành" button clicked
   completeAddChosenSignSignParagraph() {
-    if(!this.newChosenSignSignParagraphList){
+    if (!this.newChosenSignSignParagraphList) {
       this.newChosenSignSignParagraphList = [];
     }
 
     this.tmpChosenSignAddingSignParagraphList.forEach((r: any) => {
       this.newChosenSignSignParagraphList.push(r);
     });
-    this.tmpChosenSign.signParagraphs =
-      this.newChosenSignSignParagraphList;
+    this.tmpChosenSign.signParagraphs = this.newChosenSignSignParagraphList;
     this.displayAddChosenSignParagraph = false;
 
     this.detectChange();
   }
-  
+
   detectChange() {
     if (
       JSON.stringify(this.tmpChosenSign) !== JSON.stringify(this.chosenSign) &&
@@ -560,9 +566,7 @@ export class ManageSignsComponent implements OnInit {
     if (this.addingNewSignStatue) {
       this.isLoadingService.add();
       this.wrapperService.get(
-        paths.ScribeGetSectionsByStatueId +
-          '/' +
-          this.addingNewSignStatue?.id,
+        paths.ScribeGetSectionsByStatueId + '/' + this.addingNewSignStatue?.id,
         getStorageToken(),
         {
           successCallback: (response) => {
@@ -594,19 +598,22 @@ export class ManageSignsComponent implements OnInit {
           successCallback: (response) => {
             //This section has an empty paragraph
             if (response.data.length === 1 && response.data[0].name === '') {
-              this.emptyParagraphSectionOfNewSignMsg = 'Khoản này không chứa điểm';
+              this.emptyParagraphSectionOfNewSignMsg =
+                'Khoản này không chứa điểm';
             } else {
               this.addingNewSignParagraphList = response.data;
 
-              
               //Remove added reference paragraphs from the list of reference paragraph that will be added
-              if(this.newSignSignParagraphList !== undefined){
-                this.newSignSignParagraphList.forEach((addedSignParagraph: any) => {
-                  this.addingNewSignParagraphList =
-                    this.addingNewSignParagraphList.filter(
-                      (r: any) => r.id !== addedSignParagraph?.signParagraphParagraphId
-                    );
-                });
+              if (this.newSignSignParagraphList !== undefined) {
+                this.newSignSignParagraphList.forEach(
+                  (addedSignParagraph: any) => {
+                    this.addingNewSignParagraphList =
+                      this.addingNewSignParagraphList.filter(
+                        (r: any) =>
+                          r.id !== addedSignParagraph?.signParagraphParagraphId
+                      );
+                  }
+                );
               }
 
               this.emptyParagraphSectionOfNewSignMsg = '';
@@ -636,7 +643,7 @@ export class ManageSignsComponent implements OnInit {
     this.addingNewSignSection = undefined;
     this.addingNewSignParagraphList = undefined;
     this.addingNewSignParagraph = undefined;
-    
+
     this.emptyParagraphSectionOfNewSignMsg = undefined;
     this.addingErrorNewSignAddingSignParagraphMsg = undefined;
 
@@ -683,21 +690,19 @@ export class ManageSignsComponent implements OnInit {
     //     this.addingErrorChosenSignAddingSignParagraphMsg =
     //       'Điểm đã tồn tại trong danh sách';
     //   } else {
-        //check with temporary reference list before adding
-        existed = this.tmpNewSignAddingSignParagraphList.some((r: any) => {
-          if (
-            r.signParagraphParagraphId == signParagraph.signParagraphParagraphId &&
-            r.signParagraphSectionId ==
-            signParagraph.signParagraphSectionId &&
-            r.signParagraphStatueId ==
-            signParagraph.signParagraphStatueId
-          ) {
-            return true;
-          } else {
-            return false;
-          }
-        });
-      // }
+    //check with temporary reference list before adding
+    existed = this.tmpNewSignAddingSignParagraphList.some((r: any) => {
+      if (
+        r.signParagraphParagraphId == signParagraph.signParagraphParagraphId &&
+        r.signParagraphSectionId == signParagraph.signParagraphSectionId &&
+        r.signParagraphStatueId == signParagraph.signParagraphStatueId
+      ) {
+        return true;
+      } else {
+        return false;
+      }
+    });
+    // }
     // });
 
     if (this.tmpNewSignAddingSignParagraphList.length === 0 || !existed) {
@@ -717,7 +722,7 @@ export class ManageSignsComponent implements OnInit {
 
   //"Hoàn thành" button clicked
   completeAddNewSignSignParagraph() {
-    if(!this.newSignSignParagraphList){
+    if (!this.newSignSignParagraphList) {
       this.newSignSignParagraphList = [];
     }
 
@@ -954,7 +959,7 @@ export class ManageSignsComponent implements OnInit {
 
   openCreateSign() {
     this.isCreatingNewSign = true;
-    this.newSignSignCategoryId = this.signCategories[0].id;
+    this.newSignSignCategoryId = this.signCategories[0]?.id;
   }
 
   clearNewSignData() {
@@ -975,7 +980,7 @@ export class ManageSignsComponent implements OnInit {
     if (
       this.newSignName?.trim() === '' ||
       this.newSignName?.length > 150 ||
-      !this.newSignName.match('^Biển số [0-9]{3}[a-z]? ".*"$')
+      !this.newSignName.match('^Biển số ([a-zA-Z0-9.]+)[ ]{1}".*"$')
     ) {
       this.isValidNewSignName = false;
     } else {
@@ -1005,13 +1010,19 @@ export class ManageSignsComponent implements OnInit {
   }
 
   checkIsValidNewSign() {
-    this.newSignName?.trim() !== '' &&
-    this.isValidNewSignName &&
-    this.newSignDescription?.trim() !== '' &&
-    this.isValidNewSignDescription &&
-    this.newSignImageFile !== undefined
-      ? (this.isValidCreateNewSign = true)
-      : (this.isValidCreateNewSign = false);
+    if (
+      this.newSignName !== undefined &&
+      this.newSignName?.trim() !== '' &&
+      this.isValidNewSignName &&
+      this.newSignDescription !== undefined &&
+      this.newSignDescription?.trim() !== '' &&
+      this.isValidNewSignDescription &&
+      this.newSignImageFile !== undefined
+    ) {
+      this.isValidCreateNewSign = true;
+    } else {
+      this.isValidCreateNewSign = false;
+    }
   }
 
   createNewSign() {
@@ -1033,7 +1044,7 @@ export class ManageSignsComponent implements OnInit {
             signCategoryId: this.newSignSignCategoryId,
             imageUrl: this.newSignImageUrl,
 
-            signParagraphs: this.newSignSignParagraphList
+            signParagraphs: this.newSignSignParagraphList,
           },
           getStorageToken(),
           {
