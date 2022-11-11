@@ -557,7 +557,7 @@ export class ManageQuestionsComponent implements OnInit {
 
   getNewQuestionAnswer() {
     if (
-      this.newQuestionAnswer?.trim() === '' ||
+      // this.newQuestionAnswer?.trim() === '' ||
       this.newQuestionAnswer?.length > 2000
     ) {
       this.inValidNewQuestionAnswer = true;

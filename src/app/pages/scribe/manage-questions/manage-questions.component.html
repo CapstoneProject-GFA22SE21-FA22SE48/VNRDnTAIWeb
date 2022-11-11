@@ -367,7 +367,7 @@
             class="p-button-success"
             icon="pi pi-plus"
             [disabled]="
-              newQuestionAnswer === undefined || newQuestionAnswer === '' || inValidNewQuestionAnswer
+              newQuestionAnswer === undefined || newQuestionAnswer.trim() === '' || inValidNewQuestionAnswer
             "
             (click)="addNewQuestionAnswer()"
           ></button>
@@ -477,7 +477,7 @@
                   icon="pi pi-save"
                   class="p-button-rounded p-button-success p-button-text mr-2"
                   (click)="saveEditNewQuestionAnswer(i)"
-                  [disabled]="txtEditNewQuestionAnswer === '' || inValidNewQuestionEdittedAnswer"
+                  [disabled]="txtEditNewQuestionAnswer.trim() === '' || inValidNewQuestionEdittedAnswer"
                 ></button>
               </div>
               <div class="w-6">
