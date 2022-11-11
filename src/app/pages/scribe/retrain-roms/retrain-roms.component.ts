@@ -1,30 +1,27 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { IsLoadingService } from '@service-work/is-loading';
-import { DiffEditorModel } from 'ngx-monaco-editor-v2';
 import { ConfirmationService, MessageService } from 'primeng/api';
-import { OperationType } from 'src/app/common/operationType';
 import { decodeToken, getStorageToken } from 'src/app/utilities/jwt.util';
-import { toNonAccentVietnamese } from 'src/app/utilities/nonAccentVietnamese';
 import { WrapperService } from 'src/services/wrapper.service';
 import * as paths from '../../../common/paths';
 import * as commonStr from '../../../common/commonStr';
-import { EventEmitterService } from 'src/services/event-emitter.service';
+
 @Component({
-  selector: 'app-gps-roms',
-  templateUrl: './gps-roms.component.html',
-  styleUrls: ['./gps-roms.component.css'],
+  selector: 'app-retrain-roms',
+  templateUrl: './retrain-roms.component.html',
+  styleUrls: ['./retrain-roms.component.css']
 })
-export class GpsRomsComponent implements OnInit {
+export class RetrainRomsComponent implements OnInit {
   roms: any;
   tmpRoms: any;
 
   selectedRom: any;
 
-  //start of filtering data
-  filterSearchStr: any;
+  displayImgEvidence: boolean = false;
+  displayResolveRom: boolean = false;
 
+  //start of filtering data
   status: any[] = [
-    // { statusName: 'Chờ duyệt', statusCode: 1 }, //pending is 0 but dropdown of primeng need start from 1
     { statusName: 'Chưa tiếp nhận', statusCode: 1 },
     { statusName: 'Đã tiếp nhận', statusCode: 2 },
     { statusName: 'Đã duyệt', statusCode: 7 },
@@ -36,67 +33,22 @@ export class GpsRomsComponent implements OnInit {
   @ViewChild('calendar') private calendar: any;
   filterRangeDates: any;
   //end of filtering data
-
-  displayRomDetailDialog: boolean = false;
-  //start of text compare, using ngx-monaco-editor v2
-  options = {
-    theme: 'vs',
-    renderOverviewRuler: false,
-    contextmenu: false,
-    fontSize: '18px',
-    fontFamily: 'Jaldi',
-    maxWidth: '100px',
-  };
-
-  originalModel: DiffEditorModel = {
-    code: '',
-    language: 'text/plain',
-  };
-  originalModelImg: any;
-
-  changedModel: DiffEditorModel = {
-    code: '',
-    language: 'text/plain',
-  };
-  changedModelImg: any;
-  //end of text compare, using ngx-monaco-editor v2
-
-  //start of google map
-
-  //end of google map
-
+  
   constructor(
     private isLoadingService: IsLoadingService,
     private wrapperService: WrapperService,
     private confirmationService: ConfirmationService,
-    private messageService: MessageService,
-    private eventEmitterService: EventEmitterService
-  ) {}
+    private messageService: MessageService
+  ) { }
 
   ngOnInit(): void {
     this.loadRoms();
-
-     //used for displaying rom detail when navigating from notification clicked
-     this.eventEmitterService.invokeScribeNoti.subscribe((emittedRom: any) => {
-      if (emittedRom !== null && emittedRom !== undefined) {
-        var tmpRom = this.tmpRoms.filter((r: any) => {
-          if(
-            r.modifyingGpssignId !== undefined &&
-            emittedRom.modifyingGpssignId !== undefined &&
-            r.modifyingGpssignId === emittedRom.modifyingGpssignId
-          ) {
-            return r;
-          } 
-        })[0];
-        this.viewInfo(tmpRom);
-      }
-    });
   }
 
   loadRoms() {
     this.isLoadingService.add();
     this.wrapperService.get(
-      paths.ScribeGetGpssignRomList +
+      paths.ScribeGetRetrainRomList +
         '/' +
         decodeToken(getStorageToken() || '')?.Id,
       getStorageToken(),
@@ -104,7 +56,10 @@ export class GpsRomsComponent implements OnInit {
         successCallback: (response) => {
           this.roms = response.data;
           this.tmpRoms = this.roms;
-          this.filterData();
+          // this.filterData();
+
+          console.log(this.roms);
+          
 
           this.isLoadingService.remove();
         },
@@ -126,19 +81,6 @@ export class GpsRomsComponent implements OnInit {
       )
     }
 
-    //filter by filterSearchStr
-    if (this.filterSearchStr) {
-      this.roms = this.roms?.filter((r: any) => {
-        return r.modifyingGpssign?.sign?.name
-          ? toNonAccentVietnamese(
-              r.modifyingGpssign?.sign?.name?.toLowerCase()
-            ).trim().includes(
-              toNonAccentVietnamese(this.filterSearchStr.toLowerCase()).trim()
-            )
-          : null;
-      });
-    }
-
     //filter by date range
     if (this.filterRangeDates) {
       const startDate = this.filterRangeDates[0]?.toLocaleDateString('sv');
@@ -147,14 +89,14 @@ export class GpsRomsComponent implements OnInit {
       if (startDate && endDate) {
         this.roms = this.roms?.filter((r: any) => {
           return (
-            r.createdDate.toLocaleString().slice(0, 10) >= startDate &&
-            r.createdDate.toLocaleString().slice(0, 10) <= endDate
+            r?.createdDate.toLocaleString().slice(0, 10) >= startDate &&
+            r?.createdDate.toLocaleString().slice(0, 10) <= endDate
           );
         });
       }
     }
   }
-
+  
   closeDateRangePick() {
     if (this.filterRangeDates[1]) {
       this.calendar.overlayVisible = false;
@@ -162,39 +104,14 @@ export class GpsRomsComponent implements OnInit {
     }
   }
 
-  viewInfo(rom: any) {
+  viewImgEvidence(rom: any){
     this.selectedRom = rom;
-    this.originalModel.code = '';
-    this.changedModel.code = '';
-
-    if (this.selectedRom?.modifiedGpssign !== null) {
-      this.originalModel.code =
-        `Biển:\n` +
-        `\t${this.selectedRom?.modifiedGpssign?.sign?.name}\n` +
-        `Kinh độ:\n` +
-        `\t${this.selectedRom?.modifiedGpssign?.longitude}\n` +
-        `Vĩ độ:\n` +
-        `\t${this.selectedRom?.modifiedGpssign?.longitude}\n`;
-    } else {
-      this.originalModel.code = ' ';
-    }
-
-    if (this.selectedRom.operationType !== OperationType.Delete) {
-      this.changedModel.code =
-        `Biển:\n` +
-        `\t${this.selectedRom?.modifyingGpssign?.sign?.name}\n` +
-        `Kinh độ:\n` +
-        `\t${this.selectedRom?.modifyingGpssign?.longitude}\n` +
-        `Vĩ độ:\n` +
-        `\t${this.selectedRom?.modifyingGpssign?.longitude}\n`;
-    } else {
-      this.changedModel.code = ' ';
-    }
-
-    this.displayRomDetailDialog = true;
+    this.displayImgEvidence = true;
   }
 
-  confirmClaimRom(event: any) {
+  confirmClaimRom(event: any, rom: any) {
+    this.selectedRom = rom;
+
     this.confirmationService.confirm({
       target: event?.target,
       key: 'confirmClaim',
@@ -207,9 +124,9 @@ export class GpsRomsComponent implements OnInit {
 
         this.isLoadingService.add();
         this.wrapperService.put(
-          paths.ScribeClaimGpssignRom +
+          paths.ScribeClaimRetrainRom +
             '/' +
-            this.selectedRom.modifyingGpssign?.id,
+            this.selectedRom.id,
           this.selectedRom,
           getStorageToken(),
           {
@@ -240,8 +157,15 @@ export class GpsRomsComponent implements OnInit {
     });
   }
 
-  clearData() {
+  clearData(){
     this.selectedRom = undefined;
-    this.displayRomDetailDialog = false;
+    this.displayImgEvidence = false;
+  }
+
+  resolveRom(rom: any){
+    this.selectedRom = rom;
+    this.displayResolveRom = true;
+
+    
   }
 }

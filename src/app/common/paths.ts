@@ -87,6 +87,7 @@ export const ScribeCreateSignModificationRequest: string = base + '/SignModifica
 
 export const ScribeGetRomList: string = base + '/LawModificationRequests/ScribeROMList';
 export const ScribeGetGpssignRomList: string = base + '/SignModificationRequests/GpssignROMs';
+export const ScribeGetRetrainRomList: string = base + '/SignModificationRequests/RetrainROMs';
 
 export const ScribeGetLawRomDetail: string = base + '/LawModificationRequests/ROMDetail';
 export const ScribeGetParagraphRomDetailReference: string = base + '/LawModificationRequests/ParagraphROMDetail/References';
@@ -102,3 +103,4 @@ export const ScribeDeleteSignRom: string = base + '/SignModificationRequests';
 export const ScribeDeleteQuestionRom: string = base + '/QuestionModificationRequests';
 
 export const ScribeClaimGpssignRom: string = base + '/SignModificationRequests/GPSSign/Claim';
+export const ScribeClaimRetrainRom: string = base + '/SignModificationRequests/Retrain/Claim';

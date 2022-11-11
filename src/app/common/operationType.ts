@@ -1,5 +1,6 @@
 export enum OperationType {
     Add,
     Update, 
-    Delete
+    Delete,
+    Retrain
 }
