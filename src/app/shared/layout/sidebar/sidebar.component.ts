@@ -52,6 +52,10 @@ export class SidebarComponent implements OnInit {
       routerLink: '/scribe/gps-roms',
     },
     {
+      label: 'Yêu cầu Re-train AI',
+      routerLink: '/scribe/retrain-roms',
+    },
+    {
       label: 'Quản lý biển báo',
       routerLink: '/scribe/manage-signs',
     },

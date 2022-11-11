@@ -14,6 +14,7 @@ import { ManageQuestionsComponent } from './pages/scribe/manage-questions/manage
 import { MyRequestComponent } from './pages/scribe/my-request/my-request.component';
 import { ManageTaskComponent } from './pages/admin/manage-task/manage-task.component';
 import { GpsRomsComponent } from './pages/scribe/gps-roms/gps-roms.component';
+import { RetrainRomsComponent } from './pages/scribe/retrain-roms/retrain-roms.component';
 
 const routes: Routes = [
   {
@@ -69,6 +70,11 @@ const routes: Routes = [
   {
     path: paths.scribe.gpsRoms,
     component: GpsRomsComponent,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: paths.scribe.retrainRoms,
+    component: RetrainRomsComponent,
     canActivate: [AuthGuard]
   },
   {

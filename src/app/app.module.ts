@@ -67,6 +67,7 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
 import { MonacoEditorModule } from 'ngx-monaco-editor-v2';
 import {ConfirmPopupModule} from 'primeng/confirmpopup';
 import { GpsRomsComponent } from './pages/scribe/gps-roms/gps-roms.component';
+import { RetrainRomsComponent } from './pages/scribe/retrain-roms/retrain-roms.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -87,7 +88,8 @@ import { GpsRomsComponent } from './pages/scribe/gps-roms/gps-roms.component';
     MyRequestComponent,
     SafePipe,
     ManageTaskComponent,
-    GpsRomsComponent
+    GpsRomsComponent,
+    RetrainRomsComponent
   ],
   imports: [
     BrowserModule,

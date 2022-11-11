@@ -20,5 +20,6 @@ export const paths = {
     manageSigns: 'scribe/manage-signs',
     manageQuestions: 'scribe/manage-questions',
     gpsRoms: 'scribe/gps-roms',
+    retrainRoms: 'scribe/retrain-roms'
   }
 };

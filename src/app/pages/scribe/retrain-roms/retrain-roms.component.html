@@ -1,0 +1,228 @@
+<div class="flex h-full p-0">
+    <div class="w-12 h-full">
+      <div class="p-2 pb-3" style="height: 6%">
+        <fa-icon class="fa-lg mr-2" [icon]="['fas', 'triangle-exclamation']"></fa-icon>
+        <span class="text-xl">Yêu cầu Re-train AI</span>
+      </div>
+      <div class="p-2 w-12 flex align-items-center" style="height: 10%">
+        <div class="w-6 flex align-items-center">
+          <!-- <div class="mr-3">
+            <span class="p-input-icon-right">
+              <i class="pi pi-search"></i>
+              <input
+                type="text"
+                pInputText
+                placeholder="Tìm kiếm biển..."
+                [style]="{ height: '40px', width: '16rem' }"
+                [(ngModel)]="filterSearchStr"
+                (keyup)="filterData()"
+              />
+            </span>
+          </div> -->
+  
+          <p-dropdown
+            [(ngModel)]="filterStatusCode"
+            [options]="status"
+            placeholder="Trạng thái"
+            optionLabel="statusName"
+            optionValue="statusCode"
+            [showClear]="true"
+            [style]="{ height: '40px' }"
+            (onChange)="filterData()"
+          ></p-dropdown>
+        </div>
+  
+        <div class="w-6 flex justify-content-end">
+          <p-calendar
+            #calendar
+            [(ngModel)]="filterRangeDates"
+            [showIcon]="true"
+            dateFormat="dd/mm/yy"
+            [readonlyInput]="true"
+            selectionMode="range"
+            [showButtonBar]="true"
+            [style]="{ height: '40px', 'font-size': '.9rem', width: '16rem' }"
+            placeholder="Từ ngày - đến ngày"
+            (onSelect)="closeDateRangePick()"
+            (onClearClick)="filterData()"
+          ></p-calendar>
+        </div>
+      </div>
+  
+      <div class="p-2 overflow-auto" style="height: 84%">
+        <p-table
+          [value]="roms"
+          [paginator]="roms !== undefined && roms.length > 9 ? true : false"
+          [rows]="9"
+          [showCurrentPageReport]="
+            roms !== undefined && roms.length > 9 ? true : false
+          "
+          responsiveLayout="scroll"
+          currentPageReportTemplate="{first} đến {last} trong tổng số {totalRecords} mục"
+          styleClass="p-datatable-gridlines p-datatable-sm"
+        >
+          <ng-template pTemplate="header">
+            <tr>
+              <th [ngStyle]="{ width: '5%', 'text-align': 'center' }">#</th>
+              <th [ngStyle]="{ width: '10%', 'text-align': 'center' }">
+                Loại yêu cầu
+              </th>
+              <th [ngStyle]="{ width: '10%', 'text-align': 'center' }">
+                Hình ảnh
+              </th>
+              <th [ngStyle]="{ width: '10%', 'text-align': 'center' }">
+                Người yêu cầu
+              </th>
+              <th [ngStyle]="{ width: '10%', 'text-align': 'center' }">
+                Trạng thái
+              </th>
+              <th [ngStyle]="{ width: '10%', 'text-align': 'center' }">
+                Ngày tạo
+              </th>
+              <th [ngStyle]="{ width: '5%', 'text-align': 'center' }">
+                Tác vụ
+              </th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-rom let-i="rowIndex">
+            <tr>
+              <td [ngStyle]="{ 'text-align': 'center' }">
+                {{ i + 1 }}
+              </td>
+             
+              <td [ngStyle]="{ 'text-align': 'center' }">
+                <div
+                  class="w-12 white-space-nowrap overflow-hidden text-overflow-ellipsis"
+                >
+                  <span *ngIf="rom.operationType === 3">Re-train</span>
+                </div>
+              </td>
+              <td [ngStyle]="{ 'text-align': 'center' }">
+                <p-button label="Hình ảnh" icon="pi pi-image" [style]="{height: '25px'}" (click)="viewImgEvidence(rom)"></p-button>
+              </td>
+              <td  [className]="!rom.user?.username ? 'surface-200' : 'text-center'">
+                <div
+                  class="w-10rem white-space-nowrap overflow-hidden text-overflow-ellipsis"
+                >
+                  <span>{{ rom.user?.username }}</span>
+                </div>
+              </td>
+              <td [ngStyle]="{ 'text-align': 'center' }">
+                <div
+                  class="w-12 white-space-nowrap overflow-hidden text-overflow-ellipsis"
+                >
+                  <span *ngFor="let st of status">
+                    <span
+                      *ngIf="st.statusCode === rom.status"
+                      [className]="
+                        rom.status === 2
+                          ? 'text-purple-300 font-bold'
+                          : rom.status === 4
+                          ? 'text-red-300 font-bold'
+                          : rom.status === 3
+                          ? 'text-indigo-300 font-bold'
+                          : rom.status === 7 
+                          ? 'text-green-300 font-bold'
+                          : rom.status === 1
+                          ? 'text-yellow-300 font-bold' : ''
+                      "
+                    >
+                      {{ st.statusName }}
+                    </span>
+                  </span>
+                </div>
+              </td>
+              <td [ngStyle]="{ 'text-align': 'center' }">
+                <div
+                  class="w-12 white-space-nowrap overflow-hidden text-overflow-ellipsis"
+                >
+                  <span>
+                    {{ rom.createdDate | date: "dd/MM/yyyy" }}
+                  </span>
+                </div>
+              </td>
+  
+              <td [ngStyle]="{ 'text-align': 'center' }">
+                <button *ngIf="rom?.status === 1" pButton type="button" label="Tiếp nhận"
+                [style]="{padding: '.3rem .5rem .3rem .5rem', height: '25px', border: '3px solid'}"
+                class="p-button-outlined p-button-success" (click)="confirmClaimRom($event, rom)"></button>
+
+              <button *ngIf="rom?.status === 2" pButton type="button" label="Xử lý"
+                [style]="{padding: '.3rem .5rem .3rem .5rem', height: '25px', border: '3px solid'}"
+                class="p-button-outlined p-button-help" (click)="resolveRom(rom)"></button>
+              </td>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="emptymessage">
+            <tr>
+              <td colspan="9">
+                <span class="font-bold">Không tìm thấy kết quả</span>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Rom image evidence dialog -->
+  <p-dialog
+    [(visible)]="displayImgEvidence"
+    [modal]="true"
+    [style]="{ width: '50vw' }"
+    *ngIf="
+      selectedRom !== undefined
+    "
+  >
+    <ng-template pTemplate="header">
+      <span class="text-blue-500 font-bold text-xl">Hình ảnh</span>
+    </ng-template>
+  
+    <ng-template pTemplate="content">
+        <div class="w-12 text-lg">
+          <div
+            class="w-12 flex justify-content-center p-2 border-200 border-1 border-round-lg"
+          >
+            <img
+              *ngIf="selectedRom.imageUrl"
+              class="w-13rem h-auto"
+              [src]="selectedRom.imageUrl | safe: 'resourceUrl'"
+              alt="Hình ảnh"
+            />
+          </div>
+        </div>
+    </ng-template>
+  </p-dialog>
+
+  <!-- Resolve rom dialog -->
+<!-- [style]="{ width: '50vw' }" -->
+  <p-dialog
+  [(visible)]="displayResolveRom"
+  [modal]="true"
+  *ngIf="
+    selectedRom !== undefined
+  "
+>
+  <ng-template pTemplate="header">
+    <span class="text-blue-500 font-bold text-xl">Xử lý yêu cầu</span>
+  </ng-template>
+
+  <ng-template pTemplate="content">
+      <div class="w-12 text-lg">
+        <div
+          class="w-12 flex justify-content-center p-2 border-200 border-1 border-round-lg"
+        >
+        <!-- class="w-13rem h-auto" -->
+          <img
+            *ngIf="selectedRom.imageUrl"
+            [src]="selectedRom.imageUrl | safe: 'resourceUrl'"
+            alt="Hình ảnh"
+          />
+        </div>
+      </div>
+  </ng-template>
+</p-dialog>
+  
+  <p-confirmPopup key="confirmClaim"></p-confirmPopup>
+  <p-toast lifetime="1500"></p-toast>
+  
