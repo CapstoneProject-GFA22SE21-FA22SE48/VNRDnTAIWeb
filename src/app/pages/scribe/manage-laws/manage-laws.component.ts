@@ -921,38 +921,54 @@ export class ManageLawsComponent implements OnInit {
                 this.isUpdatingChosenSection = false;
                 this.clearChosenSectionData();
                 this.loadAdmins();
+
+                this.selectStatue(); //for refreshing section data
+
+                this.isLoadingService.remove();
+
                 this.messageService.add({
                   key: 'updateSuccess',
                   severity: 'success',
                   summary: commonStr.success,
                   detail: commonStr.romCreatedSuccessfully,
                 });
-                this.isLoadingService.remove();
               },
               errorCallback: (error) => {
-                console.log(error);
                 this.displayConfirmUpdateSectionDialog = false;
+                this.isUpdatingChosenSection = false;
+                this.clearChosenSectionData();
+                this.loadAdmins();
+                this.selectStatue(); //for refreshing section data
+
+                this.chosenSection = undefined;
+
+                this.isLoadingService.remove();
+
                 this.messageService.add({
                   key: 'updateError',
                   severity: 'error',
                   summary: commonStr.fail,
-                  detail: commonStr.errorOccur,
+                  detail: error?.response?.data || commonStr.errorOccur,
                 });
-                this.isLoadingService.remove();
               },
             }
           );
         },
         errorCallback: (error) => {
-          console.log(error);
           this.displayConfirmUpdateSectionDialog = false;
+          this.isUpdatingChosenSection = false;
+          this.clearChosenSectionData();
+          this.loadAdmins();
+          this.selectStatue(); //for refreshing section data
+
+          this.isLoadingService.remove();
+
           this.messageService.add({
             key: 'updateError',
             severity: 'error',
             summary: commonStr.fail,
             detail: commonStr.errorOccur,
           });
-          this.isLoadingService.remove();
         },
       }
     );
@@ -996,38 +1012,55 @@ export class ManageLawsComponent implements OnInit {
                 this.isUpdatingChosenParagraph = false;
                 this.clearChosenParagraphData();
                 this.loadAdmins();
+                this.selectSection(); //for refreshing paragraph data
+
+                this.chosenParagraph = undefined;
+
+                this.isLoadingService.remove();
+
                 this.messageService.add({
                   key: 'updateSuccess',
                   severity: 'success',
                   summary: commonStr.success,
                   detail: commonStr.romCreatedSuccessfully,
                 });
-                this.isLoadingService.remove();
               },
               errorCallback: (error) => {
-                console.log(error);
                 this.displayConfirmUpdateParagraphDialog = false;
+                this.isUpdatingChosenParagraph = false;
+                this.clearChosenParagraphData();
+                this.loadAdmins();
+                this.selectSection(); //for refreshing paragraph data
+
+                this.chosenParagraph = undefined;
+
+                this.isLoadingService.remove();
+
                 this.messageService.add({
                   key: 'updateError',
                   severity: 'error',
                   summary: commonStr.fail,
-                  detail: commonStr.errorOccur,
+                  detail: error?.response?.data || commonStr.errorOccur,
                 });
-                this.isLoadingService.remove();
               },
             }
           );
         },
         errorCallback: (error) => {
-          console.log(error);
           this.displayConfirmUpdateParagraphDialog = false;
+          this.isUpdatingChosenParagraph = false;
+          this.clearChosenParagraphData();
+          this.loadAdmins();
+          this.selectSection(); //for refreshing paragraph data
+
+          this.isLoadingService.remove();
+
           this.messageService.add({
             key: 'updateError',
             severity: 'error',
             summary: commonStr.fail,
             detail: commonStr.errorOccur,
           });
-          this.isLoadingService.remove();
         },
       }
     );

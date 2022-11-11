@@ -149,9 +149,15 @@ export class ManageQuestionsComponent implements OnInit {
     if (this.searchStr && this.searchStr.trim() != '') {
       this.questions = this.questions.filter(
         (q: any) =>
-          toNonAccentVietnamese(q.content?.toLowerCase()).trim().includes(
-            toNonAccentVietnamese(this.searchStr.toLowerCase()).trim()
-          ) || q.name?.toLowerCase().trim().includes(this.searchStr.toLowerCase().trim())
+          toNonAccentVietnamese(q.content?.toLowerCase())
+            .trim()
+            .includes(
+              toNonAccentVietnamese(this.searchStr.toLowerCase()).trim()
+            ) ||
+          q.name
+            ?.toLowerCase()
+            .trim()
+            .includes(this.searchStr.toLowerCase().trim())
       );
     } else {
       this.questions = this.tmpQuestions;
@@ -344,40 +350,53 @@ export class ManageQuestionsComponent implements OnInit {
                       });
 
                       this.resetDataUpdateQuestion();
+                      this.loadAdmins();
+                      this.loadAssigedQuestions();
                       this.displayUpdateDialog = false;
+
+                      this.isLoadingService.remove();
+
                       this.messageService.add({
                         key: 'createUpdateROMSuccess',
                         severity: 'success',
                         summary: commonStr.success,
                         detail: commonStr.romCreatedSuccessfully,
                       });
-                      this.loadAdmins();
-                      this.isLoadingService.remove();
                     },
                     errorCallback: (error) => {
-                      console.log(error);
+                      this.resetDataUpdateQuestion();
+                      this.loadAdmins();
+                      this.loadAssigedQuestions();
                       this.displayUpdateDialog = false;
+
+                      this.selectedQuestion = undefined;
+
+                      this.isLoadingService.remove();
+
                       this.messageService.add({
                         key: 'createUpdateROMError',
                         severity: 'error',
                         summary: commonStr.fail,
-                        detail: commonStr.errorOccur,
+                        detail: error?.response?.data || commonStr.errorOccur,
                       });
-                      this.isLoadingService.remove();
                     },
                   }
                 );
               },
               errorCallback: (error) => {
-                console.log(error);
+                this.resetDataUpdateQuestion();
+                this.loadAdmins();
+                this.loadAssigedQuestions();
                 this.displayUpdateDialog = false;
+
+                this.isLoadingService.remove();
+
                 this.messageService.add({
                   key: 'createUpdateROMError',
                   severity: 'error',
                   summary: commonStr.fail,
                   detail: commonStr.errorOccur,
                 });
-                this.isLoadingService.remove();
               },
             }
           );
@@ -417,40 +436,53 @@ export class ManageQuestionsComponent implements OnInit {
                   });
 
                   this.resetDataUpdateQuestion();
+                  this.loadAdmins();
+                  this.loadAssigedQuestions();
                   this.displayUpdateDialog = false;
+
+                  this.isLoadingService.remove();
+
                   this.messageService.add({
                     key: 'createUpdateROMSuccess',
                     severity: 'success',
                     summary: commonStr.success,
                     detail: commonStr.romCreatedSuccessfully,
                   });
-                  this.loadAdmins();
-                  this.isLoadingService.remove();
                 },
                 errorCallback: (error) => {
-                  console.log(error);
+                  this.resetDataUpdateQuestion();
+                  this.loadAdmins();
+                  this.loadAssigedQuestions();
                   this.displayUpdateDialog = false;
+
+                  this.selectedQuestion = undefined;
+
+                  this.isLoadingService.remove();
+
                   this.messageService.add({
                     key: 'createUpdateROMError',
                     severity: 'error',
                     summary: commonStr.fail,
-                    detail: commonStr.errorOccur,
+                    detail: error?.response?.data || commonStr.errorOccur,
                   });
-                  this.isLoadingService.remove();
                 },
               }
             );
           },
           errorCallback: (error) => {
-            console.log(error);
+            this.resetDataUpdateQuestion();
+            this.loadAdmins();
+            this.loadAssigedQuestions();
             this.displayUpdateDialog = false;
+
+            this.isLoadingService.remove();
+
             this.messageService.add({
               key: 'createUpdateROMError',
               severity: 'error',
               summary: commonStr.fail,
               detail: commonStr.errorOccur,
             });
-            this.isLoadingService.remove();
           },
         }
       );
