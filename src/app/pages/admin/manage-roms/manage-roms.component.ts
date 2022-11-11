@@ -626,7 +626,6 @@ export class ManageRomsComponent implements OnInit {
         getStorageToken(),
         {
           successCallback: (response) => {
-            console.log(response.data);
             if (response.data.modifyingSign !== null) {
               this.selectedRom.modifyingSign = response.data.modifyingSign;
               // if (!this.selectedRom.modifyingSign.isDeleted) {
