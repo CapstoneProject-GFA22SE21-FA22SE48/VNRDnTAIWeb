@@ -316,12 +316,16 @@ export class ManageLawsComponent implements OnInit {
     if (this.searchStatueStr && this.searchStatueStr.trim() != '') {
       this.statues = this.statues.filter(
         (s: any) =>
-          toNonAccentVietnamese(s.name?.toLowerCase()).trim().includes(
-            toNonAccentVietnamese(this.searchStatueStr.toLowerCase()).trim()
-          ) ||
-          toNonAccentVietnamese(s.description?.toLowerCase()).trim().includes(
-            toNonAccentVietnamese(this.searchStatueStr.toLowerCase()).trim()
-          )
+          toNonAccentVietnamese(s.name?.toLowerCase())
+            .trim()
+            .includes(
+              toNonAccentVietnamese(this.searchStatueStr.toLowerCase()).trim()
+            ) ||
+          toNonAccentVietnamese(s.description?.toLowerCase())
+            .trim()
+            .includes(
+              toNonAccentVietnamese(this.searchStatueStr.toLowerCase()).trim()
+            )
       );
     }
   }
@@ -369,12 +373,16 @@ export class ManageLawsComponent implements OnInit {
     if (this.searchSectionStr && this.searchSectionStr.trim() != '') {
       this.sections = this.sections.filter(
         (s: any) =>
-          toNonAccentVietnamese(s.name?.toLowerCase()).trim().includes(
-            toNonAccentVietnamese(this.searchSectionStr.toLowerCase()).trim()
-          ) ||
-          toNonAccentVietnamese(s.description?.toLowerCase()).trim().includes(
-            toNonAccentVietnamese(this.searchSectionStr.toLowerCase()).trim()
-          )
+          toNonAccentVietnamese(s.name?.toLowerCase())
+            .trim()
+            .includes(
+              toNonAccentVietnamese(this.searchSectionStr.toLowerCase()).trim()
+            ) ||
+          toNonAccentVietnamese(s.description?.toLowerCase())
+            .trim()
+            .includes(
+              toNonAccentVietnamese(this.searchSectionStr.toLowerCase()).trim()
+            )
       );
     }
 
@@ -411,12 +419,20 @@ export class ManageLawsComponent implements OnInit {
     if (this.searchParagraphStr && this.searchParagraphStr.trim() != '') {
       this.paragraphs = this.paragraphs.filter(
         (p: any) =>
-          toNonAccentVietnamese(p.name?.toLowerCase()).trim().includes(
-            toNonAccentVietnamese(this.searchParagraphStr.toLowerCase()).trim()
-          ) ||
-          toNonAccentVietnamese(p.description?.toLowerCase()).trim().includes(
-            toNonAccentVietnamese(this.searchParagraphStr.toLowerCase()).trim()
-          )
+          toNonAccentVietnamese(p.name?.toLowerCase())
+            .trim()
+            .includes(
+              toNonAccentVietnamese(
+                this.searchParagraphStr.toLowerCase()
+              ).trim()
+            ) ||
+          toNonAccentVietnamese(p.description?.toLowerCase())
+            .trim()
+            .includes(
+              toNonAccentVietnamese(
+                this.searchParagraphStr.toLowerCase()
+              ).trim()
+            )
       );
     }
   }
@@ -1367,13 +1383,15 @@ export class ManageLawsComponent implements OnInit {
               );
 
               //Remove added reference paragraphs from the list of reference paragraph that will be added
-              if(this.newChosenParagraphReferenceList){
-                this.newChosenParagraphReferenceList.forEach((addedRef: any) => {
-                  this.addingChosenParagraphParagraphList =
-                    this.addingChosenParagraphParagraphList.filter(
-                      (r: any) => r.id !== addedRef.referenceParagraphId
-                    );
-                });
+              if (this.newChosenParagraphReferenceList) {
+                this.newChosenParagraphReferenceList.forEach(
+                  (addedRef: any) => {
+                    this.addingChosenParagraphParagraphList =
+                      this.addingChosenParagraphParagraphList.filter(
+                        (r: any) => r.id !== addedRef.referenceParagraphId
+                      );
+                  }
+                );
               }
 
               this.emptyParagraphSectionMsg = '';
@@ -1489,7 +1507,7 @@ export class ManageLawsComponent implements OnInit {
 
   //"Hoàn thành" button clicked
   completeAddChosenParagraphIncludedReference() {
-    if(!this.newChosenParagraphReferenceList){
+    if (!this.newChosenParagraphReferenceList) {
       this.newChosenParagraphReferenceList = [];
     }
     this.tmpChosenParagraphAddingReferenceList.forEach((r: any) => {
@@ -2340,8 +2358,20 @@ export class ManageLawsComponent implements OnInit {
         successCallback: (response) => {
           this.selectedStatueForAddNewLaw.sections = response.data;
           this.selectedSectionForAddNewLaw =
-            // this.selectedStatueForAddNewLaw.sections[this.selectedStatueForAddNewLaw.sections?.length-1];
             this.selectedStatueForAddNewLaw.sections[0];
+
+          //check if selected section is a section with no paragraph
+          if (
+            this.selectedSectionForAddNewLaw.paragraphs !== undefined &&
+            this.selectedSectionForAddNewLaw.paragraphs?.length === 1 &&
+            this.selectedSectionForAddNewLaw.paragraphs[0].name.trim() === '' &&
+            this.selectedSectionForAddNewLaw.paragraphs[0].description.trim() ===
+              ''
+          ) {
+            this.isValidGoNextOnSectionDialog = false;
+          } else {
+            this.isValidGoNextOnSectionDialog = true;
+          }
 
           //Set init value for new section
           this.initValueForNewSection();
@@ -2357,6 +2387,19 @@ export class ManageLawsComponent implements OnInit {
   }
 
   selectAnotherSectionOrDefaultSectionSelected() {
+    //check if selected section is a section with no paragraph
+    if (
+      this.selectedSectionForAddNewLaw.paragraphs !== undefined &&
+      this.selectedSectionForAddNewLaw.paragraphs?.length === 1 &&
+      this.selectedSectionForAddNewLaw.paragraphs[0].name.trim() === '' &&
+      this.selectedSectionForAddNewLaw.paragraphs[0].description.trim() === ''
+    ) {
+      this.isValidGoNextOnSectionDialog = false;
+      return;
+    } else {
+      this.isValidGoNextOnSectionDialog = true;
+    }
+
     this.clearAllNewParagraphs();
     //load existing paragraph data to get length to init paragraph name for new paragraph
     if (this.selectedSectionForAddNewLaw.paragraphs?.length > 0) {

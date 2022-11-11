@@ -92,7 +92,11 @@
               {{ i + 1 }}
             </td>
             <td class="text-center">
-              {{ statue.name }}
+              <div
+                class="w-7rem overflow-hidden white-space-nowrap text-overflow-ellipsis text-center"
+              >
+                <span>{{ statue.name }}</span>
+              </div>
             </td>
             <td class="text-center">
               <div
@@ -328,11 +332,17 @@
             [style]="{ width: '10rem', height: '35px' }"
             class="dropdown-admins"
           >
-            <ng-template let-admin pTemplate="item" class="dropdown-admins-tooltip">
-              <div [pTooltip]="admin.pendingRequests"
-              tooltipPosition="left" class="w-full h-3rem flex justify-content-center 
-              align-items-center whitespace-no-wrap text-overflow-ellipsis ">
-                  <span>{{admin.username}}</span>
+            <ng-template
+              let-admin
+              pTemplate="item"
+              class="dropdown-admins-tooltip"
+            >
+              <div
+                [pTooltip]="admin.pendingRequests"
+                tooltipPosition="left"
+                class="w-full h-3rem flex justify-content-center align-items-center whitespace-no-wrap text-overflow-ellipsis"
+              >
+                <span>{{ admin.username }}</span>
               </div>
             </ng-template>
           </p-dropdown>
@@ -539,13 +549,17 @@
               {{ i + 1 }}
             </td>
             <td class="text-center">
-              {{ section.name }}
+              <div
+                class="w-5rem overflow-hidden white-space-nowrap text-overflow-ellipsis text-center"
+              >
+                <span>{{ section.name }}</span>
+              </div>
             </td>
             <td class="text-center">
               <div
                 class="w-20rem overflow-hidden white-space-nowrap text-overflow-ellipsis text-center"
               >
-                {{ section.description }}
+                <span>{{ section.description }}</span>
               </div>
             </td>
             <td class="text-center">
@@ -932,15 +946,21 @@
             filterBy="username"
             [style]="{ width: '10rem', height: '35px' }"
             class="dropdown-admins"
+          >
+            <ng-template
+              let-admin
+              pTemplate="item"
+              class="dropdown-admins-tooltip"
             >
-              <ng-template let-admin pTemplate="item" class="dropdown-admins-tooltip">
-                <div [pTooltip]="admin.pendingRequests"
-                tooltipPosition="left" class="w-full h-3rem flex justify-content-center 
-                align-items-center whitespace-no-wrap text-overflow-ellipsis ">
-                    <span>{{admin.username}}</span>
-                </div>
-              </ng-template>
-            </p-dropdown>
+              <div
+                [pTooltip]="admin.pendingRequests"
+                tooltipPosition="left"
+                class="w-full h-3rem flex justify-content-center align-items-center whitespace-no-wrap text-overflow-ellipsis"
+              >
+                <span>{{ admin.username }}</span>
+              </div>
+            </ng-template>
+          </p-dropdown>
         </div>
       </div>
     </div>
@@ -1029,22 +1049,20 @@
             class="p-button-raised p-button-success"
             [style]="{ height: '40px' }"
             (click)="displayAddNewParagraph()"
+            [disabled]="
+              !(
+                tmpParagraphs &&
+                tmpParagraphs.length >= 1 &&
+                tmpParagraphs[0].name !== '' &&
+                tmpParagraphs[0].description !== ''
+              )
+            "
           ></button>
         </div>
       </div>
     </div>
 
-    <div
-      style="height: 10%"
-      class="p-2"
-      
-    >
-    <!-- *ngIf="
-        paragraphs &&
-        paragraphs.length > 1 &&
-        paragraphs[0].name !== '' &&
-        paragraphs[0].description !== ''
-      " -->
+    <div style="height: 10%" class="p-2">
       <div class="flex align-items-center">
         <div class="flex justify-content-start" style="width: 37%">
           <div class="w-full">
@@ -1054,10 +1072,12 @@
                 type="text"
                 pInputText
                 [disabled]="
-                !(tmpParagraphs &&
-                tmpParagraphs.length > 1 &&
-                tmpParagraphs[0].name !== '' &&
-                tmpParagraphs[0].description !== '')
+                  !(
+                    tmpParagraphs &&
+                    tmpParagraphs.length >= 1 &&
+                    tmpParagraphs[0].name !== '' &&
+                    tmpParagraphs[0].description !== ''
+                  )
                 "
                 placeholder="Tìm kiếm điểm..."
                 [(ngModel)]="searchParagraphStr"
@@ -1082,19 +1102,25 @@
 
     <div style="height: 75%" class="p-2 overflow-auto">
       <span
-        *ngIf="!(tmpParagraphs &&
-        tmpParagraphs.length > 1 &&
-        tmpParagraphs[0].name !== '' &&
-        tmpParagraphs[0].description !== '') && !searchParagraphStr"
+        *ngIf="
+          !(
+            tmpParagraphs &&
+            tmpParagraphs.length >= 1 &&
+            tmpParagraphs[0].name !== '' &&
+            tmpParagraphs[0].description !== ''
+          ) && !searchParagraphStr
+        "
         class="text-lg text-blue-500 font-bold"
       >
         {{ selectedSection?.name }} không chứa điểm.
       </span>
       <p-table
-      *ngIf="(tmpParagraphs &&
-      tmpParagraphs.length > 1 &&
-      tmpParagraphs[0].name !== '' &&
-      tmpParagraphs[0].description !== '')"
+        *ngIf="
+          tmpParagraphs &&
+          tmpParagraphs.length >= 1 &&
+          tmpParagraphs[0].name !== '' &&
+          tmpParagraphs[0].description !== ''
+        "
         [value]="paragraphs"
         [paginator]="paragraphs?.length > 8 ? true : false"
         [rows]="8"
@@ -1105,62 +1131,15 @@
       >
         <ng-template pTemplate="header">
           <tr>
-            <th
-              [ngStyle]="{ width: '5%', 'text-align': 'center' }"
-              *ngIf="
-                tmpParagraphs &&
-                tmpParagraphs.length > 1 &&
-                tmpParagraphs[0].name !== '' &&
-                tmpParagraphs[0].description !== ''
-              "
-            >
-            <!-- *ngIf="
-                paragraphs &&
-                paragraphs.length > 1 &&
-                paragraphs[0].name !== '' &&
-                paragraphs[0].description !== ''
-              " -->
-              #
-            </th>
-            <th
-              [ngStyle]="{ width: '18%', 'text-align': 'center' }"
-              *ngIf="
-              tmpParagraphs &&
-              tmpParagraphs.length > 1 &&
-              tmpParagraphs[0].name !== '' &&
-              tmpParagraphs[0].description !== ''
-            "
-            >
-            <!-- *ngIf="
-                paragraphs &&
-                paragraphs.length > 1 &&
-                paragraphs[0].name !== '' &&
-                paragraphs[0].description !== ''
-              " -->
-              Điểm
-            </th>
-            <th
-              [ngStyle]="{ width: '52%', 'text-align': 'center' }"
-              *ngIf="
-              tmpParagraphs &&
-              tmpParagraphs.length > 1 &&
-              tmpParagraphs[0].name !== '' &&
-              tmpParagraphs[0].description !== ''
-            "
-              
-            >
-            <!-- *ngIf="
-                paragraphs &&
-                paragraphs.length > 1 &&
-                paragraphs[0].name !== '' &&
-                paragraphs[0].description !== ''
-              " -->
+            <th [ngStyle]="{ width: '5%', 'text-align': 'center' }">#</th>
+            <th [ngStyle]="{ width: '15%', 'text-align': 'center' }">Điểm</th>
+            <th [ngStyle]="{ width: '40%', 'text-align': 'center' }">
               Nội dung
             </th>
-            <th [ngStyle]="{ width: '12.5%', 'text-align': 'center' }">
+            <th [ngStyle]="{ width: '17.5%', 'text-align': 'center' }">
               Bao gồm hành vi tại
             </th>
-            <th [ngStyle]="{ width: '12.5%', 'text-align': 'center' }">
+            <th [ngStyle]="{ width: '17.5%', 'text-align': 'center' }">
               Ngoại trừ hành vi tại
             </th>
             <th [ngStyle]="{ width: '5%', 'text-align': 'center' }"></th>
@@ -1168,48 +1147,21 @@
         </ng-template>
         <ng-template pTemplate="body" let-paragraph let-i="rowIndex">
           <tr>
-            <td
-              class="text-center"
-              *ngIf="
-              tmpParagraphs &&
-              tmpParagraphs.length > 1 &&
-              tmpParagraphs[0].name !== '' &&
-              tmpParagraphs[0].description !== ''
-            "
-              
-            >
-            <!-- *ngIf="
-                paragraphs &&
-                paragraphs.length > 1 &&
-                paragraphs[0].name !== '' &&
-                paragraphs[0].description !== ''
-              " -->
+            <td class="text-center">
               {{ i + 1 }}
             </td>
-            <td
-              class="text-center"
-              *ngIf="
-              tmpParagraphs &&
-              tmpParagraphs.length > 1 &&
-              tmpParagraphs[0].name !== '' &&
-              tmpParagraphs[0].description !== ''
-            "
-              
-            >
-            <!-- *ngIf="
-                paragraphs &&
-                paragraphs.length > 1 &&
-                paragraphs[0].name !== '' &&
-                paragraphs[0].description !== ''
-              " -->
-              {{ paragraph.name }}
-            </td>
-            <td class="text-center" *ngIf="tmpParagraphs && tmpParagraphs.length > 1">
-              <!-- *ngIf="paragraphs && paragraphs.length > 1" -->
+            <td class="text-center">
               <div
-                class="w-20rem overflow-hidden white-space-nowrap text-overflow-ellipsis text-center"
+                class="w-6rem white-space-nowrap overflow-hidden text-overflow-ellipsis"
               >
-                {{ paragraph.description }}
+                <span>{{ paragraph.name }}</span>
+              </div>
+            </td>
+            <td class="text-center">
+              <div
+                class="w-17rem overflow-hidden white-space-nowrap text-overflow-ellipsis text-center"
+              >
+                <span>{{ paragraph.description }}</span>
               </div>
             </td>
             <td class="text-center">
@@ -1763,15 +1715,21 @@
             filterBy="username"
             [style]="{ width: '10rem', height: '35px' }"
             class="dropdown-admins"
+          >
+            <ng-template
+              let-admin
+              pTemplate="item"
+              class="dropdown-admins-tooltip"
             >
-              <ng-template let-admin pTemplate="item" class="dropdown-admins-tooltip">
-                <div [pTooltip]="admin.pendingRequests"
-                tooltipPosition="left" class="w-full h-3rem flex justify-content-center 
-                align-items-center whitespace-no-wrap text-overflow-ellipsis ">
-                    <span>{{admin.username}}</span>
-                </div>
-              </ng-template>
-            </p-dropdown>
+              <div
+                [pTooltip]="admin.pendingRequests"
+                tooltipPosition="left"
+                class="w-full h-3rem flex justify-content-center align-items-center whitespace-no-wrap text-overflow-ellipsis"
+              >
+                <span>{{ admin.username }}</span>
+              </div>
+            </ng-template>
+          </p-dropdown>
         </div>
       </div>
     </div>
@@ -2056,15 +2014,21 @@
           filterBy="username"
           [style]="{ height: '40px' }"
           class="dropdown-admins"
+        >
+          <ng-template
+            let-admin
+            pTemplate="item"
+            class="dropdown-admins-tooltip"
           >
-            <ng-template let-admin pTemplate="item" class="dropdown-admins-tooltip">
-              <div [pTooltip]="admin.pendingRequests"
-              tooltipPosition="left" class="w-full h-3rem flex justify-content-center 
-              align-items-center whitespace-no-wrap text-overflow-ellipsis ">
-                  <span>{{admin.username}}</span>
-              </div>
-            </ng-template>
-          </p-dropdown>
+            <div
+              [pTooltip]="admin.pendingRequests"
+              tooltipPosition="left"
+              class="w-full h-3rem flex justify-content-center align-items-center whitespace-no-wrap text-overflow-ellipsis"
+            >
+              <span>{{ admin.username }}</span>
+            </div>
+          </ng-template>
+        </p-dropdown>
       </div>
     </div>
   </div>
@@ -2158,15 +2122,21 @@
           filterBy="username"
           [style]="{ height: '40px' }"
           class="dropdown-admins"
+        >
+          <ng-template
+            let-admin
+            pTemplate="item"
+            class="dropdown-admins-tooltip"
           >
-            <ng-template let-admin pTemplate="item" class="dropdown-admins-tooltip">
-              <div [pTooltip]="admin.pendingRequests"
-              tooltipPosition="left" class="w-full h-3rem flex justify-content-center 
-              align-items-center whitespace-no-wrap text-overflow-ellipsis ">
-                  <span>{{admin.username}}</span>
-              </div>
-            </ng-template>
-          </p-dropdown>
+            <div
+              [pTooltip]="admin.pendingRequests"
+              tooltipPosition="left"
+              class="w-full h-3rem flex justify-content-center align-items-center whitespace-no-wrap text-overflow-ellipsis"
+            >
+              <span>{{ admin.username }}</span>
+            </div>
+          </ng-template>
+        </p-dropdown>
       </div>
     </div>
   </div>
@@ -2260,15 +2230,21 @@
           filterBy="username"
           [style]="{ height: '40px' }"
           class="dropdown-admins"
+        >
+          <ng-template
+            let-admin
+            pTemplate="item"
+            class="dropdown-admins-tooltip"
           >
-            <ng-template let-admin pTemplate="item" class="dropdown-admins-tooltip">
-              <div [pTooltip]="admin.pendingRequests"
-              tooltipPosition="left" class="w-full h-3rem flex justify-content-center 
-              align-items-center whitespace-no-wrap text-overflow-ellipsis ">
-                  <span>{{admin.username}}</span>
-              </div>
-            </ng-template>
-          </p-dropdown>
+            <div
+              [pTooltip]="admin.pendingRequests"
+              tooltipPosition="left"
+              class="w-full h-3rem flex justify-content-center align-items-center whitespace-no-wrap text-overflow-ellipsis"
+            >
+              <span>{{ admin.username }}</span>
+            </div>
+          </ng-template>
+        </p-dropdown>
       </div>
     </div>
   </div>
@@ -2344,7 +2320,7 @@
             [filter]="true"
             filterBy="name"
             modal="true"
-            [style]="{ width: '100%', height: '40px' }"
+            [style]="{ width: '100%', height: '35px' }"
             (onChange)="selectAnotherStatueOrDefaultStatueSelected()"
           >
           </p-dropdown>
@@ -2411,11 +2387,30 @@
               [filter]="true"
               filterBy="name"
               modal="true"
-              [style]="{ width: '100%', height: '40px' }"
+              [style]="{ width: '100%', height: '35px' }"
               (onChange)="selectAnotherSectionOrDefaultSectionSelected()"
               [disabled]="isAddedNewSection"
             >
             </p-dropdown>
+          </div>
+        </div>
+
+        <div
+          class="w-12 flex justify-content-center mb-3"
+          *ngIf="
+            !isCollapsedCreatNewSection &&
+            !isUpdatingNewSection &&
+            selectedSectionForAddNewLaw &&
+              selectedSectionForAddNewLaw?.paragraphs?.length === 1 &&
+              selectedSectionForAddNewLaw?.paragraphs[0]?.name?.trim() === '' &&
+              selectedSectionForAddNewLaw?.paragraphs[0]?.description?.trim() ===
+                ''
+          "
+        >
+          <div class="w-8">
+            <span class="font-bold text-red-300">
+              {{ selectedSectionForAddNewLaw?.name }} là khoản không chứa điểm
+            </span>
           </div>
         </div>
 
@@ -3335,15 +3330,21 @@
               filterBy="username"
               [style]="{ width: '10rem', height: '35px' }"
               class="dropdown-admins"
+            >
+              <ng-template
+                let-admin
+                pTemplate="item"
+                class="dropdown-admins-tooltip"
               >
-                <ng-template let-admin pTemplate="item" class="dropdown-admins-tooltip">
-                  <div [pTooltip]="admin.pendingRequests"
-                  tooltipPosition="left" class="w-full h-3rem flex justify-content-center 
-                  align-items-center whitespace-no-wrap text-overflow-ellipsis ">
-                      <span>{{admin.username}}</span>
-                  </div>
-                </ng-template>
-              </p-dropdown>
+                <div
+                  [pTooltip]="admin.pendingRequests"
+                  tooltipPosition="left"
+                  class="w-full h-3rem flex justify-content-center align-items-center whitespace-no-wrap text-overflow-ellipsis"
+                >
+                  <span>{{ admin.username }}</span>
+                </div>
+              </ng-template>
+            </p-dropdown>
           </div>
         </div>
       </div>
@@ -4203,15 +4204,21 @@
               filterBy="username"
               [style]="{ width: '10rem', height: '35px' }"
               class="dropdown-admins"
+            >
+              <ng-template
+                let-admin
+                pTemplate="item"
+                class="dropdown-admins-tooltip"
               >
-                <ng-template let-admin pTemplate="item" class="dropdown-admins-tooltip">
-                  <div [pTooltip]="admin.pendingRequests"
-                  tooltipPosition="left" class="w-full h-3rem flex justify-content-center 
-                  align-items-center whitespace-no-wrap text-overflow-ellipsis ">
-                      <span>{{admin.username}}</span>
-                  </div>
-                </ng-template>
-              </p-dropdown>
+                <div
+                  [pTooltip]="admin.pendingRequests"
+                  tooltipPosition="left"
+                  class="w-full h-3rem flex justify-content-center align-items-center whitespace-no-wrap text-overflow-ellipsis"
+                >
+                  <span>{{ admin.username }}</span>
+                </div>
+              </ng-template>
+            </p-dropdown>
           </div>
         </div>
       </div>
