@@ -266,9 +266,9 @@ export class ManageSignsComponent implements OnInit {
   getTmpChosenSignNewName() {
     if (
       !this.tmpChosenSignNewName ||
-      this.tmpChosenSignNewName.trim() === '' ||
+      this.tmpChosenSignNewName?.trim() === '' ||
       this.tmpChosenSignNewName?.length > 150 ||
-      !this.tmpChosenSignNewName.match('^Biển số ([a-zA-Z0-9.]+)[ ]{1}".*"$')
+      !this.tmpChosenSignNewName?.match('^Biển số ([a-zA-Z0-9.]+)[ ]{1}".*"$')
     ) {
       this.isValidUpdateChosenSign = false;
       this.isValidChosenSignNewName = false;
@@ -779,37 +779,50 @@ export class ManageSignsComponent implements OnInit {
                         isRead: false,
                       });
                       this.clearTmpChosenSignNewData();
+                      this.loadAdmins();
+                      this.loadAssigedSigns();
                       this.displayConfirmUpdateChosenSign = false;
+
+                      this.isLoadingService.remove();
+
                       this.messageService.add({
                         severity: 'success',
                         summary: commonStr.success,
                         detail: commonStr.romCreatedSuccessfully,
                       });
-                      this.loadAdmins();
-                      this.isLoadingService.remove();
                     },
                     errorCallback: (error) => {
-                      console.log(error);
+                      this.clearTmpChosenSignNewData();
+                      this.loadAdmins();
+                      this.loadAssigedSigns();
                       this.displayConfirmUpdateChosenSign = false;
+
+                      this.chosenSign = undefined;
+
+                      this.isLoadingService.remove();
+
                       this.messageService.add({
                         severity: 'error',
                         summary: commonStr.fail,
-                        detail: commonStr.errorOccur,
+                        detail: error?.response?.data || commonStr.errorOccur,
                       });
-                      this.isLoadingService.remove();
                     },
                   }
                 );
               },
               errorCallback: (error) => {
-                console.log(error);
+                this.clearTmpChosenSignNewData();
+                this.loadAdmins();
+                this.loadAssigedSigns();
                 this.displayConfirmUpdateChosenSign = false;
+
+                this.isLoadingService.remove();
+
                 this.messageService.add({
                   severity: 'error',
                   summary: commonStr.fail,
                   detail: commonStr.errorOccur,
                 });
-                this.isLoadingService.remove();
               },
             }
           );
@@ -848,37 +861,50 @@ export class ManageSignsComponent implements OnInit {
                     isRead: false,
                   });
                   this.clearTmpChosenSignNewData();
+                  this.loadAdmins();
+                  this.loadAssigedSigns();
                   this.displayConfirmUpdateChosenSign = false;
+
+                  this.isLoadingService.remove();
+
                   this.messageService.add({
                     severity: 'success',
                     summary: commonStr.success,
                     detail: commonStr.romCreatedSuccessfully,
                   });
-                  this.loadAdmins();
-                  this.isLoadingService.remove();
                 },
                 errorCallback: (error) => {
-                  console.log(error);
+                  this.clearTmpChosenSignNewData();
+                  this.loadAdmins();
+                  this.loadAssigedSigns();
                   this.displayConfirmUpdateChosenSign = false;
+
+                  this.chosenSign = undefined;
+
+                  this.isLoadingService.remove();
+
                   this.messageService.add({
                     severity: 'error',
                     summary: commonStr.fail,
-                    detail: commonStr.errorOccur,
+                    detail: error?.response?.data || commonStr.errorOccur,
                   });
-                  this.isLoadingService.remove();
                 },
               }
             );
           },
           errorCallback: (error) => {
-            console.log(error);
+            this.clearTmpChosenSignNewData();
+            this.loadAdmins();
+            this.loadAssigedSigns();
             this.displayConfirmUpdateChosenSign = false;
+
+            this.isLoadingService.remove();
+
             this.messageService.add({
               severity: 'error',
               summary: commonStr.fail,
               detail: commonStr.errorOccur,
             });
-            this.isLoadingService.remove();
           },
         }
       );
@@ -980,7 +1006,7 @@ export class ManageSignsComponent implements OnInit {
     if (
       this.newSignName?.trim() === '' ||
       this.newSignName?.length > 150 ||
-      !this.newSignName.match('^Biển số ([a-zA-Z0-9.]+)[ ]{1}".*"$')
+      !this.newSignName?.match('^Biển số ([a-zA-Z0-9.]+)[ ]{1}".*"$')
     ) {
       this.isValidNewSignName = false;
     } else {
