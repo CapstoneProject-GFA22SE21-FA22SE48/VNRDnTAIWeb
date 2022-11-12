@@ -109,7 +109,6 @@ export class RetrainRomsComponent implements OnInit {
   }
 
   viewImgEvidence(rom: any){
-    this.validateAccount.isActiveAccount();
     this.selectedRom = rom;
     this.displayImgEvidence = true;
   }
