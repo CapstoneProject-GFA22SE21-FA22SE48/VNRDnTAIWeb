@@ -12,6 +12,7 @@ import { toNonAccentVietnamese } from 'src/app/utilities/nonAccentVietnamese';
 import { NotificationService } from 'src/services/notification.service';
 import { SubjectType } from 'src/app/common/subjectType';
 import { ValidateAccount } from 'src/services/validateAccount.service';
+import { EventEmitterService } from 'src/services/event-emitter.service';
 
 @Component({
   selector: 'app-manage-questions',
@@ -539,39 +540,49 @@ export class ManageQuestionsComponent implements OnInit {
                 });
 
                 this.displayDeleteDialog = false;
+                this.loadAdmins();
+                this.loadAssigedQuestions();
+                
+                this.isLoadingService.remove();
+
                 this.messageService.add({
                   key: 'createDeleteROMSuccess',
                   severity: 'success',
                   summary: commonStr.success,
                   detail: commonStr.romCreatedSuccessfully,
                 });
-                this.loadAdmins();
-                this.isLoadingService.remove();
+
               },
               errorCallback: (error) => {
-                console.log(error);
                 this.displayDeleteDialog = false;
+                this.loadAdmins();
+                this.loadAssigedQuestions();
+                
+                this.isLoadingService.remove();
+
                 this.messageService.add({
                   key: 'createDeleteROMError',
                   severity: 'error',
                   summary: commonStr.fail,
-                  detail: commonStr.errorOccur,
+                  detail: error?.response?.data || commonStr.errorOccur,
                 });
-                this.isLoadingService.remove();
               },
             }
           );
         },
         errorCallback: (error) => {
-          console.log(error);
           this.displayDeleteDialog = false;
+          this.loadAdmins();
+          this.loadAssigedQuestions();
+          
+          this.isLoadingService.remove();
+
           this.messageService.add({
             key: 'createDeleteROMError',
             severity: 'error',
             summary: commonStr.fail,
             detail: commonStr.errorOccur,
           });
-          this.isLoadingService.remove();
         },
       }
     );
@@ -775,40 +786,52 @@ export class ManageQuestionsComponent implements OnInit {
                       });
 
                       this.resetDataCreateQuestion();
+                      this.loadAdmins();
+                      this.loadAssigedQuestions();
                       this.displayCreateDialog = false;
+                     
+                      this.isLoadingService.remove();
+
                       this.messageService.add({
                         key: 'createAddROMSuccess',
                         severity: 'success',
                         summary: commonStr.success,
                         detail: commonStr.romCreatedSuccessfully,
                       });
-                      this.loadAdmins();
-                      this.isLoadingService.remove();
                     },
                     errorCallback: (error) => {
-                      console.log(error);
+                      this.resetDataCreateQuestion();
+                      this.loadAdmins();
+                      this.loadAssigedQuestions();
                       this.displayCreateDialog = false;
+                      
+                      this.isLoadingService.remove();
+
                       this.messageService.add({
                         key: 'createAddROMError',
                         severity: 'error',
                         summary: commonStr.fail,
-                        detail: commonStr.errorOccur,
+                        detail: error?.response?.data || commonStr.errorOccur,
                       });
-                      this.isLoadingService.remove();
                     },
                   }
                 );
               },
               errorCallback: (error) => {
-                console.log(error);
+                this.resetDataCreateQuestion();
+                this.loadAdmins();
+                this.loadAssigedQuestions();
                 this.displayCreateDialog = false;
+
+                
+                this.isLoadingService.remove();
+
                 this.messageService.add({
                   key: 'createAddROMError',
                   severity: 'error',
                   summary: commonStr.fail,
                   detail: commonStr.errorOccur,
                 });
-                this.isLoadingService.remove();
               },
             }
           );
@@ -862,40 +885,51 @@ export class ManageQuestionsComponent implements OnInit {
                     isRead: false,
                   });
                   this.resetDataCreateQuestion();
+                  this.loadAdmins();
+                  this.loadAssigedQuestions();
                   this.displayCreateDialog = false;
+                  
+                  this.isLoadingService.remove();
+
                   this.messageService.add({
                     key: 'createAddROMSuccess',
                     severity: 'success',
                     summary: commonStr.success,
                     detail: commonStr.romCreatedSuccessfully,
                   });
-                  this.loadAdmins();
-                  this.isLoadingService.remove();
                 },
                 errorCallback: (error) => {
-                  console.log(error);
+                  this.resetDataCreateQuestion();
+                  this.loadAdmins();
+                  this.loadAssigedQuestions();
                   this.displayCreateDialog = false;
+                  
+                  this.isLoadingService.remove();
+
                   this.messageService.add({
                     key: 'createAddROMError',
                     severity: 'error',
                     summary: commonStr.fail,
-                    detail: commonStr.errorOccur,
+                    detail: error?.response?.data || commonStr.errorOccur,
                   });
-                  this.isLoadingService.remove();
                 },
               }
             );
           },
           errorCallback: (error) => {
-            console.log(error);
+            this.resetDataCreateQuestion();
+            this.loadAdmins();
+            this.loadAssigedQuestions();
             this.displayCreateDialog = false;
+            
+            this.isLoadingService.remove();
+
             this.messageService.add({
               key: 'createAddROMError',
               severity: 'error',
               summary: commonStr.fail,
               detail: commonStr.errorOccur,
             });
-            this.isLoadingService.remove();
           },
         }
       );

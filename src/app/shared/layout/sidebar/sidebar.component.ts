@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { IsLoadingService } from '@service-work/is-loading';
 import {
   decodeToken,
@@ -6,6 +7,7 @@ import {
   verifyLocalStorageToken,
   verifySessionStorageToken,
 } from 'src/app/utilities/jwt.util';
+import { EventEmitterService } from 'src/services/event-emitter.service';
 import { WrapperService } from 'src/services/wrapper.service';
 import * as paths from '../../../common/paths';
 
@@ -67,10 +69,16 @@ export class SidebarComponent implements OnInit {
 
   constructor(
     private wrapperService: WrapperService,
-    private isLoadingService: IsLoadingService
+    private isLoadingService: IsLoadingService,
+    private eventEmitterService: EventEmitterService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
+    this.loadSidebar();
+  }
+
+  loadSidebar() {
     if (verifySessionStorageToken()) {
       const token =
         sessionStorage.getItem('token') != ''
@@ -80,36 +88,7 @@ export class SidebarComponent implements OnInit {
       if (parseInt(decodeToken(token ? token : '')?.Role) === 0) {
         this.items = this.adminSidebarItems;
       } else if (parseInt(decodeToken(token ? token : '')?.Role) === 1) {
-
-        this.isLoadingService.add();
-        this.wrapperService.get(
-          paths.GetScribeAssignColumns +
-            '/' +
-            decodeToken(token ? token : '')?.Id,
-          getStorageToken(),
-          {
-            successCallback: (response) => {
-              if(response.data.length > 0){
-                this.scribeSidebarItems.splice(1, 0, {
-                  label: 'Quản lý luật'
-                })
-                response.data.forEach((c: any) => {
-                  this.subItems.push({
-                    label: c.column.name,
-                    routerLink: '/scribe/manage-laws/',
-                    columnId: c.column.id
-                  })
-                });
-              }
-              this.isLoadingService.remove();
-            },
-            errorCallback: (error) => {
-              console.log(error);
-              this.isLoadingService.remove();
-            },
-          }
-        );
-
+        this.loadColumnSidebar(token);
         this.items = this.scribeSidebarItems;
       } else {
         this.items = [];
@@ -122,36 +101,7 @@ export class SidebarComponent implements OnInit {
       if (parseInt(decodeToken(token ? token : '')?.Role) === 0) {
         this.items = this.adminSidebarItems;
       } else if (parseInt(decodeToken(token ? token : '')?.Role) === 1) {
-
-        this.isLoadingService.add();
-        this.wrapperService.get(
-          paths.GetScribeAssignColumns +
-            '/' +
-            decodeToken(token ? token : '')?.Id,
-          getStorageToken(),
-          {
-            successCallback: (response) => {
-              if(response.data.length > 0){
-                this.scribeSidebarItems.splice(1, 0, {
-                  label: 'Quản lý luật'
-                })
-                response.data.forEach((c: any) => {
-                  this.subItems.push({
-                    label: c.column.name,
-                    routerLink: '/scribe/manage-laws/',
-                    columnId: c.column.id
-                  })
-                });
-              }
-              this.isLoadingService.remove();
-            },
-            errorCallback: (error) => {
-              console.log(error);
-              this.isLoadingService.remove();
-            },
-          }
-        );
-
+        this.loadColumnSidebar(token);
         this.items = this.scribeSidebarItems;
       } else {
         this.items = [];
@@ -159,8 +109,41 @@ export class SidebarComponent implements OnInit {
     }
   }
 
+  loadColumnSidebar(token: any) {
+    this.isLoadingService.add();
+
+    this.wrapperService.get(
+      paths.GetScribeAssignColumns + '/' + decodeToken(token ? token : '')?.Id,
+      getStorageToken(),
+      {
+        successCallback: (response) => {
+          if (response.data.length > 0) {
+            this.scribeSidebarItems.splice(1, 0, {
+              label: 'Quản lý luật',
+            });
+            response.data.forEach((c: any) => {
+              this.subItems.push({
+                label: c.column.name,
+                routerLink: '/scribe/manage-laws/',
+                columnId: c.column.id,
+              });
+            });
+          } else {
+              this.router.navigate(['/scribe/my-request'])
+          }
+
+          this.isLoadingService.remove();
+        },
+        errorCallback: (error) => {
+          console.log(error);
+          this.isLoadingService.remove();
+        },
+      }
+    );
+  }
+
   toggleSubItems(i: number) {
-    if(this.subItems.length > 0 && i === 1 && !this.isShowingSubItems){
+    if (this.subItems.length > 0 && i === 1 && !this.isShowingSubItems) {
       this.isShowingSubItems = true;
     } else {
       this.isShowingSubItems = false;

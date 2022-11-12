@@ -6,13 +6,14 @@ import { decodeToken, getStorageToken } from 'src/app/utilities/jwt.util';
 import { WrapperService } from 'src/services/wrapper.service';
 import * as paths from '../../../common/paths';
 import * as commonStr from '../../../common/commonStr';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import * as vietnameseAlphabet from '../../../../assets/i18n/vietnameseAlphabet.json';
 import { NewSectionDTO, NewParagraphDTO } from 'src/app/models/General.model';
 import { toNonAccentVietnamese } from 'src/app/utilities/nonAccentVietnamese';
 import { NotificationService } from 'src/services/notification.service';
 import { SubjectType } from 'src/app/common/subjectType';
 import { ValidateAccount } from 'src/services/validateAccount.service';
+import { EventEmitterService } from 'src/services/event-emitter.service';
 @Component({
   selector: 'app-manage-laws',
   templateUrl: './manage-laws.component.html',
@@ -205,9 +206,20 @@ export class ManageLawsComponent implements OnInit {
     public activatedRoute: ActivatedRoute,
     private notiService: NotificationService,
     private validateAccount: ValidateAccount,
+    private eventEmitterService: EventEmitterService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
+    //subscribe to scribe sidebar change to reload sidebar
+    this.eventEmitterService.invokeScribeSidebar.subscribe(() => {
+      setTimeout(() => {
+        this.router.navigate(['/scribe/my-request']).then(() => {
+          window.location.reload();
+        })
+      }, 1500);
+    });
+
     this.validateAccount.isActiveAccount();
     this.activatedRoute.paramMap.subscribe((params) => {
       this.clearStatue();
@@ -861,7 +873,7 @@ export class ManageLawsComponent implements OnInit {
                 this.isUpdatingChosenStatue = false;
                 this.clearChosenStatueData();
                 this.loadAdmins();
-                
+
                 this.isLoadingService.remove();
 
                 this.messageService.add({
@@ -876,7 +888,7 @@ export class ManageLawsComponent implements OnInit {
                 this.isUpdatingChosenStatue = false;
                 this.clearChosenStatueData();
                 this.loadAdmins();
-                
+
                 this.isLoadingService.remove();
 
                 this.messageService.add({
@@ -886,7 +898,7 @@ export class ManageLawsComponent implements OnInit {
                   detail: error?.response?.data || commonStr.errorOccur,
                 });
 
-                // this.eventEmitterService.onScribeSidebarChange();
+                this.eventEmitterService.onScribeSidebarChange();
               },
             }
           );
@@ -896,7 +908,7 @@ export class ManageLawsComponent implements OnInit {
           this.isUpdatingChosenStatue = false;
           this.clearChosenStatueData();
           this.loadAdmins();
-         
+
           this.isLoadingService.remove();
 
           this.messageService.add({
@@ -985,6 +997,8 @@ export class ManageLawsComponent implements OnInit {
                   summary: commonStr.fail,
                   detail: error?.response?.data || commonStr.errorOccur,
                 });
+
+                this.eventEmitterService.onScribeSidebarChange();
               },
             }
           );
@@ -1078,6 +1092,8 @@ export class ManageLawsComponent implements OnInit {
                   summary: commonStr.fail,
                   detail: error?.response?.data || commonStr.errorOccur,
                 });
+
+                this.eventEmitterService.onScribeSidebarChange();
               },
             }
           );
@@ -1148,38 +1164,50 @@ export class ManageLawsComponent implements OnInit {
                 this.isUpdatingChosenStatue = false;
                 this.clearChosenStatueData();
                 this.loadAdmins();
+
+                this.isLoadingService.remove();
+
                 this.messageService.add({
                   key: 'deleteSuccess',
                   severity: 'success',
                   summary: commonStr.success,
                   detail: commonStr.romCreatedSuccessfully,
                 });
-                this.isLoadingService.remove();
               },
               errorCallback: (error) => {
-                console.log(error);
                 this.displayConfirmDeleteStatueDialog = false;
+                this.isUpdatingChosenStatue = false;
+                this.clearChosenStatueData();
+                this.loadAdmins();
+
+                this.isLoadingService.remove();
+
                 this.messageService.add({
                   key: 'deleteError',
                   severity: 'error',
                   summary: commonStr.fail,
-                  detail: commonStr.errorOccur,
+                  detail: error?.response?.data || commonStr.errorOccur,
                 });
-                this.isLoadingService.remove();
+
+                this.eventEmitterService.onScribeSidebarChange();
               },
             }
           );
         },
         errorCallback: (error) => {
-          console.log(error);
           this.displayConfirmDeleteStatueDialog = false;
+          this.isUpdatingChosenStatue = false;
+          this.clearChosenStatueData();
+          this.loadAdmins();
+
+          this.isLoadingService.remove();
+
           this.messageService.add({
             key: 'deleteError',
             severity: 'error',
             summary: commonStr.fail,
             detail: commonStr.errorOccur,
           });
-          this.isLoadingService.remove();
         },
       }
     );
@@ -1232,38 +1260,50 @@ export class ManageLawsComponent implements OnInit {
                 this.isUpdatingChosenSection = false;
                 this.clearChosenSectionData();
                 this.loadAdmins();
+
+                this.isLoadingService.remove();
+
                 this.messageService.add({
                   key: 'deleteSuccess',
                   severity: 'success',
                   summary: commonStr.success,
                   detail: commonStr.romCreatedSuccessfully,
                 });
-                this.isLoadingService.remove();
               },
               errorCallback: (error) => {
-                console.log(error);
                 this.displayConfirmDeleteSectionDialog = false;
+                this.isUpdatingChosenSection = false;
+                this.clearChosenSectionData();
+                this.loadAdmins();
+
+                this.isLoadingService.remove();
+
                 this.messageService.add({
                   key: 'deleteError',
                   severity: 'error',
                   summary: commonStr.fail,
-                  detail: commonStr.errorOccur,
+                  detail: error?.response?.data || commonStr.errorOccur,
                 });
-                this.isLoadingService.remove();
+
+                this.eventEmitterService.onScribeSidebarChange();
               },
             }
           );
         },
         errorCallback: (error) => {
-          console.log(error);
           this.displayConfirmDeleteSectionDialog = false;
+          this.isUpdatingChosenSection = false;
+          this.clearChosenSectionData();
+          this.loadAdmins();
+
+          this.isLoadingService.remove();
+
           this.messageService.add({
             key: 'deleteError',
             severity: 'error',
             summary: commonStr.fail,
             detail: commonStr.errorOccur,
           });
-          this.isLoadingService.remove();
         },
       }
     );
@@ -1314,38 +1354,50 @@ export class ManageLawsComponent implements OnInit {
                 this.isUpdatingChosenParagraph = false;
                 this.clearChosenParagraphData();
                 this.loadAdmins();
+
+                this.isLoadingService.remove();
+
                 this.messageService.add({
                   key: 'deleteSuccess',
                   severity: 'success',
                   summary: commonStr.success,
                   detail: commonStr.romCreatedSuccessfully,
                 });
-                this.isLoadingService.remove();
               },
               errorCallback: (error) => {
-                console.log(error);
                 this.displayConfirmDeleteParagraphDialog = false;
+                this.isUpdatingChosenParagraph = false;
+                this.clearChosenParagraphData();
+                this.loadAdmins();
+
+                this.isLoadingService.remove();
+
                 this.messageService.add({
                   key: 'deleteError',
                   severity: 'error',
                   summary: commonStr.fail,
-                  detail: commonStr.errorOccur,
+                  detail: error?.response?.data || commonStr.errorOccur,
                 });
-                this.isLoadingService.remove();
+
+                this.eventEmitterService.onScribeSidebarChange();
               },
             }
           );
         },
         errorCallback: (error) => {
-          console.log(error);
           this.displayConfirmDeleteParagraphDialog = false;
+          this.isUpdatingChosenParagraph = false;
+          this.clearChosenParagraphData();
+          this.loadAdmins();
+
+          this.isLoadingService.remove();
+
           this.messageService.add({
             key: 'deleteError',
             severity: 'error',
             summary: commonStr.fail,
             detail: commonStr.errorOccur,
           });
-          this.isLoadingService.remove();
         },
       }
     );
@@ -2237,9 +2289,11 @@ export class ManageLawsComponent implements OnInit {
                     key: 'createError',
                     severity: 'error',
                     summary: commonStr.fail,
-                    detail: commonStr.errorOccur,
+                    detail: error?.response?.data || commonStr.errorOccur,
                   });
                   this.isLoadingService.remove();
+
+                  this.eventEmitterService.onScribeSidebarChange();
                 },
               }
             );
@@ -2321,9 +2375,11 @@ export class ManageLawsComponent implements OnInit {
                     key: 'createError',
                     severity: 'error',
                     summary: commonStr.fail,
-                    detail: commonStr.errorOccur,
+                    detail: error?.response?.data || commonStr.errorOccur,
                   });
                   this.isLoadingService.remove();
+
+                  this.eventEmitterService.onScribeSidebarChange();
                 },
               }
             );
@@ -2392,9 +2448,11 @@ export class ManageLawsComponent implements OnInit {
                       key: 'createError',
                       severity: 'error',
                       summary: commonStr.fail,
-                      detail: commonStr.errorOccur,
+                      detail: error?.response?.data || commonStr.errorOccur,
                     });
                     this.isLoadingService.remove();
+
+                    this.eventEmitterService.onScribeSidebarChange();
                   },
                 }
               );

@@ -954,24 +954,33 @@ export class ManageSignsComponent implements OnInit {
                   isRead: false,
                 });
                 this.clearTmpChosenSignNewData();
+                this.loadAdmins();
+                this.loadAssigedSigns();
                 this.displayConfirmDeleteChosenSign = false;
+
                 this.messageService.add({
                   severity: 'success',
                   summary: commonStr.success,
                   detail: commonStr.romCreatedSuccessfully,
                 });
-                this.loadAdmins();
+
                 this.isLoadingService.remove();
               },
               errorCallback: (error) => {
-                console.log(error);
+                this.clearTmpChosenSignNewData();
+                this.loadAdmins();
+                this.loadAssigedSigns();
                 this.displayConfirmDeleteChosenSign = false;
+
+                this.chosenSign = undefined;
+                
+                this.isLoadingService.remove();
+
                 this.messageService.add({
                   severity: 'error',
                   summary: commonStr.fail,
-                  detail: commonStr.errorOccur,
+                  detail: error?.response?.data || commonStr.errorOccur,
                 });
-                this.isLoadingService.remove();
               },
             }
           );
@@ -1109,24 +1118,31 @@ export class ManageSignsComponent implements OnInit {
                       isRead: false,
                     });
                     this.clearNewSignData();
+                    this.loadAdmins();
+                    this.loadAssigedSigns();
                     this.displayConfirmCreateNewSign = false;
+                   
+                    this.isLoadingService.remove();
+
                     this.messageService.add({
                       severity: 'success',
                       summary: commonStr.success,
                       detail: commonStr.romCreatedSuccessfully,
                     });
-                    this.loadAdmins();
-                    this.isLoadingService.remove();
                   },
                   errorCallback: (error) => {
-                    console.log(error);
+                    this.clearNewSignData();
+                    this.loadAdmins();
+                    this.loadAssigedSigns();
                     this.displayConfirmCreateNewSign = false;
+                    
+                    this.isLoadingService.remove();
+
                     this.messageService.add({
                       severity: 'error',
                       summary: commonStr.fail,
-                      detail: commonStr.errorOccur,
+                      detail: error?.response?.data || commonStr.errorOccur,
                     });
-                    this.isLoadingService.remove();
                   },
                 }
               );
