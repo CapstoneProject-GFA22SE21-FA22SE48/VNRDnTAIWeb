@@ -7,6 +7,7 @@ import { Subscription } from 'rxjs/internal/Subscription';
 export class EventEmitterService {
   invokeAdminNoti = new EventEmitter();
   invokeScribeNoti = new EventEmitter();
+  invokeScribeSidebar = new EventEmitter();
 
   //Admin notification clicked
   onAdminNotiClick(emittedRom: any) {
@@ -16,6 +17,11 @@ export class EventEmitterService {
   //Scribe notification clicked
   onScribeNotiClick(emittedRom: any) {
     this.invokeScribeNoti.emit(emittedRom);
+  }
+
+  //Reload sidebar for scribe
+  onScribeSidebarChange(){
+    this.invokeScribeSidebar.emit();
   }
 
 }
