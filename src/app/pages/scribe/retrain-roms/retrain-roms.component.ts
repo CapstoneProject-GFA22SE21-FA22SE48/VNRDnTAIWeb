@@ -5,6 +5,7 @@ import { decodeToken, getStorageToken } from 'src/app/utilities/jwt.util';
 import { WrapperService } from 'src/services/wrapper.service';
 import * as paths from '../../../common/paths';
 import * as commonStr from '../../../common/commonStr';
+import { ValidateAccount } from 'src/services/validateAccount.service';
 
 @Component({
   selector: 'app-retrain-roms',
@@ -38,10 +39,12 @@ export class RetrainRomsComponent implements OnInit {
     private isLoadingService: IsLoadingService,
     private wrapperService: WrapperService,
     private confirmationService: ConfirmationService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private validateAccount: ValidateAccount,
   ) { }
 
   ngOnInit(): void {
+    this.validateAccount.isActiveAccount();
     this.loadRoms();
   }
 
@@ -72,6 +75,7 @@ export class RetrainRomsComponent implements OnInit {
   }
 
   filterData() {
+    this.validateAccount.isActiveAccount();
     this.roms = this.tmpRoms.slice();
 
     //filter by "Trạng thái"
@@ -105,11 +109,13 @@ export class RetrainRomsComponent implements OnInit {
   }
 
   viewImgEvidence(rom: any){
+    this.validateAccount.isActiveAccount();
     this.selectedRom = rom;
     this.displayImgEvidence = true;
   }
 
   confirmClaimRom(event: any, rom: any) {
+    this.validateAccount.isActiveAccount();
     this.selectedRom = rom;
 
     this.confirmationService.confirm({
@@ -163,6 +169,7 @@ export class RetrainRomsComponent implements OnInit {
   }
 
   resolveRom(rom: any){
+    this.validateAccount.isActiveAccount();
     this.selectedRom = rom;
     this.displayResolveRom = true;
 

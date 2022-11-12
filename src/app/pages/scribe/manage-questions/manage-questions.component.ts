@@ -11,6 +11,7 @@ import * as commonStr from '../../../common/commonStr';
 import { toNonAccentVietnamese } from 'src/app/utilities/nonAccentVietnamese';
 import { NotificationService } from 'src/services/notification.service';
 import { SubjectType } from 'src/app/common/subjectType';
+import { ValidateAccount } from 'src/services/validateAccount.service';
 
 @Component({
   selector: 'app-manage-questions',
@@ -67,10 +68,12 @@ export class ManageQuestionsComponent implements OnInit {
     private isLoadingService: IsLoadingService,
     private fileUploadService: FileUploadService,
     private messageService: MessageService,
-    private notiService: NotificationService
+    private notiService: NotificationService,
+    private validateAccount: ValidateAccount,
   ) {}
 
   ngOnInit(): void {
+    this.validateAccount.isActiveAccount();
     this.loadAssigedQuestions();
     this.loadAdmins();
   }
@@ -143,6 +146,7 @@ export class ManageQuestionsComponent implements OnInit {
   }
 
   filterData() {
+    this.validateAccount.isActiveAccount();
     this.questions = this.tmpQuestions;
 
     //Search
@@ -179,6 +183,7 @@ export class ManageQuestionsComponent implements OnInit {
   }
 
   viewInfo(question: Question) {
+    this.validateAccount.isActiveAccount();
     this.isChanging = false;
     this.isLoadingService.add();
     this.selectedQuestion = question;
@@ -205,10 +210,12 @@ export class ManageQuestionsComponent implements OnInit {
   }
 
   closeInfo() {
+    this.validateAccount.isActiveAccount();
     this.selectedQuestion = undefined;
   }
 
   openUpdateQuestion() {
+    this.validateAccount.isActiveAccount();
     this.resetDataUpdateQuestion();
     this.displayUpdateDialog = true;
   }
@@ -241,6 +248,7 @@ export class ManageQuestionsComponent implements OnInit {
   }
 
   changeTxtQuestionContent(newQuestionContent: string) {
+    this.validateAccount.isActiveAccount();
     if (
       newQuestionContent?.trim() !== '' &&
       newQuestionContent?.length <= 2000
@@ -254,6 +262,7 @@ export class ManageQuestionsComponent implements OnInit {
   }
 
   changeSelectedQuestionCorrectAnswer(answer: Answer) {
+    this.validateAccount.isActiveAccount();
     this.tmpSelectedQuestion.answers.forEach((a: Answer) => {
       if (a.id === answer.id) {
         a.isCorrect = true;
@@ -265,6 +274,7 @@ export class ManageQuestionsComponent implements OnInit {
   }
 
   changeTxtAnswer(answer: Answer, newAnswer: string, i: number) {
+    this.validateAccount.isActiveAccount();
     if (this.tmpSelectedQuestion.answers) {
       var isExistedAnsweer = this.tmpSelectedQuestion.answers.some(
         (a: any, index: number) =>
@@ -295,6 +305,7 @@ export class ManageQuestionsComponent implements OnInit {
   }
 
   updateImage(event: any, imageUploaded: any): void {
+    this.validateAccount.isActiveAccount();
     this.tmpSelectedQuestion.imageUrl =
       event.files[0].objectURL?.changingThisBreaksApplicationSecurity;
     this.updateQuestionImgFile = event.files[0];
@@ -303,6 +314,7 @@ export class ManageQuestionsComponent implements OnInit {
   }
 
   updateQuestion() {
+    this.validateAccount.isActiveAccount();
     if (
       this.updateQuestionImgFile !== undefined &&
       this.tmpSelectedQuestion.imgUrl !== ''
@@ -490,6 +502,7 @@ export class ManageQuestionsComponent implements OnInit {
   }
 
   deleteQuestion() {
+    this.validateAccount.isActiveAccount();
     var deleteQuestion = JSON.parse(JSON.stringify(this.selectedQuestion));
 
     deleteQuestion.isDeleted = true;
@@ -575,6 +588,7 @@ export class ManageQuestionsComponent implements OnInit {
   }
 
   getNewQuestionContent(event: any) {
+    this.validateAccount.isActiveAccount();
     this.newQuestionContent = event.target.value;
     if (
       this.newQuestionContent?.trim() === '' ||
@@ -588,6 +602,7 @@ export class ManageQuestionsComponent implements OnInit {
   }
 
   getNewQuestionAnswer() {
+    this.validateAccount.isActiveAccount();
     if (
       // this.newQuestionAnswer?.trim() === '' ||
       this.newQuestionAnswer?.length > 2000
@@ -609,6 +624,7 @@ export class ManageQuestionsComponent implements OnInit {
   }
 
   addNewQuestionAnswer() {
+    this.validateAccount.isActiveAccount();
     this.newQuestionAnswers.push({
       description: this.newQuestionAnswer,
       isCorrect: false,
@@ -618,6 +634,7 @@ export class ManageQuestionsComponent implements OnInit {
   }
 
   pickNewAnswersCorrectAnswer(i: number) {
+    this.validateAccount.isActiveAccount();
     this.newQuestionAnswers.forEach((a, index) => {
       if (index === i) {
         a.isCorrect = true;
@@ -635,6 +652,7 @@ export class ManageQuestionsComponent implements OnInit {
   }
 
   getEditNewQuestionAnswer(i: number) {
+    this.validateAccount.isActiveAccount();
     this.inValidNewQuestionEdittedAnswer = false;
     if (this.newQuestionAnswers) {
       var isExistedAnsweer = this.newQuestionAnswers.some(
@@ -651,6 +669,7 @@ export class ManageQuestionsComponent implements OnInit {
   }
 
   saveEditNewQuestionAnswer(i: number) {
+    this.validateAccount.isActiveAccount();
     this.newQuestionAnswers[i].description = this.txtEditNewQuestionAnswer;
     this.isEditingNewQuestionAnswer = false;
   }
@@ -661,6 +680,7 @@ export class ManageQuestionsComponent implements OnInit {
   }
 
   deleteNewQuestionAnswer(i: number) {
+    this.validateAccount.isActiveAccount();
     this.newQuestionAnswers.forEach((item, index) => {
       if (index === i) this.newQuestionAnswers.splice(index, 1);
     });
@@ -668,6 +688,7 @@ export class ManageQuestionsComponent implements OnInit {
   }
 
   addNewQuestionImage(event: any, newQuestionImageUploaded: any): void {
+    this.validateAccount.isActiveAccount();
     this.newQuestionImgUrl =
       event.files[0].objectURL?.changingThisBreaksApplicationSecurity;
     this.newQuestionImgFile = event.files[0];
@@ -706,6 +727,7 @@ export class ManageQuestionsComponent implements OnInit {
   }
 
   createQuestion() {
+    this.validateAccount.isActiveAccount();
     if (
       this.newQuestionImgFile !== undefined &&
       this.newQuestionImgUrl !== ''

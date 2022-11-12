@@ -12,6 +12,7 @@ import { NewSectionDTO, NewParagraphDTO } from 'src/app/models/General.model';
 import { toNonAccentVietnamese } from 'src/app/utilities/nonAccentVietnamese';
 import { NotificationService } from 'src/services/notification.service';
 import { SubjectType } from 'src/app/common/subjectType';
+import { ValidateAccount } from 'src/services/validateAccount.service';
 @Component({
   selector: 'app-manage-laws',
   templateUrl: './manage-laws.component.html',
@@ -202,10 +203,12 @@ export class ManageLawsComponent implements OnInit {
     private isLoadingService: IsLoadingService,
     private messageService: MessageService,
     public activatedRoute: ActivatedRoute,
-    private notiService: NotificationService
+    private notiService: NotificationService,
+    private validateAccount: ValidateAccount,
   ) {}
 
   ngOnInit(): void {
+    this.validateAccount.isActiveAccount();
     this.activatedRoute.paramMap.subscribe((params) => {
       this.clearStatue();
       this.subMenuSelectedColumnId = params.get('id');
@@ -310,6 +313,7 @@ export class ManageLawsComponent implements OnInit {
   }
 
   filterStatueData() {
+    this.validateAccount.isActiveAccount();
     this.statues = this.tmpStatues;
 
     //Search
@@ -367,6 +371,7 @@ export class ManageLawsComponent implements OnInit {
   }
 
   filterSectionData() {
+    this.validateAccount.isActiveAccount();
     this.sections = this.tmpSections;
 
     //Search
@@ -413,6 +418,7 @@ export class ManageLawsComponent implements OnInit {
   }
 
   filterParagraphData() {
+    this.validateAccount.isActiveAccount();
     this.paragraphs = this.tmpParagraphs;
 
     //Search
@@ -438,6 +444,7 @@ export class ManageLawsComponent implements OnInit {
   }
 
   viewStatueInfo(statue: any) {
+    this.validateAccount.isActiveAccount();
     this.chosenStatue = statue;
 
     this.isUpdatingChosenStatue = false;
@@ -445,6 +452,7 @@ export class ManageLawsComponent implements OnInit {
   }
 
   viewSectionInfo(section: any) {
+    this.validateAccount.isActiveAccount();
     this.chosenSection = section;
 
     this.isUpdatingChosenSection = false;
@@ -454,6 +462,7 @@ export class ManageLawsComponent implements OnInit {
   }
 
   viewParagraphInfo(paragraph: any) {
+    this.validateAccount.isActiveAccount();
     this.chosenParagraph = paragraph;
 
     this.isUpdatingChosenParagraph = false;
@@ -463,6 +472,7 @@ export class ManageLawsComponent implements OnInit {
   }
 
   selectStatue() {
+    this.validateAccount.isActiveAccount();
     //when first select a statue or select for changing a statue
     this.chosenStatue = undefined;
     this.chosenSection = undefined;
@@ -494,6 +504,7 @@ export class ManageLawsComponent implements OnInit {
   }
 
   selectSection() {
+    this.validateAccount.isActiveAccount();
     //when first select a section or select for changing a section
     this.chosenSection = undefined;
     this.chosenParagraph = undefined;
@@ -553,24 +564,29 @@ export class ManageLawsComponent implements OnInit {
   }
 
   returnToManegeStatues() {
+    this.validateAccount.isActiveAccount();
     this.clearStatue();
   }
 
   returnToManegeSections() {
+    this.validateAccount.isActiveAccount();
     this.clearSection();
   }
 
   goToManageSectionsOfChosenStatue() {
+    this.validateAccount.isActiveAccount();
     this.selectedStatue = this.chosenStatue;
     this.selectStatue();
   }
 
   goToManageParagraphsOfChosenSection() {
+    this.validateAccount.isActiveAccount();
     this.selectedSection = this.chosenSection;
     this.selectSection();
   }
 
   openUpdateChosenStatue() {
+    this.validateAccount.isActiveAccount();
     this.isUpdatingChosenStatue = true;
     this.isValidUpdatingStatue = false;
     this.tmpChosenStatue = JSON.parse(JSON.stringify(this.chosenStatue));
@@ -579,6 +595,7 @@ export class ManageLawsComponent implements OnInit {
   }
 
   openUpdateChosenSection() {
+    this.validateAccount.isActiveAccount();
     this.isUpdatingChosenSection = true;
     this.isValidUpdatingSection = false;
     this.tmpChosenSection = JSON.parse(JSON.stringify(this.chosenSection));
@@ -591,6 +608,7 @@ export class ManageLawsComponent implements OnInit {
   }
 
   openUpdateChosenParagraph() {
+    this.validateAccount.isActiveAccount();
     // if selected an empty paragraph of section with no paragraph, then disabled invalid new paragraph description
     if (
       this.tmpChosenParagraph?.name === '' &&
@@ -612,6 +630,7 @@ export class ManageLawsComponent implements OnInit {
   }
 
   getUpdatedSectionDescription(event: any) {
+    this.validateAccount.isActiveAccount();
     let newDesc = event.target.value;
     if (newDesc?.trim() !== '' && newDesc?.length <= 2000) {
       this.invalidChosenSectionNewDesc = false;
@@ -623,6 +642,7 @@ export class ManageLawsComponent implements OnInit {
   }
 
   getUpdatedStatueDescription(event: any) {
+    this.validateAccount.isActiveAccount();
     let newDesc = event.target.value;
     if (newDesc?.trim() !== '' && newDesc?.length <= 2000) {
       this.invalidChosenStatueNewDesc = false;
@@ -634,6 +654,7 @@ export class ManageLawsComponent implements OnInit {
   }
 
   getUpdatedParagraphDescription(event: any) {
+    this.validateAccount.isActiveAccount();
     let newDesc = event.target.value;
     if (newDesc.trim() !== '' && newDesc?.length < 2000) {
       this.invalidChosenParagraphNewDesc = false;
@@ -645,17 +666,20 @@ export class ManageLawsComponent implements OnInit {
   }
 
   getUpdatedParagraphAdditionalPenalty(event: any) {
+    this.validateAccount.isActiveAccount();
     this.tmpChosenParagraph.additionalPenalty = event.target.value;
     this.detectChangeParagraph();
   }
 
   changeChosenSectionVehicleCat() {
+    this.validateAccount.isActiveAccount();
     this.tmpChosenSection.vehicleCategoryId =
       this.selectedChosenSectionVehicleCatId;
     this.detectChangeSection();
   }
 
   checkChosenSectionNewMinPenalty(event: any) {
+    this.validateAccount.isActiveAccount();
     if (event.value) {
       this.newChosenSectionMinPenalty = event.value;
     }
@@ -676,6 +700,7 @@ export class ManageLawsComponent implements OnInit {
   }
 
   checkChosenSectionNewMaxPenalty(event: any) {
+    this.validateAccount.isActiveAccount();
     if (event.value) {
       this.newChosenSectionMaxPenalty = event.value;
     }
@@ -777,6 +802,7 @@ export class ManageLawsComponent implements OnInit {
   }
 
   cancelUpdateChosenStatue() {
+    this.validateAccount.isActiveAccount();
     this.isUpdatingChosenStatue = false;
     this.clearChosenStatueData();
 
@@ -784,6 +810,7 @@ export class ManageLawsComponent implements OnInit {
   }
 
   cancelUpdateChosenSection() {
+    this.validateAccount.isActiveAccount();
     this.isUpdatingChosenSection = false;
     this.clearChosenSectionData();
 
@@ -791,6 +818,7 @@ export class ManageLawsComponent implements OnInit {
   }
 
   cancelUpdateChosenParagraph() {
+    this.validateAccount.isActiveAccount();
     this.isUpdatingChosenParagraph = false;
     this.clearChosenParagraphData();
 
@@ -798,6 +826,7 @@ export class ManageLawsComponent implements OnInit {
   }
 
   updateChosenStatue() {
+    this.validateAccount.isActiveAccount();
     this.isLoadingService.add();
     this.wrapperService.post(
       paths.ScribeCreateStatueForROM,
@@ -877,6 +906,7 @@ export class ManageLawsComponent implements OnInit {
   }
 
   updateChosenSection() {
+    this.validateAccount.isActiveAccount();
     this.isLoadingService.add();
     this.wrapperService.post(
       paths.ScribeCreateSectionForROM,
@@ -975,6 +1005,7 @@ export class ManageLawsComponent implements OnInit {
   }
 
   updateChosenParagraph() {
+    this.validateAccount.isActiveAccount();
     this.isLoadingService.add();
     this.wrapperService.post(
       paths.ScribeCreateParagraphForROM,
@@ -1067,6 +1098,7 @@ export class ManageLawsComponent implements OnInit {
   }
 
   deleteChosenStatue() {
+    this.validateAccount.isActiveAccount();
     this.isLoadingService.add();
     this.wrapperService.post(
       paths.ScribeCreateStatueForROM,
@@ -1149,6 +1181,7 @@ export class ManageLawsComponent implements OnInit {
   }
 
   deleteChosenSection() {
+    this.validateAccount.isActiveAccount();
     this.isLoadingService.add();
     this.wrapperService.post(
       paths.ScribeCreateSectionForROM,
@@ -1232,6 +1265,7 @@ export class ManageLawsComponent implements OnInit {
   }
 
   deleteChosenParagraph() {
+    this.validateAccount.isActiveAccount();
     this.isLoadingService.add();
     this.wrapperService.post(
       paths.ScribeCreateParagraphForROM,
@@ -1314,6 +1348,7 @@ export class ManageLawsComponent implements OnInit {
 
   //Remove chosen paragraph reference from referenc list in updating screen
   removeChosenParagraphReferenceParagraphs(reference: any) {
+    this.validateAccount.isActiveAccount();
     this.newChosenParagraphReferenceList =
       this.newChosenParagraphReferenceList.filter(
         (r: any) => r.referenceParagraphId !== reference.referenceParagraphId
@@ -1327,6 +1362,7 @@ export class ManageLawsComponent implements OnInit {
 
   // start of adding chosen paragraph reference
   loadAddingChosenParagraphStatueList() {
+    this.validateAccount.isActiveAccount();
     this.displayAddChosenParagraphReference = true;
     // Modify to get all statue instead of get only the statues that this scribe manages
 
@@ -1359,6 +1395,7 @@ export class ManageLawsComponent implements OnInit {
   }
 
   selectAddingChosenParagraphStatue(event: any) {
+    this.validateAccount.isActiveAccount();
     this.addingChosenParagraphSection = undefined;
     this.addingChosenParagraphParagraph = undefined;
 
@@ -1386,6 +1423,7 @@ export class ManageLawsComponent implements OnInit {
   }
 
   selectAddingChosenParagraphSection(event: any) {
+    this.validateAccount.isActiveAccount();
     this.addingChosenParagraphParagraph = undefined;
 
     this.addingChosenParagraphSection = event.value;
@@ -1441,11 +1479,13 @@ export class ManageLawsComponent implements OnInit {
   }
 
   selectAddingChosenParagraphParagraph(event: any) {
+    this.validateAccount.isActiveAccount();
     this.addingChosenParagraphParagraph = event.value;
   }
 
   // "Hủy" button clicked or dialog onHide
   clearAddChosenParagraphReference() {
+    this.validateAccount.isActiveAccount();
     this.displayAddChosenParagraphReference = false;
 
     this.isUpdatingChosenParagraphReferenceIncludedList = false;
@@ -1464,6 +1504,7 @@ export class ManageLawsComponent implements OnInit {
 
   //"Lưu lại" button clicked
   addChosenParagraphIncludedReference() {
+    this.validateAccount.isActiveAccount();
     if (
       !this.addingChosenParagraphParagraph ||
       !this.addingChosenParagraphSection ||
@@ -1534,12 +1575,14 @@ export class ManageLawsComponent implements OnInit {
   }
 
   removeChosenParagraphIncludedReference(i: any) {
+    this.validateAccount.isActiveAccount();
     this.tmpChosenParagraphAddingReferenceList.splice(i, 1);
     this.addingErrorChosenParagraphAddingReferenceListReferenceMsg = '';
   }
 
   //"Hoàn thành" button clicked
   completeAddChosenParagraphIncludedReference() {
+    this.validateAccount.isActiveAccount();
     if (!this.newChosenParagraphReferenceList) {
       this.newChosenParagraphReferenceList = [];
     }
@@ -1608,6 +1651,7 @@ export class ManageLawsComponent implements OnInit {
   // }
 
   getNewSectionName(event: any) {
+    this.validateAccount.isActiveAccount();
     this.newSection.description = event.target.value;
     if (
       this.newSection?.description?.trim() === '' ||
@@ -1621,6 +1665,7 @@ export class ManageLawsComponent implements OnInit {
   }
 
   checkNewSectionMinPenalty(event: any) {
+    this.validateAccount.isActiveAccount();
     this.newSection.minPenalty = event.value;
     this.isValidNewSectionMinPenalty = true;
     this.isValidNewSectionMaxPenalty = true;
@@ -1640,6 +1685,7 @@ export class ManageLawsComponent implements OnInit {
   }
 
   checkNewSectionMaxPenalty(event: any) {
+    this.validateAccount.isActiveAccount();
     this.newSection.maxPenalty = event.value;
     this.isValidNewSectionMinPenalty = true;
     this.isValidNewSectionMaxPenalty = true;
@@ -1659,11 +1705,13 @@ export class ManageLawsComponent implements OnInit {
   }
 
   changeNewSectionVehicleCat(event: any) {
+    this.validateAccount.isActiveAccount();
     this.newSection.vehicleCategoryId = event.value;
   }
 
   //"Hủy" button of add new section clicked
   clearNewSection() {
+    this.validateAccount.isActiveAccount();
     this.initValueForNewSection();
     this.isCollapsedCreatNewSection = false;
     this.isValidGoNextOnSectionDialog = true;
@@ -1693,6 +1741,7 @@ export class ManageLawsComponent implements OnInit {
 
   //"Thêm" button of add new section clicked
   addNewSectionDataToSectionList() {
+    this.validateAccount.isActiveAccount();
     this.isCollapsedCreatNewSection = false;
 
     this.isAddedNewSection = true;
@@ -1724,6 +1773,7 @@ export class ManageLawsComponent implements OnInit {
 
   // start of adding reference for new section with no paragraph
   toggleIsSectionWithNoParagraph(isSectionWithNoParagraph: boolean) {
+    this.validateAccount.isActiveAccount();
     if (isSectionWithNoParagraph === true) {
       this.loadStatuesForAddingReferenceOfNewSectionWithNoParagraph();
       if (this.newSection === undefined) {
@@ -1741,6 +1791,7 @@ export class ManageLawsComponent implements OnInit {
     //   JSON.stringify(this.statues)
     // );
 
+    this.validateAccount.isActiveAccount();
     this.isLoadingService.add();
     this.wrapperService.get(
       paths.ScribeGetAllStatueForAddingReferences,
@@ -1767,6 +1818,7 @@ export class ManageLawsComponent implements OnInit {
   }
 
   selectStatueReferenceForNewSection(event: any) {
+    this.validateAccount.isActiveAccount();
     this.newSectionWithNoParagraphReferenceSelectedStatue = event.value;
     this.newSectionWithNoParagraphReferenceSelectedSection = undefined;
     this.newSectionWithNoParagraphReferenceSelectedParagraph = undefined;
@@ -1796,6 +1848,7 @@ export class ManageLawsComponent implements OnInit {
   }
 
   selectSectionReferenceForNewSection(event: any) {
+    this.validateAccount.isActiveAccount();
     this.newSectionWithNoParagraphReferenceSelectedSection = event.value;
     this.newSectionWithNoParagraphReferenceSelectedParagraph = undefined;
 
@@ -1822,6 +1875,7 @@ export class ManageLawsComponent implements OnInit {
   }
 
   selectParagraphReferenceForNewSection(event: any) {
+    this.validateAccount.isActiveAccount();
     this.newSectionWithNoParagraphReferenceSelectedParagraph = event.value;
 
     this.tmpReferenceNewSectionWithNoParagraph.referenceParagraphId =
@@ -1833,6 +1887,7 @@ export class ManageLawsComponent implements OnInit {
   }
 
   chooseNewSectionWithNoParagraphIncludedExcluded(event: any) {
+    this.validateAccount.isActiveAccount();
     if (this.tmpReferenceNewSectionWithNoParagraph === undefined) {
       this.tmpReferenceNewSectionWithNoParagraph = {};
     }
@@ -1845,6 +1900,7 @@ export class ManageLawsComponent implements OnInit {
 
   // "Thêm" button of adding references to new section
   addNewSectionReference() {
+    this.validateAccount.isActiveAccount();
     this.isValidAddReferenceToNewSectionWithNoParagraph = true;
 
     if (
@@ -1875,6 +1931,7 @@ export class ManageLawsComponent implements OnInit {
 
   // "x" button of removing references from new section
   removeNewSectionReference(i: number) {
+    this.validateAccount.isActiveAccount();
     this.tmpReferenceListOfNewSectionWithNoParagraph.splice(i, 1);
     this.isValidAddReferenceToNewSectionWithNoParagraph = true;
   }
@@ -1895,6 +1952,7 @@ export class ManageLawsComponent implements OnInit {
   }
 
   getNewParagraphDescription(event: any) {
+    this.validateAccount.isActiveAccount();
     this.newParagraphOfSelectedSectionDescription = event.target.value;
 
     this.newParagraphOfSelectedSection.description = event.target.value;
@@ -1925,6 +1983,7 @@ export class ManageLawsComponent implements OnInit {
   }
 
   getNewParagraphAdditionalPenalty(event: any) {
+    this.validateAccount.isActiveAccount();
     this.newParagraphOfSelectedSectionAdditionalPenalty = event.target.value;
     if (this.newParagraphOfSelectedSectionAdditionalPenalty?.length > 2000) {
       this.newParagraphAdditionalPenaltyInvalidMsg =
@@ -1964,6 +2023,7 @@ export class ManageLawsComponent implements OnInit {
   }
 
   selectStatueReferenceForNewParagraph(event: any) {
+    this.validateAccount.isActiveAccount();
     this.newParagraphReferenceSelectedStatue = event.value;
     this.newParagraphReferenceSelectedSection = undefined;
     this.newParagraphReferenceSelectedParagraph = undefined;
@@ -1993,6 +2053,7 @@ export class ManageLawsComponent implements OnInit {
   }
 
   selectSectionReferenceForNewParagraph(event: any) {
+    this.validateAccount.isActiveAccount();
     this.newParagraphReferenceSelectedSection = event.value;
     this.newParagraphReferenceSelectedParagraph = undefined;
 
@@ -2019,6 +2080,7 @@ export class ManageLawsComponent implements OnInit {
   }
 
   selectParagraphReferenceForNewParagraph(event: any) {
+    this.validateAccount.isActiveAccount();
     this.newParagraphReferenceSelectedParagraph = event.value;
 
     this.tmpReferenceOfNewParagraph.referenceParagraphId = event.value.id;
@@ -2028,6 +2090,7 @@ export class ManageLawsComponent implements OnInit {
   }
 
   chooseNewParagraphIncludedExcluded(event: any) {
+    this.validateAccount.isActiveAccount();
     if (this.tmpReferenceOfNewParagraph === undefined) {
       this.tmpReferenceOfNewParagraph = {};
     }
@@ -2059,12 +2122,14 @@ export class ManageLawsComponent implements OnInit {
   }
 
   removeNewParagraphReference(i: number) {
+    this.validateAccount.isActiveAccount();
     this.tmpReferenceListOfNewParagraph.splice(i, 1);
     this.isValidAddReferenceToNewParagraph = true;
   }
 
   // "Lưu lại" button on paragraph dialog clicked -> add new paragraph to list new Paragraphs
   saveNewParagraph() {
+    this.validateAccount.isActiveAccount();
     this.newParagraphOfSelectedSection.referenceParagraphs =
       this.tmpReferenceListOfNewParagraph;
     this.newParagraphListOfSelectedSection.push(
@@ -2131,6 +2196,7 @@ export class ManageLawsComponent implements OnInit {
   //TODO: add notification
   //"Hoàn thành" button on paragraph dialog clicked
   confirmedAddNewLaw() {
+    this.validateAccount.isActiveAccount();
     // if new section created & that section is a section with no paragraph
     if (
       this.isAddedNewSection &&
@@ -2379,6 +2445,7 @@ export class ManageLawsComponent implements OnInit {
   }
 
   selectAnotherStatueOrDefaultStatueSelected() {
+    this.validateAccount.isActiveAccount();
     this.clearNewSection();
     this.clearAllNewParagraphs();
     this.isLoadingService.add();
@@ -2420,6 +2487,7 @@ export class ManageLawsComponent implements OnInit {
   }
 
   selectAnotherSectionOrDefaultSectionSelected() {
+    this.validateAccount.isActiveAccount();
     //check if selected section is a section with no paragraph
     if (
       this.selectedSectionForAddNewLaw.paragraphs !== undefined &&
@@ -2462,6 +2530,7 @@ export class ManageLawsComponent implements OnInit {
   }
 
   openUpdateNewSectionParagraph(i: number) {
+    this.validateAccount.isActiveAccount();
     this.updatingParagraphIndex = i;
 
     this.newParagraphOfSelectedSectionDescription =
@@ -2481,6 +2550,7 @@ export class ManageLawsComponent implements OnInit {
   }
 
   saveUpdatedNewParagraph() {
+    this.validateAccount.isActiveAccount();
     this.newParagraphListOfSelectedSection[this.updatingParagraphIndex] = {
       name: this.newParagraphListOfSelectedSection[this.updatingParagraphIndex]
         .name,
@@ -2505,6 +2575,7 @@ export class ManageLawsComponent implements OnInit {
   }
 
   cancleUpdatedNewParagraph() {
+    this.validateAccount.isActiveAccount();
     this.updatingParagraphIndex = undefined;
 
     this.newParagraphOfSelectedSectionDescription = undefined;
@@ -2549,6 +2620,7 @@ export class ManageLawsComponent implements OnInit {
   }
 
   openUpdateNewSection() {
+    this.validateAccount.isActiveAccount();
     this.isUpdatingNewSection = true;
     this.isValidGobackToStatue = false;
     this.isValidGoNextOnSectionDialog = false;
@@ -2593,6 +2665,7 @@ export class ManageLawsComponent implements OnInit {
   }
 
   saveUpdatedNewSection() {
+    this.validateAccount.isActiveAccount();
     this.isAddedNewSection = true;
     if (this.isSectionWithNoParagraph) {
       this.isValidGoNextOnSectionDialog = false;
@@ -2623,6 +2696,7 @@ export class ManageLawsComponent implements OnInit {
   }
 
   cancleUpdatedNewSection() {
+    this.validateAccount.isActiveAccount();
     this.isUpdatingNewSection = false;
     this.isValidGobackToStatue = true;
     if (this.isSectionWithNoParagraph) {
@@ -2676,6 +2750,7 @@ export class ManageLawsComponent implements OnInit {
   }
 
   deleteNewSection() {
+    this.validateAccount.isActiveAccount();
     this.selectedStatueForAddNewLaw.sections?.splice(
       [this.selectedStatueForAddNewLaw.sections?.length - 1],
       1
@@ -2774,6 +2849,7 @@ export class ManageLawsComponent implements OnInit {
 
   //start of add new paragraph
   displayAddNewParagraph() {
+    this.validateAccount.isActiveAccount();
     this.displayAddNewParagraphDialog = true;
     this.selectedStatueForAddNewLaw = { ...this.selectedStatue };
     this.selectedSectionForAddNewLaw = { ...this.selectedSection };
@@ -2809,6 +2885,7 @@ export class ManageLawsComponent implements OnInit {
 
   //start of add new section
   displayAddNewSection() {
+    this.validateAccount.isActiveAccount();
     this.selectedStatueForAddNewLaw = { ...this.selectedStatue };
     this.displayAddNewLawDialog = true;
     this.isShowingStatueDialog = false;
