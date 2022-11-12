@@ -9,12 +9,13 @@ import { WrapperService } from 'src/services/wrapper.service';
 import * as paths from '../../../common/paths';
 import * as commonStr from '../../../common/commonStr';
 import { EventEmitterService } from 'src/services/event-emitter.service';
+import { ValidateAccount } from 'src/services/validateAccount.service';
 @Component({
   selector: 'app-gps-roms',
   templateUrl: './gps-roms.component.html',
   styleUrls: ['./gps-roms.component.css'],
 })
-export class GpsRomsComponent implements OnInit {
+export class GpsRomsComponent implements OnInit{
   roms: any;
   tmpRoms: any;
 
@@ -70,10 +71,12 @@ export class GpsRomsComponent implements OnInit {
     private wrapperService: WrapperService,
     private confirmationService: ConfirmationService,
     private messageService: MessageService,
-    private eventEmitterService: EventEmitterService
+    private eventEmitterService: EventEmitterService,
+    private validateAccount: ValidateAccount,
   ) {}
-
+ 
   ngOnInit(): void {
+    this.validateAccount.isActiveAccount();
     this.loadRoms();
 
      //used for displaying rom detail when navigating from notification clicked
@@ -117,6 +120,7 @@ export class GpsRomsComponent implements OnInit {
   }
 
   filterData() {
+    this.validateAccount.isActiveAccount();
     this.roms = this.tmpRoms.slice();
 
     //filter by "Trạng thái"
@@ -163,6 +167,7 @@ export class GpsRomsComponent implements OnInit {
   }
 
   viewInfo(rom: any) {
+    this.validateAccount.isActiveAccount();
     this.selectedRom = rom;
     this.originalModel.code = '';
     this.changedModel.code = '';
@@ -195,6 +200,7 @@ export class GpsRomsComponent implements OnInit {
   }
 
   confirmClaimRom(event: any) {
+    this.validateAccount.isActiveAccount();
     this.confirmationService.confirm({
       target: event?.target,
       key: 'confirmClaim',

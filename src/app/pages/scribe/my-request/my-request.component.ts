@@ -10,6 +10,7 @@ import { WrapperService } from 'src/services/wrapper.service';
 import * as paths from '../../../common/paths';
 import * as commonStr from '../../../common/commonStr';
 import { EventEmitterService } from 'src/services/event-emitter.service';
+import { ValidateAccount } from 'src/services/validateAccount.service';
 @Component({
   selector: 'app-my-request',
   templateUrl: './my-request.component.html',
@@ -79,16 +80,18 @@ export class MyRequestComponent implements OnInit {
     private wrapperService: WrapperService,
     private confirmationService: ConfirmationService,
     private messageService: MessageService,
-    private eventEmitterService: EventEmitterService
+    private eventEmitterService: EventEmitterService,
+    private validateAccount: ValidateAccount,
   ) {}
 
   ngOnInit(): void {
+    this.validateAccount.isActiveAccount();
     this.loadRoms();
 
     //used for displaying rom detail when navigating from notification clicked
     this.eventEmitterService.invokeScribeNoti.subscribe((emittedRom: any) => {
       if (emittedRom !== null && emittedRom !== undefined) {
-        var tmpRom = this.tmpRoms.filter((r: any) => {
+        var tmpRom = this.tmpRoms?.filter((r: any) => {
           if (
             r.modifyingStatueId !== undefined &&
             emittedRom.modifyingStatueId !== undefined &&
@@ -197,11 +200,11 @@ export class MyRequestComponent implements OnInit {
       getStorageToken(),
       {
         successCallback: (response) => {
-          this.roms = response.data.lawRoms
-            .concat(response.data.signRoms)
-            .concat(response.data.questionRoms);
+          this.roms = response.data?.lawRoms
+            .concat(response.data?.signRoms)
+            .concat(response.data?.questionRoms);
 
-          this.tmpRoms = this.roms;
+          this.tmpRoms = this.roms.slice();
           this.filterData();
 
           this.isLoadingService.remove();
@@ -215,6 +218,7 @@ export class MyRequestComponent implements OnInit {
   }
 
   filterData() {
+    this.validateAccount.isActiveAccount();
     this.roms = this.tmpRoms.slice();
 
     //Filter by "Loại"
@@ -308,6 +312,7 @@ export class MyRequestComponent implements OnInit {
   }
 
   viewInfo(rom: any) {
+    this.validateAccount.isActiveAccount();
     this.selectedRom = rom;
     this.originalModel.code = '';
     this.changedModel.code = '';
@@ -700,6 +705,7 @@ export class MyRequestComponent implements OnInit {
   }
 
   confirmCancelRom(event: any) {
+    this.validateAccount.isActiveAccount();
     this.confirmationService.confirm({
       target: event?.target,
       key: 'confirmCancel',
@@ -816,6 +822,7 @@ export class MyRequestComponent implements OnInit {
   }
 
   confirmDeleteRom(event: any) {
+    this.validateAccount.isActiveAccount();
     this.confirmationService.confirm({
       target: event?.target,
       key: 'confirmCancel',

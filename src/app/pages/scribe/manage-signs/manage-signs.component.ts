@@ -11,6 +11,7 @@ import { MessageService } from 'primeng/api';
 import * as commonStr from '../../../common/commonStr';
 import { NotificationService } from 'src/services/notification.service';
 import { SubjectType } from 'src/app/common/subjectType';
+import { ValidateAccount } from 'src/services/validateAccount.service';
 
 @Component({
   selector: 'app-manage-signs',
@@ -106,10 +107,12 @@ export class ManageSignsComponent implements OnInit {
     private isLoadingService: IsLoadingService,
     private fileUploadService: FileUploadService,
     private messageService: MessageService,
-    private notiService: NotificationService
+    private notiService: NotificationService,
+    private validateAccount: ValidateAccount,
   ) {}
 
   ngOnInit() {
+    this.validateAccount.isActiveAccount();
     this.loadAssigedSigns();
     this.loadAssignedSignCategories();
     this.loadAdmins();
@@ -180,6 +183,7 @@ export class ManageSignsComponent implements OnInit {
   }
 
   filterData() {
+    this.validateAccount.isActiveAccount();
     this.signs = this.tmpSigns;
 
     //filter by signCategory
@@ -212,6 +216,7 @@ export class ManageSignsComponent implements OnInit {
   }
 
   openUpdateChosenSign() {
+    this.validateAccount.isActiveAccount();
     this.isUpdatingChosenSign = true;
     this.tmpChosenSign = JSON.parse(JSON.stringify(this.chosenSign));
     this.tmpChosenSignNewName = this.tmpChosenSign?.name;
@@ -229,6 +234,7 @@ export class ManageSignsComponent implements OnInit {
   }
 
   cancleUpdateChosenSign() {
+    this.validateAccount.isActiveAccount();
     this.isUpdatingChosenSign = false;
     this.isValidUpdateChosenSign = false;
     this.clearTmpChosenSignNewData();
@@ -264,6 +270,7 @@ export class ManageSignsComponent implements OnInit {
   }
 
   getTmpChosenSignNewName() {
+    this.validateAccount.isActiveAccount();
     if (
       !this.tmpChosenSignNewName ||
       this.tmpChosenSignNewName?.trim() === '' ||
@@ -280,11 +287,13 @@ export class ManageSignsComponent implements OnInit {
   }
 
   getTmpChosenSignNewSignCategoryId() {
+    this.validateAccount.isActiveAccount();
     this.tmpChosenSign.signCategoryId = this.tmpChosenSignNewSignCategoryId;
     this.detectChange();
   }
 
   getTmpChosenSignNewDescription() {
+    this.validateAccount.isActiveAccount();
     if (
       this.tmpChosenSignNewDescription &&
       this.tmpChosenSignNewDescription.trim() !== ''
@@ -297,6 +306,7 @@ export class ManageSignsComponent implements OnInit {
   }
 
   getTmpChosenSignNewImageUrl(event: any, imageUploaded: any) {
+    this.validateAccount.isActiveAccount();
     this.tmpChosenSignNewImageUrl =
       event.files[0].objectURL?.changingThisBreaksApplicationSecurity;
     this.tmpChosenSignNewImageFile = event.files[0];
@@ -306,6 +316,7 @@ export class ManageSignsComponent implements OnInit {
   }
 
   removeChosenSignSignParagraph(signParagraph: any) {
+    this.validateAccount.isActiveAccount();
     this.newChosenSignSignParagraphList =
       this.newChosenSignSignParagraphList.filter(
         (sp: any) =>
@@ -342,6 +353,7 @@ export class ManageSignsComponent implements OnInit {
   }
 
   selectAddingChosenSignStatue(event: any) {
+    this.validateAccount.isActiveAccount();
     this.addingChosenSignSection = undefined;
     this.addingChosenSignParagraph = undefined;
 
@@ -369,6 +381,7 @@ export class ManageSignsComponent implements OnInit {
   }
 
   selectAddingChosenSignSection(event: any) {
+    this.validateAccount.isActiveAccount();
     this.addingChosenSignParagraph = undefined;
 
     this.addingChosenSignSection = event.value;
@@ -415,11 +428,13 @@ export class ManageSignsComponent implements OnInit {
   }
 
   selectAddingChosenSignParagraph(event: any) {
+    this.validateAccount.isActiveAccount();
     this.addingChosenSignParagraph = event.value;
   }
 
   //"Hủy" button clicked / dialog add chosen sign signParagraph onHide
   clearAddChosenSignSignParagraph() {
+    this.validateAccount.isActiveAccount();
     this.displayAddChosenSignParagraph = false;
 
     this.addingChosenSignStatueList = undefined;
@@ -437,6 +452,7 @@ export class ManageSignsComponent implements OnInit {
 
   //"Lưu lại" button clicked
   addChosenSignSignParagraph() {
+    this.validateAccount.isActiveAccount();
     if (
       !this.addingChosenSignParagraph ||
       !this.addingChosenSignSection ||
@@ -500,12 +516,14 @@ export class ManageSignsComponent implements OnInit {
 
   // 'x' button clicked inside adding signParagraphs for chosen sign
   removeChosenSignTmpSignParagraph(i: any) {
+    this.validateAccount.isActiveAccount();
     this.tmpChosenSignAddingSignParagraphList.splice(i, 1);
     this.addingErrorChosenSignAddingSignParagraphMsg = '';
   }
 
   //"Hoàn thành" button clicked
   completeAddChosenSignSignParagraph() {
+    this.validateAccount.isActiveAccount();
     if (!this.newChosenSignSignParagraphList) {
       this.newChosenSignSignParagraphList = [];
     }
@@ -558,6 +576,7 @@ export class ManageSignsComponent implements OnInit {
   }
 
   selectAddingNewSignStatue(event: any) {
+    this.validateAccount.isActiveAccount();
     this.addingNewSignSection = undefined;
     this.addingNewSignParagraph = undefined;
 
@@ -583,6 +602,7 @@ export class ManageSignsComponent implements OnInit {
   }
 
   selectAddingNewSignSection(event: any) {
+    this.validateAccount.isActiveAccount();
     this.addingNewSignParagraph = undefined;
 
     this.addingNewSignSection = event.value;
@@ -630,11 +650,13 @@ export class ManageSignsComponent implements OnInit {
   }
 
   selectAddingNewSignParagraph(event: any) {
+    this.validateAccount.isActiveAccount();
     this.addingNewSignParagraph = event.value;
   }
 
   //"Hủy" button clicked / dialog add new sign signParagraph onHide
   clearAddNewSignSignParagraph() {
+    this.validateAccount.isActiveAccount();
     this.displayAddNewSignSignParagraph = false;
 
     this.addingNewSignStatueList = undefined;
@@ -652,6 +674,7 @@ export class ManageSignsComponent implements OnInit {
 
   //"Lưu lại" button clicked
   addNewSignSignParagraph() {
+    this.validateAccount.isActiveAccount();
     if (
       !this.addingNewSignParagraph ||
       !this.addingNewSignSection ||
@@ -716,12 +739,14 @@ export class ManageSignsComponent implements OnInit {
 
   // 'x' button clicked inside adding signParagraphs for new sign
   removeNewSignTmpSignParagraph(i: any) {
+    this.validateAccount.isActiveAccount();
     this.tmpNewSignAddingSignParagraphList.splice(i, 1);
     this.addingErrorNewSignAddingSignParagraphMsg = '';
   }
 
   //"Hoàn thành" button clicked
   completeAddNewSignSignParagraph() {
+    this.validateAccount.isActiveAccount();
     if (!this.newSignSignParagraphList) {
       this.newSignSignParagraphList = [];
     }
@@ -736,6 +761,7 @@ export class ManageSignsComponent implements OnInit {
   //end of adding new sign signParagraphs
 
   updateChosenSign() {
+    this.validateAccount.isActiveAccount();
     if (this.tmpChosenSignNewImageFile !== undefined) {
       this.fileUploadService
         .uploadImageToFirebase(
@@ -912,6 +938,7 @@ export class ManageSignsComponent implements OnInit {
   }
 
   deleteChosenSign() {
+    this.validateAccount.isActiveAccount();
     this.chosenSign.isDeleted = true;
 
     this.isLoadingService.add();
@@ -984,6 +1011,7 @@ export class ManageSignsComponent implements OnInit {
   }
 
   openCreateSign() {
+    this.validateAccount.isActiveAccount();
     this.isCreatingNewSign = true;
     this.newSignSignCategoryId = this.signCategories[0]?.id;
   }
@@ -1003,6 +1031,7 @@ export class ManageSignsComponent implements OnInit {
   }
 
   getNewSignName() {
+    this.validateAccount.isActiveAccount();
     if (
       this.newSignName?.trim() === '' ||
       this.newSignName?.length > 150 ||
@@ -1016,6 +1045,7 @@ export class ManageSignsComponent implements OnInit {
   }
 
   getNewSignDescription() {
+    this.validateAccount.isActiveAccount();
     if (
       this.newSignDescription?.trim() === '' ||
       this.newSignDescription?.length > 2000
@@ -1028,6 +1058,7 @@ export class ManageSignsComponent implements OnInit {
   }
 
   getNewSignImageUrl(event: any, imageUploaded: any) {
+    this.validateAccount.isActiveAccount();
     this.newSignImageUrl =
       event.files[0].objectURL?.changingThisBreaksApplicationSecurity;
     this.newSignImageFile = event.files[0];
@@ -1052,6 +1083,7 @@ export class ManageSignsComponent implements OnInit {
   }
 
   createNewSign() {
+    this.validateAccount.isActiveAccount();
     this.fileUploadService
       .uploadImageToFirebase(
         this.newSignImageFile,
