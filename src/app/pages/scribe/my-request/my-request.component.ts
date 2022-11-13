@@ -218,7 +218,6 @@ export class MyRequestComponent implements OnInit {
   }
 
   filterData() {
-    this.validateAccount.isActiveAccount();
     this.roms = this.tmpRoms.slice();
 
     //Filter by "Loại"

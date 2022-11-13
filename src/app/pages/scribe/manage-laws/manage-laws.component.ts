@@ -325,7 +325,6 @@ export class ManageLawsComponent implements OnInit {
   }
 
   filterStatueData() {
-    this.validateAccount.isActiveAccount();
     this.statues = this.tmpStatues;
 
     //Search
@@ -383,7 +382,6 @@ export class ManageLawsComponent implements OnInit {
   }
 
   filterSectionData() {
-    this.validateAccount.isActiveAccount();
     this.sections = this.tmpSections;
 
     //Search
@@ -430,7 +428,6 @@ export class ManageLawsComponent implements OnInit {
   }
 
   filterParagraphData() {
-    this.validateAccount.isActiveAccount();
     this.paragraphs = this.tmpParagraphs;
 
     //Search

@@ -183,7 +183,6 @@ export class ManageSignsComponent implements OnInit {
   }
 
   filterData() {
-    this.validateAccount.isActiveAccount();
     this.signs = this.tmpSigns;
 
     //filter by signCategory
