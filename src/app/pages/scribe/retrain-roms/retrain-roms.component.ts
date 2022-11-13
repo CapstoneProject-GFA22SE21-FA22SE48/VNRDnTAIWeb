@@ -75,7 +75,6 @@ export class RetrainRomsComponent implements OnInit {
   }
 
   filterData() {
-    this.validateAccount.isActiveAccount();
     this.roms = this.tmpRoms.slice();
 
     //filter by "Trạng thái"

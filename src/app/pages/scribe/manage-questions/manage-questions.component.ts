@@ -147,7 +147,6 @@ export class ManageQuestionsComponent implements OnInit {
   }
 
   filterData() {
-    this.validateAccount.isActiveAccount();
     this.questions = this.tmpQuestions;
 
     //Search
