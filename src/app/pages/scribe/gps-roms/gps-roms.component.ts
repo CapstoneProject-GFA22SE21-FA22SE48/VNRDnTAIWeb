@@ -15,7 +15,7 @@ import { ValidateAccount } from 'src/services/validateAccount.service';
   templateUrl: './gps-roms.component.html',
   styleUrls: ['./gps-roms.component.css'],
 })
-export class GpsRomsComponent implements OnInit{
+export class GpsRomsComponent implements OnInit {
   roms: any;
   tmpRoms: any;
 
@@ -39,6 +39,7 @@ export class GpsRomsComponent implements OnInit{
   //end of filtering data
 
   displayRomDetailDialog: boolean = false;
+
   //start of text compare, using ngx-monaco-editor v2
   options = {
     theme: 'vs',
@@ -63,7 +64,17 @@ export class GpsRomsComponent implements OnInit{
   //end of text compare, using ngx-monaco-editor v2
 
   //start of google map
+  displayMapOriginal: any;
+  centerMapOriginal: any;
+  markerMapOriginalPosition: any;
 
+  displayMapChanged: any;
+  centerMapChanged: any;
+  markerMapChangedPosition: any;
+
+  zoom = 14;
+
+  markerOptions: google.maps.MarkerOptions = {draggable: false};
   //end of google map
 
   constructor(
@@ -72,24 +83,24 @@ export class GpsRomsComponent implements OnInit{
     private confirmationService: ConfirmationService,
     private messageService: MessageService,
     private eventEmitterService: EventEmitterService,
-    private validateAccount: ValidateAccount,
+    private validateAccount: ValidateAccount
   ) {}
- 
+
   ngOnInit(): void {
     this.validateAccount.isActiveAccount();
     this.loadRoms();
 
-     //used for displaying rom detail when navigating from notification clicked
-     this.eventEmitterService.invokeScribeNoti.subscribe((emittedRom: any) => {
+    //used for displaying rom detail when navigating from notification clicked
+    this.eventEmitterService.invokeScribeNoti.subscribe((emittedRom: any) => {
       if (emittedRom !== null && emittedRom !== undefined) {
         var tmpRom = this.tmpRoms.filter((r: any) => {
-          if(
+          if (
             r.modifyingGpssignId !== undefined &&
             emittedRom.modifyingGpssignId !== undefined &&
             r.modifyingGpssignId === emittedRom.modifyingGpssignId
           ) {
             return r;
-          } 
+          }
         })[0];
         this.viewInfo(tmpRom);
       }
@@ -126,18 +137,18 @@ export class GpsRomsComponent implements OnInit{
     if (this.filterStatusCode) {
       this.roms = this.roms?.filter(
         (r: any) => r.status === this.filterStatusCode
-      )
+      );
     }
 
     //filter by filterSearchStr
     if (this.filterSearchStr) {
       this.roms = this.roms?.filter((r: any) => {
         return r.modifyingGpssign?.sign?.name
-          ? toNonAccentVietnamese(
-              r.modifyingGpssign?.sign?.name?.toLowerCase()
-            ).trim().includes(
-              toNonAccentVietnamese(this.filterSearchStr.toLowerCase()).trim()
-            )
+          ? toNonAccentVietnamese(r.modifyingGpssign?.sign?.name?.toLowerCase())
+              .trim()
+              .includes(
+                toNonAccentVietnamese(this.filterSearchStr.toLowerCase()).trim()
+              )
           : null;
       });
     }
@@ -179,6 +190,15 @@ export class GpsRomsComponent implements OnInit{
         `\t${this.selectedRom?.modifiedGpssign?.longitude}\n` +
         `Vĩ độ:\n` +
         `\t${this.selectedRom?.modifiedGpssign?.longitude}\n`;
+      this.centerMapOriginal = {
+        lat: this.selectedRom?.modifiedGpssign?.latitude,
+        lng: this.selectedRom?.modifiedGpssign?.longitude,
+      };
+
+      this.markerMapOriginalPosition = {
+        lat: this.selectedRom?.modifiedGpssign?.latitude,
+        lng: this.selectedRom?.modifiedGpssign?.longitude,
+      }
     } else {
       this.originalModel.code = ' ';
     }
@@ -191,6 +211,16 @@ export class GpsRomsComponent implements OnInit{
         `\t${this.selectedRom?.modifyingGpssign?.longitude}\n` +
         `Vĩ độ:\n` +
         `\t${this.selectedRom?.modifyingGpssign?.longitude}\n`;
+
+      this.centerMapChanged = {
+        lat: this.selectedRom?.modifyingGpssign?.latitude,
+        lng: this.selectedRom?.modifyingGpssign?.longitude,
+      };
+
+      this.markerMapChangedPosition = {
+        lat: this.selectedRom?.modifyingGpssign?.latitude,
+        lng: this.selectedRom?.modifyingGpssign?.longitude,
+      };
     } else {
       this.changedModel.code = ' ';
     }
@@ -206,9 +236,7 @@ export class GpsRomsComponent implements OnInit{
       message: 'Sau khi tiếp nhận, bạn sẽ phải xử lý yêu cầu này. Bạn có chắc?',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
-        this.selectedRom.scribeId = decodeToken(
-          getStorageToken() || ''
-        )?.Id;
+        this.selectedRom.scribeId = decodeToken(getStorageToken() || '')?.Id;
 
         this.isLoadingService.add();
         this.wrapperService.put(
@@ -248,5 +276,29 @@ export class GpsRomsComponent implements OnInit{
   clearData() {
     this.selectedRom = undefined;
     this.displayRomDetailDialog = false;
+  }
+
+  moveMapOriginal(event: google.maps.MapMouseEvent) {
+    if (event.latLng != null) {
+      this.centerMapOriginal = event.latLng.toJSON();
+    }
+  }
+
+  moveOriginal(event: google.maps.MapMouseEvent) {
+    if (event.latLng != null) {
+      this.displayMapOriginal = event.latLng.toJSON();
+    }
+  }
+
+  moveMapChanged(event: google.maps.MapMouseEvent) {
+    if (event.latLng != null) {
+      this.centerMapChanged = event.latLng.toJSON();
+    }
+  }
+
+  moveChanged(event: google.maps.MapMouseEvent) {
+    if (event.latLng != null) {
+      this.displayMapChanged = event.latLng.toJSON();
+    }
   }
 }
