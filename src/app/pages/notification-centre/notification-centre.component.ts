@@ -93,16 +93,16 @@ export class NotificationCentreComponent implements OnInit {
     this.notifications = this.tmpNotifications.slice();
   }
 
-  viewUnReadNoti() {
-    this.isAllNoti = false;
-
-    this.notifications = this.unReadNotifications.slice();
-  }
+  // viewUnReadNoti() {
+  //   this.isAllNoti = false;
+  //   this.notifications = this.tmpNotifications.filter((noti: any) => !noti.isRead);
+  // }
 
   markAllAsRead(){
     this.tmpNotifications.forEach((noti: any) => {
       this.notificationService.update(noti.key || '', { isRead: true });
     })
+    this.loadNotifications();
   }
 
   //clicked on notification
