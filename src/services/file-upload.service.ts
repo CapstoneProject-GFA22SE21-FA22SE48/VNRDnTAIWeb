@@ -14,8 +14,7 @@ export class FileUploadService {
   ) {}
 
   uploadImageToFirebase(file: any, path: string): Promise<string> {
-    var n = Date.now();
-    const filePath = path + `_${n}`;
+    const filePath = path;
     const fileRef = this.storage.ref(filePath);
     const task = this.storage.upload(filePath, file);
     return new Promise((resolve) => {

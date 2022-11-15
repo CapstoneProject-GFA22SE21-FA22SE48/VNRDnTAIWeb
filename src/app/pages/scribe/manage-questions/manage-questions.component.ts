@@ -317,7 +317,7 @@ export class ManageQuestionsComponent implements OnInit {
       this.fileUploadService
         .uploadImageToFirebase(
           this.updateQuestionImgFile,
-          `images/mock-test/new/`
+          `images/mock-test/new/${Date.now}`
         )
         .then((imgUrl: any) => {
           this.tmpSelectedQuestion.imageUrl = imgUrl;
@@ -730,7 +730,7 @@ export class ManageQuestionsComponent implements OnInit {
       this.newQuestionImgUrl !== ''
     ) {
       this.fileUploadService
-        .uploadImageToFirebase(this.newQuestionImgFile, `images/mock-test/new/`)
+        .uploadImageToFirebase(this.newQuestionImgFile, `images/mock-test/new/${Date.now}`)
         .then((imgUrl: any) => {
           this.newQuestionImgUrl = imgUrl;
         })

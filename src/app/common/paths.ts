@@ -9,6 +9,7 @@ export const GetScribeAssignColumns: string = base + '/AssignedColumns/Scribes';
 
 //Common 
 export const GetAccountInformation: string = base + '/Users';
+export const AutoMailingExceededSignIncidents: string = base + '/Mails';
 
 //Admin
 export const AdminGetAllMemberDataReport: string = base + '/AdminReports/MemberByYear';
@@ -104,3 +105,4 @@ export const ScribeDeleteQuestionRom: string = base + '/QuestionModificationRequ
 
 export const ScribeClaimGpssignRom: string = base + '/SignModificationRequests/GPSSign/Claim';
 export const ScribeClaimRetrainRom: string = base + '/SignModificationRequests/Retrain/Claim';
+export const ScribeResolveRetrainRom: string = base + '/SignModificationRequests/Retrain/Resolve';

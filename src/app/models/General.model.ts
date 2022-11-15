@@ -386,3 +386,11 @@ export interface Notification {
     isRead: boolean,
 
 }
+
+//Used for sign image labelling
+export interface Shape {
+    x: number,
+    y: number,
+    w: number,
+    h: number,
+}
