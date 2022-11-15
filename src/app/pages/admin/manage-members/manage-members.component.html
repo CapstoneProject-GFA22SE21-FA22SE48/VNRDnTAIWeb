@@ -113,11 +113,11 @@
             </td>
             <td [ngStyle]="{ 'text-align': 'center' }">
               <button *ngIf="member?.status === 5" pButton type="button" label="Ngưng hoạt động"
-                [style]="{padding: '.3rem .5rem .3rem .5rem', height: '25px', border: '3px solid'}"
+                [style]="{padding: '.2rem .1rem', height: '25px', border: '3px solid'}"
                 class="p-button-outlined p-button-danger" (click)="confirmDeactivateMember(i)"></button>
 
               <button *ngIf="member?.status === 6" pButton type="button" label="Kích hoạt lại"
-                [style]="{padding: '.3rem .5rem .3rem .5rem', height: '25px', border: '3px solid'}"
+                [style]="{padding: '.2rem .1rem', height: '25px', border: '3px solid'}"
                 class="p-button-outlined p-button-success" (click)="confirmReEnableMember(i)"></button>
             </td>
             <td [ngStyle]="{ 'text-align': 'center' }">
@@ -128,7 +128,7 @@
         </ng-template>
         <ng-template pTemplate="emptymessage">
           <tr>
-            <td colspan="7">
+            <td colspan="8">
               <span class="font-bold">Không tìm thấy kết quả</span>
             </td>
           </tr>

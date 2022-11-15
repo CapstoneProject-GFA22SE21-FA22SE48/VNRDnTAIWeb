@@ -1,9 +1,31 @@
 /* custom dropdown */
 ::ng-deep .p-dropdown .p-placeholder {
-    padding-top: .4rem;
-  }
-  
-  ::ng-deep .p-dropdown .p-element {
-    padding-top: .4rem;
-  }
-  /* end custom dropdown */
+  padding-top: .4rem;
+}
+
+::ng-deep .p-dropdown .p-element {
+  padding-top: .4rem;
+}
+
+/* end custom dropdown */
+
+:host ::ng-deep .p-dropdown-item.p-ripple {
+  white-space: no-wrap;
+  overflow-x: hidden;
+  text-overflow: ellipsis;
+  width: 15rem;
+}
+
+/* for filtering input of dropdown */
+::ng-deep .p-dropdown-panel .p-dropdown-header {
+  padding: .4rem;
+}
+
+::ng-deep .p-dropdown-panel .p-dropdown-header .p-dropdown-filter-container .p-inputtext {
+  height: 35px;
+}
+/* end of for filtering input of dropdown */
+
+::ng-deep .p-button-outlined.p-button-success:disabled {
+  color: grey;
+}

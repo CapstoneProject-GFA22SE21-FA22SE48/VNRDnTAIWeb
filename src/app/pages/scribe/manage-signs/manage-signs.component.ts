@@ -745,7 +745,7 @@ export class ManageSignsComponent implements OnInit {
       this.fileUploadService
         .uploadImageToFirebase(
           this.tmpChosenSignNewImageFile,
-          `images/sign-collection/new/${this.tmpChosenSign.name.split(' ')[2]}`
+          `images/sign-collection/new/${this.tmpChosenSign.name.split(' ')[2]}_${Date.now}`
         )
         .then((imgUrl: any) => {
           this.tmpChosenSign.imageUrl = imgUrl;
@@ -1072,7 +1072,7 @@ export class ManageSignsComponent implements OnInit {
     this.fileUploadService
       .uploadImageToFirebase(
         this.newSignImageFile,
-        `images/sign-collection/new/${this.newSignName.split(' ')[2]}`
+        `images/sign-collection/new/${this.newSignName.split(' ')[2]}_${Date.now}`
       )
       .then((imgUrl: any) => {
         this.newSignImageUrl = imgUrl;
