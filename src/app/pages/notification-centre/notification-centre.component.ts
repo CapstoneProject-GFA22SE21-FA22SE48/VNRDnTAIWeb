@@ -1,8 +1,6 @@
-import { Component, OnInit } from '@angular/core';
-import { AngularFireDatabase } from '@angular/fire/compat/database';
+import { Component, ElementRef, HostListener, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { IsLoadingService } from '@service-work/is-loading';
-import { map, Observable } from 'rxjs';
+import { map } from 'rxjs';
 import { SubjectType } from 'src/app/common/subjectType';
 import { Notification } from 'src/app/models/General.model';
 import { decodeToken, getStorageToken } from 'src/app/utilities/jwt.util';
@@ -20,7 +18,7 @@ export class NotificationCentreComponent implements OnInit {
   unReadNotifications: Notification[] = [];
   receiverId: string = '';
 
-  isShowingNotifications: boolean = false;
+ isShowingNotifications: boolean = false;
 
   isAllNoti: boolean = true;
   isUnReadNoti: boolean = false;
@@ -30,8 +28,20 @@ export class NotificationCentreComponent implements OnInit {
   constructor(
     private notificationService: NotificationService,
     private router: Router,
-    private eventEmitterService: EventEmitterService
-  ) {}
+    private eventEmitterService: EventEmitterService,
+    private eRef: ElementRef
+  ) {
+    this.text = 'no clicks yet';
+  }
+
+  public text: String;
+
+  @HostListener('document:click', ['$event'])
+  clickout(event: any) {
+    if(!this.eRef.nativeElement.contains(event.target)) {
+      this.isShowingNotifications = false;
+    }
+  }
 
   ngOnInit(): void {
     // this.notifications = [];
@@ -83,10 +93,16 @@ export class NotificationCentreComponent implements OnInit {
     this.notifications = this.tmpNotifications.slice();
   }
 
-  viewUnReadNoti() {
-    this.isAllNoti = false;
+  // viewUnReadNoti() {
+  //   this.isAllNoti = false;
+  //   this.notifications = this.tmpNotifications.filter((noti: any) => !noti.isRead);
+  // }
 
-    this.notifications = this.unReadNotifications.slice();
+  markAllAsRead(){
+    this.tmpNotifications.forEach((noti: any) => {
+      this.notificationService.update(noti.key || '', { isRead: true });
+    })
+    this.loadNotifications();
   }
 
   //clicked on notification
