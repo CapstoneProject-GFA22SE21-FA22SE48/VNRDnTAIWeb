@@ -7,17 +7,6 @@
             <i class="pi pi-bell text-xl mr-3" pBadge></i>
             <span class="text-xl font-bold">Trung tâm thông báo</span>
           </div>
-
-          <div class="w-3 flex justify-content-end">
-            <button
-              pButton
-              pRipple
-              type="button"
-              icon="pi pi-times"
-              class="p-button-rounded p-button-danger p-button-text"
-              (click)="isShowingNotifications = false"
-            ></button>
-          </div>
         </div>
 
         <div class="w-12 mb-2">
@@ -49,18 +38,41 @@
           ></button>
         </div>
 
-        <div class="text-lg font-italic w-12 flex justify-content-center" *ngIf="notifications.length === 0">
+        <div class="w-12 flex justify-content-end">
+          <button
+            pButton
+            pRipple
+            icon="pi pi-check"
+            type="button"
+            label="Đánh dấu tất cả là đã đọc"
+            [style]="{color: 'black', height: '20px'}"
+            [disabled]="!tmpNotifications || tmpNotifications.length === 0"
+            class="p-button-text p-button-plain text-base"
+            (click)="markAllAsRead()"
+          ></button>
+        </div>
+
+        <div
+          class="text-lg font-italic w-12 flex justify-content-center"
+          *ngIf="notifications.length === 0"
+        >
           Bạn không có thông báo nào
         </div>
         <div *ngIf="notifications.length > 0">
           <div *ngFor="let noti of notifications">
-            
-            <div class="h-4rem mt-1 mb-1 cursor-pointer" (click)="viewInfo(noti)">
+            <div
+              class="h-4rem mt-1 mb-1 cursor-pointer"
+              (click)="viewInfo(noti)"
+            >
               <div class="flex align-items-center">
                 <div class="w-11">
-                  <div class="p-2 h-2rem text-base overflow-hidden white-space-nowrap text-overflow-ellipsis">
+                  <div
+                    class="p-2 h-2rem text-base overflow-hidden white-space-nowrap text-overflow-ellipsis"
+                  >
                     <span
-                      ><span class="font-bold">[{{ noti?.senderUsername }}]</span>
+                      ><span class="font-bold"
+                        >[{{ noti?.senderUsername }}]</span
+                      >
                       đã <span class="font-bold">{{ noti?.action }}</span
                       >&nbsp;<span class="font-italic">{{
                         noti?.relatedDescription
@@ -72,10 +84,13 @@
                   </div>
                 </div>
                 <div class="w-1">
-                  <i class="pi pi-circle-fill text-blue-500" style="font-size: .5rem" *ngIf="!noti?.isRead"></i>
+                  <i
+                    class="pi pi-circle-fill text-blue-500"
+                    style="font-size: 0.5rem"
+                    *ngIf="!noti?.isRead"
+                  ></i>
                 </div>
               </div>
-              
             </div>
           </div>
         </div>
