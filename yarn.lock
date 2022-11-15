@@ -188,7 +188,7 @@
     "uuid" "8.3.2"
     "yargs" "17.5.1"
 
-"@angular/common@^12.0.0 || ^13.0.0 || ^14.0.0", "@angular/common@^13.0.0 || ^14.0.0-0", "@angular/common@^14.0.0", "@angular/common@^14.1.0", "@angular/common@^14.2.4", "@angular/common@>=13.0.0", "@angular/common@14.2.4":
+"@angular/common@^12.0.0 || ^13.0.0 || ^14.0.0", "@angular/common@^13.0.0 || ^14.0.0-0", "@angular/common@^14.0.0", "@angular/common@^14.0.0 || ^15.0.0", "@angular/common@^14.1.0", "@angular/common@^14.2.4", "@angular/common@>=13.0.0", "@angular/common@14.2.4":
   "integrity" "sha512-nzmRUhdyKomgsf1vUdx7KOXS7OXkvdpF/1CSagqsIGYVLbL8cGZ6ROrdEuxkSsE9GUt/OAIkC4How4/LLPut1A=="
   "resolved" "https://registry.npmjs.org/@angular/common/-/common-14.2.4.tgz"
   "version" "14.2.4"
@@ -218,7 +218,7 @@
   dependencies:
     "tslib" "^2.3.0"
 
-"@angular/core@^12.0.0 || ^13.0.0 || ^14.0.0", "@angular/core@^13.0.0 || ^14.0.0-0", "@angular/core@^14.0.0", "@angular/core@^14.1.0", "@angular/core@^14.2.4", "@angular/core@>=13.0.0", "@angular/core@13 || 14", "@angular/core@14.2.4":
+"@angular/core@^12.0.0 || ^13.0.0 || ^14.0.0", "@angular/core@^13.0.0 || ^14.0.0-0", "@angular/core@^14.0.0", "@angular/core@^14.0.0 || ^15.0.0", "@angular/core@^14.1.0", "@angular/core@^14.2.4", "@angular/core@>=13.0.0", "@angular/core@13 || 14", "@angular/core@14.2.4":
   "integrity" "sha512-wB19wKmZE+X07mLbxYyqeg3v1JXy8m0+ShZD2oY3dmgk1mXOf5XVQxRZohGTrbPw83EdSWwx3vz+jjylGunVZQ=="
   "resolved" "https://registry.npmjs.org/@angular/core/-/core-14.2.4.tgz"
   "version" "14.2.4"
@@ -253,6 +253,14 @@
   "resolved" "https://registry.npmjs.org/@angular/forms/-/forms-14.2.4.tgz"
   "version" "14.2.4"
   dependencies:
+    "tslib" "^2.3.0"
+
+"@angular/google-maps@^14.2.7":
+  "integrity" "sha512-5NQEsCZ3bcvcIYcEZnxi9Yh3jYzq4460fp0TRFGMtY9K9sFY77931RoFbLQdrHzqtBkljdpDcV7GL63XdJ+icw=="
+  "resolved" "https://registry.npmjs.org/@angular/google-maps/-/google-maps-14.2.7.tgz"
+  "version" "14.2.7"
+  dependencies:
+    "@types/google.maps" "^3.45.6"
     "tslib" "^2.3.0"
 
 "@angular/localize@^14.0.0", "@angular/localize@^14.2.4":
@@ -2139,6 +2147,11 @@
     "@types/express-serve-static-core" "^4.17.18"
     "@types/qs" "*"
     "@types/serve-static" "*"
+
+"@types/google.maps@^3.45.6":
+  "integrity" "sha512-RuZf1MJtctGlpW+Gd4a/eGtAufUDjMf+eyN1l+B3fbe2YLScJbg8KEljJfb+6vnSPFAeM1/48geVIEg3vqOkxw=="
+  "resolved" "https://registry.npmjs.org/@types/google.maps/-/google.maps-3.50.5.tgz"
+  "version" "3.50.5"
 
 "@types/http-proxy@^1.17.8":
   "integrity" "sha512-QsbSjA/fSk7xB+UXlCT3wHBy5ai9wOcNDWwZAtud+jXhwOM3l+EYZh8Lng4+/6n8uar0J7xILzqftJdJ/Wdfkw=="

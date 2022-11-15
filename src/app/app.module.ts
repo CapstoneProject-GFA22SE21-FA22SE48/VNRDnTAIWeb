@@ -68,6 +68,7 @@ import { MonacoEditorModule } from 'ngx-monaco-editor-v2';
 import {ConfirmPopupModule} from 'primeng/confirmpopup';
 import { GpsRomsComponent } from './pages/scribe/gps-roms/gps-roms.component';
 import { RetrainRomsComponent } from './pages/scribe/retrain-roms/retrain-roms.component';
+import { GoogleMapsModule } from '@angular/google-maps';
 @NgModule({
   declarations: [
     AppComponent,
@@ -131,7 +132,8 @@ import { RetrainRomsComponent } from './pages/scribe/retrain-roms/retrain-roms.c
     AutoCompleteModule,
     DragDropModule,
     MonacoEditorModule.forRoot(),
-    ConfirmPopupModule
+    ConfirmPopupModule,
+    GoogleMapsModule
   ],
   providers: [ConfirmationService, MessageService],
   bootstrap: [AppComponent],
