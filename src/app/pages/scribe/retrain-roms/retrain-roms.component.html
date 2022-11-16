@@ -184,7 +184,7 @@
 <p-dialog
   [(visible)]="displayImgEvidence"
   [modal]="true"
-  [style]="{ width: '70vw' }"
+  [style]="{ width: '40vw' }"
   *ngIf="selectedRom !== undefined"
 >
   <ng-template pTemplate="header">
@@ -196,6 +196,8 @@
       <img
         *ngIf="selectedRom.imageUrl"
         [src]="selectedRom.imageUrl | safe: 'resourceUrl'"
+        [style.width]="displayImgWidth + 'rem'"
+        [style.height]="displayImgHeight + 'rem'"
         alt="Hình ảnh"
       />
     </div>
@@ -207,7 +209,7 @@
   [(visible)]="displayResolveRom"
   [modal]="true"
   *ngIf="selectedRom !== undefined"
-  [style]="{ width: '50vw', height: '100vh' }"
+  [style]="{ width: '40vw', height: '100vh' }"
   (onHide)="clearLabelData()"
 >
   <ng-template pTemplate="header">
@@ -233,12 +235,14 @@
         *ngIf="selectedRom.imageUrl"
         [src]="selectedRom.imageUrl | safe: 'resourceUrl'"
         alt="Hình ảnh"
+        [style.width]="displayImgWidth + 'rem'"
+        [style.height]="displayImgHeight + 'rem'"
         style="position: absolute; z-index: 1"
       />
       <svg
         style="position: absolute; z-index: 2"
-        attr.width="{{ imgWidth || 0 }}px"
-        attr.height="{{ imgHeight || 0 }}px"
+        attr.width="{{ displayImgWidth }}rem"
+        attr.height="{{ displayImgHeight }}rem"
         class="border-3 border-900"
         (mousedown)="startLabelling($event)"
         (mouseup)="stopLabelling()"
