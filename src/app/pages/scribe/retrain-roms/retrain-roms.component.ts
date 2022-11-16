@@ -53,6 +53,9 @@ export class RetrainRomsComponent implements OnInit {
 
   signs: any;
   selectedSign: any;
+
+  displayImgWidth: number = 0;
+  displayImgHeight: number = 0;
   //end of image labelling
 
   constructor(
@@ -155,6 +158,18 @@ export class RetrainRomsComponent implements OnInit {
   viewImgEvidence(rom: any) {
     this.selectedRom = rom;
     this.displayImgEvidence = true;
+
+    this.imgFile = new Image();
+    this.imgFile.src = this.selectedRom?.imageUrl;
+
+    this.imgFile.onload = () => {
+      this.imgWidth = this.imgFile?.width;
+      this.imgHeight = this.imgFile?.height;
+
+      this.displayImgWidth = 25;
+      this.displayImgHeight =
+        (this.imgFile?.height * this.displayImgWidth) / this.imgFile?.width;
+    };
   }
 
   confirmClaimRom(event: any, rom: any) {
@@ -218,6 +233,10 @@ export class RetrainRomsComponent implements OnInit {
     this.imgFile.onload = () => {
       this.imgWidth = this.imgFile?.width;
       this.imgHeight = this.imgFile?.height;
+
+      this.displayImgWidth = 25;
+      this.displayImgHeight =
+        (this.imgFile?.height * this.displayImgWidth) / this.imgFile?.width;
     };
   }
 
@@ -267,6 +286,7 @@ export class RetrainRomsComponent implements OnInit {
       message: 'Lưu file hình ảnh cùng file label lên firebase. Bạn có chắc?',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
+        this.isLoadingService.add();
         //Count current sign class existing incidents
         var existingIndcidentCount = 0;
         listAll(
@@ -276,135 +296,141 @@ export class RetrainRomsComponent implements OnInit {
               this.selectedSign?.name?.split(' ')[2]
             }/imgs`
           )
-        ).then((value: any) => {
-          existingIndcidentCount = value?.items?.length;
-
-          //send email to AI Department if incidents >= 30
-          if (existingIndcidentCount >= 29) {
+        )
+          .then((value: any) => {
             this.isLoadingService.add();
-            this.wrapperService.post(
-              paths.AutoMailingExceededSignIncidents,
-              JSON.parse(
-                JSON.stringify(
-                  `Biển ${
-                    this.selectedSign?.name?.split(' ')[2]
-                  } cần được re-train.\nVui lòng kiểm tra images & labels ở đường dẫn bên dưới.\nhttps://console.firebase.google.com/u/0/project/vnrdntai/storage/vnrdntai.appspot.com/files/~2Fuser-feedbacks~2Fretrain-resolved-sign-images`
-                )
-              ),
-              getStorageToken(),
-              {
-                successCallback: (response) => {
-                  this.isLoadingService.remove();
-                },
-                errorCallback: (error) => {
-                  console.log(error);
-                  this.isLoadingService.remove();
-                },
-              }
-            );
-          }
+            existingIndcidentCount = value?.items?.length;
 
-          var selectedSignClass = '-1';
-
-          Object.entries(JSON.parse(JSON.stringify(signClasses))).forEach(
-            ([key, value]) => {
-              if (value === this.selectedSign?.name?.split(' ')[2]) {
-                selectedSignClass = key;
-              }
-            }
-          );
-
-          var labelTxt =
-            selectedSignClass +
-            ' ' +
-            (
-              (this.labels[0]?.x + this.labels[0]?.w / 2) /
-              this.imgWidth
-            ).toFixed(6) +
-            ' ' +
-            (
-              (this.labels[0]?.y + this.labels[0]?.h / 2) /
-              this.imgHeight
-            ).toFixed(6) +
-            ' ' +
-            (this.labels[0].w / this.imgWidth).toFixed(6) +
-            ' ' +
-            (this.labels[0].h / this.imgHeight).toFixed(6);
-
-          var labelFile = new Blob([labelTxt], { type: '.txt' });
-
-          //Upload label .txt file to firebase
-          this.fileUploadService
-            .uploadImageToFirebase(
-              labelFile,
-              `user-feedbacks/retrain-resolved-sign-images/${
-                this.selectedSign?.name?.split(' ')[2]
-              }/labels/${this.selectedSign?.name?.split(' ')[2]}_${
-                existingIndcidentCount + 1
-              }`
-            )
-            .then(() => {
-              //Download and re-upload img .jpg file to firebase
-              getBytes(ref(getStorage(), this.selectedRom.imageUrl)).then(
-                (value: any) => {
-                  this.fileUploadService
-                    .uploadImageToFirebase(
-                      new Blob([new Uint8Array(value, 0, value?.byteLength)], {
-                        type: '.jpg',
-                      }),
-                      `user-feedbacks/retrain-resolved-sign-images/${
-                        this.selectedSign?.name?.split(' ')[2]
-                      }/imgs/${this.selectedSign?.name?.split(' ')[2]}_${
-                        existingIndcidentCount + 1
-                      }`
-                    )
-                    .then((imgUrl: any) => {
-                      this.selectedRom.imageUrl = imgUrl;
-                      this.selectedRom.status = Status.Confirmed;
-                      this.isLoadingService.add();
-                      this.wrapperService.put(
-                        paths.ScribeResolveRetrainRom +
-                          '/' +
-                          this.selectedRom.id,
-                        this.selectedRom,
-                        getStorageToken(),
-                        {
-                          successCallback: (response) => {
-                            this.clearData();
-                            this.clearLabelData();
-                            this.loadRoms();
-
-                            this.displayResolveRom = false;
-                            this.isLoadingService.remove();
-
-                            this.messageService.add({
-                              severity: 'success',
-                              summary: commonStr.success,
-                              detail: commonStr.dataUpdatedSuccessfully,
-                            });
-                          },
-                          errorCallback: (error) => {
-                            this.clearData();
-                            this.clearLabelData();
-                            this.loadRoms();
-
-                            this.displayResolveRom = false;
-                            this.isLoadingService.remove();
-
-                            this.messageService.add({
-                              severity: 'error',
-                              summary: commonStr.fail,
-                              detail:
-                                error?.response?.data || commonStr.errorOccur,
-                            });
-                          },
-                        }
-                      );
-                    });
+            //send email to AI Department if incidents >= 30
+            if (existingIndcidentCount >= 29) {
+              this.wrapperService.post(
+                paths.AutoMailingExceededSignIncidents,
+                JSON.parse(
+                  JSON.stringify(
+                    `Biển ${
+                      this.selectedSign?.name?.split(' ')[2]
+                    } cần được re-train.\nVui lòng kiểm tra images & labels ở đường dẫn bên dưới.\nhttps://console.firebase.google.com/u/0/project/vnrdntai/storage/vnrdntai.appspot.com/files/~2Fuser-feedbacks~2Fretrain-resolved-sign-images`
+                  )
+                ),
+                getStorageToken(),
+                {
+                  successCallback: (response) => {},
+                  errorCallback: (error) => {
+                    console.log(error);
+                  },
                 }
               );
-            });
-        });
+            }
+
+            var selectedSignClass = '-1';
+
+            Object.entries(JSON.parse(JSON.stringify(signClasses))).forEach(
+              ([key, value]) => {
+                if (value === this.selectedSign?.name?.split(' ')[2]) {
+                  selectedSignClass = key;
+                }
+              }
+            );
+
+            var labelTxt =
+              selectedSignClass +
+              ' ' +
+              (
+                (this.labels[0]?.x + this.labels[0]?.w / 2) /
+                this.displayImgWidth /
+                16
+              ).toFixed(6) +
+              ' ' +
+              (
+                (this.labels[0]?.y + this.labels[0]?.h / 2) /
+                this.displayImgHeight /
+                16
+              ).toFixed(6) +
+              ' ' +
+              (this.labels[0].w / this.displayImgWidth / 16).toFixed(6) +
+              ' ' +
+              (this.labels[0].h / this.displayImgHeight / 16).toFixed(6);
+
+            var labelFile = new Blob([labelTxt], { type: '.txt' });
+            this.isLoadingService.remove();
+            //Upload label .txt file to firebase
+            this.fileUploadService
+              .uploadImageToFirebase(
+                labelFile,
+                `user-feedbacks/retrain-resolved-sign-images/${
+                  this.selectedSign?.name?.split(' ')[2]
+                }/labels/${this.selectedSign?.name?.split(' ')[2]}_${
+                  existingIndcidentCount + 1
+                }`
+              )
+              .then(() => {
+                this.isLoadingService.add();
+                //Download and re-upload img .jpg file to firebase
+                getBytes(ref(getStorage(), this.selectedRom.imageUrl)).then(
+                  (value: any) => {
+                    this.fileUploadService
+                      .uploadImageToFirebase(
+                        new Blob(
+                          [new Uint8Array(value, 0, value?.byteLength)],
+                          {
+                            type: '.jpg',
+                          }
+                        ),
+                        `user-feedbacks/retrain-resolved-sign-images/${
+                          this.selectedSign?.name?.split(' ')[2]
+                        }/imgs/${this.selectedSign?.name?.split(' ')[2]}_${
+                          existingIndcidentCount + 1
+                        }`
+                      )
+                      .then((imgUrl: any) => {
+                        this.selectedRom.imageUrl = imgUrl;
+                        this.selectedRom.status = Status.Confirmed;
+                        this.wrapperService.put(
+                          paths.ScribeResolveRetrainRom +
+                            '/' +
+                            this.selectedRom.id,
+                          this.selectedRom,
+                          getStorageToken(),
+                          {
+                            successCallback: (response) => {
+                              this.clearData();
+                              this.clearLabelData();
+                              this.loadRoms();
+
+                              this.displayResolveRom = false;
+
+                              this.messageService.add({
+                                severity: 'success',
+                                summary: commonStr.success,
+                                detail: commonStr.dataUpdatedSuccessfully,
+                              });
+                              this.isLoadingService.remove();
+                            },
+                            errorCallback: (error) => {
+                              this.clearData();
+                              this.clearLabelData();
+                              this.loadRoms();
+
+                              this.displayResolveRom = false;
+                              this.isLoadingService.remove();
+
+                              this.messageService.add({
+                                severity: 'error',
+                                summary: commonStr.fail,
+                                detail:
+                                  error?.response?.data || commonStr.errorOccur,
+                              });
+                            },
+                          }
+                        );
+                      });
+                  }
+                );
+              });
+          })
+          .finally(() => {
+            this.isLoadingService.remove();
+          });
       },
       reject: () => {},
     });
