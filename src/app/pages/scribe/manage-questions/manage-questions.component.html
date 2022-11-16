@@ -6,7 +6,7 @@
       'w-8 h-full': selectedQuestion
     }"
   >
-    <div class="p-2 pb-3" style="height: 6%">
+    <div class="p-2 pb-3" style="height: 5%">
       <fa-icon class="fa-lg mr-2" [icon]="['far', 'circle-question']"></fa-icon>
       <span class="text-xl">Quản lý câu hỏi</span>
     </div>
@@ -61,7 +61,7 @@
       </div>
     </div>
 
-    <div class="p-1 overflow-auto" style="height: 84%">
+    <div class="p-1 overflow-auto" style="height: 85%">
       <p-table
         [value]="questions"
         [paginator]="questions?.length > 10 ? true : false"

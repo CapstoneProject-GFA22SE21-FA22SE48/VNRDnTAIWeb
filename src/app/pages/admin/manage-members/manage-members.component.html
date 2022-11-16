@@ -4,7 +4,7 @@
       'w-12 h-full': selectedMember === undefined,
       'w-8 h-full': selectedMember
     }">
-    <div class="p-2 pb-3" style="height: 6%">
+    <div class="p-2 pb-3" style="height: 5%">
       <fa-icon class="fa-lg mr-2" [icon]="['far', 'circle-user']"></fa-icon>
       <span class="text-xl">Quản lý thành viên</span>
     </div>
@@ -27,7 +27,7 @@
         </div>
       </div>
     </div>    
-    <div class="p-1 overflow-auto" style="height: 84%;">
+    <div class="p-1 overflow-auto" style="height: 85%;">
       <p-table [value]="members" [paginator]="
           members !== undefined && members.length > 10 ? true : false
         " [rows]="10" [showCurrentPageReport]="
