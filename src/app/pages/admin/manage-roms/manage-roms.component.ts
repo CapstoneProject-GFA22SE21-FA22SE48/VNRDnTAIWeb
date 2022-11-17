@@ -653,8 +653,10 @@ export class ManageRomsComponent implements OnInit {
                           sp2?.signParagraphStatueName?.split(' ')[1] ||
                         sp1?.signParagraphSectionName?.split(' ')[1] -
                           sp2?.signParagraphSectionName?.split(' ')[1] ||
-                        sp1?.signParagraphParagraphName?.split(' ')[1] -
-                          sp2?.signParagraphParagraphName?.split(' ')[1]
+                        (sp1?.signParagraphParagraphName >
+                        sp2?.signParagraphParagraphName
+                          ? 1
+                          : -1)
                     )
                     .forEach((sp: any) => {
                       this.changedModel.code += `\t${sp.signParagraphStatueName} > ${sp.signParagraphSectionName} > ${sp.signParagraphParagraphName}\n`;
@@ -692,8 +694,10 @@ export class ManageRomsComponent implements OnInit {
                           sp2?.signParagraphStatueName?.split(' ')[1] ||
                         sp1?.signParagraphSectionName?.split(' ')[1] -
                           sp2?.signParagraphSectionName?.split(' ')[1] ||
-                        sp1?.signParagraphParagraphName?.split(' ')[1] -
-                          sp2?.signParagraphParagraphName?.split(' ')[1]
+                        (sp1?.signParagraphParagraphName >
+                        sp2?.signParagraphParagraphName
+                          ? 1
+                          : -1)
                     )
                     .forEach((sp: any) => {
                       this.originalModel.code += `\t${sp.signParagraphStatueName} > ${sp.signParagraphSectionName} > ${sp.signParagraphParagraphName}\n`;
