@@ -108,7 +108,7 @@ export class ManageSignsComponent implements OnInit {
     private fileUploadService: FileUploadService,
     private messageService: MessageService,
     private notiService: NotificationService,
-    private validateAccount: ValidateAccount,
+    private validateAccount: ValidateAccount
   ) {}
 
   ngOnInit() {
@@ -745,7 +745,9 @@ export class ManageSignsComponent implements OnInit {
       this.fileUploadService
         .uploadImageToFirebase(
           this.tmpChosenSignNewImageFile,
-          `images/sign-collection/new/${this.tmpChosenSign.name.split(' ')[2]}_${Date.now}`
+          `images/sign-collection/new/${
+            this.tmpChosenSign.name.split(' ')[2]
+          }_${Date.now}`
         )
         .then((imgUrl: any) => {
           this.tmpChosenSign.imageUrl = imgUrl;
@@ -972,7 +974,7 @@ export class ManageSignsComponent implements OnInit {
                 this.displayConfirmDeleteChosenSign = false;
 
                 this.chosenSign = undefined;
-                
+
                 this.isLoadingService.remove();
 
                 this.messageService.add({
@@ -1072,7 +1074,9 @@ export class ManageSignsComponent implements OnInit {
     this.fileUploadService
       .uploadImageToFirebase(
         this.newSignImageFile,
-        `images/sign-collection/new/${this.newSignName.split(' ')[2]}_${Date.now}`
+        `images/sign-collection/new/${this.newSignName.split(' ')[2]}_${
+          Date.now
+        }`
       )
       .then((imgUrl: any) => {
         this.newSignImageUrl = imgUrl;
@@ -1120,7 +1124,7 @@ export class ManageSignsComponent implements OnInit {
                     this.loadAdmins();
                     this.loadAssigedSigns();
                     this.displayConfirmCreateNewSign = false;
-                   
+
                     this.isLoadingService.remove();
 
                     this.messageService.add({
@@ -1134,7 +1138,7 @@ export class ManageSignsComponent implements OnInit {
                     this.loadAdmins();
                     this.loadAssigedSigns();
                     this.displayConfirmCreateNewSign = false;
-                    
+
                     this.isLoadingService.remove();
 
                     this.messageService.add({
