@@ -74,7 +74,7 @@ export class GpsRomsComponent implements OnInit {
 
   zoom = 14;
 
-  markerOptions: google.maps.MarkerOptions = {draggable: false};
+  markerOptions: google.maps.MarkerOptions = { draggable: false };
   //end of google map
 
   constructor(
@@ -183,9 +183,11 @@ export class GpsRomsComponent implements OnInit {
     this.changedModel.code = '';
 
     if (this.selectedRom?.modifiedGpssign !== null) {
-      this.originalModel.code =
-        `Biển:\n` +
-        `\t${this.selectedRom?.modifiedGpssign?.sign?.name}\n` +
+      if (this.selectedRom?.modifiedGpssign?.sign?.name) {
+        this.originalModel.code +=
+          `Biển:\n` + `\t${this.selectedRom?.modifiedGpssign?.sign?.name}\n`;
+      }
+      this.originalModel.code +=
         `Kinh độ:\n` +
         `\t${this.selectedRom?.modifiedGpssign?.longitude}\n` +
         `Vĩ độ:\n` +
@@ -198,15 +200,17 @@ export class GpsRomsComponent implements OnInit {
       this.markerMapOriginalPosition = {
         lat: this.selectedRom?.modifiedGpssign?.latitude,
         lng: this.selectedRom?.modifiedGpssign?.longitude,
-      }
+      };
     } else {
       this.originalModel.code = ' ';
     }
 
     if (this.selectedRom.operationType !== OperationType.Delete) {
-      this.changedModel.code =
-        `Biển:\n` +
-        `\t${this.selectedRom?.modifyingGpssign?.sign?.name}\n` +
+      if (this.selectedRom?.modifyingGpssign?.sign?.name) {
+        this.changedModel.code +=
+          `Biển:\n` + `\t${this.selectedRom?.modifyingGpssign?.sign?.name}\n`;
+      }
+      this.changedModel.code +=
         `Kinh độ:\n` +
         `\t${this.selectedRom?.modifyingGpssign?.longitude}\n` +
         `Vĩ độ:\n` +

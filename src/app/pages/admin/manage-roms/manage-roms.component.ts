@@ -645,11 +645,22 @@ export class ManageRomsComponent implements OnInit {
                   this.selectedRom.modifyingSign?.signParagraphs?.length > 0
                 ) {
                   this.changedModel.code += `Các điểm liên quan (nếu có):\n`;
-                  this.selectedRom.modifyingSign?.signParagraphs?.forEach(
-                    (sp: any) => {
+
+                  this.selectedRom.modifyingSign?.signParagraphs
+                    ?.sort(
+                      (sp1: any, sp2: any) =>
+                        sp1?.signParagraphStatueName?.split(' ')[1] -
+                          sp2?.signParagraphStatueName?.split(' ')[1] ||
+                        sp1?.signParagraphSectionName?.split(' ')[1] -
+                          sp2?.signParagraphSectionName?.split(' ')[1] ||
+                        (sp1?.signParagraphParagraphName >
+                        sp2?.signParagraphParagraphName
+                          ? 1
+                          : -1)
+                    )
+                    .forEach((sp: any) => {
                       this.changedModel.code += `\t${sp.signParagraphStatueName} > ${sp.signParagraphSectionName} > ${sp.signParagraphParagraphName}\n`;
-                    }
-                  );
+                    });
                 }
 
                 if (this.selectedRom.modifyingSign?.imageUrl) {
@@ -676,11 +687,21 @@ export class ManageRomsComponent implements OnInit {
                   this.selectedRom.modifiedSign?.signParagraphs?.length > 0
                 ) {
                   this.originalModel.code += `Các điểm liên quan (nếu có):\n`;
-                  this.selectedRom.modifiedSign?.signParagraphs?.forEach(
-                    (sp: any) => {
+                  this.selectedRom.modifiedSign?.signParagraphs
+                    ?.sort(
+                      (sp1: any, sp2: any) =>
+                        sp1?.signParagraphStatueName?.split(' ')[1] -
+                          sp2?.signParagraphStatueName?.split(' ')[1] ||
+                        sp1?.signParagraphSectionName?.split(' ')[1] -
+                          sp2?.signParagraphSectionName?.split(' ')[1] ||
+                        (sp1?.signParagraphParagraphName >
+                        sp2?.signParagraphParagraphName
+                          ? 1
+                          : -1)
+                    )
+                    .forEach((sp: any) => {
                       this.originalModel.code += `\t${sp.signParagraphStatueName} > ${sp.signParagraphSectionName} > ${sp.signParagraphParagraphName}\n`;
-                    }
-                  );
+                    });
                 }
 
                 if (this.selectedRom.modifiedSign?.imageUrl) {
