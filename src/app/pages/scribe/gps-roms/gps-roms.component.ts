@@ -64,10 +64,6 @@ export class GpsRomsComponent implements OnInit {
   //end of text compare, using ngx-monaco-editor v2
 
   //start of google map
-  displayMapOriginal: any;
-  centerMapOriginal: any;
-  markerMapOriginalPosition: any;
-
   displayMapChanged: any;
   centerMapChanged: any;
   markerMapChangedPosition: any;
@@ -192,15 +188,6 @@ export class GpsRomsComponent implements OnInit {
         `\t${this.selectedRom?.modifiedGpssign?.longitude}\n` +
         `Vĩ độ:\n` +
         `\t${this.selectedRom?.modifiedGpssign?.longitude}\n`;
-      this.centerMapOriginal = {
-        lat: this.selectedRom?.modifiedGpssign?.latitude,
-        lng: this.selectedRom?.modifiedGpssign?.longitude,
-      };
-
-      this.markerMapOriginalPosition = {
-        lat: this.selectedRom?.modifiedGpssign?.latitude,
-        lng: this.selectedRom?.modifiedGpssign?.longitude,
-      };
     } else {
       this.originalModel.code = ' ';
     }
@@ -227,6 +214,15 @@ export class GpsRomsComponent implements OnInit {
       };
     } else {
       this.changedModel.code = ' ';
+      this.centerMapChanged = {
+        lat: this.selectedRom?.modifyingGpssign?.latitude,
+        lng: this.selectedRom?.modifyingGpssign?.longitude,
+      };
+
+      this.markerMapChangedPosition = {
+        lat: this.selectedRom?.modifyingGpssign?.latitude,
+        lng: this.selectedRom?.modifyingGpssign?.longitude,
+      };
     }
 
     this.displayRomDetailDialog = true;
@@ -280,18 +276,6 @@ export class GpsRomsComponent implements OnInit {
   clearData() {
     this.selectedRom = undefined;
     this.displayRomDetailDialog = false;
-  }
-
-  moveMapOriginal(event: google.maps.MapMouseEvent) {
-    if (event.latLng != null) {
-      this.centerMapOriginal = event.latLng.toJSON();
-    }
-  }
-
-  moveOriginal(event: google.maps.MapMouseEvent) {
-    if (event.latLng != null) {
-      this.displayMapOriginal = event.latLng.toJSON();
-    }
   }
 
   moveMapChanged(event: google.maps.MapMouseEvent) {

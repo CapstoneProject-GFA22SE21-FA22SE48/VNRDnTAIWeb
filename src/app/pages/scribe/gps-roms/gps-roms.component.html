@@ -303,36 +303,11 @@
         </div>
       </div>
 
-      <div
-          class="w-12 flex p-2"
-          *ngIf="centerMapOriginal"
-        >
-          <div class="w-6">
-            <span class="text-lg font-bold">Vị trí cũ: </span>
-          </div>
-        </div>
-        <div
-          class="w-12 flex p-2 border-200 border-1 border-round-lg overflow-hidden"
-          *ngIf="centerMapOriginal"
-        >
-            <google-map
-            class="w-full h-auto"
-            [center]="centerMapOriginal"
-            [zoom]="zoom"
-            (mapClick)="moveMapOriginal($event)"
-            (mapMousemove)="moveOriginal($event)">
-            <map-marker
-            [position]="markerMapOriginalPosition"
-            [options]="markerOptions"
-            ></map-marker>
-            </google-map>
-        </div>
-
         <div
           class="w-12 flex p-2"
         >
           <div class="w-6">
-            <span class="text-lg font-bold">Vị trí mới: </span>
+            <span class="text-lg font-bold">Vị trí: </span>
           </div>
         </div>
         <div
