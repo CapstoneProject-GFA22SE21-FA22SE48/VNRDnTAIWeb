@@ -55,7 +55,7 @@
             label="Tạo mới"
             class="p-button-raised p-button-success"
             [style]="{ height: '40px' }"
-            (click)="displayCreateDialog = true; initValueForCreateNew()"
+            (click)="displayCreateDialog = true; initValueForCreateNew(); getApprovalRate()"
           ></button>
         </div>
       </div>
@@ -233,7 +233,7 @@
             label="Chỉnh sửa"
             class="p-button-raised p-button-warning"
             [style]="{ height: '40px' }"
-            (click)="openUpdateQuestion()"
+            (click)="openUpdateQuestion(); getApprovalRate()"
           ></button>
         </div>
         <div class="w-6 text-center">
@@ -244,7 +244,7 @@
             label="Xóa"
             class="p-button-raised p-button-danger"
             [style]="{ height: '40px' }"
-            (click)="displayDeleteDialog = true"
+            (click)="displayDeleteDialog = true; getApprovalRate()"
           ></button>
         </div>
       </div>
@@ -533,6 +533,37 @@
           />
         </div>
       </div>
+
+      <div
+        class="w-full text-left p-2 border-blue-200 border-2 border-round-md"
+      >
+        <span class="font-bold text-lg">Lưu ý: </span><br />
+        + Tỷ lệ phê duyệt hiện tại:
+        <span class="font-bold"
+          >{{
+            (1 - deniedRomCount / totalRomCount) * 100 | number: "2.0-2"
+          }}%</span
+        ><br />
+        + Tỷ lệ phê duyệt (nếu yêu cầu được chấp nhận):
+        <span class="font-bold"
+          >{{
+            (1 - deniedRomCount / (totalRomCount + 1)) * 100 | number: "2.0-2"
+          }}%</span
+        ><br />
+        + Tỷ lệ phê duyệt (nếu yêu cầu bị từ chối):
+        <span class="font-bold"
+          >{{
+            (1 - (deniedRomCount + 1) / (totalRomCount + 1)) * 100
+              | number: "2.0-2"
+          }}%</span
+        ><br />
+        <div class="text-center">
+          <span class="font-bold font-italic text-red-300 text-sm"
+            >Nếu tỷ lệ phê duyệt < 65%, tài khoản sẽ bị ngưng hoạt động bởi hệ
+            thống</span
+          >
+        </div>
+      </div>
     </div>
   </ng-template>
 
@@ -701,6 +732,37 @@
     </div>
   </div>
 
+  <div
+        class="w-full text-left p-2 border-blue-200 border-2 border-round-md"
+      >
+        <span class="font-bold text-lg">Lưu ý: </span><br />
+        + Tỷ lệ phê duyệt hiện tại:
+        <span class="font-bold"
+          >{{
+            (1 - deniedRomCount / totalRomCount) * 100 | number: "2.0-2"
+          }}%</span
+        ><br />
+        + Tỷ lệ phê duyệt (nếu yêu cầu được chấp nhận):
+        <span class="font-bold"
+          >{{
+            (1 - deniedRomCount / (totalRomCount + 1)) * 100 | number: "2.0-2"
+          }}%</span
+        ><br />
+        + Tỷ lệ phê duyệt (nếu yêu cầu bị từ chối):
+        <span class="font-bold"
+          >{{
+            (1 - (deniedRomCount + 1) / (totalRomCount + 1)) * 100
+              | number: "2.0-2"
+          }}%</span
+        ><br />
+        <div class="text-center">
+          <span class="font-bold font-italic text-red-300 text-sm"
+            >Nếu tỷ lệ phê duyệt < 65%, tài khoản sẽ bị ngưng hoạt động bởi hệ
+            thống</span
+          >
+        </div>
+      </div>
+
   <ng-template pTemplate="footer">
     <button
       type="button"
@@ -730,13 +792,13 @@
   #updateDialog
   [(visible)]="displayDeleteDialog"
   [modal]="true"
-  [style]="{ width: '35vw', height: '50vh' }"
+  [style]="{ width: '35vw'}"
   [modal]="true"
 >
   <ng-template pTemplate="header">
     <span class="text-red-500 font-bold text-xl">Xóa</span>
   </ng-template>
-  <div class="w-12 flex mb-5 align-items-center">
+  <div class="w-12 flex mb-2 align-items-center">
     <div class="w-3">
       <span class="text-lg font-bold">Gửi yêu cầu tới </span> <br />
     </div>
@@ -761,11 +823,42 @@
         </p-dropdown>
     </div>
   </div>
-  <div class="w-12">
+  <div class="w-12 mb-2">
     <span class="text-lg"
       >Câu hỏi cùng các đáp án sẽ bị yêu cầu xóa. Bạn có chắc chắn?</span
     >
   </div>
+
+  <div
+        class="w-full text-left p-2 border-blue-200 border-2 border-round-md"
+      >
+        <span class="font-bold text-lg">Lưu ý: </span><br />
+        + Tỷ lệ phê duyệt hiện tại:
+        <span class="font-bold"
+          >{{
+            (1 - deniedRomCount / totalRomCount) * 100 | number: "2.0-2"
+          }}%</span
+        ><br />
+        + Tỷ lệ phê duyệt (nếu yêu cầu được chấp nhận):
+        <span class="font-bold"
+          >{{
+            (1 - deniedRomCount / (totalRomCount + 1)) * 100 | number: "2.0-2"
+          }}%</span
+        ><br />
+        + Tỷ lệ phê duyệt (nếu yêu cầu bị từ chối):
+        <span class="font-bold"
+          >{{
+            (1 - (deniedRomCount + 1) / (totalRomCount + 1)) * 100
+              | number: "2.0-2"
+          }}%</span
+        ><br />
+        <div class="text-center">
+          <span class="font-bold font-italic text-red-300 text-sm"
+            >Nếu tỷ lệ phê duyệt < 65%, tài khoản sẽ bị ngưng hoạt động bởi hệ
+            thống</span
+          >
+        </div>
+      </div>
 
   <ng-template pTemplate="footer">
     <button

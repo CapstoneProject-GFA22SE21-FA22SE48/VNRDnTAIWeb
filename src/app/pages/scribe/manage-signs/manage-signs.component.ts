@@ -101,6 +101,10 @@ export class ManageSignsComponent implements OnInit {
   displayConfirmUpdateChosenSign: boolean = false;
   displayConfirmDeleteChosenSign: boolean = false;
   displayConfirmCreateNewSign: boolean = false;
+  
+  //Approval rate
+  deniedRomCount: any;
+  totalRomCount: any; 
 
   constructor(
     private wrapperService: WrapperService,
@@ -212,6 +216,21 @@ export class ManageSignsComponent implements OnInit {
       );
       this.isLoadingService.remove();
     }
+  }
+
+  getApprovalRate(){
+    this.isLoadingService.add();
+    this.wrapperService.get(paths.ScribeGetApprovalRate + '/' + decodeToken(getStorageToken() || '')?.Id, getStorageToken(), {
+      successCallback: (response) => {
+        this.deniedRomCount = response.data?.deniedRomCount;
+        this.totalRomCount = response.data?.totalRomCount;
+        this.isLoadingService.remove();
+      },
+      errorCallback: (error) => {
+        console.log(error);
+        this.isLoadingService.remove();
+      }
+    })
   }
 
   openUpdateChosenSign() {

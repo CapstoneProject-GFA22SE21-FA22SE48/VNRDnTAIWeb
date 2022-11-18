@@ -267,7 +267,9 @@
               label="Xóa "
               class="p-button-raised p-button-danger"
               [style]="{ height: '40px' }"
-              (click)="displayConfirmDeleteStatueDialog = true"
+              (click)="
+                displayConfirmDeleteStatueDialog = true; getApprovalRate()
+              "
             ></button>
           </div>
         </div>
@@ -361,7 +363,7 @@
             class="p-button-raised p-button-success"
             [style]="{ height: '40px' }"
             [disabled]="!isValidUpdatingStatue"
-            (click)="displayConfirmUpdateStatueDialog = true"
+            (click)="displayConfirmUpdateStatueDialog = true; getApprovalRate()"
           ></button>
         </div>
         <div class="w-6 flex flex-row-reverse">
@@ -810,7 +812,9 @@
               label="Xóa "
               class="p-button-raised p-button-danger"
               [style]="{ height: '40px' }"
-              (click)="displayConfirmDeleteSectionDialog = true"
+              (click)="
+                displayConfirmDeleteSectionDialog = true; getApprovalRate()
+              "
             ></button>
           </div>
         </div>
@@ -976,7 +980,9 @@
             class="p-button-raised p-button-success"
             [style]="{ height: '40px' }"
             [disabled]="!isValidUpdatingSection"
-            (click)="displayConfirmUpdateSectionDialog = true"
+            (click)="
+              displayConfirmUpdateSectionDialog = true; getApprovalRate()
+            "
           ></button>
         </div>
         <div class="w-6 flex flex-row-reverse">
@@ -1554,7 +1560,9 @@
               label="Xóa "
               class="p-button-raised p-button-danger"
               [style]="{ height: '40px' }"
-              (click)="displayConfirmDeleteParagraphDialog = true"
+              (click)="
+                displayConfirmDeleteParagraphDialog = true; getApprovalRate()
+              "
             ></button>
           </div>
         </div>
@@ -1745,7 +1753,9 @@
             class="p-button-raised p-button-success"
             [style]="{ height: '40px' }"
             [disabled]="!isValidUpdatingParagraph"
-            (click)="displayConfirmUpdateParagraphDialog = true"
+            (click)="
+              displayConfirmUpdateParagraphDialog = true; getApprovalRate()
+            "
           ></button>
         </div>
         <div class="w-6 flex flex-row-reverse">
@@ -1956,16 +1966,52 @@
 <!-- Confirm update statue dialog -->
 <p-dialog
   [(visible)]="displayConfirmUpdateStatueDialog"
-  [style]="{ width: '30rem', height: '13rem' }"
+  [style]="{ width: '30rem' }"
   [modal]="true"
 >
   <ng-template pTemplate="header">
     <span class="text-orange-500 font-bold text-xl">Chỉnh sửa</span>
   </ng-template>
-  <div class="w-full text-center text-lg">
-    "{{ chosenStatue?.name }}"
-    <span> sẽ được gửi yêu cầu chỉnh sửa. Bạn có chắc? </span>
-  </div>
+
+  <ng-template pTemplate="content">
+    <div class="w-full text-center text-lg">
+      <div class="w-full mb-2">
+        "{{ chosenStatue?.name }}"
+        <span> sẽ được gửi yêu cầu chỉnh sửa. Bạn có chắc? </span>
+      </div>
+
+      <div
+        class="w-full text-left p-2 border-blue-200 border-2 border-round-md"
+      >
+        <span class="font-bold text-lg">Lưu ý: </span><br />
+        + Tỷ lệ phê duyệt hiện tại:
+        <span class="font-bold"
+          >{{
+            (1 - deniedRomCount / totalRomCount) * 100 | number: "2.0-2"
+          }}%</span
+        ><br />
+        + Tỷ lệ phê duyệt (nếu yêu cầu được chấp nhận):
+        <span class="font-bold"
+          >{{
+            (1 - deniedRomCount / (totalRomCount + 1)) * 100 | number: "2.0-2"
+          }}%</span
+        ><br />
+        + Tỷ lệ phê duyệt (nếu yêu cầu bị từ chối):
+        <span class="font-bold"
+          >{{
+            (1 - (deniedRomCount + 1) / (totalRomCount + 1)) * 100
+              | number: "2.0-2"
+          }}%</span
+        ><br />
+        <div class="text-center">
+          <span class="font-bold font-italic text-red-300 text-sm"
+            >Nếu tỷ lệ phê duyệt < 65%, tài khoản sẽ bị ngưng hoạt động bởi hệ
+            thống</span
+          >
+        </div>
+      </div>
+    </div>
+  </ng-template>
 
   <ng-template pTemplate="footer">
     <button
@@ -1992,14 +2038,14 @@
 <!-- Confirm delete statue dialog -->
 <p-dialog
   [(visible)]="displayConfirmDeleteStatueDialog"
-  [style]="{ width: '35vw', height: '45vh' }"
+  [style]="{ width: '35vw' }"
   [modal]="true"
 >
   <ng-template pTemplate="header">
     <span class="text-red-500 font-bold text-xl">Xóa</span>
   </ng-template>
 
-  <div class="mb-5">
+  <div class="w-full mb-2">
     <div class="flex justify-content-center align-items-center">
       <div class="w-3">
         <span class="text-lg font-bold">Gửi yêu cầu tới </span> <br />
@@ -2032,11 +2078,37 @@
       </div>
     </div>
   </div>
-  <div class="w-full text-center">
+  <div class="w-full text-center mb-2">
     <span class="text-lg font-bold ml-4">
       {{ chosenStatue?.name }}
     </span>
     <span class="text-lg"> sẽ được gửi yêu cầu xóa. Bạn có chắc chắn?</span>
+  </div>
+  <div class="w-full text-left p-2 border-blue-200 border-2 border-round-md">
+    <span class="font-bold text-lg">Lưu ý: </span><br />
+    + Tỷ lệ phê duyệt hiện tại:
+    <span class="font-bold"
+      >{{ (1 - deniedRomCount / totalRomCount) * 100 | number: "2.0-2" }}%</span
+    ><br />
+    + Tỷ lệ phê duyệt (nếu yêu cầu được chấp nhận):
+    <span class="font-bold"
+      >{{
+        (1 - deniedRomCount / (totalRomCount + 1)) * 100 | number: "2.0-2"
+      }}%</span
+    ><br />
+    + Tỷ lệ phê duyệt (nếu yêu cầu bị từ chối):
+    <span class="font-bold"
+      >{{
+        (1 - (deniedRomCount + 1) / (totalRomCount + 1)) * 100
+          | number: "2.0-2"
+      }}%</span
+    ><br />
+    <div class="text-center">
+      <span class="font-bold font-italic text-red-300 text-sm"
+        >Nếu tỷ lệ phê duyệt < 65%, tài khoản sẽ bị ngưng hoạt động bởi hệ
+        thống</span
+      >
+    </div>
   </div>
 
   <ng-template pTemplate="footer">
@@ -2064,16 +2136,46 @@
 <!-- Confirm update section dialog -->
 <p-dialog
   [(visible)]="displayConfirmUpdateSectionDialog"
-  [style]="{ width: '30rem', height: '13rem' }"
+  [style]="{ width: '30rem'}"
   [modal]="true"
 >
   <ng-template pTemplate="header">
     <span class="text-orange-500 font-bold text-xl">Chỉnh sửa</span>
   </ng-template>
-  <div class="w-full text-center text-lg">
+  <div class="w-full text-center text-lg mb-2">
     "{{ chosenSection?.name }}"
     <span> sẽ được gửi yêu cầu chỉnh sửa. Bạn có chắc? </span>
   </div>
+  <div
+        class="w-full text-left p-2 border-blue-200 border-2 border-round-md"
+      >
+        <span class="font-bold text-lg">Lưu ý: </span><br />
+        + Tỷ lệ phê duyệt hiện tại:
+        <span class="font-bold"
+          >{{
+            (1 - deniedRomCount / totalRomCount) * 100 | number: "2.0-2"
+          }}%</span
+        ><br />
+        + Tỷ lệ phê duyệt (nếu yêu cầu được chấp nhận):
+        <span class="font-bold"
+          >{{
+            (1 - deniedRomCount / (totalRomCount + 1)) * 100 | number: "2.0-2"
+          }}%</span
+        ><br />
+        + Tỷ lệ phê duyệt (nếu yêu cầu bị từ chối):
+        <span class="font-bold"
+          >{{
+            (1 - (deniedRomCount + 1) / (totalRomCount + 1)) * 100
+              | number: "2.0-2"
+          }}%</span
+        ><br />
+        <div class="text-center">
+          <span class="font-bold font-italic text-red-300 text-sm"
+            >Nếu tỷ lệ phê duyệt < 65%, tài khoản sẽ bị ngưng hoạt động bởi hệ
+            thống</span
+          >
+        </div>
+      </div>
 
   <ng-template pTemplate="footer">
     <button
@@ -2100,14 +2202,14 @@
 <!-- Confirm delete section dialog -->
 <p-dialog
   [(visible)]="displayConfirmDeleteSectionDialog"
-  [style]="{ width: '35vw', height: '45vh' }"
+  [style]="{ width: '35vw'}"
   [modal]="true"
 >
   <ng-template pTemplate="header">
     <span class="text-red-500 font-bold text-xl">Xóa</span>
   </ng-template>
 
-  <div class="mb-5">
+  <div class="w-full mb-2">
     <div class="flex justify-content-center align-items-center">
       <div class="w-3">
         <span class="text-lg font-bold">Gửi yêu cầu tới </span> <br />
@@ -2140,12 +2242,42 @@
       </div>
     </div>
   </div>
-  <div class="w-full text-center">
+  <div class="w-full text-center mb-2">
     <span class="text-lg font-bold ml-4">
       {{ chosenSection?.name }}
     </span>
     <span class="text-lg"> sẽ được gửi yêu cầu xóa. Bạn có chắc chắn?</span>
   </div>
+  <div
+        class="w-full text-left p-2 border-blue-200 border-2 border-round-md"
+      >
+        <span class="font-bold text-lg">Lưu ý: </span><br />
+        + Tỷ lệ phê duyệt hiện tại:
+        <span class="font-bold"
+          >{{
+            (1 - deniedRomCount / totalRomCount) * 100 | number: "2.0-2"
+          }}%</span
+        ><br />
+        + Tỷ lệ phê duyệt (nếu yêu cầu được chấp nhận):
+        <span class="font-bold"
+          >{{
+            (1 - deniedRomCount / (totalRomCount + 1)) * 100 | number: "2.0-2"
+          }}%</span
+        ><br />
+        + Tỷ lệ phê duyệt (nếu yêu cầu bị từ chối):
+        <span class="font-bold"
+          >{{
+            (1 - (deniedRomCount + 1) / (totalRomCount + 1)) * 100
+              | number: "2.0-2"
+          }}%</span
+        ><br />
+        <div class="text-center">
+          <span class="font-bold font-italic text-red-300 text-sm"
+            >Nếu tỷ lệ phê duyệt < 65%, tài khoản sẽ bị ngưng hoạt động bởi hệ
+            thống</span
+          >
+        </div>
+      </div>
 
   <ng-template pTemplate="footer">
     <button
@@ -2172,16 +2304,46 @@
 <!-- Confirm update paragraph dialog -->
 <p-dialog
   [(visible)]="displayConfirmUpdateParagraphDialog"
-  [style]="{ width: '30rem', height: '13rem' }"
+  [style]="{ width: '30rem'}"
   [modal]="true"
 >
   <ng-template pTemplate="header">
     <span class="text-orange-500 font-bold text-xl">Chỉnh sửa</span>
   </ng-template>
-  <div class="w-full text-center text-lg">
+  <div class="w-full text-center text-lg mb-2">
     "{{ chosenParagraph?.name }}"
     <span> sẽ được gửi yêu cầu chỉnh sửa. Bạn có chắc? </span>
   </div>
+  <div
+        class="w-full text-left p-2 border-blue-200 border-2 border-round-md"
+      >
+        <span class="font-bold text-lg">Lưu ý: </span><br />
+        + Tỷ lệ phê duyệt hiện tại:
+        <span class="font-bold"
+          >{{
+            (1 - deniedRomCount / totalRomCount) * 100 | number: "2.0-2"
+          }}%</span
+        ><br />
+        + Tỷ lệ phê duyệt (nếu yêu cầu được chấp nhận):
+        <span class="font-bold"
+          >{{
+            (1 - deniedRomCount / (totalRomCount + 1)) * 100 | number: "2.0-2"
+          }}%</span
+        ><br />
+        + Tỷ lệ phê duyệt (nếu yêu cầu bị từ chối):
+        <span class="font-bold"
+          >{{
+            (1 - (deniedRomCount + 1) / (totalRomCount + 1)) * 100
+              | number: "2.0-2"
+          }}%</span
+        ><br />
+        <div class="text-center">
+          <span class="font-bold font-italic text-red-300 text-sm"
+            >Nếu tỷ lệ phê duyệt < 65%, tài khoản sẽ bị ngưng hoạt động bởi hệ
+            thống</span
+          >
+        </div>
+      </div>
 
   <ng-template pTemplate="footer">
     <button
@@ -2208,14 +2370,14 @@
 <!-- Confirm delete paragraph dialog -->
 <p-dialog
   [(visible)]="displayConfirmDeleteParagraphDialog"
-  [style]="{ width: '35vw', height: '45vh' }"
+  [style]="{ width: '35vw'}"
   [modal]="true"
 >
   <ng-template pTemplate="header">
     <span class="text-red-500 font-bold text-xl">Xóa</span>
   </ng-template>
 
-  <div class="mb-5">
+  <div class="w-full mb-2">
     <div class="flex justify-content-center align-items-center">
       <div class="w-3">
         <span class="text-lg font-bold">Gửi yêu cầu tới </span> <br />
@@ -2248,12 +2410,42 @@
       </div>
     </div>
   </div>
-  <div class="w-full text-center">
+  <div class="w-full text-center mb-2">
     <span class="text-lg font-bold ml-4">
       {{ chosenParagraph?.name }}
     </span>
     <span class="text-lg"> sẽ được gửi yêu cầu xóa. Bạn có chắc chắn?</span>
   </div>
+  <div
+        class="w-full text-left p-2 border-blue-200 border-2 border-round-md"
+      >
+        <span class="font-bold text-lg">Lưu ý: </span><br />
+        + Tỷ lệ phê duyệt hiện tại:
+        <span class="font-bold"
+          >{{
+            (1 - deniedRomCount / totalRomCount) * 100 | number: "2.0-2"
+          }}%</span
+        ><br />
+        + Tỷ lệ phê duyệt (nếu yêu cầu được chấp nhận):
+        <span class="font-bold"
+          >{{
+            (1 - deniedRomCount / (totalRomCount + 1)) * 100 | number: "2.0-2"
+          }}%</span
+        ><br />
+        + Tỷ lệ phê duyệt (nếu yêu cầu bị từ chối):
+        <span class="font-bold"
+          >{{
+            (1 - (deniedRomCount + 1) / (totalRomCount + 1)) * 100
+              | number: "2.0-2"
+          }}%</span
+        ><br />
+        <div class="text-center">
+          <span class="font-bold font-italic text-red-300 text-sm"
+            >Nếu tỷ lệ phê duyệt < 65%, tài khoản sẽ bị ngưng hoạt động bởi hệ
+            thống</span
+          >
+        </div>
+      </div>
 
   <ng-template pTemplate="footer">
     <button
@@ -2401,10 +2593,10 @@
             !isCollapsedCreatNewSection &&
             !isUpdatingNewSection &&
             selectedSectionForAddNewLaw &&
-              selectedSectionForAddNewLaw?.paragraphs?.length === 1 &&
-              selectedSectionForAddNewLaw?.paragraphs[0]?.name?.trim() === '' &&
-              selectedSectionForAddNewLaw?.paragraphs[0]?.description?.trim() ===
-                ''
+            selectedSectionForAddNewLaw?.paragraphs?.length === 1 &&
+            selectedSectionForAddNewLaw?.paragraphs[0]?.name?.trim() === '' &&
+            selectedSectionForAddNewLaw?.paragraphs[0]?.description?.trim() ===
+              ''
           "
         >
           <div class="w-8">
@@ -3368,8 +3560,9 @@
           (isAddedNewSection &&
             !selectedSectionForAddNewLaw?.isSectionWithNoParagraph)
         "
+        class="mb-2"
       >
-        <div class="w-12 flex justify-content-center mb-2">
+        <div class="w-12 flex justify-content-center">
           <div class="w-8 flex align-items-center">
             <div class="w-6">
               <span class="text-lg">Khoản: </span>
@@ -3417,8 +3610,9 @@
           isAddedNewSection &&
           selectedSectionForAddNewLaw?.isSectionWithNoParagraph
         "
+        class="mb-2"
       >
-        <div class="w-12 flex justify-content-center mb-2">
+        <div class="w-12 flex justify-content-center">
           <div class="w-8 flex align-items-center">
             <div class="w-6">
               <span class="text-lg">Khoản: </span>
@@ -3440,6 +3634,39 @@
             </div>
           </div>
         </div>
+      </div>
+
+      <div class="w-12 flex justify-content-center">
+      <div
+        class="w-8 text-left p-2 border-blue-200 border-2 border-round-md"
+      >
+        <span class="font-bold text-lg">Lưu ý: </span><br />
+        + Tỷ lệ phê duyệt hiện tại:
+        <span class="font-bold"
+          >{{
+            (1 - deniedRomCount / totalRomCount) * 100 | number: "2.0-2"
+          }}%</span
+        ><br />
+        + Tỷ lệ phê duyệt (nếu yêu cầu được chấp nhận):
+        <span class="font-bold"
+          >{{
+            (1 - deniedRomCount / (totalRomCount + 1)) * 100 | number: "2.0-2"
+          }}%</span
+        ><br />
+        + Tỷ lệ phê duyệt (nếu yêu cầu bị từ chối):
+        <span class="font-bold"
+          >{{
+            (1 - (deniedRomCount + 1) / (totalRomCount + 1)) * 100
+              | number: "2.0-2"
+          }}%</span
+        ><br />
+        <div class="text-center">
+          <span class="font-bold font-italic text-red-300 text-sm"
+            >Nếu tỷ lệ phê duyệt < 65%, tài khoản sẽ bị ngưng hoạt động bởi hệ
+            thống</span
+          >
+        </div>
+      </div>
       </div>
     </div>
   </ng-template>
@@ -3565,7 +3792,7 @@
               [disabled]="!isValidFinishOnSectionDialog"
               class="p-button-outlined p-button-success"
               style="height: 40px; margin: 0; border: 3px solid"
-              (click)="isShowingConfirmAddNewLaw = true"
+              (click)="isShowingConfirmAddNewLaw = true; getApprovalRate()"
             ></button>
             <!-- this part commented is of disabled -->
             <!-- isSectionWithNoParagraph &&
@@ -3638,7 +3865,7 @@
                 "
                 class="p-button-outlined p-button-success"
                 style="height: 40px; margin: 0; border: 3px solid"
-                (click)="isShowingConfirmAddNewLaw = true"
+                (click)="isShowingConfirmAddNewLaw = true; getApprovalRate()"
               ></button>
             </div>
           </div>
@@ -4257,7 +4484,7 @@
         </div>
       </div>
 
-      <div class="w-12 flex justify-content-center">
+      <div class="w-12 flex justify-content-center mb-2">
         <div class="w-8 p-3max-h-8rem overflow-y-auto overflow-x-hidden">
           <ul *ngFor="let newParagraph of newParagraphListOfSelectedSection">
             <li class="flex align-items-center">
@@ -4276,6 +4503,39 @@
             </li>
           </ul>
         </div>
+      </div>
+
+      <div class="w-12 flex justify-content-center">
+        <div
+        class="w-8 text-left p-2 border-blue-200 border-2 border-round-md"
+      >
+        <span class="font-bold text-lg">Lưu ý: </span><br />
+        + Tỷ lệ phê duyệt hiện tại:
+        <span class="font-bold"
+          >{{
+            (1 - deniedRomCount / totalRomCount) * 100 | number: "2.0-2"
+          }}%</span
+        ><br />
+        + Tỷ lệ phê duyệt (nếu yêu cầu được chấp nhận):
+        <span class="font-bold"
+          >{{
+            (1 - deniedRomCount / (totalRomCount + 1)) * 100 | number: "2.0-2"
+          }}%</span
+        ><br />
+        + Tỷ lệ phê duyệt (nếu yêu cầu bị từ chối):
+        <span class="font-bold"
+          >{{
+            (1 - (deniedRomCount + 1) / (totalRomCount + 1)) * 100
+              | number: "2.0-2"
+          }}%</span
+        ><br />
+        <div class="text-center">
+          <span class="font-bold font-italic text-red-300 text-sm"
+            >Nếu tỷ lệ phê duyệt < 65%, tài khoản sẽ bị ngưng hoạt động bởi hệ
+            thống</span
+          >
+        </div>
+      </div>
       </div>
     </div>
   </ng-template>
@@ -4310,7 +4570,7 @@
               "
               class="p-button-outlined p-button-success"
               style="height: 40px; margin: 0; border: 3px solid"
-              (click)="isShowingConfirmAddNewLaw = true"
+              (click)="isShowingConfirmAddNewLaw = true; getApprovalRate()"
             ></button>
           </div>
         </div>

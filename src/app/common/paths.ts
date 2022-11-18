@@ -55,8 +55,11 @@ export const AdminApproveUserRom: string = base + '/UserModificationRequests/App
 export const AdminDenyUserRom: string = base + '/UserModificationRequests/Deny';
 export const AdminApproveGpssignRom: string = base + '/SignModificationRequests/GPS/Approve';
 export const AdminDenyGpssignRom: string = base + '/SignModificationRequests/GPS/Deny';
+
 // Scribe
 export const ScribeGetAllStatueForAddingReferences: string = base + '/Statues';
+
+export const ScribeGetApprovalRate: string = base + '/Users/Scribes/ApprovalRate';
 
 export const ScribeGetAssignedQuestions: string = base + '/Questions/AssignedQuestions/Scribes';
 export const ScribeGetTestCategories: string = base + '/TestCategories';
