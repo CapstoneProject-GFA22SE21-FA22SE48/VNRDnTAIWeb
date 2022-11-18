@@ -44,7 +44,7 @@
             [disabled]="!isValidClickOnCreate"
             class="p-button-raised p-button-success"
             [style]="{ height: '40px' }"
-            (click)="openCreateSign()"
+            (click)="openCreateSign(); getApprovalRate()"
           ></button>
         </div>
       </div>
@@ -269,7 +269,7 @@
               label="Xóa"
               class="p-button-raised p-button-danger"
               [style]="{ height: '40px' }"
-              (click)="displayConfirmDeleteChosenSign = true"
+              (click)="displayConfirmDeleteChosenSign = true; getApprovalRate()"
             ></button>
           </div>
         </div>
@@ -443,7 +443,7 @@
               [disabled]="!isValidUpdateChosenSign"
               class="p-button-raised p-button-success"
               [style]="{ height: '40px' }"
-              (click)="displayConfirmUpdateChosenSign = true"
+              (click)="displayConfirmUpdateChosenSign = true; getApprovalRate()"
             ></button>
           </div>
           <div class="w-6 text-center">
@@ -659,13 +659,13 @@
 <p-dialog
   #updateDialog
   [(visible)]="displayConfirmUpdateChosenSign"
-  [style]="{ width: '35vw', height: '50vh' }"
+  [style]="{ width: '35vw'}"
   [modal]="true"
 >
   <ng-template pTemplate="header">
     <span class="text-purple-500 font-bold text-xl">Cập nhật</span>
   </ng-template>
-  <div class="w-12 flex mb-5 align-items-center">
+  <div class="w-12 flex mb-2 align-items-center">
     <div class="w-3">
       <span class="text-lg font-bold">Gửi yêu cầu tới </span> <br />
     </div>
@@ -692,12 +692,42 @@
       </p-dropdown>
     </div>
   </div>
-  <div class="w-12">
+  <div class="w-12 mb-2">
     <span class="text-lg font-bold">
       {{ chosenSign?.name }}
     </span>
     <span class="text-lg">sẽ bị yêu cầu sửa đổi. Bạn có chắc chắn?</span>
   </div>
+  <div
+        class="w-full text-left p-2 border-blue-200 border-2 border-round-md"
+      >
+        <span class="font-bold text-lg">Lưu ý: </span><br />
+        + Tỷ lệ phê duyệt hiện tại:
+        <span class="font-bold"
+          >{{
+            (1 - deniedRomCount / totalRomCount) * 100 | number: "2.0-2"
+          }}%</span
+        ><br />
+        + Tỷ lệ phê duyệt (nếu yêu cầu được chấp nhận):
+        <span class="font-bold"
+          >{{
+            (1 - deniedRomCount / (totalRomCount + 1)) * 100 | number: "2.0-2"
+          }}%</span
+        ><br />
+        + Tỷ lệ phê duyệt (nếu yêu cầu bị từ chối):
+        <span class="font-bold"
+          >{{
+            (1 - (deniedRomCount + 1) / (totalRomCount + 1)) * 100
+              | number: "2.0-2"
+          }}%</span
+        ><br />
+        <div class="text-center">
+          <span class="font-bold font-italic text-red-300 text-sm"
+            >Nếu tỷ lệ phê duyệt < 65%, tài khoản sẽ bị ngưng hoạt động bởi hệ
+            thống</span
+          >
+        </div>
+      </div>
 
   <ng-template pTemplate="footer">
     <button
@@ -725,13 +755,13 @@
 <p-dialog
   #updateDialog
   [(visible)]="displayConfirmDeleteChosenSign"
-  [style]="{ width: '35vw', height: '50vh' }"
+  [style]="{ width: '35vw'}"
   [modal]="true"
 >
   <ng-template pTemplate="header">
     <span class="text-red-500 font-bold text-xl">Xóa</span>
   </ng-template>
-  <div class="w-12 flex mb-5 align-items-center">
+  <div class="w-12 flex mb-2 align-items-center">
     <div class="w-3">
       <span class="text-lg font-bold">Gửi yêu cầu tới </span> <br />
     </div>
@@ -758,12 +788,42 @@
       </p-dropdown>
     </div>
   </div>
-  <div class="w-12">
+  <div class="w-12 mb-2">
     <span class="text-lg font-bold">
       {{ chosenSign?.name }}
     </span>
     <span class="text-lg">sẽ bị yêu cầu xóa. Bạn có chắc chắn?</span>
   </div>
+  <div
+        class="w-full text-left p-2 border-blue-200 border-2 border-round-md"
+      >
+        <span class="font-bold text-lg">Lưu ý: </span><br />
+        + Tỷ lệ phê duyệt hiện tại:
+        <span class="font-bold"
+          >{{
+            (1 - deniedRomCount / totalRomCount) * 100 | number: "2.0-2"
+          }}%</span
+        ><br />
+        + Tỷ lệ phê duyệt (nếu yêu cầu được chấp nhận):
+        <span class="font-bold"
+          >{{
+            (1 - deniedRomCount / (totalRomCount + 1)) * 100 | number: "2.0-2"
+          }}%</span
+        ><br />
+        + Tỷ lệ phê duyệt (nếu yêu cầu bị từ chối):
+        <span class="font-bold"
+          >{{
+            (1 - (deniedRomCount + 1) / (totalRomCount + 1)) * 100
+              | number: "2.0-2"
+          }}%</span
+        ><br />
+        <div class="text-center">
+          <span class="font-bold font-italic text-red-300 text-sm"
+            >Nếu tỷ lệ phê duyệt < 65%, tài khoản sẽ bị ngưng hoạt động bởi hệ
+            thống</span
+          >
+        </div>
+      </div>
 
   <ng-template pTemplate="footer">
     <button
@@ -791,13 +851,13 @@
 <p-dialog
   #updateDialog
   [(visible)]="displayConfirmCreateNewSign"
-  [style]="{ width: '35vw', height: '50vh' }"
+  [style]="{ width: '35vw'}"
   [modal]="true"
 >
   <ng-template pTemplate="header">
     <span class="text-green-500 font-bold text-xl">Tạo mới</span>
   </ng-template>
-  <div class="w-12 flex mb-5 align-items-center">
+  <div class="w-12 flex mb-2 align-items-center">
     <div class="w-3">
       <span class="text-lg font-bold">Gửi yêu cầu tới </span> <br />
     </div>
@@ -824,12 +884,42 @@
       </p-dropdown>
     </div>
   </div>
-  <div class="w-12">
+  <div class="w-12 mb-2">
     <span class="text-lg font-bold">
       {{ newSignName }}
     </span>
     <span class="text-lg">sẽ được yêu cầu tạo mới. Bạn có chắc chắn?</span>
   </div>
+  <div
+        class="w-full text-left p-2 border-blue-200 border-2 border-round-md"
+      >
+        <span class="font-bold text-lg">Lưu ý: </span><br />
+        + Tỷ lệ phê duyệt hiện tại:
+        <span class="font-bold"
+          >{{
+            (1 - deniedRomCount / totalRomCount) * 100 | number: "2.0-2"
+          }}%</span
+        ><br />
+        + Tỷ lệ phê duyệt (nếu yêu cầu được chấp nhận):
+        <span class="font-bold"
+          >{{
+            (1 - deniedRomCount / (totalRomCount + 1)) * 100 | number: "2.0-2"
+          }}%</span
+        ><br />
+        + Tỷ lệ phê duyệt (nếu yêu cầu bị từ chối):
+        <span class="font-bold"
+          >{{
+            (1 - (deniedRomCount + 1) / (totalRomCount + 1)) * 100
+              | number: "2.0-2"
+          }}%</span
+        ><br />
+        <div class="text-center">
+          <span class="font-bold font-italic text-red-300 text-sm"
+            >Nếu tỷ lệ phê duyệt < 65%, tài khoản sẽ bị ngưng hoạt động bởi hệ
+            thống</span
+          >
+        </div>
+      </div>
 
   <ng-template pTemplate="footer">
     <button

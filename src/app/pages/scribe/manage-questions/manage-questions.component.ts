@@ -64,6 +64,10 @@ export class ManageQuestionsComponent implements OnInit {
   admins: User[] = [];
   selectedAdmin: any;
 
+  //Approval rate
+  deniedRomCount: any;
+  totalRomCount: any;  
+
   constructor(
     private wrapperService: WrapperService,
     private isLoadingService: IsLoadingService,
@@ -144,6 +148,21 @@ export class ManageQuestionsComponent implements OnInit {
         this.isLoadingService.remove();
       },
     });
+  }
+
+  getApprovalRate(){
+    this.isLoadingService.add();
+    this.wrapperService.get(paths.ScribeGetApprovalRate + '/' + decodeToken(getStorageToken() || '')?.Id, getStorageToken(), {
+      successCallback: (response) => {
+        this.deniedRomCount = response.data?.deniedRomCount;
+        this.totalRomCount = response.data?.totalRomCount;
+        this.isLoadingService.remove();
+      },
+      errorCallback: (error) => {
+        console.log(error);
+        this.isLoadingService.remove();
+      }
+    })
   }
 
   filterData() {
