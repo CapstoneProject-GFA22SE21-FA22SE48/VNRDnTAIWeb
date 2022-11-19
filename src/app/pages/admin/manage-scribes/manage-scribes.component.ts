@@ -107,6 +107,7 @@ export class ManageScribesComponent implements OnInit {
       message:
         'Tài khoản nhân viên này sẽ bị ngưng hoạt động, nhân viên sẽ không còn quản lý các công việc đã được giao hiện tại, các yêu cầu sẽ được xóa vĩnh viễn. Bạn có chắc chắn?',
       accept: () => {
+        this.isLoadingService.add();
         this.wrapperService.put(
           paths.AdminDeactivateScribe + '/' + this.scribes[i]?.id,
 
@@ -122,6 +123,7 @@ export class ManageScribesComponent implements OnInit {
                 summary: 'Thành công',
                 detail: 'Cập nhật dữ liệu thành công',
               });
+              this.isLoadingService.remove();
             },
             errorCallback: (error) => {
               console.log(error);
@@ -131,6 +133,7 @@ export class ManageScribesComponent implements OnInit {
                 summary: 'Thất bại',
                 detail: error?.response?.data || 'Có lỗi xảy ra. Vui lòng thử lại.',
               });
+              this.isLoadingService.remove();
             },
           }
         );
@@ -145,6 +148,7 @@ export class ManageScribesComponent implements OnInit {
       message:
         'Tài khoản nhân viên này sẽ hoạt động bình thường trở lại. Bạn có chắc chắn?',
       accept: () => {
+        this.isLoadingService.add();
         this.wrapperService.put(
           paths.AdminReEnableScribe + '/' + this.scribes[i]?.id,
           this.scribes[i],
@@ -159,6 +163,7 @@ export class ManageScribesComponent implements OnInit {
                 summary: 'Thành công',
                 detail: 'Cập nhật dữ liệu thành công',
               });
+              this.isLoadingService.remove();
             },
             errorCallback: (error) => {
               console.log(error);
@@ -166,8 +171,9 @@ export class ManageScribesComponent implements OnInit {
                 key: 'reEnableFail',
                 severity: 'error',
                 summary: 'Thất bại',
-                detail: 'Có lỗi xảy ra. Vui lòng thử lại.',
+                detail: error?.response?.data || 'Có lỗi xảy ra. Vui lòng thử lại.',
               });
+              this.isLoadingService.remove();
             },
           }
         );
