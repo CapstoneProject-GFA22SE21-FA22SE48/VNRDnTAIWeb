@@ -174,7 +174,7 @@ export class ManageTaskComponent implements OnInit {
             this.messageService.add({
               severity: 'error',
               summary: commonStr.fail,
-              detail: commonStr.errorOccur,
+              detail: error?.response?.data || commonStr.errorOccur,
             });
             this.isLoadingService.remove();
           }
