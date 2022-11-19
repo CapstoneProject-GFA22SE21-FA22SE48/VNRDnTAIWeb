@@ -704,10 +704,13 @@
         <span class="font-bold text-lg">Lưu ý: </span><br />
         + Tỷ lệ phê duyệt hiện tại:
         <span class="font-bold"
+        *ngIf="totalRomCount !== 0"
           >{{
             (1 - deniedRomCount / totalRomCount) * 100 | number: "2.0-2"
           }}%</span
-        ><br />
+        >
+        <span *ngIf="totalRomCount === 0" class="font-bold">Chưa có dữ liệu</span>
+        <br />
         + Tỷ lệ phê duyệt (nếu yêu cầu được chấp nhận):
         <span class="font-bold"
           >{{
@@ -718,7 +721,7 @@
         <span class="font-bold"
           >{{
             (1 - (deniedRomCount + 1) / (totalRomCount + 1)) * 100
-              | number: "2.0-2"
+              | number: "1.0-2"
           }}%</span
         ><br />
         <div class="text-center">
@@ -800,10 +803,13 @@
         <span class="font-bold text-lg">Lưu ý: </span><br />
         + Tỷ lệ phê duyệt hiện tại:
         <span class="font-bold"
+        *ngIf="totalRomCount !== 0"
           >{{
             (1 - deniedRomCount / totalRomCount) * 100 | number: "2.0-2"
           }}%</span
-        ><br />
+        >
+        <span *ngIf="totalRomCount === 0" class="font-bold">Chưa có dữ liệu</span>
+        <br />
         + Tỷ lệ phê duyệt (nếu yêu cầu được chấp nhận):
         <span class="font-bold"
           >{{
@@ -814,7 +820,7 @@
         <span class="font-bold"
           >{{
             (1 - (deniedRomCount + 1) / (totalRomCount + 1)) * 100
-              | number: "2.0-2"
+              | number: "1.0-2"
           }}%</span
         ><br />
         <div class="text-center">
@@ -896,10 +902,13 @@
         <span class="font-bold text-lg">Lưu ý: </span><br />
         + Tỷ lệ phê duyệt hiện tại:
         <span class="font-bold"
+        *ngIf="totalRomCount !== 0"
           >{{
             (1 - deniedRomCount / totalRomCount) * 100 | number: "2.0-2"
           }}%</span
-        ><br />
+        >
+        <span *ngIf="totalRomCount === 0" class="font-bold">Chưa có dữ liệu</span>
+        <br />
         + Tỷ lệ phê duyệt (nếu yêu cầu được chấp nhận):
         <span class="font-bold"
           >{{
@@ -910,7 +919,7 @@
         <span class="font-bold"
           >{{
             (1 - (deniedRomCount + 1) / (totalRomCount + 1)) * 100
-              | number: "2.0-2"
+              | number: "1.0-2"
           }}%</span
         ><br />
         <div class="text-center">

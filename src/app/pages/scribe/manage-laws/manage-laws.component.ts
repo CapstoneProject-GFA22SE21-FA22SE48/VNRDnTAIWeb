@@ -340,6 +340,8 @@ export class ManageLawsComponent implements OnInit {
           this.deniedRomCount = response.data?.deniedRomCount;
           this.totalRomCount = response.data?.totalRomCount;
           this.isLoadingService.remove();
+          console.log(this.totalRomCount);
+          
         },
         errorCallback: (error) => {
           console.log(error);
