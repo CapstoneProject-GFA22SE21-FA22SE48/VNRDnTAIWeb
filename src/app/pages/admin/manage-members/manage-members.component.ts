@@ -135,6 +135,7 @@ export class ManageMembersComponent implements OnInit {
       message:
         'Các bình luận của người dùng này đồng thời bị gỡ bỏ. Bạn có chắc chắn?',
       accept: () => {
+        this.isLoadingService.add();
         this.wrapperService.put(
           paths.AdminDeactivateMember + '/' + this.members[i]?.id,
           this.members[i],
@@ -148,6 +149,7 @@ export class ManageMembersComponent implements OnInit {
                 summary: 'Thành công',
                 detail: 'Cập nhật dữ liệu thành công',
               });
+              this.isLoadingService.remove();
             },
             errorCallback: (error) => {
               console.log(error);
@@ -155,8 +157,9 @@ export class ManageMembersComponent implements OnInit {
                 key: 'deactivateFail',
                 severity: 'error',
                 summary: 'Thất bại',
-                detail: 'Có lỗi xảy ra. Vui lòng thử lại.',
+                detail: error?.response?.data || 'Có lỗi xảy ra. Vui lòng thử lại.',
               });
+              this.isLoadingService.remove();
             },
           }
         );
@@ -172,6 +175,7 @@ export class ManageMembersComponent implements OnInit {
       message:
         'Tài khoản thành viên này sẽ được kích hoạt trở lại. Bạn có chắc chắn?',
       accept: () => {
+        this.isLoadingService.add();
         this.wrapperService.put(
           paths.AdminReEnableMember + '/' + this.members[i]?.id,
           this.members[i],
@@ -185,6 +189,7 @@ export class ManageMembersComponent implements OnInit {
                 summary: 'Thành công',
                 detail: 'Cập nhật dữ liệu thành công',
               });
+              this.isLoadingService.remove();
             },
             errorCallback: (error) => {
               console.log(error);
@@ -192,8 +197,9 @@ export class ManageMembersComponent implements OnInit {
                 key: 'reEnableFail',
                 severity: 'error',
                 summary: 'Thất bại',
-                detail: 'Có lỗi xảy ra. Vui lòng thử lại.',
+                detail:error?.response?.data || 'Có lỗi xảy ra. Vui lòng thử lại.',
               });
+              this.isLoadingService.remove();
             },
           }
         );
