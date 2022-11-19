@@ -167,10 +167,13 @@ export class ManageTaskComponent implements OnInit {
               detail: commonStr.dataUpdatedSuccessfully,
             });
             this.loadAllTasks();
+            this.loadScribe();
             this.isLoadingService.remove();
           }, 
           errorCallback: (error) => {
             console.log(error);
+            this.loadAllTasks();
+            this.loadScribe();
             this.messageService.add({
               severity: 'error',
               summary: commonStr.fail,
