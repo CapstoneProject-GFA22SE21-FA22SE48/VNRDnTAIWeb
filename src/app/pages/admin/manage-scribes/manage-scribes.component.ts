@@ -129,7 +129,7 @@ export class ManageScribesComponent implements OnInit {
                 key: 'deactivateFail',
                 severity: 'error',
                 summary: 'Thất bại',
-                detail: 'Có lỗi xảy ra. Vui lòng thử lại.',
+                detail: error?.response?.data || 'Có lỗi xảy ra. Vui lòng thử lại.',
               });
             },
           }
