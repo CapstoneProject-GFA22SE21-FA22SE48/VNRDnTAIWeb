@@ -47,4 +47,8 @@ export class HeaderComponent implements OnInit {
       }
     );
   }
+
+  openCSDLQuocGia(){
+    window.open('https://vbpl.vn/TW/Pages/vbpq-toanvan.aspx?ItemID=140152')
+  }
 }
