@@ -13,6 +13,16 @@
   <div
     class="layout-topbar-menu w-6 flex justify-content-end align-items-center pr-5"
   >
+    <button
+      pButton
+      pRipple
+      type="button"
+      icon="pi pi-book"
+      label="Nghị định 100/2019/NĐ-CP"
+      class="p-button-rounded p-button-outlined mr-3"
+      (click)="openCSDLQuocGia()"
+    ></button>
+
     <span class="text-lg mr-3 p-2 border-300 border-2 border-round-lg"
       >Tài khoản: <span class="font-bold">{{ account?.username }}</span></span
     >
