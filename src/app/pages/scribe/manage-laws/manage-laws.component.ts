@@ -1998,7 +1998,6 @@ export class ManageLawsComponent implements OnInit {
   //start of add new paragraph
   initValueForNewParagraph() {
     this.newParagraphOfSelectedSection = {};
-
     this.newParagraphOfSelectedSection.name =
       'Điểm ' +
       JSON.parse(JSON.stringify(vietnameseAlphabet))[
@@ -2565,7 +2564,7 @@ export class ManageLawsComponent implements OnInit {
         getStorageToken(),
         {
           successCallback: (response) => {
-            this.existedParagraphCountOfSelectedSection = response.data.length;
+              this.existedParagraphCountOfSelectedSection = response.data.length;
             this.initValueForNewParagraph();
 
             this.isLoadingService.remove();
@@ -2909,7 +2908,11 @@ export class ManageLawsComponent implements OnInit {
         getStorageToken(),
         {
           successCallback: (response) => {
-            this.existedParagraphCountOfSelectedSection = response.data.length;
+            if(response.data[0]?.name.trim() !== ''){
+              this.existedParagraphCountOfSelectedSection = response.data.length;
+            } else {
+              this.existedParagraphCountOfSelectedSection = 0;
+            }
             this.initValueForNewParagraph();
 
             this.isLoadingService.remove();
