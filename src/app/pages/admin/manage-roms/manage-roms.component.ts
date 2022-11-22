@@ -315,6 +315,10 @@ export class ManageRomsComponent implements OnInit {
   private paragraphChangedReferencesObservable(
     paragraphId: string
   ): Observable<string> {
+    if(!paragraphId) {
+      this.selectedChangedParagraphRomReferenceSub.next('');
+      return this.selectedChangedParagraphRomReferenceSub.asObservable();
+    }
     this.selectedChangedParagraphRomReferenceSub.next('');
     this.isLoadingService.add();
     this.wrapperService.get(
@@ -326,20 +330,6 @@ export class ManageRomsComponent implements OnInit {
             this.selectedChangedParagraphRomReferenceSub.next(
               `Các hành vi liên quan:\n`
             );
-            // response.data.forEach((r: any, i: number) => {
-            //   this.selectedParagraphRomReferenceSub.next(
-            //     `\t${r.referenceParagraphSectionStatueName} > ${
-            //       r.referenceParagraphSectionName
-            //     } > ${r.referenceParagraphName} (${
-            //       r.referenceParagraphIsExcluded ? 'ngoại trừ' : 'bao gồm'
-            //     })\n`
-            //   );
-            //   if(i === response.data?.length -1){
-            //     this.selectedParagraphRomReferenceSub.complete();
-            //     this.isLoadingService.remove();
-            //   }
-            // });
-
             for await (const r of response.data) {
               this.selectedChangedParagraphRomReferenceSub.next(
                 `\t${r.referenceParagraphSectionStatueName} > ${
@@ -371,6 +361,10 @@ export class ManageRomsComponent implements OnInit {
   private paragraphOriginalReferencesObservable(
     paragraphId: string
   ): Observable<string> {
+    if(!paragraphId) {
+      this.selectedOriginalParagraphRomReferenceSub.next('');
+      return this.selectedOriginalParagraphRomReferenceSub.asObservable();
+    }
     this.selectedOriginalParagraphRomReferenceSub.next('');
     this.isLoadingService.add();
     this.wrapperService.get(
@@ -382,20 +376,6 @@ export class ManageRomsComponent implements OnInit {
             this.selectedOriginalParagraphRomReferenceSub.next(
               `Các hành vi liên quan:\n`
             );
-            // response.data.forEach((r: any, i: number) => {
-            //   this.selectedParagraphRomReferenceSub.next(
-            //     `\t${r.referenceParagraphSectionStatueName} > ${
-            //       r.referenceParagraphSectionName
-            //     } > ${r.referenceParagraphName} (${
-            //       r.referenceParagraphIsExcluded ? 'ngoại trừ' : 'bao gồm'
-            //     })\n`
-            //   );
-            //   if(i === response.data?.length -1){
-            //     this.selectedParagraphRomReferenceSub.complete();
-            //     this.isLoadingService.remove();
-            //   }
-            // });
-
             for await (const r of response.data) {
               this.selectedOriginalParagraphRomReferenceSub.next(
                 `\t${r.referenceParagraphSectionStatueName} > ${
