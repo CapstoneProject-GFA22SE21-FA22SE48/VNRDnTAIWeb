@@ -2,7 +2,7 @@ import { Component, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { IsLoadingService } from '@service-work/is-loading';
 import { DiffEditorModel } from 'ngx-monaco-editor-v2';
 import { ConfirmationService, MessageService } from 'primeng/api';
-import { BehaviorSubject, Observable, of } from 'rxjs';
+import { async, BehaviorSubject, Observable, of } from 'rxjs';
 import { OperationType } from 'src/app/common/operationType';
 import { decodeToken, getStorageToken } from 'src/app/utilities/jwt.util';
 import { toNonAccentVietnamese } from 'src/app/utilities/nonAccentVietnamese';
@@ -12,6 +12,7 @@ import * as commonStr from '../../../common/commonStr';
 import { EventEmitterService } from 'src/services/event-emitter.service';
 import { NotificationService } from 'src/services/notification.service';
 import { SubjectType } from 'src/app/common/subjectType';
+import axios from 'axios';
 @Component({
   selector: 'app-manage-roms',
   templateUrl: './manage-roms.component.html',
@@ -83,9 +84,6 @@ export class ManageRomsComponent implements OnInit {
   isValidDeniedReason: boolean = true;
 
   displayConfirmDenyDialog: boolean = false;
-
-  selectedChangedParagraphRomReferenceSub = new BehaviorSubject<string>('');
-  selectedOriginalParagraphRomReferenceSub = new BehaviorSubject<string>('');
 
   isPromotingAdminPromotionRom: boolean = false;
   isArbitratingAdminPromotionRom: boolean = false;
@@ -312,98 +310,6 @@ export class ManageRomsComponent implements OnInit {
   }
   //end of filtering data
 
-  private paragraphChangedReferencesObservable(
-    paragraphId: string
-  ): Observable<string> {
-    if(!paragraphId) {
-      this.selectedChangedParagraphRomReferenceSub.next('');
-      return this.selectedChangedParagraphRomReferenceSub.asObservable();
-    }
-    this.selectedChangedParagraphRomReferenceSub.next('');
-    this.isLoadingService.add();
-    this.wrapperService.get(
-      paths.AdminGetParagraphRomDetailReference + '/' + paragraphId,
-      getStorageToken(),
-      {
-        successCallback: async (response) => {
-          if (response.data?.length > 0) {
-            this.selectedChangedParagraphRomReferenceSub.next(
-              `Các hành vi liên quan:\n`
-            );
-            for await (const r of response.data) {
-              this.selectedChangedParagraphRomReferenceSub.next(
-                `\t${r.referenceParagraphSectionStatueName} > ${
-                  r.referenceParagraphSectionName
-                } > ${r.referenceParagraphName} (${
-                  r.referenceParagraphIsExcluded ? 'ngoại trừ' : 'bao gồm'
-                })\n`
-              );
-              if (response.data?.indexOf(r) === response.data?.length - 1) {
-                // console.log(response.data?.indexOf(r));
-                this.selectedChangedParagraphRomReferenceSub.complete();
-                this.isLoadingService.remove();
-              }
-            }
-          } else if (response.data?.length === 0) {
-            this.selectedChangedParagraphRomReferenceSub.complete();
-            this.isLoadingService.remove();
-          }
-        },
-        errorCallback: (error) => {
-          console.log(error);
-          this.isLoadingService.remove();
-        },
-      }
-    );
-    return this.selectedChangedParagraphRomReferenceSub.asObservable();
-  }
-
-  private paragraphOriginalReferencesObservable(
-    paragraphId: string
-  ): Observable<string> {
-    if(!paragraphId) {
-      this.selectedOriginalParagraphRomReferenceSub.next('');
-      return this.selectedOriginalParagraphRomReferenceSub.asObservable();
-    }
-    this.selectedOriginalParagraphRomReferenceSub.next('');
-    this.isLoadingService.add();
-    this.wrapperService.get(
-      paths.AdminGetParagraphRomDetailReference + '/' + paragraphId,
-      getStorageToken(),
-      {
-        successCallback: async (response) => {
-          if (response.data?.length > 0) {
-            this.selectedOriginalParagraphRomReferenceSub.next(
-              `Các hành vi liên quan:\n`
-            );
-            for await (const r of response.data) {
-              this.selectedOriginalParagraphRomReferenceSub.next(
-                `\t${r.referenceParagraphSectionStatueName} > ${
-                  r.referenceParagraphSectionName
-                } > ${r.referenceParagraphName} (${
-                  r.referenceParagraphIsExcluded ? 'ngoại trừ' : 'bao gồm'
-                })\n`
-              );
-              if (response.data?.indexOf(r) === response.data?.length - 1) {
-                // console.log(response.data?.indexOf(r));
-                this.selectedOriginalParagraphRomReferenceSub.complete();
-                this.isLoadingService.remove();
-              }
-            }
-          } else if (response.data?.length === 0) {
-            this.selectedOriginalParagraphRomReferenceSub.complete();
-            this.isLoadingService.remove();
-          }
-        },
-        errorCallback: (error) => {
-          console.log(error);
-          this.isLoadingService.remove();
-        },
-      }
-    );
-    return this.selectedOriginalParagraphRomReferenceSub.asObservable();
-  }
-
   viewInfo(rom: any) {
     this.selectedRom = rom;
     this.originalModel.code = '';
@@ -413,13 +319,6 @@ export class ManageRomsComponent implements OnInit {
 
     this.isPromotingAdminPromotionRom = false;
     this.isArbitratingAdminPromotionRom = false;
-
-    this.selectedChangedParagraphRomReferenceSub = new BehaviorSubject<string>(
-      ''
-    );
-    this.selectedOriginalParagraphRomReferenceSub = new BehaviorSubject<string>(
-      ''
-    );
 
     if (this.selectedRom.lawRomId) {
       this.isLoadingService.add();
@@ -542,17 +441,51 @@ export class ManageRomsComponent implements OnInit {
                       ? this.selectedRom.modifyingParagraph?.additionalPenalty
                       : '{không}'
                   }\n`;
-                this.paragraphChangedReferencesObservable(
-                  // this.selectedRom.modifyingParagraphId
-                  this.selectedRom.modifyingParagraph?.id ||
-                    this.selectedRom.modifyingParagraphId
-                ).subscribe({
-                  next: (v) => (tmpChangedModelCode += `${v}`),
-                  error: (e) => console.log(e),
-                  complete: () => {
-                    this.changedModel.code = tmpChangedModelCode;
-                  },
-                });
+
+                if (!this.selectedRom.modifyingParagraphId) {
+                  this.viewInfo(this.selectedRom);
+                } else {
+                  this.isLoadingService.add();
+                  this.wrapperService.get(
+                    paths.AdminGetParagraphRomDetailReference +
+                      '/' +
+                      this.selectedRom.modifyingParagraphId,
+                    getStorageToken(),
+                    {
+                      successCallback: async (response) => {
+                        if (response.data?.length > 0) {
+                          tmpChangedModelCode += `Các hành vi liên quan:\n`;
+                          for await (const r of response.data) {
+                            tmpChangedModelCode += `\t${
+                              r.referenceParagraphSectionStatueName
+                            } > ${r.referenceParagraphSectionName} > ${
+                              r.referenceParagraphName
+                            } (${
+                              r.referenceParagraphIsExcluded
+                                ? 'ngoại trừ'
+                                : 'bao gồm'
+                            })\n`;
+
+                            if (
+                              response.data?.indexOf(r) ===
+                              response.data?.length - 1
+                            ) {
+                              this.changedModel.code = tmpChangedModelCode;
+                              this.isLoadingService.remove();
+                            }
+                          }
+                        } else if (response.data?.length === 0) {
+                          this.changedModel.code = tmpChangedModelCode;
+                          this.isLoadingService.remove();
+                        }
+                      },
+                      errorCallback: (error) => {
+                        console.log(error);
+                        this.isLoadingService.remove();
+                      },
+                    }
+                  );
+                }
               } else {
                 this.changedModel.code = ' '; //must be a whitespace to open text compare
               }
@@ -573,16 +506,51 @@ export class ManageRomsComponent implements OnInit {
                       ? this.selectedRom.modifiedParagraph?.additionalPenalty
                       : '{không}'
                   }\n`;
-                this.paragraphOriginalReferencesObservable(
-                  this.selectedRom.modifiedParagraph?.id ||
-                    this.selectedRom.modifiedParagraphId
-                ).subscribe({
-                  next: (v) => (tmpOriginalModelCode += `${v}`),
-                  error: (e) => console.log(e),
-                  complete: () => {
-                    this.originalModel.code = tmpOriginalModelCode;
-                  },
-                });
+
+                if (!this.selectedRom.modifiedParagraphId) {
+                  this.viewInfo(this.selectedRom);
+                } else {
+                  this.isLoadingService.add();
+                  this.wrapperService.get(
+                    paths.AdminGetParagraphRomDetailReference +
+                      '/' +
+                      this.selectedRom.modifiedParagraphId,
+                    getStorageToken(),
+                    {
+                      successCallback: async (response) => {
+                        if (response.data?.length > 0) {
+                          tmpOriginalModelCode += `Các hành vi liên quan:\n`;
+                          for await (const r of response.data) {
+                            tmpOriginalModelCode += `\t${
+                              r.referenceParagraphSectionStatueName
+                            } > ${r.referenceParagraphSectionName} > ${
+                              r.referenceParagraphName
+                            } (${
+                              r.referenceParagraphIsExcluded
+                                ? 'ngoại trừ'
+                                : 'bao gồm'
+                            })\n`;
+
+                            if (
+                              response.data?.indexOf(r) ===
+                              response.data?.length - 1
+                            ) {
+                              this.originalModel.code = tmpOriginalModelCode;
+                              this.isLoadingService.remove();
+                            }
+                          }
+                        } else if (response.data?.length === 0) {
+                          this.originalModel.code = tmpOriginalModelCode;
+                          this.isLoadingService.remove();
+                        }
+                      },
+                      errorCallback: (error) => {
+                        console.log(error);
+                        this.isLoadingService.remove();
+                      },
+                    }
+                  );
+                }
               } else {
                 this.originalModel.code = ' '; //must be a whitespace to open text compare
               }
