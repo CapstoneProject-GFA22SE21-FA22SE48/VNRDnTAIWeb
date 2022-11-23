@@ -160,6 +160,9 @@ export class ManageRomsComponent implements OnInit {
             .concat(response.data.userRoms)
             .concat(response.data.gpsSignRoms);
 
+            console.log(this.roms);
+            
+
           this.tmpRoms = this.roms;
           this.requesters = [];
 
@@ -175,10 +178,13 @@ export class ManageRomsComponent implements OnInit {
               this.requesters.push({
                 requesterId:
                   rom?.scribeId || rom?.userId || rom?.promotingAdminId,
-                requesterName: rom?.username || rom?.promotingAdminUsername,
+                requesterName: rom?.scribe?.username || rom?.username || rom?.promotingAdminUsername,
               });
             }
           });
+
+          console.log(this.requesters);
+          
 
           this.filterData();
 

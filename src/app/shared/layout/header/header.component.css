@@ -5,7 +5,7 @@
     box-shadow: rgba(0, 0, 0, 0.15) 3px 3px 4px;
 }
 
-::ng-deep .p-button-label {
+::ng-deep .decree-btn .p-button-label {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;    

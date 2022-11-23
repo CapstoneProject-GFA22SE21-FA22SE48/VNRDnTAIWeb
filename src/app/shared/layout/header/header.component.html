@@ -22,7 +22,7 @@
       [style]="{
         height: '30px'
       }"
-      class="p-button-rounded p-button-outlined mr-2"
+      class="p-button-rounded p-button-outlined mr-2 decree-btn"
       (click)="openOriginDecree()"
       [pTooltip]="originDecreeTooltip"
       tooltipPosition="bottom"
@@ -34,17 +34,11 @@
       icon="pi pi-book"
       [label]="changeDecree?.decreeName"
       [style]="{ height: '30px' }"
-      class="p-button-rounded p-button-outlined mr-3"
+      class="p-button-rounded p-button-outlined mr-3  decree-btn"
       [pTooltip]="changeDecree?.decreeName"
       tooltipPosition="bottom"
       (click)="openChangeDecree()"
     ></button>
-
-    <!-- <div class="overflow-hidden" style="width: 5rem;">
-    <a href="#" (click)="openOriginDecree()"  class="mr-2 text-overflow-ellipsis">{{originDecree?.decreeName}}</a>
-
-    </div>
-    <a href="#" (click)="openChangeDecree()">{{changeDecree?.decreeName}}</a> -->
 
     <span class="text-lg mr-3 p-2 border-300 border-2 border-round-lg"
       >Tài khoản: <span class="font-bold">{{ account?.username }}</span></span
