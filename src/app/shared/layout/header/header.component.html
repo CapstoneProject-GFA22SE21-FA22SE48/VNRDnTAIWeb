@@ -1,5 +1,5 @@
 <div class="layout-header w-full h-5rem flex justify-content-between">
-  <div class="w-6 flex justify-content-start align-items-center pl-3">
+  <div class="w-3 flex justify-content-start align-items-center pl-3">
     <img
       src="../../../../assets/images/logo-noname.png"
       alt="logo"
@@ -11,17 +11,40 @@
   </div>
 
   <div
-    class="layout-topbar-menu w-6 flex justify-content-end align-items-center pr-5"
+    class="layout-topbar-menu w-9 flex justify-content-end align-items-center pr-5"
   >
     <button
       pButton
       pRipple
       type="button"
       icon="pi pi-book"
-      label="Nghị định 100/2019/NĐ-CP"
-      class="p-button-rounded p-button-outlined mr-3"
-      (click)="openCSDLQuocGia()"
+      [label]="originDecree?.decreeName"
+      [style]="{
+        height: '30px'
+      }"
+      class="p-button-rounded p-button-outlined mr-2"
+      (click)="openOriginDecree()"
+      [pTooltip]="originDecreeTooltip"
+      tooltipPosition="bottom"
     ></button>
+    <button
+      pButton
+      pRipple
+      type="button"
+      icon="pi pi-book"
+      [label]="changeDecree?.decreeName"
+      [style]="{ height: '30px' }"
+      class="p-button-rounded p-button-outlined mr-3"
+      [pTooltip]="changeDecree?.decreeName"
+      tooltipPosition="bottom"
+      (click)="openChangeDecree()"
+    ></button>
+
+    <!-- <div class="overflow-hidden" style="width: 5rem;">
+    <a href="#" (click)="openOriginDecree()"  class="mr-2 text-overflow-ellipsis">{{originDecree?.decreeName}}</a>
+
+    </div>
+    <a href="#" (click)="openChangeDecree()">{{changeDecree?.decreeName}}</a> -->
 
     <span class="text-lg mr-3 p-2 border-300 border-2 border-round-lg"
       >Tài khoản: <span class="font-bold">{{ account?.username }}</span></span
