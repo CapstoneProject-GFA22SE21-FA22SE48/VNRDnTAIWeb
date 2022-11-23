@@ -31,6 +31,7 @@ import { MenuModule } from 'primeng/menu';
 import { SidebarModule } from 'primeng/sidebar';
 import { BadgeModule } from 'primeng/badge';
 import {InputTextareaModule} from 'primeng/inputtextarea';
+import { AngularFirestoreModule } from '@angular/fire/compat/firestore/'; 
 
 import {
   FontAwesomeModule,
@@ -133,7 +134,8 @@ import { GoogleMapsModule } from '@angular/google-maps';
     DragDropModule,
     MonacoEditorModule.forRoot(),
     ConfirmPopupModule,
-    GoogleMapsModule
+    GoogleMapsModule,
+    AngularFirestoreModule
   ],
   providers: [ConfirmationService, MessageService],
   bootstrap: [AppComponent],
