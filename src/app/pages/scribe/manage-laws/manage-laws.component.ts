@@ -14,6 +14,8 @@ import { NotificationService } from 'src/services/notification.service';
 import { SubjectType } from 'src/app/common/subjectType';
 import { ValidateAccount } from 'src/services/validateAccount.service';
 import { EventEmitterService } from 'src/services/event-emitter.service';
+import { AngularFirestore } from '@angular/fire/compat/firestore';
+import { map } from 'rxjs';
 @Component({
   selector: 'app-manage-laws',
   templateUrl: './manage-laws.component.html',
@@ -203,6 +205,10 @@ export class ManageLawsComponent implements OnInit {
   deniedRomCount: any;
   totalRomCount: any;
 
+  //Decree
+  changingDecrees: any;
+  selectedChangingDecree: any;
+
   constructor(
     private wrapperService: WrapperService,
     private isLoadingService: IsLoadingService,
@@ -211,7 +217,8 @@ export class ManageLawsComponent implements OnInit {
     private notiService: NotificationService,
     private validateAccount: ValidateAccount,
     private eventEmitterService: EventEmitterService,
-    private router: Router
+    private router: Router,
+    private afs: AngularFirestore
   ) {}
 
   ngOnInit(): void {
@@ -232,6 +239,7 @@ export class ManageLawsComponent implements OnInit {
       this.loadDecree();
       this.loadVehicleCat();
       this.loadAdmins();
+      this.loadChangingDecrees();
     });
   }
 
@@ -262,6 +270,24 @@ export class ManageLawsComponent implements OnInit {
         this.isLoadingService.remove();
       },
     });
+  }
+
+  // Load change decrees for selecting when updating a paragraph
+  loadChangingDecrees() {
+    this.afs
+      .collection('decrees')
+      .snapshotChanges()
+      .pipe(
+        map((changes) =>
+          changes.map((c: any) => ({
+            id: c.payload.doc.id,
+            ...c.payload.doc.data(),
+          }))
+        )
+      )
+      .subscribe((data) => {
+        this.changingDecrees = data.filter((d: any) => !d.isOrigin);
+      });
   }
 
   loadStatuesOfSubmenuSelectedAssignColumn() {
@@ -340,8 +366,6 @@ export class ManageLawsComponent implements OnInit {
           this.deniedRomCount = response.data?.deniedRomCount;
           this.totalRomCount = response.data?.totalRomCount;
           this.isLoadingService.remove();
-          console.log(this.totalRomCount);
-          
         },
         errorCallback: (error) => {
           console.log(error);
@@ -2564,7 +2588,7 @@ export class ManageLawsComponent implements OnInit {
         getStorageToken(),
         {
           successCallback: (response) => {
-              this.existedParagraphCountOfSelectedSection = response.data.length;
+            this.existedParagraphCountOfSelectedSection = response.data.length;
             this.initValueForNewParagraph();
 
             this.isLoadingService.remove();
@@ -2908,8 +2932,9 @@ export class ManageLawsComponent implements OnInit {
         getStorageToken(),
         {
           successCallback: (response) => {
-            if(response.data[0]?.name.trim() !== ''){
-              this.existedParagraphCountOfSelectedSection = response.data.length;
+            if (response.data[0]?.name.trim() !== '') {
+              this.existedParagraphCountOfSelectedSection =
+                response.data.length;
             } else {
               this.existedParagraphCountOfSelectedSection = 0;
             }
@@ -2946,4 +2971,34 @@ export class ManageLawsComponent implements OnInit {
     this.selectAnotherStatueOrDefaultStatueSelected();
   }
   //end of add new section
+
+  selectChangingDecreeUpdateChosenParagraph() {
+    // check if selected changing decree -> append to description
+    if (this.selectedChangingDecree) {
+      //if already has -> replace
+      if (this.newChosenParagraphDesc.includes('sửa đổi, bổ sung bởi')) {
+        this.newChosenParagraphDesc = this.newChosenParagraphDesc.replace(
+          /\(sửa đổi, bổ sung bởi .*\)/,
+          `(sửa đổi, bổ sung bởi ${this.selectedChangingDecree?.decreeName})`
+        );
+      } else {
+        //if does not have -> append
+        this.newChosenParagraphDesc += `(sửa đổi, bổ sung bởi ${this.selectedChangingDecree?.decreeName})`;
+      }
+    } else {
+      //if not select changing decree -> replace sđbs
+      this.newChosenParagraphDesc = this.newChosenParagraphDesc.replace(
+        /\(sửa đổi, bổ sung bởi .*\)/,
+        ''
+      );
+    }
+
+    // this.innerht = this.newChosenParagraphDesc
+    // .replace(/\n$/g, '\n\n')
+    // .replace(/\(sửa đổi, bổ sung bởi .*\)/, '<mark>$&</mark>');
+
+    
+  }
+
+  // innerHTMLHightLight: any;
 }

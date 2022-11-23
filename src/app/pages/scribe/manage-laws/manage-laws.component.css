@@ -85,7 +85,42 @@
 }
 
 ::ng-deep .p-tooltip-left .p-tooltip-text{
-  height: 3rem;
-  width: 12rem;
+  height: auto;
+  width: auto;
 }
 /* end of info of pending requests of admin */
+
+/* mark {
+  border-radius: 3px;
+  color: transparent;
+  background-color: #b1d5e5;
+}
+
+.backdrop {
+  position: absolute;
+  z-index: 1;
+  border: 2px solid #685972;
+  background-color: #fff;
+  overflow: auto;
+  pointer-events: none;
+  transition: transform 1s;
+}
+
+.highlights {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  color: transparent;
+}
+
+#para-desc-textarea {
+  position: absolute;
+  display: block;
+  z-index: 2;
+  margin: 0;
+  border: 2px solid #74637f;
+  border-radius: 0;
+  color: #444;
+  background-color: transparent;
+  overflow: auto;
+  resize: none;
+} */
