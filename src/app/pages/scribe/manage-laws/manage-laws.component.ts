@@ -2989,56 +2989,28 @@ export class ManageLawsComponent implements OnInit {
     if (this.selectedChangingDecree) {
       //if already has -> replace
       if (this.newChosenParagraphDesc.includes('sửa đổi, bổ sung bởi')) {
-        this.newChosenParagraphDesc = this.newChosenParagraphDesc
-          .trim()
-          .replace(
-            /\(sửa đổi, bổ sung bởi .*\)/,
-            ` (sửa đổi, bổ sung bởi ${this.selectedChangingDecree?.decreeName})`
-          );
+        this.newChosenParagraphDesc = this.newChosenParagraphDesc.replace(
+          /\(sửa đổi, bổ sung bởi .*\)/,
+          `(sửa đổi, bổ sung bởi ${this.selectedChangingDecree?.decreeName})`
+        );
       } else {
         //if does not have -> append
-        this.newChosenParagraphDesc =
-          this.newChosenParagraphDesc.trim() +
-          ` (sửa đổi, bổ sung bởi ${this.selectedChangingDecree?.decreeName})`;
+        this.newChosenParagraphDesc += `(sửa đổi, bổ sung bởi ${this.selectedChangingDecree?.decreeName})`;
       }
     } else {
-      //if clear changing decree -> replace sđbs
-      this.newChosenParagraphDesc = this.newChosenParagraphDesc
-        .trim()
-        .replace(/\(sửa đổi, bổ sung bởi .*\)/, '');
+      //if not select changing decree -> replace sđbs
+      this.newChosenParagraphDesc = this.newChosenParagraphDesc.replace(
+        /\(sửa đổi, bổ sung bởi .*\)/,
+        ''
+      );
     }
+
+    // this.innerht = this.newChosenParagraphDesc
+    // .replace(/\n$/g, '\n\n')
+    // .replace(/\(sửa đổi, bổ sung bởi .*\)/, '<mark>$&</mark>');
+
+    
   }
 
-  selectChangingDecreeForAddingNewParagraph() {
-    // check if selected changing decree -> append to description
-    if (this.selectedChangingDecree) {
-      //if already has -> replace
-      if (
-        this.newParagraphOfSelectedSectionDescription.includes(
-          'sửa đổi, bổ sung bởi'
-        )
-      ) {
-        this.newParagraphOfSelectedSectionDescription =
-          this.newParagraphOfSelectedSectionDescription
-            .trim()
-            .replace(
-              /\(sửa đổi, bổ sung bởi .*\)/,
-              ` (sửa đổi, bổ sung bởi ${this.selectedChangingDecree?.decreeName})`
-            );
-      } else {
-        //if does not have -> append
-        this.newParagraphOfSelectedSectionDescription =
-          this.newParagraphOfSelectedSectionDescription.trim() +
-          ` (sửa đổi, bổ sung bởi ${this.selectedChangingDecree?.decreeName})`;
-      }
-    } else {
-      //if clear changing decree -> replace sđbs
-      this.newParagraphOfSelectedSectionDescription =
-        this.newParagraphOfSelectedSectionDescription
-          .trim()
-          .replace(/\(sửa đổi, bổ sung bởi .*\)/, '');
-    }
-    this.newParagraphOfSelectedSection.description =
-      this.newParagraphOfSelectedSectionDescription;
-  }
+  // innerHTMLHightLight: any;
 }
