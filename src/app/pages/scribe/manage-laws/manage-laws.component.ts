@@ -852,6 +852,8 @@ export class ManageLawsComponent implements OnInit {
     this.isValidUpdatingStatue = false;
     this.isValidUpdatingSection = false;
     this.isValidUpdatingParagraph = false;
+
+    this.selectedChangingDecree = undefined;
   }
 
   cancelUpdateChosenStatue() {
@@ -2035,13 +2037,16 @@ export class ManageLawsComponent implements OnInit {
   getNewParagraphDescription(event: any) {
     this.newParagraphOfSelectedSectionDescription = event.target.value;
 
-    this.newParagraphOfSelectedSection.description = event.target.value;
+    // this.newParagraphOfSelectedSection.description = event.target.value;
+    this.newParagraphOfSelectedSection.description =
+      this.newParagraphOfSelectedSectionDescription;
     if (
       this.newParagraphOfSelectedSection?.description === '' ||
       this.newParagraphOfSelectedSection?.description?.length > 2000
     ) {
       this.newParagraphDescriptionInvalidMsg =
         'Vui lòng nhập nội dung cho điều (tối đa 2000 ký tự)';
+      this.selectedChangingDecree = undefined;
     } else {
       this.newParagraphDescriptionInvalidMsg = '';
     }
@@ -2057,8 +2062,10 @@ export class ManageLawsComponent implements OnInit {
         this.newParagraphAdditionalPenaltyInvalidMsg === '')
     ) {
       this.isValidSaveNewParagraph = true;
+      console.log(this.isValidSaveNewParagraph);
     } else {
       this.isValidSaveNewParagraph = false;
+      console.log(this.isValidSaveNewParagraph);
     }
   }
 
@@ -2239,6 +2246,7 @@ export class ManageLawsComponent implements OnInit {
     this.isValidAddReferenceToNewParagraph = true;
 
     this.newParagraphSelectedKeyword = undefined;
+    this.selectedChangingDecree = undefined;
   }
 
   clearAllNewParagraphs() {
@@ -2264,6 +2272,7 @@ export class ManageLawsComponent implements OnInit {
 
     this.newParagraphKeywordList = undefined;
     this.newParagraphSelectedKeyword = undefined;
+    this.selectedChangingDecree = undefined;
   }
 
   //"Hoàn thành" button on paragraph dialog clicked
@@ -2914,6 +2923,7 @@ export class ManageLawsComponent implements OnInit {
     this.isValidDisplayFinishAndSaveOnParagraphDialog = true;
 
     this.displayAddNewParagraphDialog = false;
+    this.selectedChangingDecree = undefined;
   }
   //end of admin ADD new section
 
@@ -2923,6 +2933,7 @@ export class ManageLawsComponent implements OnInit {
     this.displayAddNewParagraphDialog = true;
     this.selectedStatueForAddNewLaw = { ...this.selectedStatue };
     this.selectedSectionForAddNewLaw = { ...this.selectedSection };
+    this.selectedChangingDecree = undefined;
     if (this.selectedSectionForAddNewLaw.paragraphs?.length > 0) {
       this.isLoadingService.add();
       this.wrapperService.get(
@@ -2968,6 +2979,7 @@ export class ManageLawsComponent implements OnInit {
     this.isShowingParagraphDialog = false;
     this.isShowingConfirmAddNewLaw = false;
     this.isValidGobackToStatue = false;
+    this.selectedChangingDecree = undefined;
     this.selectAnotherStatueOrDefaultStatueSelected();
   }
   //end of add new section
@@ -2977,28 +2989,56 @@ export class ManageLawsComponent implements OnInit {
     if (this.selectedChangingDecree) {
       //if already has -> replace
       if (this.newChosenParagraphDesc.includes('sửa đổi, bổ sung bởi')) {
-        this.newChosenParagraphDesc = this.newChosenParagraphDesc.replace(
-          /\(sửa đổi, bổ sung bởi .*\)/,
-          `(sửa đổi, bổ sung bởi ${this.selectedChangingDecree?.decreeName})`
-        );
+        this.newChosenParagraphDesc = this.newChosenParagraphDesc
+          .trim()
+          .replace(
+            /\(sửa đổi, bổ sung bởi .*\)/,
+            ` (sửa đổi, bổ sung bởi ${this.selectedChangingDecree?.decreeName})`
+          );
       } else {
         //if does not have -> append
-        this.newChosenParagraphDesc += `(sửa đổi, bổ sung bởi ${this.selectedChangingDecree?.decreeName})`;
+        this.newChosenParagraphDesc =
+          this.newChosenParagraphDesc.trim() +
+          ` (sửa đổi, bổ sung bởi ${this.selectedChangingDecree?.decreeName})`;
       }
     } else {
-      //if not select changing decree -> replace sđbs
-      this.newChosenParagraphDesc = this.newChosenParagraphDesc.replace(
-        /\(sửa đổi, bổ sung bởi .*\)/,
-        ''
-      );
+      //if clear changing decree -> replace sđbs
+      this.newChosenParagraphDesc = this.newChosenParagraphDesc
+        .trim()
+        .replace(/\(sửa đổi, bổ sung bởi .*\)/, '');
     }
-
-    // this.innerht = this.newChosenParagraphDesc
-    // .replace(/\n$/g, '\n\n')
-    // .replace(/\(sửa đổi, bổ sung bởi .*\)/, '<mark>$&</mark>');
-
-    
   }
 
-  // innerHTMLHightLight: any;
+  selectChangingDecreeForAddingNewParagraph() {
+    // check if selected changing decree -> append to description
+    if (this.selectedChangingDecree) {
+      //if already has -> replace
+      if (
+        this.newParagraphOfSelectedSectionDescription.includes(
+          'sửa đổi, bổ sung bởi'
+        )
+      ) {
+        this.newParagraphOfSelectedSectionDescription =
+          this.newParagraphOfSelectedSectionDescription
+            .trim()
+            .replace(
+              /\(sửa đổi, bổ sung bởi .*\)/,
+              ` (sửa đổi, bổ sung bởi ${this.selectedChangingDecree?.decreeName})`
+            );
+      } else {
+        //if does not have -> append
+        this.newParagraphOfSelectedSectionDescription =
+          this.newParagraphOfSelectedSectionDescription.trim() +
+          ` (sửa đổi, bổ sung bởi ${this.selectedChangingDecree?.decreeName})`;
+      }
+    } else {
+      //if clear changing decree -> replace sđbs
+      this.newParagraphOfSelectedSectionDescription =
+        this.newParagraphOfSelectedSectionDescription
+          .trim()
+          .replace(/\(sửa đổi, bổ sung bởi .*\)/, '');
+    }
+    this.newParagraphOfSelectedSection.description =
+      this.newParagraphOfSelectedSectionDescription;
+  }
 }
