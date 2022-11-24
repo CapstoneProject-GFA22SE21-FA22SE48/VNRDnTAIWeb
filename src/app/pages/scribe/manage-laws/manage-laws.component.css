@@ -85,7 +85,7 @@
 }
 
 ::ng-deep .p-tooltip-left .p-tooltip-text{
-  height: 3rem;
-  width: 12rem;
+  height: auto;
+  width: auto;
 }
 /* end of info of pending requests of admin */

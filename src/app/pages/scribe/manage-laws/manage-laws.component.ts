@@ -14,6 +14,8 @@ import { NotificationService } from 'src/services/notification.service';
 import { SubjectType } from 'src/app/common/subjectType';
 import { ValidateAccount } from 'src/services/validateAccount.service';
 import { EventEmitterService } from 'src/services/event-emitter.service';
+import { AngularFirestore } from '@angular/fire/compat/firestore';
+import { map } from 'rxjs';
 @Component({
   selector: 'app-manage-laws',
   templateUrl: './manage-laws.component.html',
@@ -203,6 +205,10 @@ export class ManageLawsComponent implements OnInit {
   deniedRomCount: any;
   totalRomCount: any;
 
+  //Decree
+  changingDecrees: any;
+  selectedChangingDecree: any;
+
   constructor(
     private wrapperService: WrapperService,
     private isLoadingService: IsLoadingService,
@@ -211,7 +217,8 @@ export class ManageLawsComponent implements OnInit {
     private notiService: NotificationService,
     private validateAccount: ValidateAccount,
     private eventEmitterService: EventEmitterService,
-    private router: Router
+    private router: Router,
+    private afs: AngularFirestore
   ) {}
 
   ngOnInit(): void {
@@ -232,6 +239,7 @@ export class ManageLawsComponent implements OnInit {
       this.loadDecree();
       this.loadVehicleCat();
       this.loadAdmins();
+      this.loadChangingDecrees();
     });
   }
 
@@ -262,6 +270,24 @@ export class ManageLawsComponent implements OnInit {
         this.isLoadingService.remove();
       },
     });
+  }
+
+  // Load change decrees for selecting when updating a paragraph
+  loadChangingDecrees() {
+    this.afs
+      .collection('decrees')
+      .snapshotChanges()
+      .pipe(
+        map((changes) =>
+          changes.map((c: any) => ({
+            id: c.payload.doc.id,
+            ...c.payload.doc.data(),
+          }))
+        )
+      )
+      .subscribe((data) => {
+        this.changingDecrees = data.filter((d: any) => !d.isOrigin);
+      });
   }
 
   loadStatuesOfSubmenuSelectedAssignColumn() {
@@ -340,8 +366,6 @@ export class ManageLawsComponent implements OnInit {
           this.deniedRomCount = response.data?.deniedRomCount;
           this.totalRomCount = response.data?.totalRomCount;
           this.isLoadingService.remove();
-          console.log(this.totalRomCount);
-          
         },
         errorCallback: (error) => {
           console.log(error);
@@ -828,6 +852,8 @@ export class ManageLawsComponent implements OnInit {
     this.isValidUpdatingStatue = false;
     this.isValidUpdatingSection = false;
     this.isValidUpdatingParagraph = false;
+
+    this.selectedChangingDecree = undefined;
   }
 
   cancelUpdateChosenStatue() {
@@ -2011,13 +2037,16 @@ export class ManageLawsComponent implements OnInit {
   getNewParagraphDescription(event: any) {
     this.newParagraphOfSelectedSectionDescription = event.target.value;
 
-    this.newParagraphOfSelectedSection.description = event.target.value;
+    // this.newParagraphOfSelectedSection.description = event.target.value;
+    this.newParagraphOfSelectedSection.description =
+      this.newParagraphOfSelectedSectionDescription;
     if (
       this.newParagraphOfSelectedSection?.description === '' ||
       this.newParagraphOfSelectedSection?.description?.length > 2000
     ) {
       this.newParagraphDescriptionInvalidMsg =
         'Vui lòng nhập nội dung cho điều (tối đa 2000 ký tự)';
+      this.selectedChangingDecree = undefined;
     } else {
       this.newParagraphDescriptionInvalidMsg = '';
     }
@@ -2033,8 +2062,10 @@ export class ManageLawsComponent implements OnInit {
         this.newParagraphAdditionalPenaltyInvalidMsg === '')
     ) {
       this.isValidSaveNewParagraph = true;
+      console.log(this.isValidSaveNewParagraph);
     } else {
       this.isValidSaveNewParagraph = false;
+      console.log(this.isValidSaveNewParagraph);
     }
   }
 
@@ -2215,6 +2246,7 @@ export class ManageLawsComponent implements OnInit {
     this.isValidAddReferenceToNewParagraph = true;
 
     this.newParagraphSelectedKeyword = undefined;
+    this.selectedChangingDecree = undefined;
   }
 
   clearAllNewParagraphs() {
@@ -2240,6 +2272,7 @@ export class ManageLawsComponent implements OnInit {
 
     this.newParagraphKeywordList = undefined;
     this.newParagraphSelectedKeyword = undefined;
+    this.selectedChangingDecree = undefined;
   }
 
   //"Hoàn thành" button on paragraph dialog clicked
@@ -2564,7 +2597,7 @@ export class ManageLawsComponent implements OnInit {
         getStorageToken(),
         {
           successCallback: (response) => {
-              this.existedParagraphCountOfSelectedSection = response.data.length;
+            this.existedParagraphCountOfSelectedSection = response.data.length;
             this.initValueForNewParagraph();
 
             this.isLoadingService.remove();
@@ -2890,6 +2923,7 @@ export class ManageLawsComponent implements OnInit {
     this.isValidDisplayFinishAndSaveOnParagraphDialog = true;
 
     this.displayAddNewParagraphDialog = false;
+    this.selectedChangingDecree = undefined;
   }
   //end of admin ADD new section
 
@@ -2899,6 +2933,7 @@ export class ManageLawsComponent implements OnInit {
     this.displayAddNewParagraphDialog = true;
     this.selectedStatueForAddNewLaw = { ...this.selectedStatue };
     this.selectedSectionForAddNewLaw = { ...this.selectedSection };
+    this.selectedChangingDecree = undefined;
     if (this.selectedSectionForAddNewLaw.paragraphs?.length > 0) {
       this.isLoadingService.add();
       this.wrapperService.get(
@@ -2908,8 +2943,9 @@ export class ManageLawsComponent implements OnInit {
         getStorageToken(),
         {
           successCallback: (response) => {
-            if(response.data[0]?.name.trim() !== ''){
-              this.existedParagraphCountOfSelectedSection = response.data.length;
+            if (response.data[0]?.name.trim() !== '') {
+              this.existedParagraphCountOfSelectedSection =
+                response.data.length;
             } else {
               this.existedParagraphCountOfSelectedSection = 0;
             }
@@ -2943,7 +2979,66 @@ export class ManageLawsComponent implements OnInit {
     this.isShowingParagraphDialog = false;
     this.isShowingConfirmAddNewLaw = false;
     this.isValidGobackToStatue = false;
+    this.selectedChangingDecree = undefined;
     this.selectAnotherStatueOrDefaultStatueSelected();
   }
   //end of add new section
+
+  selectChangingDecreeUpdateChosenParagraph() {
+    // check if selected changing decree -> append to description
+    if (this.selectedChangingDecree) {
+      //if already has -> replace
+      if (this.newChosenParagraphDesc.includes('sửa đổi, bổ sung bởi')) {
+        this.newChosenParagraphDesc = this.newChosenParagraphDesc
+          .trim()
+          .replace(
+            /\(sửa đổi, bổ sung bởi .*\)/,
+            ` (sửa đổi, bổ sung bởi ${this.selectedChangingDecree?.decreeName})`
+          );
+      } else {
+        //if does not have -> append
+        this.newChosenParagraphDesc =
+          this.newChosenParagraphDesc.trim() +
+          ` (sửa đổi, bổ sung bởi ${this.selectedChangingDecree?.decreeName})`;
+      }
+    } else {
+      //if clear changing decree -> replace sđbs
+      this.newChosenParagraphDesc = this.newChosenParagraphDesc
+        .trim()
+        .replace(/\(sửa đổi, bổ sung bởi .*\)/, '');
+    }
+  }
+
+  selectChangingDecreeForAddingNewParagraph() {
+    // check if selected changing decree -> append to description
+    if (this.selectedChangingDecree) {
+      //if already has -> replace
+      if (
+        this.newParagraphOfSelectedSectionDescription.includes(
+          'sửa đổi, bổ sung bởi'
+        )
+      ) {
+        this.newParagraphOfSelectedSectionDescription =
+          this.newParagraphOfSelectedSectionDescription
+            .trim()
+            .replace(
+              /\(sửa đổi, bổ sung bởi .*\)/,
+              ` (sửa đổi, bổ sung bởi ${this.selectedChangingDecree?.decreeName})`
+            );
+      } else {
+        //if does not have -> append
+        this.newParagraphOfSelectedSectionDescription =
+          this.newParagraphOfSelectedSectionDescription.trim() +
+          ` (sửa đổi, bổ sung bởi ${this.selectedChangingDecree?.decreeName})`;
+      }
+    } else {
+      //if clear changing decree -> replace sđbs
+      this.newParagraphOfSelectedSectionDescription =
+        this.newParagraphOfSelectedSectionDescription
+          .trim()
+          .replace(/\(sửa đổi, bổ sung bởi .*\)/, '');
+    }
+    this.newParagraphOfSelectedSection.description =
+      this.newParagraphOfSelectedSectionDescription;
+  }
 }

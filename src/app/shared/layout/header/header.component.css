@@ -11,3 +11,8 @@
     white-space: nowrap;    
     width: 10rem;
 }
+
+::ng-deep .p-tooltip-bottom .p-tooltip-text{
+    width: 15rem;
+    height: auto;
+  }
