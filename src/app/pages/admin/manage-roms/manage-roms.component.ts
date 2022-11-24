@@ -159,10 +159,6 @@ export class ManageRomsComponent implements OnInit {
             .concat(response.data.questionRoms)
             .concat(response.data.userRoms)
             .concat(response.data.gpsSignRoms);
-
-            console.log(this.roms);
-            
-
           this.tmpRoms = this.roms;
           this.requesters = [];
 
@@ -182,10 +178,6 @@ export class ManageRomsComponent implements OnInit {
               });
             }
           });
-
-          console.log(this.requesters);
-          
-
           this.filterData();
 
           this.isLoadingService.remove();

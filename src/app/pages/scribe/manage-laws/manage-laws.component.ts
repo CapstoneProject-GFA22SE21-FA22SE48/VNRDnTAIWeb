@@ -785,8 +785,6 @@ export class ManageLawsComponent implements OnInit {
   }
 
   detectChangeSection() {
-    // console.log(this.tmpChosenSection);
-
     if (
       JSON.stringify(this.chosenSection) !==
         JSON.stringify(this.tmpChosenSection) &&
@@ -1194,8 +1192,6 @@ export class ManageLawsComponent implements OnInit {
             getStorageToken(),
             {
               successCallback: (response2) => {
-                console.log(response2);
-
                 //add notification
                 this.notiService.create({
                   subjectId: response2.data?.id,
@@ -1718,36 +1714,6 @@ export class ManageLawsComponent implements OnInit {
     this.newSection.vehicleCategoryId = this.vehicleCats[0]?.id;
   }
 
-  // loadSectionListForSelectedStatueInAddnewDialog() {
-  //   if (this.selectedStatueForAddNewLaw.sections?.length === 0) {
-  //     this.isLoadingService.add();
-  //     this.wrapperService.get(
-  //       paths.ScribeGetSectionsByStatueId +
-  //         '/' +
-  //         this.selectedStatueForAddNewLaw?.id,
-  //       getStorageToken(),
-  //       {
-  //         successCallback: (response) => {
-  //           this.selectedStatueForAddNewLaw.sections = response.data;
-  //           this.selectedSectionForAddNewLaw =
-  //             this.selectedStatueForAddNewLaw.sections[this.selectedStatueForAddNewLaw.sections?.length-1];
-
-  //           //Set init value for new section
-  //           this.initValueForNewSection();
-
-  //           this.isLoadingService.remove();
-  //         },
-  //         errorCallback: (error) => {
-  //           console.log(error);
-  //           this.isLoadingService.remove();
-  //         },
-  //       }
-  //     );
-  //   } else {
-  //     this.initValueForNewSection();
-  //   }
-  // }
-
   getNewSectionName(event: any) {
     this.newSection.description = event.target.value;
     if (
@@ -2062,10 +2028,8 @@ export class ManageLawsComponent implements OnInit {
         this.newParagraphAdditionalPenaltyInvalidMsg === '')
     ) {
       this.isValidSaveNewParagraph = true;
-      console.log(this.isValidSaveNewParagraph);
     } else {
       this.isValidSaveNewParagraph = false;
-      console.log(this.isValidSaveNewParagraph);
     }
   }
 
