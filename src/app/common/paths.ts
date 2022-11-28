@@ -4,7 +4,7 @@
  const base = 'https://vnrdntaiapi.azurewebsites.net/api';
 
 //Login
-export const Login: string = base + '/Users/Login';
+export const Login: string = base + '/Users/WebLogin';
 export const GetScribeAssignColumns: string = base + '/AssignedColumns/Scribes';
 
 //Common 
