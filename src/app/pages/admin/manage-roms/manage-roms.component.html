@@ -401,8 +401,8 @@
         <div class="w-6 text-lg flex justify-content-end">
           <span>{{
             selectedRom.scribe?.username ||
-            selectedRom.username ||
-            selectedRom.promotingAdminUsername
+              selectedRom.username ||
+              selectedRom.promotingAdminUsername
           }}</span>
         </div>
       </div>
@@ -536,7 +536,12 @@
 
   <ng-template
     pTemplate="footer"
-    *ngIf="(selectedRom?.status === 0 || selectedRom?.status === 2) && !isPromotingAdminPromotionRom"
+    *ngIf="
+      (selectedRom?.status === 0 ||
+        selectedRom?.status === 2 ||
+        (!selectedRom.modifyingSignId && selectedRom?.status === 3)) &&
+      !isPromotingAdminPromotionRom
+    "
   >
     <div class="w-12 flex" style="height: 10%">
       <div class="w-6 flex justify-content-start">
