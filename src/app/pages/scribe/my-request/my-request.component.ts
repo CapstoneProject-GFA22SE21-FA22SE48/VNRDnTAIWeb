@@ -79,7 +79,7 @@ export class MyRequestComponent implements OnInit {
     private confirmationService: ConfirmationService,
     private messageService: MessageService,
     private eventEmitterService: EventEmitterService,
-    private validateAccount: ValidateAccount,
+    private validateAccount: ValidateAccount
   ) {}
 
   ngOnInit(): void {
@@ -147,6 +147,12 @@ export class MyRequestComponent implements OnInit {
             .concat(response.data?.signRoms)
             .concat(response.data?.questionRoms);
 
+          //Not display gps roms -> gps roms are displayed on a specific rom tab named "Yêu cầu về GPS"
+          this.roms = this.roms.filter(
+            (r: any) =>
+              !(r.modifyingSignId === undefined || r.modifyingSignId === null)
+          );
+
           this.tmpRoms = this.roms.slice();
           this.filterData();
 
@@ -170,7 +176,9 @@ export class MyRequestComponent implements OnInit {
         this.roms = this.roms.filter((r: any) => r.lawRomId);
       } else if (this.filterRomTypeCode === 2) {
         //sign
-        this.roms = this.roms.filter((r: any) => r.signRomId);
+        this.roms = this.roms.filter(
+          (r: any) => r.signRomId && r.modifyingSignId
+        );
       } else if (this.filterRomTypeCode === 3) {
         //question
         this.roms = this.roms.filter((r: any) => r.modifyingQuestionId);
@@ -193,39 +201,41 @@ export class MyRequestComponent implements OnInit {
     if (this.filterSearchStr) {
       this.roms = this.roms?.filter((r: any) => {
         return r.modifyingStatueName
-          ? toNonAccentVietnamese(
-              r.modifyingStatueName?.toLowerCase()
-            ).trim().includes(
-              toNonAccentVietnamese(this.filterSearchStr.toLowerCase()).trim()
-            )
+          ? toNonAccentVietnamese(r.modifyingStatueName?.toLowerCase())
+              .trim()
+              .includes(
+                toNonAccentVietnamese(this.filterSearchStr.toLowerCase()).trim()
+              )
           : r.modifyingSectionName
-          ? toNonAccentVietnamese(
-              r.modifyingSectionName?.toLowerCase()
-            ).trim().includes(
-              toNonAccentVietnamese(this.filterSearchStr.toLowerCase()).trim()
-            )
+          ? toNonAccentVietnamese(r.modifyingSectionName?.toLowerCase())
+              .trim()
+              .includes(
+                toNonAccentVietnamese(this.filterSearchStr.toLowerCase()).trim()
+              )
           : r.modifyingParagraphName
-          ? toNonAccentVietnamese(
-              r.modifyingParagraphName?.toLowerCase()
-            ).trim().includes(
-              toNonAccentVietnamese(this.filterSearchStr.toLowerCase()).trim()
-            )
+          ? toNonAccentVietnamese(r.modifyingParagraphName?.toLowerCase())
+              .trim()
+              .includes(
+                toNonAccentVietnamese(this.filterSearchStr.toLowerCase()).trim()
+              )
           : r.modifyingSignName
-          ? toNonAccentVietnamese(r.modifyingSignName?.toLowerCase()).trim().includes(
-              toNonAccentVietnamese(this.filterSearchStr.toLowerCase()).trim()
-            )
+          ? toNonAccentVietnamese(r.modifyingSignName?.toLowerCase())
+              .trim()
+              .includes(
+                toNonAccentVietnamese(this.filterSearchStr.toLowerCase()).trim()
+              )
           : r.modifyingGpssignName
-          ? toNonAccentVietnamese(
-              r.modifyingGpssignName?.toLowerCase()
-            ).trim().includes(
-              toNonAccentVietnamese(this.filterSearchStr.toLowerCase().trim())
-            )
+          ? toNonAccentVietnamese(r.modifyingGpssignName?.toLowerCase())
+              .trim()
+              .includes(
+                toNonAccentVietnamese(this.filterSearchStr.toLowerCase().trim())
+              )
           : r.modifyingQuestionContent
-          ? toNonAccentVietnamese(
-              r.modifyingQuestionContent?.toLowerCase()
-            ).trim().includes(
-              toNonAccentVietnamese(this.filterSearchStr.toLowerCase().trim())
-            )
+          ? toNonAccentVietnamese(r.modifyingQuestionContent?.toLowerCase())
+              .trim()
+              .includes(
+                toNonAccentVietnamese(this.filterSearchStr.toLowerCase().trim())
+              )
           : null;
       });
     }
@@ -382,51 +392,50 @@ export class MyRequestComponent implements OnInit {
                       ? this.selectedRom.modifyingParagraph?.additionalPenalty
                       : '{không}'
                   }\n`;
-                  if (!this.selectedRom.modifyingParagraphId) {
-                    this.viewInfo(this.selectedRom);
-                  } else {
-                    this.isLoadingService.add();
-                    this.wrapperService.get(
-                      paths.ScribeGetParagraphRomDetailReference +
-                        '/' +
-                        this.selectedRom.modifyingParagraphId,
-                      getStorageToken(),
-                      {
-                        successCallback: async (response) => {
-                          if (response.data?.length > 0) {
-                            tmpChangedModelCode += `Các hành vi liên quan:\n`;
-                            for await (const r of response.data) {
-                              tmpChangedModelCode += `\t${
-                                r.referenceParagraphSectionStatueName
-                              } > ${r.referenceParagraphSectionName} > ${
-                                r.referenceParagraphName
-                              } (${
-                                r.referenceParagraphIsExcluded
-                                  ? 'ngoại trừ'
-                                  : 'bao gồm'
-                              })\n`;
-  
-                              if (
-                                response.data?.indexOf(r) ===
-                                response.data?.length - 1
-                              ) {
-                                this.changedModel.code = tmpChangedModelCode;
-                                this.isLoadingService.remove();
-                              }
+                if (!this.selectedRom.modifyingParagraphId) {
+                  this.viewInfo(this.selectedRom);
+                } else {
+                  this.isLoadingService.add();
+                  this.wrapperService.get(
+                    paths.ScribeGetParagraphRomDetailReference +
+                      '/' +
+                      this.selectedRom.modifyingParagraphId,
+                    getStorageToken(),
+                    {
+                      successCallback: async (response) => {
+                        if (response.data?.length > 0) {
+                          tmpChangedModelCode += `Các hành vi liên quan:\n`;
+                          for await (const r of response.data) {
+                            tmpChangedModelCode += `\t${
+                              r.referenceParagraphSectionStatueName
+                            } > ${r.referenceParagraphSectionName} > ${
+                              r.referenceParagraphName
+                            } (${
+                              r.referenceParagraphIsExcluded
+                                ? 'ngoại trừ'
+                                : 'bao gồm'
+                            })\n`;
+
+                            if (
+                              response.data?.indexOf(r) ===
+                              response.data?.length - 1
+                            ) {
+                              this.changedModel.code = tmpChangedModelCode;
+                              this.isLoadingService.remove();
                             }
-                          } else if (response.data?.length === 0) {
-                            this.changedModel.code = tmpChangedModelCode;
-                            this.isLoadingService.remove();
                           }
-                        },
-                        errorCallback: (error) => {
-                          console.log(error);
+                        } else if (response.data?.length === 0) {
+                          this.changedModel.code = tmpChangedModelCode;
                           this.isLoadingService.remove();
-                        },
-                      }
-                    );
-                  }
-                
+                        }
+                      },
+                      errorCallback: (error) => {
+                        console.log(error);
+                        this.isLoadingService.remove();
+                      },
+                    }
+                  );
+                }
               } else {
                 this.changedModel.code = ' '; //must be a whitespace to open text compare
               }
@@ -448,51 +457,50 @@ export class MyRequestComponent implements OnInit {
                       : '{không}'
                   }\n`;
 
-                  if (!this.selectedRom.modifiedParagraphId) {
-                    this.viewInfo(this.selectedRom);
-                  } else {
-                    this.isLoadingService.add();
-                    this.wrapperService.get(
-                      paths.ScribeGetParagraphRomDetailReference +
-                        '/' +
-                        this.selectedRom.modifiedParagraphId,
-                      getStorageToken(),
-                      {
-                        successCallback: async (response) => {
-                          if (response.data?.length > 0) {
-                            tmpOriginalModelCode += `Các hành vi liên quan:\n`;
-                            for await (const r of response.data) {
-                              tmpOriginalModelCode += `\t${
-                                r.referenceParagraphSectionStatueName
-                              } > ${r.referenceParagraphSectionName} > ${
-                                r.referenceParagraphName
-                              } (${
-                                r.referenceParagraphIsExcluded
-                                  ? 'ngoại trừ'
-                                  : 'bao gồm'
-                              })\n`;
-  
-                              if (
-                                response.data?.indexOf(r) ===
-                                response.data?.length - 1
-                              ) {
-                                this.originalModel.code = tmpOriginalModelCode;
-                                this.isLoadingService.remove();
-                              }
+                if (!this.selectedRom.modifiedParagraphId) {
+                  this.viewInfo(this.selectedRom);
+                } else {
+                  this.isLoadingService.add();
+                  this.wrapperService.get(
+                    paths.ScribeGetParagraphRomDetailReference +
+                      '/' +
+                      this.selectedRom.modifiedParagraphId,
+                    getStorageToken(),
+                    {
+                      successCallback: async (response) => {
+                        if (response.data?.length > 0) {
+                          tmpOriginalModelCode += `Các hành vi liên quan:\n`;
+                          for await (const r of response.data) {
+                            tmpOriginalModelCode += `\t${
+                              r.referenceParagraphSectionStatueName
+                            } > ${r.referenceParagraphSectionName} > ${
+                              r.referenceParagraphName
+                            } (${
+                              r.referenceParagraphIsExcluded
+                                ? 'ngoại trừ'
+                                : 'bao gồm'
+                            })\n`;
+
+                            if (
+                              response.data?.indexOf(r) ===
+                              response.data?.length - 1
+                            ) {
+                              this.originalModel.code = tmpOriginalModelCode;
+                              this.isLoadingService.remove();
                             }
-                          } else if (response.data?.length === 0) {
-                            this.originalModel.code = tmpOriginalModelCode;
-                            this.isLoadingService.remove();
                           }
-                        },
-                        errorCallback: (error) => {
-                          console.log(error);
+                        } else if (response.data?.length === 0) {
+                          this.originalModel.code = tmpOriginalModelCode;
                           this.isLoadingService.remove();
-                        },
-                      }
-                    );
-                  }
-                
+                        }
+                      },
+                      errorCallback: (error) => {
+                        console.log(error);
+                        this.isLoadingService.remove();
+                      },
+                    }
+                  );
+                }
               } else {
                 this.originalModel.code = ' '; //must be a whitespace to open text compare
               }
@@ -536,21 +544,20 @@ export class MyRequestComponent implements OnInit {
                 ) {
                   this.changedModel.code += `Các điểm liên quan (nếu có):\n`;
                   this.selectedRom.modifyingSign?.signParagraphs
-                  ?.sort(
-                    (sp1: any, sp2: any) =>
-                      sp1?.signParagraphStatueName?.split(' ')[1] -
-                        sp2?.signParagraphStatueName?.split(' ')[1] ||
-                      sp1?.signParagraphSectionName?.split(' ')[1] -
-                        sp2?.signParagraphSectionName?.split(' ')[1] ||
-                      (sp1?.signParagraphParagraphName >
-                      sp2?.signParagraphParagraphName
-                        ? 1
-                        : -1)
-                  ).forEach(
-                    (sp: any) => {
+                    ?.sort(
+                      (sp1: any, sp2: any) =>
+                        sp1?.signParagraphStatueName?.split(' ')[1] -
+                          sp2?.signParagraphStatueName?.split(' ')[1] ||
+                        sp1?.signParagraphSectionName?.split(' ')[1] -
+                          sp2?.signParagraphSectionName?.split(' ')[1] ||
+                        (sp1?.signParagraphParagraphName >
+                        sp2?.signParagraphParagraphName
+                          ? 1
+                          : -1)
+                    )
+                    .forEach((sp: any) => {
                       this.changedModel.code += `\t${sp.signParagraphStatueName} > ${sp.signParagraphSectionName} > ${sp.signParagraphParagraphName}\n`;
-                    }
-                  );
+                    });
                 }
 
                 if (this.selectedRom.modifyingSign?.imageUrl) {
@@ -577,21 +584,21 @@ export class MyRequestComponent implements OnInit {
                   this.selectedRom.modifiedSign?.signParagraphs?.length > 0
                 ) {
                   this.originalModel.code += `Các điểm liên quan (nếu có):\n`;
-                  this.selectedRom.modifiedSign?.signParagraphs?.sort(
-                    (sp1: any, sp2: any) =>
-                      sp1?.signParagraphStatueName?.split(' ')[1] -
-                        sp2?.signParagraphStatueName?.split(' ')[1] ||
-                      sp1?.signParagraphSectionName?.split(' ')[1] -
-                        sp2?.signParagraphSectionName?.split(' ')[1] ||
-                      (sp1?.signParagraphParagraphName >
-                      sp2?.signParagraphParagraphName
-                        ? 1
-                        : -1)
-                  ).forEach(
-                    (sp: any) => {
+                  this.selectedRom.modifiedSign?.signParagraphs
+                    ?.sort(
+                      (sp1: any, sp2: any) =>
+                        sp1?.signParagraphStatueName?.split(' ')[1] -
+                          sp2?.signParagraphStatueName?.split(' ')[1] ||
+                        sp1?.signParagraphSectionName?.split(' ')[1] -
+                          sp2?.signParagraphSectionName?.split(' ')[1] ||
+                        (sp1?.signParagraphParagraphName >
+                        sp2?.signParagraphParagraphName
+                          ? 1
+                          : -1)
+                    )
+                    .forEach((sp: any) => {
                       this.originalModel.code += `\t${sp.signParagraphStatueName} > ${sp.signParagraphSectionName} > ${sp.signParagraphParagraphName}\n`;
-                    }
-                  );
+                    });
                 }
 
                 if (this.selectedRom.modifiedSign?.imageUrl) {

@@ -120,11 +120,16 @@
                 <span *ngIf="rom.operationType === 2">Xóa</span>
               </div>
             </td>
-            <td [className]="!rom.user?.username ? 'surface-200' : 'text-center'">
-              <div
+            <td [className]="(!rom.user?.username && !rom.scribe?.username )? 'surface-200' : 'text-center'">
+              <div *ngIf="rom.user"
                 class="w-10rem white-space-nowrap overflow-hidden text-overflow-ellipsis"
               >
                 <span>{{ rom.user?.username }}</span>
+              </div>
+              <div *ngIf="!rom.user && rom.scribe"
+                class="w-10rem white-space-nowrap overflow-hidden text-overflow-ellipsis"
+              >
+                <span>{{ rom.scribe?.username }}</span>
               </div>
             </td>
             <td [ngStyle]="{ 'text-align': 'center' }">
