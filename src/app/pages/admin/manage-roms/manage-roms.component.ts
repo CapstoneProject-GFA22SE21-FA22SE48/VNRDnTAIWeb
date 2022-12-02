@@ -88,6 +88,16 @@ export class ManageRomsComponent implements OnInit {
   isPromotingAdminPromotionRom: boolean = false;
   isArbitratingAdminPromotionRom: boolean = false;
 
+  //start of google map
+  displayMapChanged: any;
+  centerMapChanged: any;
+  markerMapChangedPosition: any;
+
+  zoom = 14;
+
+  markerOptions: google.maps.MarkerOptions = { draggable: false };
+  //end of google map
+
   constructor(
     private wrapperService: WrapperService,
     private isLoadingService: IsLoadingService,
@@ -174,7 +184,10 @@ export class ManageRomsComponent implements OnInit {
               this.requesters.push({
                 requesterId:
                   rom?.scribeId || rom?.userId || rom?.promotingAdminId,
-                requesterName: rom?.scribe?.username || rom?.username || rom?.promotingAdminUsername,
+                requesterName:
+                  rom?.scribe?.username ||
+                  rom?.username ||
+                  rom?.promotingAdminUsername,
               });
             }
           });
@@ -668,6 +681,67 @@ export class ManageRomsComponent implements OnInit {
         }
       );
     } else if (this.selectedRom.modifyingGpssignId) {
+      // this.changedModelImg = undefined;
+      // this.originalModelImg = undefined;
+      // this.isLoadingService.add();
+      // this.wrapperService.get(
+      //   paths.AdminGetGpssignRomList +
+      //     '/' +
+      //     decodeToken(getStorageToken() || '')?.Id,
+      //   getStorageToken(),
+      //   {
+      //     successCallback: (response) => {
+      //       console.log(response);
+
+      // //       this.selectedRom = response.data?.filter(
+      // //         (r: any) => r.modifyingGpssignId === this.selectedRom.modifyingGpssignId
+      // //       );
+
+      // //       if (this.selectedRom?.modifiedGpssign !== null) {
+      // //         this.originalModel.code =
+      // //           `Biển:\n` +
+      // //           `\t${this.selectedRom?.modifiedGpssign?.sign?.name}\n` +
+      // //           `Kinh độ:\n` +
+      // //           `\t${this.selectedRom?.modifiedGpssign?.longitude}\n` +
+      // //           `Vĩ độ:\n` +
+      // //           `\t${this.selectedRom?.modifiedGpssign?.longitude}\n`;
+      // //       } else {
+      // //         this.originalModel.code = ' ';
+      // //       }
+
+      // //       if (this.selectedRom.operationType !== OperationType.Delete) {
+      // //         this.changedModel.code =
+      // //           `Biển:\n` +
+      // //           `\t${this.selectedRom?.modifyingGpssign?.sign?.name}\n` +
+      // //           `Kinh độ:\n` +
+      // //           `\t${this.selectedRom?.modifyingGpssign?.longitude}\n` +
+      // //           `Vĩ độ:\n` +
+      // //           `\t${this.selectedRom?.modifyingGpssign?.longitude}\n`;
+      // //       } else {
+      // //         this.changedModel.code = ' ';
+      // //       }
+
+      // //       this.centerMapChanged = {
+      // //         lat: this.selectedRom?.modifyingGpssign?.latitude,
+      // //         lng: this.selectedRom?.modifyingGpssign?.longitude,
+      // //       };
+
+      // //       this.markerMapChangedPosition = {
+      // //         lat: this.selectedRom?.modifyingGpssign?.latitude,
+      // //         lng: this.selectedRom?.modifyingGpssign?.longitude,
+      // //       };
+
+      // // this.displayRomDetailDialog = true;
+
+      //       this.isLoadingService.remove();
+      //     },
+      //     errorCallback: (error) => {
+      //       console.log(error);
+      //       this.isLoadingService.remove();
+      //     },
+      //   }
+      // );
+
       if (this.selectedRom?.modifiedGpssign !== null) {
         this.originalModel.code =
           `Biển:\n` +
@@ -691,6 +765,16 @@ export class ManageRomsComponent implements OnInit {
       } else {
         this.changedModel.code = ' ';
       }
+
+      this.centerMapChanged = {
+        lat: this.selectedRom?.modifyingGpssign?.latitude,
+        lng: this.selectedRom?.modifyingGpssign?.longitude,
+      };
+
+      this.markerMapChangedPosition = {
+        lat: this.selectedRom?.modifyingGpssign?.latitude,
+        lng: this.selectedRom?.modifyingGpssign?.longitude,
+      };
 
       this.displayRomDetailDialog = true;
     } else if (this.selectedRom.modifyingQuestionId) {
@@ -1678,5 +1762,17 @@ export class ManageRomsComponent implements OnInit {
 
     this.isPromotingAdminPromotionRom = false;
     this.isArbitratingAdminPromotionRom = false;
+  }
+
+  moveMapChanged(event: google.maps.MapMouseEvent) {
+    if (event.latLng != null) {
+      this.centerMapChanged = event.latLng.toJSON();
+    }
+  }
+
+  moveChanged(event: google.maps.MapMouseEvent) {
+    if (event.latLng != null) {
+      this.displayMapChanged = event.latLng.toJSON();
+    }
   }
 }

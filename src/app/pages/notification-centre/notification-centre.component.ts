@@ -134,13 +134,13 @@ export class NotificationCentreComponent implements OnInit {
           });
         });
       } 
-      // else if (noti.subjectType === SubjectType.GPSSign) {
-      //   this.router.navigate(['/admin/manage-roms']).then(() => {
-      //     this.eventEmitterService.onAdminNotiClick({
-      //       modifyingGpssignId: noti.subjectId,
-      //     });
-      //   });
-      // }
+      else if (noti.subjectType === SubjectType.GPSSign) {
+        this.router.navigate(['/admin/manage-roms']).then(() => {
+          this.eventEmitterService.onAdminNotiClick({
+            modifyingGpssignId: noti.subjectId,
+          });
+        });
+      }
        else if (noti.subjectType === SubjectType.Question) {
         this.router.navigate(['/admin/manage-roms']).then(() => {
           this.eventEmitterService.onAdminNotiClick({

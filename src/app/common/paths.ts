@@ -38,6 +38,7 @@ export const AdminUpdateAssignedTasks: string = base + "/AssignedColumns/TasksUp
 export const AdminGetLawRomDetail: string = base + '/LawModificationRequests/ROMDetail';
 export const AdminGetParagraphRomDetailReference: string = base + '/LawModificationRequests/ParagraphROMDetail/References';
 export const AdminGetSignRomDetail: string = base + '/SignModificationRequests/SignROMDetail';
+export const AdminGetGpssignRomList: string = base + '/SignModificationRequests/GpssignROMs/Admin';
 export const AdminGetQuestionRomDetail: string = base + '/QuestionModificationRequests/QuestionROMDetail';
 export const AdminGetUserRomDetail: string = base + '/UserModificationRequests/UserROMDetail';
 
