@@ -749,7 +749,7 @@ export class ManageRomsComponent implements OnInit {
           `Kinh độ:\n` +
           `\t${this.selectedRom?.modifiedGpssign?.longitude}\n` +
           `Vĩ độ:\n` +
-          `\t${this.selectedRom?.modifiedGpssign?.longitude}\n`;
+          `\t${this.selectedRom?.modifiedGpssign?.latitude}\n`;
       } else {
         this.originalModel.code = ' ';
       }
@@ -761,7 +761,7 @@ export class ManageRomsComponent implements OnInit {
           `Kinh độ:\n` +
           `\t${this.selectedRom?.modifyingGpssign?.longitude}\n` +
           `Vĩ độ:\n` +
-          `\t${this.selectedRom?.modifyingGpssign?.longitude}\n`;
+          `\t${this.selectedRom?.modifyingGpssign?.latitude}\n`;
       } else {
         this.changedModel.code = ' ';
       }
