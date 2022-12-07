@@ -6,9 +6,23 @@
       'w-8 h-full': scribeDTO
     }"
   >
-    <div class="p-2" style="height: 5%">
-      <fa-icon class="fa-lg mr-2" [icon]="['far', 'circle-user']"></fa-icon>
-      <span class="text-xl">Quản lý nhân viên</span>
+    <div class="p-2 flex" style="height: 5%">
+      <div class="w-6">
+        <fa-icon class="fa-lg mr-2" [icon]="['far', 'circle-user']"></fa-icon>
+        <span class="text-xl">Quản lý nhân viên</span>
+      </div>
+
+      <div class="w-6 flex justify-content-end">
+        <button
+          pButton
+          pRipple
+          type="button"
+          icon="pi pi-refresh"
+          class="p-button-rounded p-button-text"
+          [style]="{ height: '25px', width: '25px' }"
+          (click)="ngOnInit()"
+        ></button>
+      </div>
     </div>
 
     <div class="p-2" style="height: 10%">
@@ -51,7 +65,7 @@
             (onClearClick)="filterData()"
           ></p-calendar>
         </div>
-        
+
         <div class="w-4 flex justify-content-end">
           <button
             pButton
@@ -60,7 +74,7 @@
             label="Tạo mới"
             class="p-button-raised p-button-success"
             [style]="{ height: '40px' }"
-            (click)="displayCreateScribe = true;"
+            (click)="displayCreateScribe = true"
           ></button>
         </div>
       </div>
@@ -68,7 +82,9 @@
     <div class="p-2 overflow-auto" style="height: 85%">
       <p-table
         [value]="scribes"
-        [paginator]="scribes !== undefined && scribes.length > 10 ? true : false"
+        [paginator]="
+          scribes !== undefined && scribes.length > 10 ? true : false
+        "
         [rows]="10"
         [showCurrentPageReport]="
           scribes !== undefined && scribes.length > 10 ? true : false
@@ -130,7 +146,7 @@
               </div>
             </td>
             <td [ngStyle]="{ 'text-align': 'center' }">
-              {{ scribe.createdDate | date: "dd/MM/yyyy" }}
+              {{ scribe.createdDate | date : "dd/MM/yyyy" }}
             </td>
             <td [ngStyle]="{ 'text-align': 'center' }">
               <div
@@ -269,7 +285,7 @@
           class="w-6 flex justify-content-end white-space-nowrap overflow-x-auto overflow-y-hidden"
         >
           <span class="text-lg font-bold ml-3">
-            {{ scribeDTO?.createdDate | date: "dd/MM/yyyy" }}
+            {{ scribeDTO?.createdDate | date : "dd/MM/yyyy" }}
           </span>
         </div>
       </div>
@@ -365,7 +381,7 @@
                   (1 -
                     scribeDTO?.deniedRequestCountByMonthYear /
                       scribeDTO?.totalRequestCountByMonthYear)
-                  | number: "1.0-2"
+                  | number : "1.0-2"
               }}%</span
             >
             <span
@@ -545,9 +561,9 @@
 
     <div class="w-12 mb-3 flex justify-content-end">
       <div class="w-6">
-        <small class="p-block p-error" *ngIf="!isValidNewScribeUsername"
-          >{{inValidNewScribeUsernameMsg}}</small
-        >
+        <small class="p-block p-error" *ngIf="!isValidNewScribeUsername">{{
+          inValidNewScribeUsernameMsg
+        }}</small>
       </div>
     </div>
 
@@ -626,4 +642,3 @@
 <p-toast key="createScribeFail" life="1500"></p-toast>
 
 <p-confirmPopup key="confirmCreateNewScribe"></p-confirmPopup>
-

@@ -6,9 +6,23 @@
       'w-8 h-full': chosenSign || isCreatingNewSign
     }"
   >
-    <div class="p-2 pb-3" style="height: 5%">
-      <fa-icon class="fa-lg mr-2" [icon]="['far', 'circle-question']"></fa-icon>
-      <span class="text-xl">Quản lý biển báo</span>
+    <div class="p-2 pb-3 flex" style="height: 5%">
+      <div class="w-6">
+        <fa-icon class="fa-lg mr-2" [icon]="['far', 'circle-question']"></fa-icon>
+        <span class="text-xl">Quản lý biển báo</span>
+      </div>
+      
+      <div class="w-6 flex justify-content-end">
+        <button
+          pButton
+          pRipple
+          type="button"
+          icon="pi pi-refresh"
+          class="p-button-rounded p-button-text"
+          [style]="{ height: '25px', width: '25px' }"
+          (click)="ngOnInit()"
+        ></button>
+      </div>
     </div>
     <div class="p-2" style="height: 10%">
       <div class="w-12 flex align-items-center">
