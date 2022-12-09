@@ -2971,6 +2971,8 @@ export class ManageLawsComponent implements OnInit {
         .trim()
         .replace(/\(sửa đổi, bổ sung bởi .*\)/, '');
     }
+    this.tmpChosenParagraph.description = this.newChosenParagraphDesc;
+    this.detectChangeParagraph();
   }
 
   selectChangingDecreeForAddingNewParagraph() {
