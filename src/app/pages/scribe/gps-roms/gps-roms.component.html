@@ -188,7 +188,7 @@
                 icon="pi pi-info"
                 class="p-button-rounded p-button-outlined"
                 [style]="{ width: '25px', height: '25px' }"
-                (click)="viewInfo(rom)"
+                (click)="viewInfo(rom); selectedRom = rom"
               ></button>
             </td>
           </tr>
@@ -362,8 +362,8 @@
     </div>
   </ng-template>
 
-  <ng-template pTemplate="footer" *ngIf="selectedRom?.status === 1">
-    <div class="w-12 flex justify-content-end">
+  <ng-template pTemplate="footer">
+    <div *ngIf="selectedRom?.status === 1" class="w-12 flex justify-content-end">
       <button
         pButton
         pRipple
