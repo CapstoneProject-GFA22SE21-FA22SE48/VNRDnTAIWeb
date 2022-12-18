@@ -3,10 +3,10 @@
     <div class="p-2 pb-3 flex" style="height: 6%">
       <div class="w-6">
         <fa-icon
-        class="fa-lg mr-2"
-        [icon]="['fas', 'code-pull-request']"
-      ></fa-icon>
-      <span class="text-xl">Quản lý yêu cầu</span>
+          class="fa-lg mr-2"
+          [icon]="['fas', 'code-pull-request']"
+        ></fa-icon>
+        <span class="text-xl">Quản lý yêu cầu</span>
       </div>
       <div class="w-6 flex justify-content-end">
         <button
@@ -257,7 +257,7 @@
                 class="w-12 white-space-nowrap overflow-hidden text-overflow-ellipsis"
               >
                 <span>
-                  {{ rom.createdDate | date: "dd/MM/yyyy" }}
+                  {{ rom.createdDate | date : "dd/MM/yyyy" }}
                 </span>
               </div>
             </td>
@@ -402,7 +402,7 @@
         </div>
         <div class="w-6 text-lg flex justify-content-end">
           <span>
-            {{ selectedRom.createdDate | date: "dd/MM/yyyy" }}
+            {{ selectedRom.createdDate | date : "dd/MM/yyyy" }}
           </span>
         </div>
       </div>
@@ -487,7 +487,7 @@
           <img
             *ngIf="originalModelImg"
             class="w-15rem h-auto"
-            [src]="originalModelImg | safe: 'resourceUrl'"
+            [src]="originalModelImg | safe : 'resourceUrl'"
             alt="Hình ảnh gốc"
           />
         </div>
@@ -495,7 +495,7 @@
           <img
             *ngIf="changedModelImg"
             class="w-15rem h-auto"
-            [src]="changedModelImg | safe: 'resourceUrl'"
+            [src]="changedModelImg | safe : 'resourceUrl'"
             alt="Hình ảnh sửa đổi"
           />
         </div>
@@ -518,36 +518,33 @@
         <img
           *ngIf="selectedRom.imageUrl"
           class="w-13rem h-auto"
-          [src]="selectedRom.imageUrl | safe: 'resourceUrl'"
+          [src]="selectedRom.imageUrl | safe : 'resourceUrl'"
           alt="Hình ảnh bằng chứng"
         />
       </div>
 
-      <div
-      *ngIf="selectedRom.modifyingGpssignId"
-          class="w-12 flex p-2"
-        >
-          <div class="w-6">
-            <span class="text-lg font-bold">Vị trí: </span>
-          </div>
+      <div *ngIf="selectedRom.modifyingGpssignId" class="w-12 flex p-2">
+        <div class="w-6">
+          <span class="text-lg font-bold">Vị trí: </span>
         </div>
-        <div
-          *ngIf="selectedRom.modifyingGpssignId"
-          class="w-12 flex justify-content-center p-2 border-200 border-1 border-round-lg overflow-hidden"
+      </div>
+      <div
+        *ngIf="selectedRom.modifyingGpssignId"
+        class="w-12 flex justify-content-center p-2 border-200 border-1 border-round-lg overflow-hidden"
+      >
+        <google-map
+          class="w-12 h-auto"
+          [center]="centerMapChanged"
+          [zoom]="zoom"
+          (mapClick)="moveMapChanged($event)"
+          (mapMousemove)="moveChanged($event)"
         >
-          
-            <google-map
-            class="w-12 h-auto"
-            [center]="centerMapChanged"
-            [zoom]="zoom"
-            (mapClick)="moveMapChanged($event)"
-            (mapMousemove)="moveChanged($event)">
-            <map-marker
+          <map-marker
             [position]="markerMapChangedPosition"
             [options]="markerOptions"
-            ></map-marker>
-            </google-map>
-        </div>
+          ></map-marker>
+        </google-map>
+      </div>
 
       <div
         class="w-12 flex p-2"
@@ -573,16 +570,17 @@
     </div>
   </ng-template>
 
-  <ng-template
-    pTemplate="footer"
-    *ngIf="
-      (selectedRom?.status === 0 ||
-        selectedRom?.status === 2 ||
-        (!selectedRom.modifyingSignId && selectedRom?.status === 3)) &&
-      !isPromotingAdminPromotionRom
-    "
-  >
-    <div class="w-12 flex" style="height: 10%">
+  <ng-template pTemplate="footer">
+    <div
+      class="w-12 flex"
+      style="height: 10%"
+      *ngIf="
+        (selectedRom?.status === 0 ||
+          selectedRom?.status === 2 ||
+          (!selectedRom.modifyingSignId && selectedRom?.status === 3)) &&
+        !isPromotingAdminPromotionRom
+      "
+    >
       <div class="w-6 flex justify-content-start">
         <button
           pButton
