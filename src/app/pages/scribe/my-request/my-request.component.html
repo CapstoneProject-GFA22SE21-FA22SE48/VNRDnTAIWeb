@@ -437,8 +437,8 @@
       </div>
     </ng-template>
 
-    <ng-template pTemplate="footer" *ngIf="selectedRom?.status === 4">
-        <div class="w-12 flex justify-content-end">
+    <ng-template pTemplate="footer">
+        <div class="w-12 flex justify-content-end"  *ngIf="selectedRom?.status === 4">
             <button
               pButton
               pRipple
