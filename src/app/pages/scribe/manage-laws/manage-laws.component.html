@@ -2802,12 +2802,14 @@
 
         <div *ngIf="isCollapsedCreatNewSection || isUpdatingNewSection">
           <div class="w-12 flex justify-content-center mb-3">
-            <div class="w-8 flex">
+            <div class="w-8 flex align-items-center">
               <div class="w-6">
                 <span class="text-lg">Khoản: </span>
               </div>
               <div class="w-6 flex justify-content-end">
-                <span class="text-lg font-bold">{{ newSection?.name }}</span>
+                <span class="text-lg font-bold">
+                  <input type="text" pInputText [(ngModel)]="newSection.name"/>
+                </span>
               </div>
             </div>
           </div>
