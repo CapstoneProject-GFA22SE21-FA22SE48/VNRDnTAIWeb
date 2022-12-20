@@ -740,11 +740,11 @@ export class ManageLawsComponent implements OnInit {
 
     if (
       this.newChosenSectionMinPenalty < 50000 ||
-      this.newChosenSectionMinPenalty > 75000000 ||
+      this.newChosenSectionMinPenalty > 150000000 ||
       this.newChosenSectionMinPenalty > this.newChosenSectionMaxPenalty
     ) {
       this.invalidChosenSectionNewPenaltyMsg =
-        'Vui lòng nhập mức phạt tối thiểu nhỏ hơn mức phạt tối đa (50.000đ - 75.000.000đ)';
+        'Vui lòng nhập mức phạt tối thiểu nhỏ hơn mức phạt tối đa (50.000đ - 150.000.000đ)';
       this.tmpChosenSection.minPenalty = undefined;
     } else {
       this.invalidChosenSectionNewPenaltyMsg = '';
@@ -759,11 +759,11 @@ export class ManageLawsComponent implements OnInit {
     }
     if (
       this.newChosenSectionMinPenalty < 50000 ||
-      this.newChosenSectionMinPenalty > 75000000 ||
+      this.newChosenSectionMinPenalty > 150000000 ||
       this.newChosenSectionMaxPenalty < this.newChosenSectionMinPenalty
     ) {
       this.invalidChosenSectionNewPenaltyMsg =
-        'Vui lòng nhập mức phạt tối đa lớn hơn mức phạt tối thiểu (50.000đ - 75.000.000đ)';
+        'Vui lòng nhập mức phạt tối đa lớn hơn mức phạt tối thiểu (50.000đ - 150.000.000đ)';
       this.tmpChosenSection.maxPenalty = undefined;
     } else {
       this.invalidChosenSectionNewPenaltyMsg = '';
@@ -1735,14 +1735,14 @@ export class ManageLawsComponent implements OnInit {
 
     if (
       this.newSection.minPenalty < 50000 ||
-      this.newSection.minPenalty > 75000000 ||
+      this.newSection.minPenalty > 150000000 ||
       (this.newSection.minPenalty &&
         this.newSection.maxPenalty &&
         this.newSection.minPenalty >= this.newSection.maxPenalty)
     ) {
       this.isValidNewSectionMinPenalty = false;
       this.newSectionPenaltyInvalidMsg =
-        'Vui lòng nhập mức phạt tối thiểu nhỏ hơn mức phạt tối đa (50.000đ - 75.000.000đ)';
+        'Vui lòng nhập mức phạt tối thiểu nhỏ hơn mức phạt tối đa (50.000đ - 150.000.000đ)';
     }
   }
 
@@ -1754,14 +1754,14 @@ export class ManageLawsComponent implements OnInit {
 
     if (
       this.newSection.maxPenalty < 50000 ||
-      this.newSection.maxPenalty > 75000000 ||
+      this.newSection.maxPenalty > 150000000 ||
       (this.newSection.minPenalty &&
         this.newSection.maxPenalty &&
         this.newSection.maxPenalty <= this.newSection.minPenalty)
     ) {
       this.isValidNewSectionMaxPenalty = false;
       this.newSectionPenaltyInvalidMsg =
-        'Vui lòng nhập mức phạt tối đa lớn hơn mức phạt tối thiểu (50.000đ - 75.000.000đ)';
+        'Vui lòng nhập mức phạt tối đa lớn hơn mức phạt tối thiểu (50.000đ - 150.000.000đ)';
     }
   }
 
