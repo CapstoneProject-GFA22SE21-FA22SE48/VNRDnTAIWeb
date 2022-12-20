@@ -150,7 +150,7 @@ export class MyRequestComponent implements OnInit {
           //Not display gps roms -> gps roms are displayed on a specific rom tab named "Yêu cầu về GPS"
           this.roms = this.roms.filter(
             (r: any) =>
-              !(r.modifyingSignId === undefined || r.modifyingSignId === null)
+              !(r.modifyingSignId === null)
           );
 
           this.tmpRoms = this.roms.slice();
